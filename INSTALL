@@ -1,0 +1,38 @@
+Building and Installing `synthclone`
+====================================
+
+Contents:
+
+1. Build Requirements
+2. Building and Installing from Source
+
+1. Build Requirements
+---------------------
+
+In order to compile `libsynthclone` and the `synthclone` executable, you must
+have the following libraries (and their corresponding development packages)
+installed:
+
+  * jack
+  * libsamplerate
+  * libsndfile
+  * qt4
+
+In addition, you'll need the following tools:
+
+  * python
+  * qmake
+
+2. Building and Installing from Source
+--------------------------------------
+
+To build `synthclone`, change your current directory to the top-level directory
+of the project and execute the command:
+
+  python build.py --prefix=/usr
+
+Optionally, you can use your own directory prefix.
+
+To install `synthclone`, execute the command:
+
+  make install

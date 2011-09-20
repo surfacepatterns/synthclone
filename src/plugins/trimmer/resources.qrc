@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/synthclone/plugins/trimmer">
+        <file>effectview.ui</file>
+    </qresource>
+</RCC>

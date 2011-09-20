@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/synthclone/plugins/zonegenerator">
+        <file>view.ui</file>
+    </qresource>
+</RCC>

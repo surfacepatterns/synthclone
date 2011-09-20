@@ -1,0 +1,59 @@
+<RCC>
+  <qresource prefix="/synthclone">
+    <file>aboutview.ui</file>
+    <file>errorview.ui</file>
+    <file>mainview.ui</file>
+    <file>participantview.ui</file>
+    <file>progressview.ui</file>
+    <file>savechangesview.ui</file>
+    <file>savewarningview.ui</file>
+    <file>sessionloadview.ui</file>
+    <file>images/16x16/add.png</file>
+    <file>images/16x16/clear.png</file>
+    <file>images/16x16/close.png</file>
+    <file>images/16x16/connect.png</file>
+    <file>images/16x16/copy.png</file>
+    <file>images/16x16/cut.png</file>
+    <file>images/16x16/delete.png</file>
+    <file>images/16x16/error.png</file>
+    <file>images/16x16/folder-music.png</file>
+    <file>images/16x16/folder-new.png</file>
+    <file>images/16x16/folder-open.png</file>
+    <file>images/16x16/go-down.png</file>
+    <file>images/16x16/go-up.png</file>
+    <file>images/16x16/image-loading.png</file>
+    <file>images/16x16/important.png</file>
+    <file>images/16x16/information.png</file>
+    <file>images/16x16/load.png</file>
+    <file>images/16x16/locked.png</file>
+    <file>images/16x16/ok.png</file>
+    <file>images/16x16/paste.png</file>
+    <file>images/16x16/play.png</file>
+    <file>images/16x16/quit.png</file>
+    <file>images/16x16/record.png</file>
+    <file>images/16x16/remove.png</file>
+    <file>images/16x16/save.png</file>
+    <file>images/16x16/save-as.png</file>
+    <file>images/16x16/select-all.png</file>
+    <file>images/16x16/stop.png</file>
+    <file>images/16x16/synthclone.png</file>
+    <file>images/16x16/view-properties.png</file>
+    <file>images/16x16/view-tree.png</file>
+    <file>images/32x32/error.png</file>
+    <file>images/32x32/important.png</file>
+    <file>images/32x32/information.png</file>
+    <file>images/32x32/synthclone.png</file>
+
+    <!-- accepted.png == ok.png -->
+    <!-- document-open.png == load.png -->
+    <!-- document-save.png == save.png -->
+    <!-- document-save-as.png == save-as.png -->
+    <!-- edit-copy.png == copy.png -->
+    <!-- edit-cut.png == cut.png -->
+    <!-- edit-delete.png == delete.png -->
+    <!-- edit-paste.png == paste.png -->
+    <!-- edit-select-all.png == select-all.png -->
+    <!-- rejected.png == quit.png -->
+
+  </qresource>
+</RCC>

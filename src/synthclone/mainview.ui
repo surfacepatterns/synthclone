@@ -1,0 +1,819 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>synthclone</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resources.qrc">
+    <normaloff>:/synthclone/images/16x16/synthclone.png</normaloff>:/synthclone/images/16x16/synthclone.png</iconset>
+  </property>
+  <widget class="QWidget" name="widget">
+   <layout class="QVBoxLayout" stretch="0,1">
+    <item>
+     <widget class="QTabWidget" name="componentTabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="samplerTab">
+       <attribute name="title">
+        <string>Sampler</string>
+       </attribute>
+       <layout class="QVBoxLayout" stretch="0,0,0,0,1">
+        <item>
+         <layout class="QHBoxLayout" stretch="1,0">
+          <item>
+           <widget class="QLabel" name="samplerName">
+            <property name="text">
+             <string>(sampler not set)</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="samplerAddButton">
+            <property name="statusTip">
+             <string>Set the sampler.</string>
+            </property>
+            <property name="text">
+             <string>Add</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/synthclone/images/16x16/add.png</normaloff>:/synthclone/images/16x16/add.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" stretch="1,0">
+          <item>
+           <widget class="QProgressBar" name="samplerProgressBar">
+            <property name="maximum">
+             <number>10000</number>
+            </property>
+            <property name="value">
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="samplerJobAbortButton">
+            <property name="statusTip">
+             <string>Cancel the current job.</string>
+            </property>
+            <property name="text">
+             <string>Stop</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/synthclone/images/16x16/stop.png</normaloff>:/synthclone/images/16x16/stop.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QLabel" name="samplerStatus">
+          <property name="text">
+           <string>Idle.</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="effectsTab">
+       <attribute name="title">
+        <string>Effects</string>
+       </attribute>
+       <layout class="QHBoxLayout" stretch="1,0">
+        <item>
+         <widget class="QTableView" name="effectTableView">
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout">
+          <item>
+           <widget class="QPushButton" name="effectAddButton">
+            <property name="statusTip">
+             <string>Add effect to effect chain.</string>
+            </property>
+            <property name="text">
+             <string>Add</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/synthclone/images/16x16/add.png</normaloff>:/synthclone/images/16x16/add.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="effectRemoveButton">
+            <property name="statusTip">
+             <string>Remove selected effect from effect chain.</string>
+            </property>
+            <property name="text">
+             <string>Remove</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/synthclone/images/16x16/remove.png</normaloff>:/synthclone/images/16x16/remove.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="effectMoveUpButton">
+            <property name="statusTip">
+             <string>Move selected effect up in effect chain.</string>
+            </property>
+            <property name="text">
+             <string>Move Up</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/synthclone/images/16x16/go-up.png</normaloff>:/synthclone/images/16x16/go-up.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="effectMoveDownButton">
+            <property name="statusTip">
+             <string>Move selected effect down in effect chain.</string>
+            </property>
+            <property name="text">
+             <string>Move Down</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/synthclone/images/16x16/go-down.png</normaloff>:/synthclone/images/16x16/go-down.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="targetsTab">
+       <attribute name="title">
+        <string>Targets</string>
+       </attribute>
+       <layout class="QHBoxLayout" stretch="1,0">
+        <item>
+         <widget class="QTableView" name="targetTableView">
+          <property name="selectionMode">
+           <enum>QAbstractItemView::SingleSelection</enum>
+          </property>
+          <property name="selectionBehavior">
+           <enum>QAbstractItemView::SelectRows</enum>
+          </property>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout">
+          <item>
+           <widget class="QPushButton" name="targetAddButton">
+            <property name="statusTip">
+             <string>Add a target.</string>
+            </property>
+            <property name="text">
+             <string>Add</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/synthclone/images/16x16/add.png</normaloff>:/synthclone/images/16x16/add.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="targetRemoveButton">
+            <property name="statusTip">
+             <string>Remove a target.</string>
+            </property>
+            <property name="text">
+             <string>Remove</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/synthclone/images/16x16/remove.png</normaloff>:/synthclone/images/16x16/remove.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="targetMoveUpButton">
+            <property name="statusTip">
+             <string>Move target up.</string>
+            </property>
+            <property name="text">
+             <string>Move Up</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/synthclone/images/16x16/go-up.png</normaloff>:/synthclone/images/16x16/go-up.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="targetMoveDownButton">
+            <property name="statusTip">
+             <string>Move target down.</string>
+            </property>
+            <property name="text">
+             <string>Move Down</string>
+            </property>
+            <property name="icon">
+             <iconset resource="resources.qrc">
+              <normaloff>:/synthclone/images/16x16/go-down.png</normaloff>:/synthclone/images/16x16/go-down.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>0</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTableView" name="zoneTableView">
+      <property name="editTriggers">
+       <set>QAbstractItemView::AnyKeyPressed|QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+      </property>
+      <property name="selectionBehavior">
+       <enum>QAbstractItemView::SelectRows</enum>
+      </property>
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="sessionMenu">
+    <property name="title">
+     <string>&amp;Session</string>
+    </property>
+    <addaction name="loadSessionAction"/>
+    <addaction name="separator"/>
+    <addaction name="saveSessionAction"/>
+    <addaction name="saveSessionAsAction"/>
+    <addaction name="separator"/>
+    <addaction name="quitSessionAction"/>
+   </widget>
+   <widget class="QMenu" name="zonesMenu">
+    <property name="title">
+     <string>&amp;Zones</string>
+    </property>
+    <widget class="QMenu" name="zoneColumnsMenu">
+     <property name="title">
+      <string>C&amp;olumns</string>
+     </property>
+     <widget class="QMenu" name="controlColumnsMenu1">
+      <property name="title">
+       <string>Control Columns 0 - 15</string>
+      </property>
+     </widget>
+     <widget class="QMenu" name="controlColumnsMenu2">
+      <property name="title">
+       <string>Control Columns 16 - 31</string>
+      </property>
+     </widget>
+     <widget class="QMenu" name="controlColumnsMenu3">
+      <property name="title">
+       <string>Control Columns 32 - 47</string>
+      </property>
+     </widget>
+     <widget class="QMenu" name="controlColumnsMenu4">
+      <property name="title">
+       <string>Control Columns 48 - 63</string>
+      </property>
+     </widget>
+     <widget class="QMenu" name="controlColumnsMenu5">
+      <property name="title">
+       <string>Control Columns 64 - 79</string>
+      </property>
+     </widget>
+     <widget class="QMenu" name="controlColumnsMenu6">
+      <property name="title">
+       <string>Control Columns 80 - 95</string>
+      </property>
+     </widget>
+     <widget class="QMenu" name="controlColumnsMenu7">
+      <property name="title">
+       <string>Control Columns 96 - 111</string>
+      </property>
+     </widget>
+     <widget class="QMenu" name="controlColumnsMenu8">
+      <property name="title">
+       <string>Control Columns 112 - 127</string>
+      </property>
+     </widget>
+     <addaction name="statusColumnShowAction"/>
+     <addaction name="channelColumnShowAction"/>
+     <addaction name="noteColumnShowAction"/>
+     <addaction name="velocityColumnShowAction"/>
+     <addaction name="aftertouchColumnShowAction"/>
+     <addaction name="sampleTimeColumnShowAction"/>
+     <addaction name="releaseTimeColumnShowAction"/>
+     <addaction name="drySampleColumnShowAction"/>
+     <addaction name="wetSampleColumnShowAction"/>
+     <addaction name="separator"/>
+     <addaction name="controlColumnsMenu1"/>
+     <addaction name="controlColumnsMenu2"/>
+     <addaction name="controlColumnsMenu3"/>
+     <addaction name="controlColumnsMenu4"/>
+     <addaction name="controlColumnsMenu5"/>
+     <addaction name="controlColumnsMenu6"/>
+     <addaction name="controlColumnsMenu7"/>
+     <addaction name="controlColumnsMenu8"/>
+    </widget>
+    <addaction name="insertZoneAction"/>
+    <addaction name="cutZonesAction"/>
+    <addaction name="copyZonesAction"/>
+    <addaction name="pasteZonesAction"/>
+    <addaction name="deleteZonesAction"/>
+    <addaction name="separator"/>
+    <addaction name="getSampleZonesAction"/>
+    <addaction name="playDrySampleZonesAction"/>
+    <addaction name="playWetSampleZonesAction"/>
+    <addaction name="separator"/>
+    <addaction name="applyEffectsZonesAction"/>
+    <addaction name="separator"/>
+    <addaction name="removeEffectJobZonesAction"/>
+    <addaction name="removeSamplerJobZonesAction"/>
+    <addaction name="separator"/>
+    <addaction name="selectAllZonesAction"/>
+    <addaction name="invertZoneSelectionAction"/>
+    <addaction name="clearZonesSelectionAction"/>
+    <addaction name="separator"/>
+    <addaction name="zoneColumnsMenu"/>
+    <addaction name="separator"/>
+    <addaction name="buildTargetsAction"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="viewMenu">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="participantsViewAction"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="toolsMenu">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="componentsMenu">
+    <property name="title">
+     <string>&amp;Components</string>
+    </property>
+    <widget class="QMenu" name="samplerMenu">
+     <property name="title">
+      <string>Sampler</string>
+     </property>
+     <widget class="QMenu" name="addSamplerMenu">
+      <property name="title">
+       <string>Set ...</string>
+      </property>
+     </widget>
+     <addaction name="addSamplerMenu"/>
+     <addaction name="separator"/>
+    </widget>
+    <widget class="QMenu" name="effectMenu">
+     <property name="title">
+      <string>&amp;Effects</string>
+     </property>
+     <widget class="QMenu" name="addEffectMenu">
+      <property name="title">
+       <string>Add ...</string>
+      </property>
+     </widget>
+     <addaction name="addEffectMenu"/>
+     <addaction name="separator"/>
+    </widget>
+    <widget class="QMenu" name="targetMenu">
+     <property name="title">
+      <string>&amp;Targets</string>
+     </property>
+     <widget class="QMenu" name="addTargetMenu">
+      <property name="title">
+       <string>Add ...</string>
+      </property>
+     </widget>
+     <addaction name="addTargetMenu"/>
+     <addaction name="separator"/>
+    </widget>
+    <addaction name="samplerMenu"/>
+    <addaction name="effectMenu"/>
+    <addaction name="targetMenu"/>
+   </widget>
+   <widget class="QMenu" name="helpMenu">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="aboutHelpAction"/>
+    <addaction name="separator"/>
+   </widget>
+   <addaction name="sessionMenu"/>
+   <addaction name="zonesMenu"/>
+   <addaction name="viewMenu"/>
+   <addaction name="toolsMenu"/>
+   <addaction name="componentsMenu"/>
+   <addaction name="helpMenu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="loadSessionAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/load.png</normaloff>:/synthclone/images/16x16/load.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Load</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::TextHeuristicRole</enum>
+   </property>
+  </action>
+  <action name="saveSessionAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/save.png</normaloff>:/synthclone/images/16x16/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="saveSessionAsAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/save-as.png</normaloff>:/synthclone/images/16x16/save-as.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save &amp;As</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+S</string>
+   </property>
+  </action>
+  <action name="quitSessionAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/quit.png</normaloff>:/synthclone/images/16x16/quit.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="cutZonesAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/cut.png</normaloff>:/synthclone/images/16x16/cut.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cu&amp;t</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="copyZonesAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/copy.png</normaloff>:/synthclone/images/16x16/copy.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="pasteZonesAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/paste.png</normaloff>:/synthclone/images/16x16/paste.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Paste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="deleteZonesAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/delete.png</normaloff>:/synthclone/images/16x16/delete.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="selectAllZonesAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/select-all.png</normaloff>:/synthclone/images/16x16/select-all.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select &amp;All</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="invertZoneSelectionAction">
+   <property name="text">
+    <string>In&amp;vert Selection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="insertZoneAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/add.png</normaloff>:/synthclone/images/16x16/add.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Insert</string>
+   </property>
+   <property name="shortcut">
+    <string>Ins</string>
+   </property>
+  </action>
+  <action name="aboutHelpAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/information.png</normaloff>:/synthclone/images/16x16/information.png</iconset>
+   </property>
+   <property name="text">
+    <string>About &amp;synthclone</string>
+   </property>
+  </action>
+  <action name="statusColumnShowAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Status</string>
+   </property>
+  </action>
+  <action name="channelColumnShowAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Channel</string>
+   </property>
+  </action>
+  <action name="noteColumnShowAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Note</string>
+   </property>
+  </action>
+  <action name="velocityColumnShowAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Velocity</string>
+   </property>
+  </action>
+  <action name="aftertouchColumnShowAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Aftertouch</string>
+   </property>
+  </action>
+  <action name="sampleTimeColumnShowAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Sample Time</string>
+   </property>
+  </action>
+  <action name="releaseTimeColumnShowAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Release Time</string>
+   </property>
+  </action>
+  <action name="drySampleColumnShowAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Dry Sample</string>
+   </property>
+  </action>
+  <action name="wetSampleColumnShowAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Wet Sample</string>
+   </property>
+  </action>
+  <action name="getSampleZonesAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/record.png</normaloff>:/synthclone/images/16x16/record.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Get Sample</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="playDrySampleZonesAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/play.png</normaloff>:/synthclone/images/16x16/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>Play D&amp;ry Sample</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
+   </property>
+  </action>
+  <action name="playWetSampleZonesAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/play.png</normaloff>:/synthclone/images/16x16/play.png</iconset>
+   </property>
+   <property name="text">
+    <string>Play &amp;Wet Sample</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="participantsViewAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/view-tree.png</normaloff>:/synthclone/images/16x16/view-tree.png</iconset>
+   </property>
+   <property name="text">
+    <string>Participants</string>
+   </property>
+  </action>
+  <action name="clearZonesSelectionAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/clear.png</normaloff>:/synthclone/images/16x16/clear.png</iconset>
+   </property>
+   <property name="text">
+    <string>C&amp;lear Selection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
+  <action name="applyEffectsZonesAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/connect.png</normaloff>:/synthclone/images/16x16/connect.png</iconset>
+   </property>
+   <property name="text">
+    <string>Apply &amp;Effects</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="removeSamplerJobZonesAction">
+   <property name="text">
+    <string>Remove &amp;Sampler Job</string>
+   </property>
+   <property name="shortcut">
+    <string>Backspace</string>
+   </property>
+  </action>
+  <action name="removeEffectJobZonesAction">
+   <property name="text">
+    <string>Remove E&amp;ffect Job</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Backspace</string>
+   </property>
+  </action>
+  <action name="buildTargetsAction">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/synthclone/images/16x16/folder-music.png</normaloff>:/synthclone/images/16x16/folder-music.png</iconset>
+   </property>
+   <property name="text">
+    <string>Build Targets</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

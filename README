@@ -1,0 +1,15 @@
+`synthclone` is a Qt-based application that "clones" your MIDI-capable
+instruments.  It does this by sending out MIDI data that instructs an instrument
+to emit sounds for a series of notes and velocities.  It then saves this data in
+a format that can be understood by sampling software.
+
+For more information on `synthclone`, visit:
+
+  http://synthclone.googlecode.com/
+
+Unless otherwise noted, images distributed with this package are licensed under
+the Creative Commons Attribution-ShareAlike 3.0 Unported License.  All images,
+save for application logos, are taken from the excellent Oxygen Icon Theme.  For
+more information on the Oxygen Icon Theme, visit:
+
+  http://www.oxygen-icons.org/
