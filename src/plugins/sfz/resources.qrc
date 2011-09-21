@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/synthclone/plugins/hydrogen">
-        <file>targetview.ui</file>
-    </qresource>
-</RCC>
