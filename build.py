@@ -93,8 +93,6 @@ def main():
     }
     writeTemplate(join(buildDir, "include", "synthclone", "config.h"),
                   join("templates", "config.h"), data)
-    writeTemplate(join(buildDir, "share", "menu", "synthclone"),
-                  join("templates", "menu"), data)
     writeTemplate(join(buildDir, "share", "applications", "synthclone.desktop"),
                   join("templates", "synthclone.desktop"), data)
 
