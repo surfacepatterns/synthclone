@@ -1,4 +1,4 @@
-Files in this tree are mainly license under the GPL, as noted in the file
+Files in this tree are mainly licensed under the GPL, as noted in the file
 headers.  However, the files under the 'src/include' and 'src/lib' trees are
 licensed under the LGPL in order to allow for proprietary usage of
 libsynthclone, a plugin API for synthclone, and the files under the
