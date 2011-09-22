@@ -22,9 +22,9 @@
 
 #include <QtCore/QMap>
 
+#include <synthclone/fileselectionview.h>
 #include <synthclone/participant.h>
 
-#include "directoryview.h"
 #include "target.h"
 #include "targetview.h"
 
@@ -57,6 +57,9 @@ private slots:
     handleDirectoryViewCloseRequest();
 
     void
+    handleDirectoryViewPathSelection(const QStringList &paths);
+
+    void
     handleTargetAddition();
 
     void
@@ -79,7 +82,7 @@ private:
     synthclone::MenuAction addTargetAction;
     Target *configuredTarget;
     synthclone::Context *context;
-    DirectoryView directoryView;
+    synthclone::FileSelectionView directoryView;
     TargetView targetView;
 
 };

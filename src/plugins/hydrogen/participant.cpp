@@ -26,10 +26,15 @@ Participant::Participant(QObject *parent):
                             tr("Creates Hydrogen drum kits."), parent),
     addTargetAction(tr("Hydrogen"))
 {
+    directoryView.setFilesVisible(false);
+    directoryView.setOperation(synthclone::FileSelectionView::OPERATION_SAVE);
+    directoryView.setTitle(tr("Save Hydrogen Kit"));
     connect(&addTargetAction, SIGNAL(triggered()),
             SLOT(handleTargetAddition()));
     connect(&directoryView, SIGNAL(closeRequest()),
             SLOT(handleDirectoryViewCloseRequest()));
+    connect(&directoryView, SIGNAL(pathsSelected(const QStringList &)),
+            SLOT(handleDirectoryViewPathSelection(const QStringList &)));
     connect(&targetView, SIGNAL(closeRequest()),
             SLOT(handleTargetViewCloseRequest()));
     connect(&targetView, SIGNAL(pathLookupRequest()),
@@ -145,8 +150,13 @@ void
 Participant::handleDirectoryViewCloseRequest()
 {
     directoryView.setVisible(false);
-    disconnect(&directoryView, SIGNAL(pathSelected(const QString &)),
-               configuredTarget, SLOT(setPath(const QString &)));
+}
+
+void
+Participant::handleDirectoryViewPathSelection(const QStringList &paths)
+{
+    assert(paths.count() == 1);
+    configuredTarget->setPath(paths[0]);
 }
 
 void
@@ -204,9 +214,7 @@ void
 Participant::handleTargetViewPathLookupRequest()
 {
     assert(configuredTarget);
-    directoryView.setPath(configuredTarget->getPath());
-    connect(&directoryView, SIGNAL(pathSelected(const QString &)),
-            configuredTarget, SLOT(setPath(const QString &)));
+    directoryView.setDirectory(configuredTarget->getPath());
     directoryView.setVisible(true);
 }
 
