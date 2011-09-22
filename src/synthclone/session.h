@@ -183,6 +183,9 @@ public:
     isAftertouchPropertyVisible() const;
 
     bool
+    isChannelPressurePropertyVisible() const;
+
+    bool
     isChannelPropertyVisible() const;
 
     bool
@@ -377,6 +380,9 @@ public slots:
     setAftertouchPropertyVisible(bool visible);
 
     void
+    setChannelPressurePropertyVisible(bool visible);
+
+    void
     setChannelPropertyVisible(bool visible);
 
     void
@@ -512,6 +518,9 @@ signals:
 
     void
     buildingTargets();
+
+    void
+    channelPressurePropertyVisibilityChanged(bool visible);
 
     void
     channelPropertyVisibilityChanged(bool visible);
@@ -1014,6 +1023,7 @@ private:
 
     bool aftertouchPropertyVisible;
     QCoreApplication &application;
+    bool channelPressurePropertyVisible;
     bool channelPropertyVisible;
     bool controlPropertiesVisible[0x80];
     synthclone::EffectJob *currentEffectJob;

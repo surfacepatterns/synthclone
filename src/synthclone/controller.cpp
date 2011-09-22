@@ -154,6 +154,9 @@ Controller::Controller(Application &application, QObject *parent):
     connect(zoneViewlet,
             SIGNAL(aftertouchPropertyVisibilityChangeRequest(bool)),
             &session, SLOT(setAftertouchPropertyVisible(bool)));
+    connect(zoneViewlet,
+            SIGNAL(channelPressurePropertyVisibilityChangeRequest(bool)),
+            &session, SLOT(setChannelPressurePropertyVisible(bool)));
     connect(zoneViewlet, SIGNAL(channelPropertyVisibilityChangeRequest(bool)),
             &session, SLOT(setChannelPropertyVisible(bool)));
     connect(zoneViewlet,
@@ -180,6 +183,8 @@ Controller::Controller(Application &application, QObject *parent):
 
     connect(zoneViewlet, SIGNAL(aftertouchPropertySortRequest(bool)),
             SLOT(handleZoneViewletAftertouchPropertySortRequest(bool)));
+    connect(zoneViewlet, SIGNAL(channelPressurePropertySortRequest(bool)),
+            SLOT(handleZoneViewletChannelPressurePropetySortRequest(bool)));
     connect(zoneViewlet, SIGNAL(channelPropertySortRequest(bool)),
             SLOT(handleZoneViewletChannelPropertySortRequest(bool)));
     connect(zoneViewlet,
@@ -209,6 +214,10 @@ Controller::Controller(Application &application, QObject *parent):
             SIGNAL(channelChangeRequest(int, synthclone::MIDIData)),
             SLOT(handleZoneViewletChannelChangeRequest(int,
                                                        synthclone::MIDIData)));
+    connect(zoneViewlet,
+            SIGNAL(channelPressureChangeRequest(int, synthclone::MIDIData)),
+            SLOT(handleZoneViewletChannelPressureChangeRequest
+                 (int, synthclone::MIDIData)));
     connect(zoneViewlet,
             SIGNAL(controlValueChangeRequest(int, synthclone::MIDIData,
                                              synthclone::MIDIData)),
@@ -282,6 +291,8 @@ Controller::Controller(Application &application, QObject *parent):
 
     zoneViewlet->setAftertouchPropertyVisible
         (session.isAftertouchPropertyVisible());
+    zoneViewlet->setChannelPressurePropertyVisible
+        (session.isChannelPressurePropertyVisible());
     zoneViewlet->setChannelPropertyVisible(session.isChannelPropertyVisible());
     zoneViewlet->setDrySamplePropertyVisible
         (session.isDrySamplePropertyVisible());
@@ -304,6 +315,8 @@ Controller::Controller(Application &application, QObject *parent):
 
     connect(&session, SIGNAL(aftertouchPropertyVisibilityChanged(bool)),
             zoneViewlet, SLOT(setAftertouchPropertyVisible(bool)));
+    connect(&session, SIGNAL(channelPressurePropertyVisibilityChanged(bool)),
+            zoneViewlet, SLOT(setChannelPressurePropertyVisible(bool)));
     connect(&session, SIGNAL(channelPropertyVisibilityChanged(bool)),
             zoneViewlet, SLOT(setChannelPropertyVisible(bool)));
     connect(&session,
@@ -1096,6 +1109,7 @@ Controller::updateZoneViewlet(const synthclone::Zone *zone, int index)
     ZoneViewlet *viewlet = mainView.getZoneViewlet();
     viewlet->setAftertouch(index, zone->getAftertouch());
     viewlet->setChannel(index, zone->getChannel());
+    viewlet->setChannelPressure(index, zone->getChannelPressure());
     viewlet->setDrySampleAcquired(index,
                                   static_cast<bool>(zone->getDrySample()));
     viewlet->setDrySampleStale(index, zone->isDrySampleStale());
@@ -2135,6 +2149,8 @@ Controller::handleSessionZoneAddition(synthclone::Zone *zone, int index)
             SLOT(handleZoneAftertouchChange(synthclone::MIDIData)));
     connect(zone, SIGNAL(channelChanged(synthclone::MIDIData)),
             SLOT(handleZoneChannelChange(synthclone::MIDIData)));
+    connect(zone, SIGNAL(channelPressureChanged(synthclone::MIDIData)),
+            SLOT(handleZoneChannelPressureChange(synthclone::MIDIData)));
     connect(zone,
             SIGNAL(controlValueChanged(synthclone::MIDIData,
                                        synthclone::MIDIData)),
@@ -2392,6 +2408,14 @@ Controller::handleZoneChannelChange(synthclone::MIDIData channel)
 }
 
 void
+Controller::handleZoneChannelPressureChange(synthclone::MIDIData pressure)
+{
+    synthclone::Zone *zone = qobject_cast<synthclone::Zone *>(sender());
+    mainView.getZoneViewlet()->
+        setChannelPressure(session.getZoneIndex(zone), pressure);
+}
+
+void
 Controller::handleZoneControlValueChange(synthclone::MIDIData control,
                                          synthclone::MIDIData value)
 {
@@ -2552,6 +2576,21 @@ Controller::handleZoneViewletChannelChangeRequest(int index,
                                                   synthclone::MIDIData channel)
 {
     session.getZone(index)->setChannel(channel);
+}
+
+void
+Controller::
+handleZoneViewletChannelPressureChangeRequest(int index,
+                                              synthclone::MIDIData pressure)
+{
+    session.getZone(index)->setChannelPressure(pressure);
+}
+
+void
+Controller::handleZoneViewletChannelPressurePropertySortRequest(bool ascending)
+{
+    session.sortZones(ZoneComparer(ZoneComparer::PROPERTY_CHANNEL_PRESSURE),
+                      ascending);
 }
 
 void

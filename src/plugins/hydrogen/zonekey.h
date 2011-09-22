@@ -43,6 +43,7 @@ private:
 
     synthclone::MIDIData aftertouch;
     synthclone::MIDIData channel;
+    synthclone::MIDIData channelPressure;
     quint64 controlBits1;
     quint64 controlBits2;
     synthclone::MIDIData controlValues[0x80];

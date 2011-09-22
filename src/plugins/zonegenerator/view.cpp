@@ -34,6 +34,11 @@ View::View(QObject *parent):
     cancelButton = synthclone::getChild<QPushButton>(widget, "cancelButton");
     connect(cancelButton, SIGNAL(clicked()), SIGNAL(closeRequest()));
 
+    channelPressureLayers =
+        synthclone::getChild<QSpinBox>(widget, "channelPressureLayers");
+    connect(channelPressureLayers, SIGNAL(valueChanged(int)),
+            SLOT(handleChannelPressureLayersChange(int)));
+
     firstNote = synthclone::getChild<QComboBox>(widget, "firstNote");
     connect(firstNote, SIGNAL(currentIndexChanged(int)),
             SLOT(handleFirstNoteChange(int)));
@@ -87,6 +92,13 @@ View::handleAftertouchLayersChange(int layers)
 }
 
 void
+View::handleChannelPressureLayersChange(int layers)
+{
+    emit channelPressureLayersChanged
+        (static_cast<synthclone::MIDIData>(layers));
+}
+
+void
 View::handleFirstNoteChange(int firstNote)
 {
     emit firstNoteChanged(static_cast<synthclone::MIDIData>(firstNote));
@@ -131,7 +143,13 @@ View::handleVelocityLayersChange(int layers)
 void
 View::setAftertouchLayers(synthclone::MIDIData layers)
 {
-    this->aftertouchLayers->setValue(layers);
+    this->aftertouchLayers->setValue(static_cast<int>(layers));
+}
+
+void
+View::setChannelPressureLayers(synthclone::MIDIData layers)
+{
+    this->channelPressureLayers->setValue(static_cast<int>(layers));
 }
 
 void

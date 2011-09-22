@@ -43,6 +43,9 @@ public:
     synthclone::MIDIData
     getChannel() const;
 
+    synthclone::MIDIData
+    getChannelPressure() const;
+
     const ControlMap &
     getControlMap() const;
 
@@ -83,6 +86,9 @@ public slots:
 
     void
     setChannel(synthclone::MIDIData channel);
+
+    void
+    setChannelPressure(synthclone::MIDIData pressure);
 
     void
     setControlValue(synthclone::MIDIData control, synthclone::MIDIData value);
@@ -129,6 +135,7 @@ private:
 
     synthclone::MIDIData aftertouch;
     synthclone::MIDIData channel;
+    synthclone::MIDIData channelPressure;
     ControlMap controlMap;
     synthclone::Sample *drySample;
     bool drySampleStale;

@@ -32,6 +32,8 @@ Participant::Participant(QObject *parent):
 
     connect(&view, SIGNAL(aftertouchLayersChanged(synthclone::MIDIData)),
             &data, SLOT(setAftertouchLayers(synthclone::MIDIData)));
+    connect(&view, SIGNAL(channelPressureLayersChanged(synthclone::MIDIData)),
+            &data, SLOT(setChannelPressureLayers(synthclone::MIDIData)));
     connect(&view, SIGNAL(firstNoteChanged(synthclone::MIDIData)),
             &data, SLOT(setFirstNote(synthclone::MIDIData)));
     connect(&view, SIGNAL(lastNoteChanged(synthclone::MIDIData)),
@@ -52,6 +54,8 @@ Participant::Participant(QObject *parent):
 
     connect(&data, SIGNAL(aftertouchLayersChanged(synthclone::MIDIData)),
             &view, SLOT(setAftertouchLayers(synthclone::MIDIData)));
+    connect(&data, SIGNAL(channelPressureLayersChanged(synthclone::MIDIData)),
+            &view, SLOT(setChannelPressureLayers(synthclone::MIDIData)));
     connect(&data, SIGNAL(firstNoteChanged(synthclone::MIDIData)),
             &view, SLOT(setFirstNote(synthclone::MIDIData)));
     connect(&data, SIGNAL(lastNoteChanged(synthclone::MIDIData)),
@@ -82,6 +86,7 @@ Participant::activate(synthclone::Context &context, const QVariant &/*state*/)
     data.reset();
     synthclone::MIDIData totalNotes = data.getTotalNotes();
     view.setAftertouchLayers(data.getAftertouchLayers());
+    view.setChannelPressureLayers(data.getChannelPressureLayers());
     view.setFirstNote(data.getFirstNote());
     view.setLastNote(data.getLastNote());
     view.setLastNoteEditingEnabled(totalNotes != 1);
@@ -117,24 +122,65 @@ Participant::handleGenerateRequest()
     synthclone::MIDIData firstNote = data.getFirstNote();
     synthclone::MIDIData midiChannel = data.getMIDIChannel();
     synthclone::MIDIData noteDifference = data.getLastNote() - firstNote;
+    synthclone::MIDIData pressureLayers = data.getChannelPressureLayers();
     synthclone::SampleTime releaseTime = data.getReleaseTime();
     synthclone::SampleTime sampleTime = data.getSampleTime();
     synthclone::MIDIData totalNotes = data.getTotalNotes();
     synthclone::MIDIData velocityLayers = data.getVelocityLayers();
+
+    // Iterate over note values
     for (int noteIndex = static_cast<int>(totalNotes - 1); noteIndex >= 0;
          noteIndex--) {
         synthclone::MIDIData note = static_cast<synthclone::MIDIData>
             (std::ceil(firstNote + (noteDifference *
                                     (static_cast<float>(noteIndex) /
                                      (totalNotes - 1)))));
+
+        // Iterate over velocity values
         for (synthclone::MIDIData velocityIndex = velocityLayers;
              velocityIndex > 0; velocityIndex--) {
             synthclone::MIDIData velocity = static_cast<synthclone::MIDIData>
                 (std::ceil(0x7f * (static_cast<float>(velocityIndex) /
                                    velocityLayers)));
-
-            // Generate zones with aftertouch (if requested).
             synthclone::Zone *zone;
+
+            // Iterate over channel pressure values (if requested).
+            for (synthclone::MIDIData pressureIndex = pressureLayers;
+                 pressureIndex > 0; pressureIndex--) {
+                synthclone::MIDIData pressure =
+                    static_cast<synthclone::MIDIData>
+                    (std::ceil(0x7f * (static_cast<float>(pressureIndex) /
+                                       pressureLayers)));
+
+                // Iterate over aftertouch values (if requested).
+                for (synthclone::MIDIData aftertouchIndex = aftertouchLayers;
+                     aftertouchIndex > 0; aftertouchIndex--) {
+                    synthclone::MIDIData aftertouch =
+                        static_cast<synthclone::MIDIData>
+                        (std::ceil(0x7f * (static_cast<float>(aftertouchIndex) /
+                                           aftertouchLayers)));
+                    zone = context->addZone(insertIndex);
+                    zone->setAftertouch(aftertouch);
+                    zone->setChannel(midiChannel);
+                    zone->setChannelPressure(pressure);
+                    zone->setNote(note);
+                    zone->setReleaseTime(releaseTime);
+                    zone->setSampleTime(sampleTime);
+                    zone->setVelocity(velocity);
+                }
+
+                // Generate zone without aftertouch.
+                zone = context->addZone(insertIndex);
+                zone->setChannel(midiChannel);
+                zone->setChannelPressure(pressure);
+                zone->setNote(note);
+                zone->setReleaseTime(releaseTime);
+                zone->setSampleTime(sampleTime);
+                zone->setVelocity(velocity);
+            }
+
+            // Iterate over aftertouch values, but don't apply channel
+            // pressure (if requested).
             for (synthclone::MIDIData aftertouchIndex = aftertouchLayers;
                  aftertouchIndex > 0; aftertouchIndex--) {
                 synthclone::MIDIData aftertouch =
@@ -150,7 +196,7 @@ Participant::handleGenerateRequest()
                 zone->setVelocity(velocity);
             }
 
-            // Generate zone without aftertouch.
+            // Generate zone without aftertouch or channel pressure.
             zone = context->addZone(insertIndex);
             zone->setChannel(midiChannel);
             zone->setNote(note);

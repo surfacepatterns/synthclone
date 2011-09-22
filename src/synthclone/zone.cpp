@@ -40,6 +40,7 @@ Zone::Zone(SessionSampleData &sessionSampleData, QObject *parent):
 
     aftertouch = synthclone::MIDI_VALUE_NOT_SET;
     channel = 1;
+    channelPressure = synthclone::MIDI_VALUE_NOT_SET;
     drySample = 0;
     drySampleStale = true;
     note = 60;
@@ -67,6 +68,18 @@ Zone::getAftertouch() const
     return aftertouch;
 }
 
+synthclone::MIDIData
+Zone::getChannelPressure() const
+{
+    return channelPressure;
+}
+
+synthclone::MIDIData
+Zone::getChannel() const
+{
+    return channel;
+}
+
 const Zone::ControlMap &
 Zone::getControlMap() const
 {
@@ -81,12 +94,6 @@ Zone::getControlValue(synthclone::MIDIData control) const
     ControlMap::const_iterator iter = controlMap.find(control);
     return iter != controlMap.end() ? iter.value() :
         synthclone::MIDI_VALUE_NOT_SET;
-}
-
-synthclone::MIDIData
-Zone::getChannel() const
-{
-    return channel;
 }
 
 const synthclone::Sample *
@@ -186,6 +193,20 @@ Zone::setChannel(synthclone::MIDIData channel)
     if (this->channel != channel) {
         this->channel = channel;
         emit channelChanged(channel);
+        setDrySampleStale(true);
+    }
+}
+
+void
+Zone::setChannelPressure(synthclone::MIDIData pressure)
+{
+    CONFIRM((pressure == synthclone::MIDI_VALUE_NOT_SET) || (pressure < 0x80),
+            tr("'%1': invalid MIDI channel pressure").arg(pressure));
+    CONFIRM(status == STATUS_NORMAL, tr("zone is being used by session"));
+
+    if (channelPressure != pressure) {
+        channelPressure = pressure;
+        emit channelPressureChanged(pressure);
         setDrySampleStale(true);
     }
 }

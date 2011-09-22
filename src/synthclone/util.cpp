@@ -138,6 +138,8 @@ writeZone(QXmlStreamWriter &writer, Zone *zone, QDir *samplesDirectory,
     writer.writeAttribute("aftertouch", QString::number(uValue));
     uValue = static_cast<ulong>(zone->getChannel());
     writer.writeAttribute("channel", QString::number(uValue));
+    uValue = static_cast<ulong>(zone->getChannelPressure());
+    writer.writeAttribute("channel-pressure", QString::number(uValue));
     writer.writeAttribute("dry-sample-stale",
                           zone->isDrySampleStale() ? "true" : "false");
     uValue = static_cast<ulong>(zone->getNote());

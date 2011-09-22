@@ -147,6 +147,9 @@ public:
     isAftertouchPropertyVisible() const;
 
     bool
+    isChannelPressurePropertyVisible() const;
+
+    bool
     isChannelPropertyVisible() const;
 
     bool
@@ -337,6 +340,9 @@ public slots:
 
     void
     setAftertouchPropertyVisible(bool visible);
+
+    void
+    setChannelPressurePropertyVisible(bool visible);
 
     void
     setChannelPropertyVisible(bool visible);

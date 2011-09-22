@@ -80,6 +80,9 @@ namespace synthclone {
          *      control item that's set to a specific value.
          *   -# Send a MIDI note on message on the given MIDI channel for the
          *      given note and velocity values.
+         *   -# If the channel pressure value is set, send a MIDI channel
+         *      pressure message on the given MIDI channel with the given
+         *      channel pressure value.
          *   -# If the aftertouch value is set, send a MIDI aftertouch message
          *      on the given MIDI channel with the given aftertouch value.
          *   -# If there is any known latency for the MIDI port and/or audio

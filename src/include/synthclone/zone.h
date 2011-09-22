@@ -93,9 +93,10 @@ namespace synthclone {
         };
 
         /**
-         * Gets the MIDI aftertouch value.  If aftertouch isn't set, then the
-         * value will be MIDI_VALUE_NOT_SET.  The aftertouch value is used by
-         * the Sampler to send a MIDI aftertouch message before sampling.
+         * Gets the MIDI polyphonic aftertouch value.  If the polyphonic
+         * aftertouch isn't set, then the value will be MIDI_VALUE_NOT_SET.
+         * The polyphonic aftertouch value is used by the Sampler to send a
+         * MIDI polyphonic aftertouch message before sampling.
          *
          * @returns
          *   The aftertouch value.
@@ -115,6 +116,19 @@ namespace synthclone {
 
         virtual MIDIData
         getChannel() const = 0;
+
+        /**
+         * Gets the MIDI channel pressure value.  If the channel pressure isn't
+         * set, then the value will be MIDI_VALUE_NOT_SET.  The channel
+         * pressure value is used by the Sampler to send a MIDI channel
+         * pressure message before sampling.
+         *
+         * @returns
+         *   The pressure value.
+         */
+
+        virtual MIDIData
+        getChannelPressure() const = 0;
 
         /**
          * Gets the internal control map containing all of the current control
@@ -254,8 +268,9 @@ namespace synthclone {
     public slots:
 
         /**
-         * Sets the MIDI aftertouch value.  The MIDI aftertouch value can be
-         * cleared by calling this method with MIDI_VALUE_NOT_SET.
+         * Sets the MIDI polyphonic aftertouch value.  The MIDI polyphonic
+         * aftertouch value can be cleared by calling this method with
+         * MIDI_VALUE_NOT_SET.
          *
          * @param aftertouch
          *   The aftertouch value.
@@ -279,6 +294,20 @@ namespace synthclone {
 
         virtual void
         setChannel(synthclone::MIDIData channel) = 0;
+
+        /**
+         * Sets the MIDI channel pressure value.  The MIDI channel pressure
+         * value can be cleared by calling this method with MIDI_VALUE_NOT_SET.
+         *
+         * @param pressure
+         *   The pressure value.
+         *
+         * @sa
+         *   getChannelPressure()
+         */
+
+        virtual void
+        setChannelPressure(synthclone::MIDIData pressure) = 0;
 
         /**
          * Sets a MIDI control value.  A control can be cleared by calling this
@@ -378,10 +407,10 @@ namespace synthclone {
     signals:
 
         /**
-         * Emitted when the MIDI aftertouch value is changed.
+         * Emitted when the MIDI polyphonic aftertouch value is changed.
          *
          * @param aftertouch
-         *   The new MIDI aftertouch value.
+         *   The new MIDI polyphonic aftertouch value.
          */
 
         void
@@ -396,6 +425,16 @@ namespace synthclone {
 
         void
         channelChanged(synthclone::MIDIData channel);
+
+        /**
+         * Emitted when the MIDI channel pressure value is changed.
+         *
+         * @param pressure
+         *   The new MIDI channel pressure value.
+         */
+
+        void
+        channelPressureChanged(synthclone::MIDIData pressure);
 
         /**
          * Emitted when a MIDI control value is changed.

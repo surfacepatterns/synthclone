@@ -39,6 +39,12 @@ Data::getAftertouchLayers() const
 }
 
 synthclone::MIDIData
+Data::getChannelPressureLayers() const
+{
+    return channelPressureLayers;
+}
+
+synthclone::MIDIData
 Data::getFirstNote() const
 {
     return firstNote;
@@ -85,6 +91,7 @@ Data::reset()
 {
     // Simple defaults
     aftertouchLayers = 0;
+    channelPressureLayers = 0;
     firstNote = 0;
     lastNote = 0x7f;
     midiChannel = 1;
@@ -101,6 +108,16 @@ Data::setAftertouchLayers(synthclone::MIDIData layers)
     if (aftertouchLayers != layers) {
         aftertouchLayers = layers;
         emit aftertouchLayersChanged(layers);
+    }
+}
+
+void
+Data::setChannelPressureLayers(synthclone::MIDIData layers)
+{
+    assert(layers <= 0x80);
+    if (channelPressureLayers != layers) {
+        channelPressureLayers = layers;
+        emit channelPressureLayersChanged(layers);
     }
 }
 

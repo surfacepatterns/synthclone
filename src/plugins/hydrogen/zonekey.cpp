@@ -24,6 +24,7 @@ ZoneKey::ZoneKey(const synthclone::Zone &zone, QObject *parent):
 {
     aftertouch = zone.getAftertouch();
     channel = zone.getChannel();
+    channelPressure = zone.getChannelPressure();
     controlBits1 = 0;
     controlBits2 = 0;
     note = zone.getNote();
@@ -40,7 +41,7 @@ ZoneKey::ZoneKey(const synthclone::Zone &zone, QObject *parent):
         value = zone.getControlValue(i);
         controlValues[i] = value;
         if (value != synthclone::MIDI_VALUE_NOT_SET) {
-            controlBits2 |= 0x8000000000000000 >> i;
+            controlBits2 |= 0x8000000000000000 >> (i - 0x40);
         }
     }
 }
@@ -56,6 +57,7 @@ ZoneKey::operator=(const ZoneKey &key)
 {
     aftertouch = key.aftertouch;
     channel = key.channel;
+    channelPressure = key.channelPressure;
     controlBits1 = key.controlBits1;
     controlBits2 = key.controlBits2;
     note = key.note;
@@ -73,6 +75,11 @@ ZoneKey::operator<(const ZoneKey &key) const
     }
     if (note != key.note) {
         return note < key.note;
+    }
+    if (channelPressure != key.channelPressure) {
+        return channelPressure == synthclone::MIDI_VALUE_NOT_SET ? true :
+            key.channelPressure == synthclone::MIDI_VALUE_NOT_SET ? false :
+            channelPressure < key.channelPressure;
     }
     if (aftertouch != key.aftertouch) {
         return aftertouch == synthclone::MIDI_VALUE_NOT_SET ? true :

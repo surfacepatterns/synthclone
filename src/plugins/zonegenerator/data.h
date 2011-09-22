@@ -39,6 +39,9 @@ public:
     getAftertouchLayers() const;
 
     synthclone::MIDIData
+    getChannelPressureLayers() const;
+
+    synthclone::MIDIData
     getFirstNote() const;
 
     synthclone::MIDIData
@@ -68,6 +71,9 @@ public slots:
     setAftertouchLayers(synthclone::MIDIData layers);
 
     void
+    setChannelPressureLayers(synthclone::MIDIData layers);
+
+    void
     setFirstNote(synthclone::MIDIData firstNote);
 
     void
@@ -92,6 +98,9 @@ signals:
 
     void
     aftertouchLayersChanged(synthclone::MIDIData layers);
+
+    void
+    channelPressureLayersChanged(synthclone::MIDIData layers);
 
     void
     firstNoteChanged(synthclone::MIDIData firstNote);
@@ -120,6 +129,7 @@ private:
     updateTotalNotes();
 
     synthclone::MIDIData aftertouchLayers;
+    synthclone::MIDIData channelPressureLayers;
     synthclone::MIDIData firstNote;
     synthclone::MIDIData lastNote;
     synthclone::MIDIData midiChannel;

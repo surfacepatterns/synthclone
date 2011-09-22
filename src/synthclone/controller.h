@@ -377,6 +377,9 @@ private slots:
     handleZoneChannelChange(synthclone::MIDIData channel);
 
     void
+    handleZoneChannelPressureChange(synthclone::MIDIData pressure);
+
+    void
     handleZoneControlValueChange(synthclone::MIDIData control,
                                  synthclone::MIDIData value);
 
@@ -423,6 +426,13 @@ private slots:
     void
     handleZoneViewletChannelChangeRequest(int index,
                                           synthclone::MIDIData channel);
+
+    void
+    handleZoneViewletChannelPressureChangeRequest
+    (int index, synthclone::MIDIData pressure);
+
+    void
+    handleZoneViewletChannelPressurePropertySortRequest(bool ascending);
 
     void
     handleZoneViewletChannelPropertySortRequest(bool ascending);

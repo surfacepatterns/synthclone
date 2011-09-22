@@ -75,6 +75,12 @@ public slots:
     setChannel(int index, synthclone::MIDIData channel);
 
     void
+    setChannelPressure(int index, synthclone::MIDIData pressure);
+
+    void
+    setChannelPressurePropertyVisible(bool visible);
+
+    void
     setChannelPropertyVisible(bool visible);
 
     void
@@ -193,6 +199,15 @@ signals:
 
     void
     channelChangeRequest(int index, synthclone::MIDIData channel);
+
+    void
+    channelPressureChangeRequest(int index, synthclone::MIDIData pressure);
+
+    void
+    channelPressurePropertyVisibilityChangeRequest(bool visible);
+
+    void
+    channelPressurePropertySortRequest(bool ascending);
 
     void
     channelPropertyVisibilityChangeRequest(bool visible);

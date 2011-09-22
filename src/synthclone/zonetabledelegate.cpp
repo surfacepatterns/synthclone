@@ -51,6 +51,7 @@ ZoneTableDelegate::createEditor(QWidget *parent,
     switch (index.column()) {
     default:
     case ZONETABLECOLUMN_AFTERTOUCH:
+    case ZONETABLECOLUMN_CHANNEL_PRESSURE:
         spinBox = new QSpinBox(parent);
         spinBox->setRange(-1, 127);
         spinBox->setSpecialValueText(tr("(not set)"));
@@ -101,6 +102,7 @@ ZoneTableDelegate::setEditorData(QWidget *editor,
     QVariant value = index.data(Qt::EditRole);
     switch (index.column()) {
     case ZONETABLECOLUMN_AFTERTOUCH:
+    case ZONETABLECOLUMN_CHANNEL_PRESSURE:
     default:
         intValue = value.toInt();
         if (intValue == synthclone::MIDI_VALUE_NOT_SET) {
@@ -150,6 +152,12 @@ ZoneTableDelegate::setModelData(QWidget *editor, QAbstractItemModel */*model*/,
         intValue = qobject_cast<QSpinBox *>(editor)->value();
         emit channelChangeRequest
             (row, static_cast<synthclone::MIDIData>(intValue));
+        break;
+    case ZONETABLECOLUMN_CHANNEL_PRESSURE:
+        intValue = qobject_cast<QSpinBox *>(editor)->value();
+        midiValue = (intValue == -1) ? synthclone::MIDI_VALUE_NOT_SET :
+            static_cast<synthclone::MIDIData>(intValue);
+        emit channelPressureChangeRequest(row, midiValue);
         break;
     case ZONETABLECOLUMN_DRY_SAMPLE:
     case ZONETABLECOLUMN_STATUS:

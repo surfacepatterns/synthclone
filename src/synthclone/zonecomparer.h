@@ -34,15 +34,16 @@ public:
     enum Property {
         PROPERTY_AFTERTOUCH = 0,
         PROPERTY_CHANNEL = 1,
-        PROPERTY_DRY_SAMPLE = 2,
-        PROPERTY_NOTE = 3,
-        PROPERTY_RELEASE_TIME = 4,
-        PROPERTY_SAMPLE_TIME = 5,
-        PROPERTY_STATUS = 6,
-        PROPERTY_VELOCITY = 7,
-        PROPERTY_WET_SAMPLE = 8,
-        PROPERTY_CONTROL_0 = 9,
-        PROPERTY_CONTROL_127 = 136
+        PROPERTY_CHANNEL_PRESSURE = 2,
+        PROPERTY_DRY_SAMPLE = 3,
+        PROPERTY_NOTE = 4,
+        PROPERTY_RELEASE_TIME = 5,
+        PROPERTY_SAMPLE_TIME = 6,
+        PROPERTY_STATUS = 7,
+        PROPERTY_VELOCITY = 8,
+        PROPERTY_WET_SAMPLE = 9,
+        PROPERTY_CONTROL_0 = 10,
+        PROPERTY_CONTROL_127 = 137
     };
 
     ZoneComparer(int property, QObject *parent=0);

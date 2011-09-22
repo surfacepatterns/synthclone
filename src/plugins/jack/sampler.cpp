@@ -415,22 +415,26 @@ Sampler::handleProcessEvent(jack_nframes_t frames)
                  iter != end; iter++) {
                 if (! sendMIDIMessage(midiBuffer, 0xb0 | midiChannel,
                                       iter.key(), iter.value())) {
-                    state = STATE_SAMPLE_SEND_POST_MIDI;
-                    goto sampleSendPostMIDI;
+                    goto error;
                 }
             }
             synthclone::MIDIData note = zone->getNote();
             if (! sendMIDIMessage(midiBuffer, 0x90 | midiChannel, note,
                                   zone->getVelocity())) {
-                state = STATE_SAMPLE_SEND_POST_MIDI;
-                goto sampleSendPostMIDI;
+                goto error;
+            }
+            synthclone::MIDIData pressure = zone->getChannelPressure();
+            if (pressure != synthclone::MIDI_VALUE_NOT_SET) {
+                if (! sendMIDIMessage(midiBuffer, 0xb0 | midiChannel,
+                                      pressure)) {
+                    goto error;
+                }
             }
             synthclone::MIDIData aftertouch = zone->getAftertouch();
             if (aftertouch != synthclone::MIDI_VALUE_NOT_SET) {
                 if (! sendMIDIMessage(midiBuffer, 0xa0 | midiChannel, note,
                                       aftertouch)) {
-                    state = STATE_SAMPLE_SEND_POST_MIDI;
-                    goto sampleSendPostMIDI;
+                    goto error;
                 }
             }
         }
@@ -749,7 +753,15 @@ bool
 Sampler::sendMIDIMessage(void *midiBuffer, synthclone::MIDIData status,
                          synthclone::MIDIData data1, synthclone::MIDIData data2)
 {
-    jack_midi_data_t *event = jack_midi_event_reserve(midiBuffer, 0, 3);
+    assert(data1 < 0x80);
+    size_t size;
+    if (data2 == synthclone::MIDI_VALUE_NOT_SET) {
+        size = 2;
+    } else {
+        assert(data2 < 0x80);
+        size = 3;
+    }
+    jack_midi_data_t *event = jack_midi_event_reserve(midiBuffer, 0, size);
     if (! event) {
         jack_midi_clear_buffer(midiBuffer);
         setProcessErrorState(ERROR_MIDI_EVENT_RESERVE);
@@ -757,7 +769,9 @@ Sampler::sendMIDIMessage(void *midiBuffer, synthclone::MIDIData status,
     }
     event[0] = status;
     event[1] = data1;
-    event[2] = data2;
+    if (size == 3) {
+        event[2] = data2;
+    }
     return true;
 }
 

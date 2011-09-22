@@ -387,6 +387,9 @@ static const char *REMOVING_PARTICIPANT_SIGNAL =
 static const char *AFTERTOUCH_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(aftertouchPropertyVisibilityChanged(bool)));
+static const char *CHANNEL_PRESSURE_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
+    QMetaObject::normalizedSignature
+    (SIGNAL(channelPressurePropertyVisibilityChanged(bool)));
 static const char *CHANNEL_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(channelPropertyVisibilityChanged(bool)));
@@ -627,6 +630,9 @@ static SignalMap sessionSignalMap =
 
     SignalPair(QLatin1String(AFTERTOUCH_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
                AFTERTOUCH_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
+    SignalPair(QLatin1String
+               (CHANNEL_PRESSURE_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
+               CHANNEL_PRESSURE_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
     SignalPair(QLatin1String(CHANNEL_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
                CHANNEL_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
     SignalPair(QLatin1String(CONTROL_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
@@ -1186,6 +1192,12 @@ Context::isAftertouchPropertyVisible() const
 }
 
 bool
+Context::isChannelPressurePropertyVisible() const
+{
+    return session.isChannelPressurePropertyVisible();
+}
+
+bool
 Context::isChannelPropertyVisible() const
 {
     return session.isChannelPropertyVisible();
@@ -1412,6 +1424,12 @@ void
 Context::setAftertouchPropertyVisible(bool visible)
 {
     session.setAftertouchPropertyVisible(visible);
+}
+
+void
+Context::setChannelPressurePropertyVisible(bool visible)
+{
+    session.setChannelPressurePropertyVisible(visible);
 }
 
 void

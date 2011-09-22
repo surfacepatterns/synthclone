@@ -83,6 +83,9 @@ ZoneComparer::isLessThan(const synthclone::Zone *zone1,
         return isLessThan(zone1->getAftertouch(), zone2->getAftertouch());
     case PROPERTY_CHANNEL:
         return zone1->getChannel() < zone2->getChannel();
+    case PROPERTY_CHANNEL_PRESSURE:
+        return isLessThan(zone1->getChannelPressure(),
+                          zone2->getChannelPressure());
     case PROPERTY_DRY_SAMPLE:
         return isLessThan(zone1->getDrySample(), zone2->getDrySample());
     case PROPERTY_NOTE:

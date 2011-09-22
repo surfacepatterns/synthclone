@@ -198,7 +198,8 @@ private:
 
     bool
     sendMIDIMessage(void *midiBuffer, synthclone::MIDIData status,
-                    synthclone::MIDIData data1, synthclone::MIDIData data2);
+                    synthclone::MIDIData data1,
+                    synthclone::MIDIData data2=synthclone::MIDI_VALUE_NOT_SET);
 
     void
     sendPriorityEvent(const PriorityEvent &event);

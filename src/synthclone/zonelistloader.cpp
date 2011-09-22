@@ -62,6 +62,9 @@ ZoneListLoader::loadZones(QDomElement &element, int startIndex,
         if (verifyMIDIAttribute(element, "aftertouch", data, false)) {
             zone->setAftertouch(data);
         }
+        if (verifyMIDIAttribute(element, "channel-pressure", data, false)) {
+            zone->setChannelPressure(data);
+        }
         if (verifyMIDIAttribute(element, "channel", data, true, 1, 16)) {
             zone->setChannel(data);
         }

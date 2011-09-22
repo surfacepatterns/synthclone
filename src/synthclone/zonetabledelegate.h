@@ -62,6 +62,10 @@ signals:
     channelChangeRequest(int index, synthclone::MIDIData channel) const;
 
     void
+    channelPressureChangeRequest(int index,
+                                 synthclone::MIDIData pressure) const;
+
+    void
     controlValueChangeRequest(int index, synthclone::MIDIData control,
                               synthclone::MIDIData value) const;
 

@@ -102,6 +102,8 @@ ZoneViewlet::ZoneViewlet(QMainWindow *mainWindow, QObject *parent):
                                "aftertouchColumnShowAction");
     initializeColumnShowAction(mainWindow, ZONETABLECOLUMN_CHANNEL,
                                "channelColumnShowAction");
+    initializeColumnShowAction(mainWindow, ZONETABLECOLUMN_CHANNEL_PRESSURE,
+                               "channelPressureColumnShowAction");
     initializeColumnShowAction(mainWindow, ZONETABLECOLUMN_DRY_SAMPLE,
                                "drySampleColumnShowAction");
     initializeColumnShowAction(mainWindow, ZONETABLECOLUMN_NOTE,
@@ -144,6 +146,8 @@ ZoneViewlet::ZoneViewlet(QMainWindow *mainWindow, QObject *parent):
                              tr("Aftertouch"), Qt::DisplayRole);
     tableModel.setHeaderData(ZONETABLECOLUMN_CHANNEL, Qt::Horizontal,
                              tr("Channel"), Qt::DisplayRole);
+    tableModel.setHeaderData(ZONETABLECOLUMN_CHANNEL_PRESSURE, Qt::Horizontal,
+                             tr("Channel Pressure"), Qt::DisplayRole);
     tableModel.setHeaderData(ZONETABLECOLUMN_DRY_SAMPLE, Qt::Horizontal,
                              tr("Dry Sample"), Qt::DisplayRole);
     tableModel.setHeaderData(ZONETABLECOLUMN_NOTE, Qt::Horizontal,
@@ -171,6 +175,9 @@ ZoneViewlet::ZoneViewlet(QMainWindow *mainWindow, QObject *parent):
     connect(&tableDelegate,
             SIGNAL(channelChangeRequest(int, synthclone::MIDIData)),
             SIGNAL(channelChangeRequest(int, synthclone::MIDIData)));
+    connect(&tableDelegate,
+            SIGNAL(channelPressureChangeRequest(int, synthclone::MIDIData)),
+            SIGNAL(channelPressureChangeRequest(int, synthclone::MIDIData)));
     connect(&tableDelegate,
             SIGNAL(controlValueChangeRequest(int, synthclone::MIDIData,
                                              synthclone::MIDIData)),
@@ -228,6 +235,7 @@ ZoneViewlet::disableRow(int index)
     getModelItem(index, ZONETABLECOLUMN_WET_SAMPLE)->setFlags(flags);
     getModelItem(index, ZONETABLECOLUMN_AFTERTOUCH)->setFlags(flags);
     getModelItem(index, ZONETABLECOLUMN_CHANNEL)->setFlags(flags);
+    getModelItem(index, ZONETABLECOLUMN_CHANNEL_PRESSURE)->setFlags(flags);
     getModelItem(index, ZONETABLECOLUMN_NOTE)->setFlags(flags);
     getModelItem(index, ZONETABLECOLUMN_RELEASE_TIME)->setFlags(flags);
     getModelItem(index, ZONETABLECOLUMN_SAMPLE_TIME)->setFlags(flags);
@@ -255,6 +263,7 @@ ZoneViewlet::enableRow(int index)
     flags |= Qt::ItemIsEditable;
     getModelItem(index, ZONETABLECOLUMN_AFTERTOUCH)->setFlags(flags);
     getModelItem(index, ZONETABLECOLUMN_CHANNEL)->setFlags(flags);
+    getModelItem(index, ZONETABLECOLUMN_CHANNEL_PRESSURE)->setFlags(flags);
     getModelItem(index, ZONETABLECOLUMN_NOTE)->setFlags(flags);
     getModelItem(index, ZONETABLECOLUMN_RELEASE_TIME)->setFlags(flags);
     getModelItem(index, ZONETABLECOLUMN_SAMPLE_TIME)->setFlags(flags);
@@ -293,6 +302,9 @@ ZoneViewlet::handleColumnShowAction()
         break;
     case ZONETABLECOLUMN_CHANNEL:
         emit channelPropertyVisibilityChangeRequest(visible);
+        break;
+    case ZONETABLECOLUMN_CHANNEL_PRESSURE:
+        emit channelPressurePropertyVisibilityChangeRequest(visible);
         break;
     case ZONETABLECOLUMN_DRY_SAMPLE:
         emit drySamplePropertyVisibilityChangeRequest(visible);
@@ -365,6 +377,9 @@ ZoneViewlet::handleSortRequest(int column, bool ascending)
         break;
     case ZONETABLECOLUMN_CHANNEL:
         emit channelPropertySortRequest(ascending);
+        break;
+    case ZONETABLECOLUMN_CHANNEL_PRESSURE:
+        emit channelPressurePropertySortRequest(ascending);
         break;
     case ZONETABLECOLUMN_DRY_SAMPLE:
         emit drySamplePropertySortRequest(ascending);
@@ -489,6 +504,28 @@ ZoneViewlet::setChannel(int index, synthclone::MIDIData channel)
     int intChannel = static_cast<int>(channel);
     setModelData(index, ZONETABLECOLUMN_CHANNEL, intChannel);
     setModelData(index, ZONETABLECOLUMN_CHANNEL, intChannel, Qt::DisplayRole);
+}
+
+void
+ZoneViewlet::setChannelPressure(int index, synthclone::MIDIData pressure)
+{
+    assert((index >= 0) && (index < tableModel.rowCount()));
+    int intPressure = static_cast<int>(pressure);
+    setModelData(index, ZONETABLECOLUMN_CHANNEL_PRESSURE, intPressure);
+    QVariant value;
+    if (pressure == synthclone::MIDI_VALUE_NOT_SET) {
+        value = tr("(not set)");
+    } else {
+        value = intPressure;
+    }
+    setModelData(index, ZONETABLECOLUMN_CHANNEL_PRESSURE, value,
+                 Qt::DisplayRole);
+}
+
+void
+ZoneViewlet::setChannelPressurePropertyVisible(bool visible)
+{
+    setColumnVisible(ZONETABLECOLUMN_CHANNEL_PRESSURE, visible);
 }
 
 void

@@ -392,6 +392,7 @@
      <addaction name="channelColumnShowAction"/>
      <addaction name="noteColumnShowAction"/>
      <addaction name="velocityColumnShowAction"/>
+     <addaction name="channelPressureColumnShowAction" />
      <addaction name="aftertouchColumnShowAction"/>
      <addaction name="sampleTimeColumnShowAction"/>
      <addaction name="releaseTimeColumnShowAction"/>
@@ -672,6 +673,14 @@
    </property>
    <property name="text">
     <string>Velocity</string>
+   </property>
+  </action>
+  <action name="channelPressureColumnShowAction">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Channel Pressure</string>
    </property>
   </action>
   <action name="aftertouchColumnShowAction">

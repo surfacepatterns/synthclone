@@ -151,11 +151,28 @@
      <item row="9" column="0">
       <widget class="QLabel">
        <property name="text">
-        <string>Aftertouch Layers (per velocity layer):</string>
+        <string>Channel Pressure Layers (per aftertouch layer):</string>
        </property>
       </widget>
      </item>
      <item row="9" column="1">
+      <widget class="QSpinBox" name="channelPressureLayers">
+       <property name="specialValueText">
+        <string>(not used)</string>
+       </property>
+       <property name="maximum">
+        <number>128</number>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="0">
+      <widget class="QLabel">
+       <property name="text">
+        <string>Aftertouch Layers (per velocity and channel pressure layer):</string>
+       </property>
+      </widget>
+     </item>
+     <item row="10" column="1">
       <widget class="QSpinBox" name="aftertouchLayers">
        <property name="specialValueText">
         <string>(not used)</string>

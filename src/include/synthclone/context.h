@@ -468,6 +468,17 @@ namespace synthclone {
         isAftertouchPropertyVisible() const = 0;
 
         /**
+         * Gets a boolean indicating whether or not the channel pressure
+         * property is visible.
+         *
+         * @returns
+         *   The boolean.
+         */
+
+        virtual bool
+        isChannelPressurePropertyVisible() const = 0;
+
+        /**
          * Gets a boolean indicating whether or not the channel property is
          * visible.
          *
@@ -1240,6 +1251,16 @@ namespace synthclone {
         setAftertouchPropertyVisible(bool visible) = 0;
 
         /**
+         * Sets the visibility of the channel pressure property.
+         *
+         * @param visible
+         *   Whether or not the channel pressure property should be visible.
+         */
+
+        virtual void
+        setChannelPressurePropertyVisible(bool visible) = 0;
+
+        /**
          * Sets the visibility of the channel property.
          *
          * @param visible
@@ -1769,6 +1790,17 @@ namespace synthclone {
 
         void
         buildingTargets();
+
+        /**
+         * Emitted when the visibility of the channel pressure property is
+         * changed.
+         *
+         * @param visible
+         *   The visibility of the channel pressure property.
+         */
+
+        void
+        channelPressurePropertyVisibilityChanged(bool visible);
 
         /**
          * Emitted when the visibility of the channel property is changed.

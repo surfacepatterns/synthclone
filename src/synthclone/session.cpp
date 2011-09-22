@@ -59,6 +59,7 @@ Session::create(const QDir &directory, synthclone::SampleRate sampleRate,
     writer.writeAttribute("sample-channel-count", QString::number(count));
     writer.writeAttribute("sample-rate", QString::number(sampleRate));
     writer.writeAttribute("aftertouch-property-visible", "false");
+    writer.writeAttribute("channel-pressure-property-visible", "false");
     writer.writeAttribute("channel-property-visible", "true");
     writer.writeAttribute("dry-sample-property-visible", "true");
     writer.writeAttribute("note-property-visible", "true");
@@ -158,6 +159,7 @@ Session::Session(QCoreApplication &application, QObject *parent):
         controlPropertiesVisible[i] = false;
     }
     aftertouchPropertyVisible = false;
+    channelPressurePropertyVisible = false;
     channelPropertyVisible = true;
     currentEffectJob = 0;
     currentEffectJobWetSample = 0;
@@ -673,6 +675,8 @@ Session::addZone(int index)
     connect(zone, SIGNAL(aftertouchChanged(synthclone::MIDIData)),
             SLOT(setModified()));
     connect(zone, SIGNAL(channelChanged(synthclone::MIDIData)),
+            SLOT(setModified()));
+    connect(zone, SIGNAL(channelPressureChanged(synthclone::MIDIData)),
             SLOT(setModified()));
     connect(zone, SIGNAL(controlValueChanged(synthclone::MIDIData,
                                              synthclone::MIDIData)),
@@ -1259,6 +1263,12 @@ Session::isAftertouchPropertyVisible() const
 }
 
 bool
+Session::isChannelPressurePropertyVisible() const
+{
+    return channelPressurePropertyVisible;
+}
+
+bool
 Session::isChannelPropertyVisible() const
 {
     return channelPropertyVisible;
@@ -1396,6 +1406,9 @@ Session::load(const QDir &directory)
     aftertouchPropertyVisible =
         verifyBooleanAttribute(documentElement, "aftertouch-property-visible",
                                false);
+    channelPressurePropertyVisible =
+        verifyBooleanAttribute(documentElement,
+                               "channel-pressure-property-visible", false);
     channelPropertyVisible =
         verifyBooleanAttribute(documentElement, "channel-property-visible",
                                true);
@@ -2145,6 +2158,8 @@ Session::save(const QDir &directory)
     // Property visibility flags
     writer.writeAttribute("aftertouch-property-visible",
                           aftertouchPropertyVisible ? "true" : "false");
+    writer.writeAttribute("channel-pressure-property-visible",
+                          channelPressurePropertyVisible ? "true" : "false");
     writer.writeAttribute("channel-property-visible",
                           channelPropertyVisible ? "true" : "false");
     writer.writeAttribute("dry-sample-property-visible",
@@ -2298,6 +2313,15 @@ Session::setAftertouchPropertyVisible(bool visible)
     if (aftertouchPropertyVisible != visible) {
         aftertouchPropertyVisible = visible;
         emit aftertouchPropertyVisibilityChanged(visible);
+    }
+}
+
+void
+Session::setChannelPressurePropertyVisible(bool visible)
+{
+    if (channelPressurePropertyVisible != visible) {
+        channelPressurePropertyVisible = visible;
+        emit channelPressurePropertyVisibilityChanged(visible);
     }
 }
 

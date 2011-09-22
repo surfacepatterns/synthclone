@@ -47,6 +47,9 @@ public slots:
     setAftertouchLayers(synthclone::MIDIData layers);
 
     void
+    setChannelPressureLayers(synthclone::MIDIData layers);
+
+    void
     setFirstNote(synthclone::MIDIData firstNote);
 
     void
@@ -74,6 +77,9 @@ signals:
 
     void
     aftertouchLayersChanged(synthclone::MIDIData layers);
+
+    void
+    channelPressureLayersChanged(synthclone::MIDIData layers);
 
     void
     firstNoteChanged(synthclone::MIDIData firstNote);
@@ -105,6 +111,9 @@ private slots:
     handleAftertouchLayersChange(int layers);
 
     void
+    handleChannelPressureLayersChange(int layers);
+
+    void
     handleFirstNoteChange(int firstNoteIndex);
 
     void
@@ -129,6 +138,7 @@ private:
 
     QSpinBox *aftertouchLayers;
     QPushButton *cancelButton;
+    QSpinBox *channelPressureLayers;
     QComboBox *firstNote;
     QPushButton *generateButton;
     QComboBox *lastNote;
