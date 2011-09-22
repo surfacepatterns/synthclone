@@ -47,10 +47,11 @@ Controller::Controller(Application &application, QObject *parent):
     aboutView.setMinorVersion(session.getMinorVersion());
     aboutView.setRevision(session.getRevision());
 
+    directoryView.setFilesVisible(false);
     connect(&directoryView, SIGNAL(closeRequest()),
             SLOT(handleDirectoryViewCloseRequest()));
-    connect(&directoryView, SIGNAL(pathSelected(QString)),
-            SLOT(handleDirectoryViewPathSelection(QString)));
+    connect(&directoryView, SIGNAL(pathsSelected(QStringList)),
+            SLOT(handleDirectoryViewPathSelection(QStringList)));
 
     connect(&errorView, SIGNAL(closeRequest()),
             SLOT(handleErrorViewCloseRequest()));
@@ -1281,17 +1282,18 @@ Controller::handleDirectoryViewCloseRequest()
 }
 
 void
-Controller::handleDirectoryViewPathSelection(const QString &path)
+Controller::handleDirectoryViewPathSelection(const QStringList &paths)
 {
+    assert(paths.count() == 1);
     QDir directory;
+    QString path = paths[0];
+    directoryView.setVisible(false);
     switch (postDirectorySelectAction) {
     case POSTDIRECTORYSELECTACTION_CREATE_SESSION:
         verifySessionLoadViewCreation(path, createSessionName);
-        directoryView.setVisible(false);
         break;
     case POSTDIRECTORYSELECTACTION_OPEN_SESSION:
         verifySessionLoadViewOpen(path);
-        directoryView.setVisible(false);
         break;
     case POSTDIRECTORYSELECTACTION_SAVE_SESSION:
         directory = QDir(path);
@@ -2227,8 +2229,8 @@ handleSessionLoadViewCreationDirectoryBrowseRequest(const QString &directory,
 {
     createSessionName = name;
     postDirectorySelectAction = POSTDIRECTORYSELECTACTION_CREATE_SESSION;
-    directoryView.setMode(DirectoryView::MODE_LOADING);
-    directoryView.setPath(directory);
+    directoryView.setDirectory(directory);
+    directoryView.setOperation(synthclone::FileSelectionView::OPERATION_OPEN);
     directoryView.setTitle(tr("New Session"));
     directoryView.setVisible(true);
 }
@@ -2260,8 +2262,8 @@ Controller::
 handleSessionLoadViewOpenDirectoryBrowseRequest(const QString &directory)
 {
     postDirectorySelectAction = POSTDIRECTORYSELECTACTION_OPEN_SESSION;
-    directoryView.setMode(DirectoryView::MODE_LOADING);
-    directoryView.setPath(directory);
+    directoryView.setDirectory(directory);
+    directoryView.setOperation(synthclone::FileSelectionView::OPERATION_OPEN);
     directoryView.setTitle(tr("Open Session"));
     directoryView.setVisible(true);
 }
@@ -2311,8 +2313,8 @@ void
 Controller::handleSessionViewletSaveAsRequest()
 {
     postDirectorySelectAction = POSTDIRECTORYSELECTACTION_SAVE_SESSION;
-    directoryView.setMode(DirectoryView::MODE_SAVING);
-    directoryView.setPath(session.getDirectory()->absolutePath());
+    directoryView.setDirectory(session.getDirectory()->absolutePath());
+    directoryView.setOperation(synthclone::FileSelectionView::OPERATION_SAVE);
     directoryView.setTitle(tr("Save Session"));
     directoryView.setVisible(true);
 }

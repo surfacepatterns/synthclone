@@ -24,7 +24,6 @@ HEADERS += aboutview.h \
     contextmenueventfilter.h \
     controller.h \
     dialogview.h \
-    directoryview.h \
     effectjob.h \
     effectjobthread.h \
     errorview.h \
@@ -79,7 +78,6 @@ SOURCES += aboutview.cpp \
     contextmenueventfilter.cpp \
     controller.cpp \
     dialogview.cpp \
-    directoryview.cpp \
     effectjob.cpp \
     effectjobthread.cpp \
     errorview.cpp \

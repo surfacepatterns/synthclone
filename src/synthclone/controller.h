@@ -20,9 +20,10 @@
 #ifndef __CONTROLLER_H__
 #define __CONTROLLER_H__
 
+#include <synthclone/fileselectionview.h>
+
 #include "aboutview.h"
 #include "application.h"
-#include "directoryview.h"
 #include "errorview.h"
 #include "mainview.h"
 #include "participantview.h"
@@ -66,7 +67,7 @@ private slots:
     handleDirectoryViewCloseRequest();
 
     void
-    handleDirectoryViewPathSelection(const QString &path);
+    handleDirectoryViewPathSelection(const QStringList &paths);
 
     void
     handleEffectNameChange(const QString &name);
@@ -648,7 +649,7 @@ private:
 
     AboutView aboutView;
     ErrorView errorView;
-    DirectoryView directoryView;
+    FileSelectionView directoryView;
     MainView mainView;
     ParticipantView participantView;
     ProgressView progressView;
