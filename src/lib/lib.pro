@@ -20,6 +20,7 @@ HEADERS += closeeventfilter.h \
     ../include/synthclone/effect.h \
     ../include/synthclone/effectjob.h \
     ../include/synthclone/error.h \
+    ../include/synthclone/fileselectionview.h \
     ../include/synthclone/iplugin.h \
     ../include/synthclone/menuaction.h \
     ../include/synthclone/menuitem.h \
@@ -50,6 +51,7 @@ SOURCES += closeeventfilter.cpp \
     effect.cpp \
     effectjob.cpp \
     error.cpp \
+    fileselectionview.cpp \
     menuaction.cpp \
     menuitem.cpp \
     menuseparator.cpp \

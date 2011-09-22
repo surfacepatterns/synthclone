@@ -29,6 +29,10 @@ namespace synthclone {
     /**
      * Utility view class.  Captures any close event and emits a signal instead
      * of requiring the subclassing of a widget.
+     *
+     * Views based on this class attempt to build on the 'passive view' design
+     * pattern, meaning that the view knows nothing about the model, and is
+     * subject to the will of the controller.
      */
 
     class View: public QObject {
@@ -134,6 +138,16 @@ namespace synthclone {
 
         virtual
         ~View();
+
+        /**
+         * Gets the root widget for this view.
+         *
+         * @returns
+         *   The root widget.
+         */
+
+        const QWidget *
+        getRootWidget() const;
 
         /**
          * Gets the root widget for this view.

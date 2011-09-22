@@ -39,6 +39,12 @@ View::~View()
     closeEventFilter->deleteLater();
 }
 
+const QWidget *
+View::getRootWidget() const
+{
+    return rootWidget;
+}
+
 QWidget *
 View::getRootWidget()
 {
