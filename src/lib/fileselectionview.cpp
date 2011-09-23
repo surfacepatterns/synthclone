@@ -145,7 +145,7 @@ FileSelectionView::setFilesVisible(bool visible)
     if (! visible) {
         dialog->setFileMode(QFileDialog::Directory);
     }
-    dialog->setOption(QFileDialog::ShowDirsOnly, visible);
+    dialog->setOption(QFileDialog::ShowDirsOnly, ! visible);
 }
 
 void

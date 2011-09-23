@@ -649,7 +649,7 @@ private:
 
     AboutView aboutView;
     ErrorView errorView;
-    FileSelectionView directoryView;
+    synthclone::FileSelectionView directoryView;
     MainView mainView;
     ParticipantView participantView;
     ProgressView progressView;

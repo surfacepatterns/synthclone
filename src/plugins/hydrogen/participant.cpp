@@ -59,6 +59,20 @@ Target *
 Participant::addTarget()
 {
     Target *target = new Target(tr("Hydrogen"), this);
+    connect(target, SIGNAL(authorChanged(QString)),
+            context, SLOT(setSessionModified()));
+    connect(target, SIGNAL(infoChanged(QString)),
+            context, SLOT(setSessionModified()));
+    connect(target, SIGNAL(layerAlgorithmChanged(LayerAlgorithm)),
+            context, SLOT(setSessionModified()));
+    connect(target, SIGNAL(licenseChanged(QString)),
+            context, SLOT(setSessionModified()));
+    connect(target, SIGNAL(nameChanged(QString)),
+            context, SLOT(setSessionModified()));
+    connect(target, SIGNAL(pathChanged(QString)),
+            context, SLOT(setSessionModified()));
+    connect(target, SIGNAL(sampleFormatChanged(SampleFormat)),
+            context, SLOT(setSessionModified()));
 
     synthclone::MenuAction *action =
         new synthclone::MenuAction(tr("Configure"), target);
@@ -157,6 +171,7 @@ Participant::handleDirectoryViewPathSelection(const QStringList &paths)
 {
     assert(paths.count() == 1);
     configuredTarget->setPath(paths[0]);
+    directoryView.setVisible(false);
 }
 
 void
