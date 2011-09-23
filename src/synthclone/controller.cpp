@@ -1437,6 +1437,34 @@ Controller::handleClipboardDataChange()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// Sampler signal handlers
+////////////////////////////////////////////////////////////////////////////////
+
+void
+Controller::handleSamplerNameChange(const QString &name)
+{
+    if (session.getSampler()) {
+        mainView.getComponentViewlet()->setSamplerName(name);
+    }
+}
+
+void
+Controller::handleSamplerProgressChange(float progress)
+{
+    if (session.getSampler()) {
+        mainView.getComponentViewlet()->setSamplerProgress(progress);
+    }
+}
+
+void
+Controller::handleSamplerStatusChange(const QString &status)
+{
+    if (session.getSampler()) {
+        mainView.getComponentViewlet()->setSamplerStatus(status);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // SaveChangesView signal handlers
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1496,8 +1524,10 @@ void
 Controller::
 handleSessionCurrentSamplerJobChange(const synthclone::SamplerJob *job)
 {
-    mainView.getComponentViewlet()->
-        setCurrentSamplerJob(static_cast<bool>(job));
+    ComponentViewlet *viewlet = mainView.getComponentViewlet();
+    bool hasJob = static_cast<bool>(job);
+    viewlet->setCurrentSamplerJob(hasJob);
+    viewlet->setSamplerEditingEnabled(! hasJob);
 }
 
 void
@@ -1880,12 +1910,14 @@ Controller::handleSessionSamplerAddition(const synthclone::Sampler *sampler)
     viewlet->setSamplerName(sampler->getName());
     viewlet->setSamplerProgress(0.0);
     viewlet->setSamplerStatus("");
+
     connect(sampler, SIGNAL(nameChanged(QString)),
-            viewlet, SLOT(setSamplerName(QString)));
+            SLOT(handleSamplerNameChange(QString)));
     connect(sampler, SIGNAL(progressChanged(float)),
-            viewlet, SLOT(setSamplerProgress(float)));
+            SLOT(handleSamplerProgressChange(float)));
     connect(sampler, SIGNAL(statusChanged(QString)),
-            viewlet, SLOT(setSamplerStatus(QString)));
+            SLOT(handleSamplerStatusChange(QString)));
+
     int count = session.getSelectedZoneCount();
     synthclone::Zone *zone;
     if (count) {
@@ -1918,12 +1950,14 @@ void
 Controller::handleSessionSamplerRemoval(const synthclone::Sampler *sampler)
 {
     ComponentViewlet *viewlet = mainView.getComponentViewlet();
+
     disconnect(sampler, SIGNAL(nameChanged(const QString)),
-               viewlet, SLOT(setSamplerName(const QString)));
+               this, SLOT(handleSamplerNameChange(const QString)));
     disconnect(sampler, SIGNAL(progressChanged(float)),
-               viewlet, SLOT(setSamplerProgress(float)));
+               this, SLOT(handleSamplerProgressChange(float)));
     disconnect(sampler, SIGNAL(statusChanged(QString)),
-               viewlet, SLOT(setSamplerStatus(QString)));
+               this, SLOT(handleSamplerStatusChange(QString)));
+
     viewlet->removeSampler();
     ZoneViewlet *zoneViewlet = mainView.getZoneViewlet();
     zoneViewlet->setPlayDrySampleEnabled(false);

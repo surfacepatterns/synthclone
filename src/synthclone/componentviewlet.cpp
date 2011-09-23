@@ -527,6 +527,13 @@ ComponentViewlet::setModelData(QStandardItemModel &model, int row, int column,
 }
 
 void
+ComponentViewlet::setSamplerEditingEnabled(bool enabled)
+{
+    samplerAddButton->setEnabled(enabled);
+    samplerRootMenu->setEnabled(enabled);
+}
+
+void
 ComponentViewlet::setSamplerName(const QString &name)
 {
     samplerName->setText(name);

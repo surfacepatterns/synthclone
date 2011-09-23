@@ -100,6 +100,15 @@ private slots:
     handleProgressViewCloseRequest();
 
     void
+    handleSamplerNameChange(const QString &name);
+
+    void
+    handleSamplerProgressChange(float progress);
+
+    void
+    handleSamplerStatusChange(const QString &status);
+
+    void
     handleSaveChangesViewCloseRequest();
 
     void

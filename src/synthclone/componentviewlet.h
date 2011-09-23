@@ -115,6 +115,9 @@ public slots:
     setFocusedComponent(Type type, int index);
 
     void
+    setSamplerEditingEnabled(bool enabled);
+
+    void
     setSamplerName(const QString &name);
 
     void

@@ -1182,26 +1182,35 @@ Session::handleEffectJobError(const QString &message)
 void
 Session::handleSamplerJobAbort()
 {
-    Zone *zone = qobject_cast<SamplerJob *>(currentSamplerJob)->getZone();
-    recycleCurrentSamplerJob();
-    zone->setStatus(synthclone::Zone::STATUS_NORMAL);
+    // There's a possibility that a sampler job object may not be available if
+    // the session is unloaded while there's still a pending job.
+    if (currentSamplerJob) {
+        Zone *zone = qobject_cast<SamplerJob *>(currentSamplerJob)->getZone();
+        recycleCurrentSamplerJob();
+        zone->setStatus(synthclone::Zone::STATUS_NORMAL);
+    }
 }
 
 void
 Session::handleSamplerJobCompletion()
 {
-    Zone *zone = qobject_cast<SamplerJob *>(currentSamplerJob)->getZone();
-    if (currentSamplerJob->getType() == synthclone::SamplerJob::TYPE_SAMPLE) {
-        currentSamplerJobStream->close();
-        if (zones.contains(zone)) {
+    // There's a possibility that a sampler job object may not be available if
+    // the session is unloaded while there's still a pending job.
+    if (currentSamplerJob) {
+        Zone *zone = qobject_cast<SamplerJob *>(currentSamplerJob)->getZone();
+        if (currentSamplerJob->getType() ==
+            synthclone::SamplerJob::TYPE_SAMPLE) {
+            currentSamplerJobStream->close();
+            if (zones.contains(zone)) {
+                zone->setStatus(synthclone::Zone::STATUS_NORMAL);
+                zone->setDrySample(currentSamplerJobSample, false);
+                currentSamplerJobSample = 0;
+            }
+            recycleCurrentSamplerJob();
+        } else {
+            recycleCurrentSamplerJob();
             zone->setStatus(synthclone::Zone::STATUS_NORMAL);
-            zone->setDrySample(currentSamplerJobSample, false);
-            currentSamplerJobSample = 0;
         }
-        recycleCurrentSamplerJob();
-    } else {
-        recycleCurrentSamplerJob();
-        zone->setStatus(synthclone::Zone::STATUS_NORMAL);
     }
 }
 
@@ -1209,9 +1218,14 @@ void
 Session::handleSamplerJobError(const QString &message)
 {
     emit samplerJobError(message);
-    Zone *zone = qobject_cast<SamplerJob *>(currentSamplerJob)->getZone();
-    recycleCurrentSamplerJob();
-    zone->setStatus(synthclone::Zone::STATUS_NORMAL);
+
+    // There's a possibility that a sampler job object may not be available if
+    // the session is unloaded while there's still a pending job.
+    if (currentSamplerJob) {
+        Zone *zone = qobject_cast<SamplerJob *>(currentSamplerJob)->getZone();
+        recycleCurrentSamplerJob();
+        zone->setStatus(synthclone::Zone::STATUS_NORMAL);
+    }
 }
 
 void
@@ -1932,6 +1946,20 @@ void
 Session::removeSampler()
 {
     CONFIRM(sampler, tr("sampler is not registered with session"));
+    if (currentSamplerJob) {
+
+        // If we're unloading, then removing the sampler while there is still a
+        // sampler job being executed is necessary.  Otherwise, it shouldn't
+        // happen.
+        CONFIRM(state == synthclone::SESSIONSTATE_UNLOADING,
+                tr("sampler is currently in use"));
+
+        sampler->abortJob();
+        Zone *zone = qobject_cast<SamplerJob *>(currentSamplerJob)->getZone();
+        recycleCurrentSamplerJob();
+        zone->setStatus(synthclone::Zone::STATUS_NORMAL);
+    }
+
     removeComponentMenuItems(&samplerData);
 
     emit removingSampler(sampler);
@@ -2596,8 +2624,6 @@ Session::unload()
         // Let the effect job thread know that it needs to terminate.
         effectJobSemaphore.release();
 
-        // XXX: Do the same with target structures.
-
         int i;
 
         // Take care of sampler jobs before removing components.
@@ -2606,7 +2632,6 @@ Session::unload()
         }
         if (currentSamplerJob) {
             if (sampler) {
-                sampler->abortJob();
                 removeSampler();
             } else {
                 currentSamplerJob->deleteLater();
