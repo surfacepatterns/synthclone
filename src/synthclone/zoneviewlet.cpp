@@ -775,8 +775,13 @@ ZoneViewlet::setStatus(int index, synthclone::Zone::Status status)
     setModelData(index, ZONETABLECOLUMN_STATUS, statusStr, Qt::DisplayRole);
     if (disabled) {
         disableRow(index);
+        setModelData(index, ZONETABLECOLUMN_STATUS,
+                     QPixmap(":/synthclone/images/16x16/locked.png"),
+                     Qt::DecorationRole);
     } else {
         enableRow(index);
+        setModelData(index, ZONETABLECOLUMN_STATUS, QVariant(),
+                     Qt::DecorationRole);
     }
 }
 
