@@ -61,7 +61,7 @@ public:
 public slots:
 
     void
-    save(const QList<synthclone::Zone *> &zones);
+    build(const QList<synthclone::Zone *> &zones);
 
     void
     setAuthor(const QString &author);
@@ -80,9 +80,6 @@ public slots:
 
     void
     setSampleFormat(SampleFormat format);
-
-    void
-    validate(const QList<synthclone::Zone *> &zones);
 
 signals:
 
@@ -107,9 +104,6 @@ signals:
 private:
 
     typedef QMultiMap<ZoneKey, const synthclone::Zone *> ZoneMap;
-
-    int
-    buildZoneMap(ZoneMap &map, const QList<synthclone::Zone *> &zones);
 
     void
     writeElement(QXmlStreamWriter &writer, const QString &name,

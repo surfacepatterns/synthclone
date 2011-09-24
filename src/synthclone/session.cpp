@@ -717,30 +717,20 @@ Session::buildTargets()
     }
     for (int i = 0; i < count; i++) {
         synthclone::Target *target = targets[i];
-        connect(target, SIGNAL(validationError(QString)),
-                SLOT(handleTargetValidationError()));
-        targetValidationErrorsOccurred = false;
-        emit validatingTarget(target);
-        target->validate(zones);
-        emit targetValidationCompleted(target);
-        disconnect(target, SIGNAL(validationError(QString)),
-                   this, SLOT(handleTargetValidationError()));
-        if (! targetValidationErrorsOccurred) {
-            emit savingTarget(target);
-            try {
-                target->save(zones);
-            } catch (synthclone::Error &e) {
-                emit targetSaveError(target, e.getMessage());
-                continue;
-            }
-            emit targetSaved(target);
+        emit buildingTarget(target);
+        try {
+            target->build(zones);
+        } catch (synthclone::Error &e) {
+            emit targetBuildError(target, e.getMessage());
+            continue;
         }
+        emit targetBuilt(target);
     }
     for (int i = 0; i < zones.count(); i++) {
         qobject_cast<Zone *>(zones[i])->
             setStatus(synthclone::Zone::STATUS_NORMAL);
     }
-    emit targetBuildingCompleted();
+    emit targetsBuilt();
 }
 
 QString
@@ -1226,12 +1216,6 @@ Session::handleSamplerJobError(const QString &message)
         recycleCurrentSamplerJob();
         zone->setStatus(synthclone::Zone::STATUS_NORMAL);
     }
-}
-
-void
-Session::handleTargetValidationError()
-{
-    targetValidationErrorsOccurred = true;
 }
 
 void

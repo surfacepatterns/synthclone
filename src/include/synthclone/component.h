@@ -81,7 +81,7 @@ namespace synthclone {
          *   "finished".
          *
          * @sa
-         *   Effect::process, Sampler::startJob, Target::save, Target::validate
+         *   Effect::process, Sampler::startJob, Target::build
          */
 
         void

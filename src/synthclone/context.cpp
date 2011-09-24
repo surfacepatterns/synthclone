@@ -321,27 +321,21 @@ static const char *REMOVING_TARGET_MENU_SEPARATOR_SIGNAL =
                                   const synthclone::MenuSeparator *,
                                   const QStringList &)));
 
+static const char *BUILDING_TARGET_SIGNAL =
+    QMetaObject::normalizedSignature
+    (SIGNAL(buildingTarget()));
 static const char *BUILDING_TARGETS_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(buildingTargets()));
-static const char *SAVING_TARGET_SIGNAL =
+static const char *TARGET_BUILD_ERROR_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(savingTarget(const synthclone::Target *)));
-static const char *TARGET_BUILDING_COMPLETED_SIGNAL =
+    (SIGNAL(targetBuildError(const synthclone::Target *, const QString &)));
+static const char *TARGET_BUILT_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(targetBuildingCompleted()));
-static const char *TARGET_SAVED_SIGNAL =
+    (SIGNAL(targetBuilt(const synthclone::Target *)));
+static const char *TARGETS_BUILT_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(targetSaved(const synthclone::Target *)));
-static const char *TARGET_SAVE_ERROR_SIGNAL =
-    QMetaObject::normalizedSignature
-    (SIGNAL(targetSaveError(const synthclone::Target *, const QString &)));
-static const char *TARGET_VALIDATION_COMPLETED_SIGNAL =
-    QMetaObject::normalizedSignature
-    (SIGNAL(targetValidationCompleted(const synthclone::Target *)));
-static const char *VALIDATING_TARGET_SIGNAL =
-    QMetaObject::normalizedSignature
-    (SIGNAL(validatingTarget(const synthclone::Target *)));
+    (SIGNAL(targetBuilt()));
 
 static const char *ACTIVATING_PARTICIPANT_SIGNAL =
     QMetaObject::normalizedSignature
@@ -596,20 +590,16 @@ static SignalMap sessionSignalMap =
     SignalPair(QLatin1String(REMOVING_TARGET_MENU_SEPARATOR_SIGNAL),
                REMOVING_TARGET_MENU_SEPARATOR_SIGNAL) <<
 
+    SignalPair(QLatin1String(BUILDING_TARGET_SIGNAL),
+               BUILDING_TARGET_SIGNAL) <<
     SignalPair(QLatin1String(BUILDING_TARGETS_SIGNAL),
                BUILDING_TARGETS_SIGNAL) <<
-    SignalPair(QLatin1String(SAVING_TARGET_SIGNAL),
-               SAVING_TARGET_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_BUILDING_COMPLETED_SIGNAL),
-               TARGET_BUILDING_COMPLETED_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_SAVED_SIGNAL),
-               TARGET_SAVED_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_SAVE_ERROR_SIGNAL),
-               TARGET_SAVE_ERROR_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_VALIDATION_COMPLETED_SIGNAL),
-               TARGET_VALIDATION_COMPLETED_SIGNAL) <<
-    SignalPair(QLatin1String(VALIDATING_TARGET_SIGNAL),
-               VALIDATING_TARGET_SIGNAL) <<
+    SignalPair(QLatin1String(TARGET_BUILD_ERROR_SIGNAL),
+               TARGET_BUILD_ERROR_SIGNAL) <<
+    SignalPair(QLatin1String(TARGET_BUILT_SIGNAL),
+               TARGET_BUILT_SIGNAL) <<
+    SignalPair(QLatin1String(TARGETS_BUILT_SIGNAL),
+               TARGETS_BUILT_SIGNAL) <<
 
     SignalPair(QLatin1String(ACTIVATING_PARTICIPANT_SIGNAL),
                ACTIVATING_PARTICIPANT_SIGNAL) <<

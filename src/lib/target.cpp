@@ -31,9 +31,3 @@ Target::~Target()
 {
     // Empty
 }
-
-void
-Target::validate(const QList<Zone *> &/*zones*/) const
-{
-    // Empty
-}

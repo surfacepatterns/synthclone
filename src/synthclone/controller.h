@@ -283,33 +283,27 @@ private slots:
     handleSessionTargetAddition(const synthclone::Target *target, int index);
 
     void
-    handleSessionTargetBuild();
+    handleSessionTargetBuild(const synthclone::Target *target);
 
     void
-    handleSessionTargetBuildCompletion();
+    handleSessionTargetBuildCompletion(const synthclone::Target *target);
+
+    void
+    handleSessionTargetBuildError(const synthclone::Target *target,
+                                  const QString &message);
+
+    void
+    handleSessionTargetBuildOperation();
+
+    void
+    handleSessionTargetBuildOperationCompletion();
 
     void
     handleSessionTargetMove(const synthclone::Target *target, int fromIndex,
                             int toIndex);
 
     void
-    handleSessionTargetSave(const synthclone::Target *target);
-
-    void
-    handleSessionTargetSaveCompletion(const synthclone::Target *target);
-
-    void
-    handleSessionTargetSaveError(const synthclone::Target *target,
-                                 const QString &message);
-
-    void
     handleSessionTargetRemoval(const synthclone::Target *target, int index);
-
-    void
-    handleSessionTargetValidation(const synthclone::Target *target);
-
-    void
-    handleSessionTargetValidationCompletion(const synthclone::Target *target);
 
     void
     handleSessionZoneAddition(synthclone::Zone *zone, int index);
@@ -363,6 +357,9 @@ private slots:
     handleTargetBuildStatusChange(const QString &status);
 
     void
+    handleTargetBuildWarning(const QString &message);
+
+    void
     handleTargetNameChange(const QString &name);
 
     void
@@ -370,12 +367,6 @@ private slots:
 
     void
     handleTargetStatusChange(const QString &status);
-
-    void
-    handleTargetValidationError(const QString &message);
-
-    void
-    handleTargetValidationWarning(const QString &message);
 
     void
     handleViewViewletParticipantEditRequest();
@@ -650,8 +641,7 @@ private:
     PostSaveChangesAction postSaveChangesAction;
     QString saveAsPath;
     int sessionLoadWarningCount;
-    int targetValidationErrorCount;
-    int targetValidationWarningCount;
+    int targetBuildWarningCount;
 
     Session session;
     Settings settings;

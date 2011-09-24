@@ -1785,6 +1785,16 @@ namespace synthclone {
         aftertouchPropertyVisibilityChanged(bool visible);
 
         /**
+         * Emitted when a Target is being built.
+         *
+         * @param target
+         *   The Target being built.
+         */
+
+        void
+        buildingTarget(const synthclone::Target *target);
+
+        /**
          * Emitted when a Target build operation is starting.
          */
 
@@ -2813,16 +2823,6 @@ namespace synthclone {
         sampleTimePropertyVisibilityChanged(bool visible);
 
         /**
-         * Emitted when a Target is being saved during a build operation.
-         *
-         * @param target
-         *   The Target being saved.
-         */
-
-        void
-        savingTarget(const synthclone::Target *target);
-
-        /**
          * Emitted when the selected Effect is changed.
          *
          * @param effect
@@ -2887,11 +2887,35 @@ namespace synthclone {
         targetAdded(const synthclone::Target *target, int index);
 
         /**
+         * Emitted when an error occurs while attempting to build a Target.
+         *
+         * @param target
+         *   The Target that was being built.
+         *
+         * @param message
+         *   The error message.
+         */
+
+        void
+        targetBuildError(const synthclone::Target *target,
+                         const QString &message);
+
+        /**
+         * Emitted when a Target is successfully built.
+         *
+         * @param target
+         *   The Target that was successfully built.
+         */
+
+        void
+        targetBuilt(const synthclone::Target *target);
+
+        /**
          * Emitted when a Target build operation is completed.
          */
 
         void
-        targetBuildingCompleted();
+        targetsBuilt();
 
         /**
          * Emitted when a Target has been moved in the Target list.
@@ -2922,53 +2946,6 @@ namespace synthclone {
 
         void
         targetRemoved(const synthclone::Target *target, int index);
-
-        /**
-         * Emitted when a Target is successfully saved during a build operation.
-         *
-         * @param target
-         *   The Target that was saved.
-         */
-
-        void
-        targetSaved(const synthclone::Target *target);
-
-        /**
-         * Emitted when an error occurs while attempting to save a Target during
-         * a build operation.
-         *
-         * @param target
-         *   The Target that was being saved.
-         *
-         * @param message
-         *   The error message.
-         */
-
-        void
-        targetSaveError(const synthclone::Target *target,
-                        const QString &message);
-
-        /**
-         * Emitted when Target validation is completed in a build operation.
-         *
-         * @param target
-         *   The target that was being validated.
-         */
-
-        void
-        targetValidationCompleted(const synthclone::Target *target);
-
-        /**
-         * Emitted when a Target is about to be validated during a build
-         * operation.  To monitor the validation, connect to the
-         * Target::validationError() and Target::validationWarning() signals.
-         *
-         * @param target
-         *   The target to be validated.
-         */
-
-        void
-        validatingTarget(const synthclone::Target *target);
 
         /**
          * Emitted when the visibility of the velocity property is changed.

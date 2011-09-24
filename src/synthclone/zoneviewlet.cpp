@@ -770,7 +770,7 @@ ZoneViewlet::setStatus(int index, synthclone::Zone::Status status)
         statusStr = tr("In sampler job queue ...");
         break;
     case synthclone::Zone::STATUS_TARGETS:
-        statusStr = tr("Saving target patches ...");
+        statusStr = tr("Building targets ...");
     }
     setModelData(index, ZONETABLECOLUMN_STATUS, statusStr, Qt::DisplayRole);
     if (disabled) {

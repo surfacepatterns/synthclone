@@ -531,25 +531,19 @@ Controller::Controller(Application &application, QObject *parent):
             SLOT(handleSessionZoneSelectionChange(synthclone::Zone *, int,
                                                   bool)));
 
+    connect(&session, SIGNAL(buildingTarget(const synthclone::Target *)),
+            SLOT(handleSessionTargetBuild(const synthclone::Target *)));
     connect(&session, SIGNAL(buildingTargets()),
-            SLOT(handleSessionTargetBuild()));
-    connect(&session, SIGNAL(targetBuildingCompleted()),
-            SLOT(handleSessionTargetBuildCompletion()));
-    connect(&session, SIGNAL(savingTarget(const synthclone::Target *)),
-            SLOT(handleSessionTargetSave(const synthclone::Target *)));
-    connect(&session, SIGNAL(targetSaved(const synthclone::Target *)),
-            SLOT(handleSessionTargetSaveCompletion
-                 (const synthclone::Target *)));
+            SLOT(handleSessionTargetBuildOperation()));
     connect(&session,
-            SIGNAL(targetSaveError(const synthclone::Target *, QString)),
-            SLOT(handleSessionTargetSaveError(const synthclone::Target *,
-                                              QString)));
-    connect(&session, SIGNAL(validatingTarget(const synthclone::Target *)),
-            SLOT(handleSessionTargetValidation(const synthclone::Target *)));
-    connect(&session,
-            SIGNAL(targetValidationCompleted(const synthclone::Target *)),
-            SLOT(handleSessionTargetValidationCompletion
+            SIGNAL(targetBuildError(const synthclone::Target *, QString)),
+            SLOT(handleSessionTargetBuildError(const synthclone::Target *,
+                                               QString)));
+    connect(&session, SIGNAL(targetBuilt(const synthclone::Target *)),
+            SLOT(handleSessionTargetBuildCompletion
                  (const synthclone::Target *)));
+    connect(&session, SIGNAL(targetsBuilt()),
+            SLOT(handleSessionTargetBuildOperationCompletion()));
 
     connect(&session, SIGNAL(errorReported(QString)),
             SLOT(handleSessionErrorReport(QString)));
@@ -2052,7 +2046,56 @@ Controller::handleSessionTargetAddition(const synthclone::Target *target,
 }
 
 void
-Controller::handleSessionTargetBuild()
+Controller::handleSessionTargetBuild(const synthclone::Target *target)
+{
+    connect(target, SIGNAL(buildWarning(const QString &)),
+            SLOT(handleTargetBuildWarning(const QString &)));
+    connect(target, SIGNAL(progressChanged(float)),
+            SLOT(handleTargetBuildProgressChange(float)));
+    connect(target, SIGNAL(statusChanged(const QString &)),
+            SLOT(handleTargetBuildStatusChange(const QString &)));
+
+    QString message = tr("Building target '%1' ...").arg(target->getName());
+    progressView.addMessage(message);
+    progressView.setProgress(0.0);
+    progressView.setStatus(message);
+    targetBuildWarningCount = 0;
+    application.processEvents(QEventLoop::ExcludeUserInputEvents);
+}
+
+void
+Controller::
+handleSessionTargetBuildCompletion(const synthclone::Target *target)
+{
+    disconnect(target, SIGNAL(buildWarning(const QString &)),
+               this, SLOT(handleTargetBuildWarning(const QString &)));
+    disconnect(target, SIGNAL(progressChanged(float)),
+               this, SLOT(handleTargetBuildProgressChange(float)));
+    disconnect(target, SIGNAL(statusChanged(const QString &)),
+               this, SLOT(handleTargetBuildStatusChange(const QString &)));
+    QString message = tr("Target '%1' built successfully with %2 warnings.").
+        arg(target->getName(),
+            QLocale::system().toString(targetBuildWarningCount));
+    progressView.addMessage(message);
+    application.processEvents(QEventLoop::ExcludeUserInputEvents);
+}
+
+void
+Controller::handleSessionTargetBuildError(const synthclone::Target *target,
+                                          const QString &message)
+{
+    disconnect(target, SIGNAL(progressChanged(float)),
+               this, SLOT(handleTargetBuildProgressChange(float)));
+    disconnect(target, SIGNAL(statusChanged(const QString &)),
+               this, SLOT(handleTargetBuildStatusChange(const QString &)));
+    QString msg = tr("ERROR: Target '%1' build failed: %2").
+        arg(target->getName(), message);
+    progressView.addMessage(msg);
+    application.processEvents(QEventLoop::ExcludeUserInputEvents);
+}
+
+void
+Controller::handleSessionTargetBuildOperation()
 {
     progressView.setCloseEnabled(false);
     progressView.setProgress(0.0);
@@ -2062,7 +2105,7 @@ Controller::handleSessionTargetBuild()
 }
 
 void
-Controller::handleSessionTargetBuildCompletion()
+Controller::handleSessionTargetBuildOperationCompletion()
 {
     progressView.setCloseEnabled(true);
     progressView.setProgress(0.0);
@@ -2090,88 +2133,6 @@ Controller::handleSessionTargetRemoval(const synthclone::Target *target,
     if (session.getTargetCount() == 1) {
         mainView.getZoneViewlet()->setBuildTargetsEnabled(false);
     }
-}
-
-void
-Controller::handleSessionTargetSave(const synthclone::Target *target)
-{
-    connect(target, SIGNAL(progressChanged(float)),
-            SLOT(handleTargetBuildProgressChange(float)));
-    connect(target, SIGNAL(statusChanged(const QString &)),
-            SLOT(handleTargetBuildStatusChange(const QString &)));
-
-    QString message = tr("Saving target '%1' ...").arg(target->getName());
-    progressView.addMessage(message);
-    progressView.setProgress(0.0);
-    progressView.setStatus(message);
-    application.processEvents(QEventLoop::ExcludeUserInputEvents);
-}
-
-void
-Controller::handleSessionTargetSaveCompletion(const synthclone::Target *target)
-{
-    disconnect(target, SIGNAL(progressChanged(float)),
-               this, SLOT(handleTargetBuildProgressChange(float)));
-    disconnect(target, SIGNAL(statusChanged(const QString &)),
-               this, SLOT(handleTargetBuildStatusChange(const QString &)));
-    progressView.addMessage(tr("Target '%1' saved.").arg(target->getName()));
-    application.processEvents(QEventLoop::ExcludeUserInputEvents);
-}
-
-void
-Controller::handleSessionTargetSaveError(const synthclone::Target *target,
-                                         const QString &message)
-{
-    disconnect(target, SIGNAL(progressChanged(float)),
-               this, SLOT(handleTargetBuildProgressChange(float)));
-    disconnect(target, SIGNAL(statusChanged(const QString &)),
-               this, SLOT(handleTargetBuildStatusChange(const QString &)));
-    progressView.addMessage(tr("ERROR: failed to save target '%1': %2").
-                            arg(target->getName(), message));
-    application.processEvents(QEventLoop::ExcludeUserInputEvents);
-}
-
-void
-Controller::handleSessionTargetValidation(const synthclone::Target *target)
-{
-    connect(target, SIGNAL(progressChanged(float)),
-            SLOT(handleTargetBuildProgressChange(float)));
-    connect(target, SIGNAL(statusChanged(const QString &)),
-            SLOT(handleTargetBuildStatusChange(const QString &)));
-    connect(target, SIGNAL(validationError(const QString &)),
-            SLOT(handleTargetValidationError(const QString &)));
-    connect(target, SIGNAL(validationWarning(const QString &)),
-            SLOT(handleTargetValidationWarning(const QString &)));
-
-    QString message = tr("Validating target '%1' ...").arg(target->getName());
-    progressView.addMessage(message);
-    progressView.setProgress(0.0);
-    progressView.setStatus(message);
-    targetValidationErrorCount = 0;
-    targetValidationWarningCount = 0;
-    application.processEvents(QEventLoop::ExcludeUserInputEvents);
-}
-
-void
-Controller::
-handleSessionTargetValidationCompletion(const synthclone::Target *target)
-{
-    disconnect(target, SIGNAL(progressChanged(float)),
-               this, SLOT(handleTargetBuildProgressChange(float)));
-    disconnect(target, SIGNAL(statusChanged(const QString &)),
-               this, SLOT(handleTargetBuildStatusChange(const QString &)));
-    disconnect(target, SIGNAL(validationError(const QString &)),
-               this, SLOT(handleTargetValidationError(const QString &)));
-    disconnect(target, SIGNAL(validationWarning(const QString &)),
-               this, SLOT(handleTargetValidationWarning(const QString &)));
-
-    QLocale locale = QLocale::system();
-    progressView.addMessage(tr("Validation of target '%1' completed ... %2 "
-                               "errors, %3 warnings.").
-                            arg(target->getName(),
-                                locale.toString(targetValidationErrorCount),
-                                locale.toString(targetValidationWarningCount)));
-    application.processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
 void
@@ -2372,6 +2333,14 @@ Controller::handleTargetBuildStatusChange(const QString &status)
 }
 
 void
+Controller::handleTargetBuildWarning(const QString &message)
+{
+    targetBuildWarningCount++;
+    progressView.addMessage(tr("WARN: %1").arg(message));
+    application.processEvents(QEventLoop::ExcludeUserInputEvents);
+}
+
+void
 Controller::handleTargetNameChange(const QString &name)
 {
     const synthclone::Target *target =
@@ -2396,22 +2365,6 @@ Controller::handleTargetStatusChange(const QString &status)
         qobject_cast<const synthclone::Target *>(sender());
     int index = session.getTargetIndex(target);
     mainView.getComponentViewlet()->setTargetStatus(index, status);
-}
-
-void
-Controller::handleTargetValidationError(const QString &message)
-{
-    targetValidationErrorCount++;
-    progressView.addMessage(tr("ERROR: %1").arg(message));
-    application.processEvents(QEventLoop::ExcludeUserInputEvents);
-}
-
-void
-Controller::handleTargetValidationWarning(const QString &message)
-{
-    targetValidationWarningCount++;
-    progressView.addMessage(tr("WARN: %1").arg(message));
-    application.processEvents(QEventLoop::ExcludeUserInputEvents);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

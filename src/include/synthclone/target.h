@@ -28,7 +28,7 @@
 namespace synthclone {
 
     /**
-     * Component capable of saving data to a patch.
+     * Component capable of building a patch from a list of Zone objects.
      */
 
     class Target: public Component {
@@ -38,51 +38,26 @@ namespace synthclone {
     public:
 
         /**
-         * Saves zone data to a patch.
+         * Builds a patch.
          *
          * @param zones
-         *   The zone list to save.
+         *   The Zone list to use to build the patch.
          */
 
         virtual void
-        save(const QList<Zone *> &zones) = 0;
-
-        /**
-         * Validates zone data for saving to a patch created by this target.
-         * Subclasses should emit a validationWarning() signal or
-         * validationError() signal each time a warning or error is found while
-         * validating the zone data.
-         *
-         * The default implementation does nothing.
-         *
-         * @param zones
-         *   The zone list to validate.
-         */
-
-        virtual void
-        validate(const QList<Zone *> &zones) const;
+        build(const QList<Zone *> &zones) = 0;
 
     signals:
 
         /**
-         * Emitted to indicate an error found during validation.
-         *
-         * @param message
-         *   The error message.
-         */
-
-        void
-        validationError(const QString &message);
-
-        /**
-         * Emitted to indicate a warning found during validation.
+         * Emitted to indicate a warning found during the build process.
          *
          * @param message
          *   The warning message.
          */
 
         void
-        validationWarning(const QString &message);
+        buildWarning(const QString &message);
 
     protected:
 
@@ -100,6 +75,10 @@ namespace synthclone {
 
         explicit
         Target(const QString &name, QObject *parent=0);
+
+        /**
+         * Destroys a Target object.
+         */
 
         virtual
         ~Target();

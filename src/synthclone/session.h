@@ -517,6 +517,9 @@ signals:
     aftertouchPropertyVisibilityChanged(bool visible);
 
     void
+    buildingTarget(const synthclone::Target *target);
+
+    void
     buildingTargets();
 
     void
@@ -789,9 +792,6 @@ signals:
     sampleTimePropertyVisibilityChanged(bool visible);
 
     void
-    savingTarget(const synthclone::Target *target);
-
-    void
     selectedEffectChanged(const synthclone::Effect *effect, int index);
 
     void
@@ -807,25 +807,19 @@ signals:
     targetAdded(const synthclone::Target *target, int index);
 
     void
-    targetBuildingCompleted();
+    targetBuildError(const synthclone::Target *target, const QString &message);
+
+    void
+    targetBuilt(const synthclone::Target *target);
+
+    void
+    targetsBuilt();
 
     void
     targetMoved(const synthclone::Target *target, int fromIndex, int toIndex);
 
     void
     targetRemoved(const synthclone::Target *target, int index);
-
-    void
-    targetSaved(const synthclone::Target *target);
-
-    void
-    targetSaveError(const synthclone::Target *target, const QString &message);
-
-    void
-    targetValidationCompleted(const synthclone::Target *target);
-
-    void
-    validatingTarget(const synthclone::Target *target);
 
     void
     velocityPropertyVisibilityChanged(bool visible);
@@ -861,9 +855,6 @@ private slots:
 
     void
     handleSamplerJobError(const QString &message);
-
-    void
-    handleTargetValidationError();
 
     void
     handleZoneLoad(int current, int total);
@@ -1058,7 +1049,6 @@ private:
     bool statusPropertyVisible;
     TargetList targets;
     TargetDataMap targetDataMap;
-    bool targetValidationErrorsOccurred;
     bool velocityPropertyVisible;
     bool wetSamplePropertyVisible;
     ZoneList zones;
