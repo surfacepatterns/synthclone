@@ -37,9 +37,9 @@ namespace synthclone {
     class Participant;
 
     /**
-     * Context objects allow Participant objects to interact with a `synthclone`
-     * session.  They allow Participant objects to do almost everything to a
-     * session that the application itself can do.
+     * Context objects allow Participant objects to interact with a
+     * `synthclone` session.  They allow Participant objects to do almost
+     * everything to a session that the application itself can do.
      */
 
     class Context: public QObject {
@@ -539,8 +539,8 @@ namespace synthclone {
         isParticipantActivated(const Participant *participant) const = 0;
 
         /**
-         * Gets a boolean indicating whether or not the release time property is
-         * visible.
+         * Gets a boolean indicating whether or not the release time property
+         * is visible.
          *
          * @returns
          *   The boolean.
@@ -561,8 +561,8 @@ namespace synthclone {
         isSampleTimePropertyVisible() const = 0;
 
         /**
-         * Gets a boolean indicating whether or not a directory contains a valid
-         * `synthclone` session.
+         * Gets a boolean indicating whether or not a directory contains a
+         * valid `synthclone` session.
          *
          * @param directory
          *   The directory to scan.
@@ -673,7 +673,8 @@ namespace synthclone {
          * Adds an EffectJob to the EffectJob queue.
          *
          * @param zone
-         *   The Zone containing the dry Sample that effects will be applied to.
+         *   The Zone containing the dry Sample that effects will be applied
+         *   to.
          *
          * @returns
          *   The new EffectJob.
@@ -713,8 +714,8 @@ namespace synthclone {
          *   The Effect corresponding to the effect menu to add this action to.
          *
          * @param subMenus
-         *   A list of sub-menus to create from the effect menu.  The MenuAction
-         *   will be created at the deepest menu.
+         *   A list of sub-menus to create from the effect menu.  The
+         *   MenuAction will be created at the deepest menu.
          *
          * @returns
          *   A Registration object corresponding to the added MenuAction.
@@ -756,8 +757,8 @@ namespace synthclone {
          *   The Target corresponding to the target menu to add this action to.
          *
          * @param subMenus
-         *   A list of sub-menus to create from the target menu.  The MenuAction
-         *   will be created at the deepest menu.
+         *   A list of sub-menus to create from the target menu.  The
+         *   MenuAction will be created at the deepest menu.
          *
          * @returns
          *   A Registration object corresponding to the added MenuAction.
@@ -817,8 +818,8 @@ namespace synthclone {
          *   The MenuSeparator to add.
          *
          * @param sampler
-         *   The Sampler corresponding to the sampler menu to add this separator
-         *   to.
+         *   The Sampler corresponding to the sampler menu to add this
+         *   separator to.
          *
          * @param subMenus
          *   A list of sub-menus to create from the sampler menu.  The
@@ -855,8 +856,8 @@ namespace synthclone {
                          const QStringList &subMenus=QStringList()) = 0;
 
         /**
-         * Adds a Participant to the session.  At this point, the Participant is
-         * made available for activation, but it cannot interact with the
+         * Adds a Participant to the session.  At this point, the Participant
+         * is made available for activation, but it cannot interact with the
          * application until its Participant::activate() method is called.
          *
          * @param participant
@@ -1328,8 +1329,8 @@ namespace synthclone {
          * Sets the SampleChannelCount for the session.  If there are Sample
          * objects already registered with this session, then behavior varies:
          *
-         * - If the Sample objects are mono samples, then they will be converted
-         * to samples with the updated SampleChannelCount.
+         * - If the Sample objects are mono samples, then they will be
+         * converted to samples with the updated SampleChannelCount.
          * - If the incoming SampleChannelCount is 1, then the Sample objects
          * will be converted to mono samples.
          * - Otherwise, the Sample objects will be deleted.
@@ -1347,7 +1348,8 @@ namespace synthclone {
         /**
          * Sets the SampleRate for the session.  If there are Sample objects
          * already registered with this session, then they will be converted to
-         * the new SampleRate WITHOUT prompting the user.  You have been warned.
+         * the new SampleRate WITHOUT prompting the user.  You have been
+         * warned.
          *
          * @param sampleRate
          *   The new SampleRate.
@@ -1512,9 +1514,9 @@ namespace synthclone {
          *   The Participant being activated.
          *
          * @param parent
-         *   The parent Participant of the Participant being activated.  If this
-         *   argument is set to 0, then the Participant being activated is a
-         *   root Participant.
+         *   The parent Participant of the Participant being activated.  If
+         *   this argument is set to 0, then the Participant being activated is
+         *   a root Participant.
          *
          * @param id
          *   The id of the Participant being activated.
@@ -1579,8 +1581,8 @@ namespace synthclone {
          *   The Effect corresponding to the Effect menu to add this action to.
          *
          * @param subMenus
-         *   A list of sub-menus that will be created from the Effect menu.  The
-         *   MenuAction will be created at the deepest menu.
+         *   A list of sub-menus that will be created from the Effect menu.
+         *   The MenuAction will be created at the deepest menu.
          */
 
         void
@@ -1618,8 +1620,8 @@ namespace synthclone {
          *   The Target corresponding to the Target menu to add this action to.
          *
          * @param subMenus
-         *   A list of sub-menus that will be created from the Target menu.  The
-         *   MenuAction will be created at the deepest menu.
+         *   A list of sub-menus that will be created from the Target menu.
+         *   The MenuAction will be created at the deepest menu.
          */
 
         void
@@ -1643,7 +1645,8 @@ namespace synthclone {
 
         void
         addingMenuSeparator(const synthclone::MenuSeparator *separator,
-                            synthclone::Menu menu, const QStringList &subMenus);
+                            synthclone::Menu menu,
+                            const QStringList &subMenus);
 
         /**
          * Emitted when a MenuSeparator is being added to an Effect menu.
@@ -1656,8 +1659,8 @@ namespace synthclone {
          *   to.
          *
          * @param subMenus
-         *   A list of sub-menus that will be created from the Effect menu.  The
-         *   MenuSeparator will be created at the deepest menu.
+         *   A list of sub-menus that will be created from the Effect menu.
+         *   The MenuSeparator will be created at the deepest menu.
          */
 
         void
@@ -1672,8 +1675,8 @@ namespace synthclone {
          *   The MenuSeparator being added.
          *
          * @param sampler
-         *   The Sampler corresponding to the Sampler menu to add this separator
-         *   to.
+         *   The Sampler corresponding to the Sampler menu to add this
+         *   separator to.
          *
          * @param subMenus
          *   A list of sub-menus that will be created from the Sampler menu.
@@ -1696,8 +1699,8 @@ namespace synthclone {
          *   to.
          *
          * @param subMenus
-         *   A list of sub-menus that will be created from the Target menu.  The
-         *   MenuSeparator will be created at the deepest menu.
+         *   A list of sub-menus that will be created from the Target menu.
+         *   The MenuSeparator will be created at the deepest menu.
          */
 
         void
@@ -1986,8 +1989,8 @@ namespace synthclone {
          * Emitted when the focused component is changed.
          *
          * @param component
-         *   The component that has gained focus.  If this argument is set to 0,
-         *   then there currently isn't a focused component.
+         *   The component that has gained focus.  If this argument is set to
+         *   0, then there currently isn't a focused component.
          */
 
         void
@@ -2078,8 +2081,8 @@ namespace synthclone {
          *   The root menu.
          *
          * @param subMenus
-         *   A list of sub-menus created from the root menu.  The MenuAction was
-         *   at the deepest menu.  Any empty sub-menus have been removed.
+         *   A list of sub-menus created from the root menu.  The MenuAction
+         *   was at the deepest menu.  Any empty sub-menus have been removed.
          */
 
         void
@@ -2691,7 +2694,8 @@ namespace synthclone {
         removingSampler(const synthclone::Sampler *sampler);
 
         /**
-         * Emitted when a SamplerJob is being removed from the SamplerJob queue.
+         * Emitted when a SamplerJob is being removed from the SamplerJob
+         * queue.
          *
          * @param job
          *   The SamplerJob being removed.
@@ -2730,7 +2734,8 @@ namespace synthclone {
         removingZone(const synthclone::Zone *zone, int index);
 
         /**
-         * Emitted when the session's synthclone::SampleChannelCount is changed.
+         * Emitted when the session's synthclone::SampleChannelCount is
+         * changed.
          *
          * @param count
          *   The synthclone::SampleChannelCount.
@@ -2790,7 +2795,8 @@ namespace synthclone {
                         int toIndex);
 
         /**
-         * Emitted when a SamplerJob has been removed from the SamplerJob queue.
+         * Emitted when a SamplerJob has been removed from the SamplerJob
+         * queue.
          *
          * @param job
          *   The removed SamplerJob.
@@ -2855,8 +2861,8 @@ namespace synthclone {
          *   The synthclone::SessionState.
          *
          * @param directory
-         *   The session directory.  If this argument is 0, then a session isn't
-         *   currently loaded.
+         *   The session directory.  If this argument is 0, then a session
+         *   isn't currently loaded.
          */
 
         void

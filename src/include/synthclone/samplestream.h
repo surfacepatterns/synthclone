@@ -43,10 +43,7 @@ namespace synthclone {
     public:
 
         /**
-         * Contains format endian types supported by sample streams.  Adding
-         * format endian types supported by 'libsndfile' is a trivial task.  If
-         * you have a format endian type that you'd like to see supported, then
-         * let me know.
+         * Contains format endian types supported by sample streams.
          */
 
         enum EndianType {
@@ -68,9 +65,7 @@ namespace synthclone {
         };
 
         /**
-         * Contains format sub-types supported by sample streams.  Adding format
-         * sub-types supported by 'libsndfile' is a trivial task.  If you have a
-         * format sub-type that you'd like to see supported, then let me know.
+         * Contains format sub-types supported by sample streams.
          */
 
         enum SubType {
@@ -106,9 +101,7 @@ namespace synthclone {
         };
 
         /**
-         * Contains format types supported by sample streams.  Adding formats
-         * supported by 'libsndfile' is a trivial task.  If you have a format
-         * that you'd like to see supported, then let me know.
+         * Contains format types supported by sample streams.
          */
 
         enum Type {
@@ -212,8 +205,8 @@ namespace synthclone {
          * Sets the position of the stream in the sample file.
          *
          * @param frames
-         *   The absolute frame count from the offset where the stream should be
-         *   positioned.
+         *   The absolute frame count from the offset where the stream should
+         *   be positioned.
          *
          * @param offset
          *   The offset for stream positioning.
@@ -228,9 +221,9 @@ namespace synthclone {
     protected:
 
         /**
-         * Constructs a new SampleStream.  This constructor should not be called
-         * directly; instead, subclasses of SampleStream should be used to
-         * create stream objects.
+         * Constructs a new SampleStream.  This constructor should not be
+         * called directly; instead, subclasses of SampleStream should be used
+         * to create stream objects.
          *
          * @param parent
          *   The parent object of the new stream object.

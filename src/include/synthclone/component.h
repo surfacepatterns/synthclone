@@ -76,8 +76,8 @@ namespace synthclone {
          * the Component is performing.
          *
          * @param progress
-         *   The 'progress' amount, which must be in the range [0.0, 1.0], where
-         *   0.0 and 1.0 are roughly equivalent to "just starting" and
+         *   The 'progress' amount, which must be in the range [0.0, 1.0],
+         *   where 0.0 and 1.0 are roughly equivalent to "just starting" and
          *   "finished".
          *
          * @sa

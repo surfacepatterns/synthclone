@@ -66,8 +66,8 @@ namespace synthclone {
          *
          * @param frames
          *   The maximum number of frames to read into the buffer.  If the
-         *   stream is positioned less than the amount of frames from the end of
-         *   the sample file, then less data will be read into the buffer.
+         *   stream is positioned less than the amount of frames from the end
+         *   of the sample file, then less data will be read into the buffer.
          *
          * @returns
          *   The number of frames read into the buffer.

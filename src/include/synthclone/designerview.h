@@ -35,8 +35,8 @@ namespace synthclone {
     protected:
 
         /**
-         * Constructs a new DesignerView.  This constructor should not be called
-         * directly; instead, subclass constructors should call this
+         * Constructs a new DesignerView.  This constructor should not be
+         * called directly; instead, subclass constructors should call this
          * constructor.
          *
          * @param path

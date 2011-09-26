@@ -27,8 +27,8 @@ namespace synthclone {
 
     /**
      * Utility class that copies Sample data from a SampleInputStream to a
-     * SampleOutputStream, emitting SampleCopier::copyProgress events as it goes
-     * along.
+     * SampleOutputStream, emitting SampleCopier::copyProgress events as it
+     * goes along.
      */
 
     class SampleCopier: public QObject {

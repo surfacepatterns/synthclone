@@ -50,9 +50,9 @@ namespace synthclone {
     protected:
 
         /**
-         * Constructs a new registration object.  This constructor should not be
-         * called directly.  Registration objects are returned when objects are
-         * registered with the session via Context objects.
+         * Constructs a new registration object.  This constructor should not
+         * be called directly.  Registration objects are returned when objects
+         * are registered with the session via Context objects.
          *
          * @param parent
          *   The parent object of the new registration object.

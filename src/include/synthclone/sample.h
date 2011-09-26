@@ -45,9 +45,9 @@ namespace synthclone {
 
         /**
          * Initializes an empty sample object.  Sample contents are stored in a
-         * file in the system's temporary directory.  This constructor should be
-         * used when a SampleOutputStream object will be used to write data to
-         * this sample.
+         * file in the system's temporary directory.  This constructor should
+         * be used when a SampleOutputStream object will be used to write data
+         * to this sample.
          *
          * @param temporary
          *   Whether or not the file associated with the sample should be
@@ -80,8 +80,8 @@ namespace synthclone {
         Sample(const QString &path, bool temporary=false, QObject *parent=0);
 
         /**
-         * Initializes a sample object.  Sample contents are stored in a file in
-         * the system's temporary directory.
+         * Initializes a sample object.  Sample contents are stored in a file
+         * in the system's temporary directory.
          *
          * @param sample
          *   A sample object.  Sample contents will be copied from this object

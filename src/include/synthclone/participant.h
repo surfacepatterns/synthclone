@@ -27,8 +27,8 @@
 namespace synthclone {
 
     /**
-     * Participants objects interact with `synthclone`.  Interaction takes place
-     * through the Context object that is passed with activate().
+     * Participants objects interact with `synthclone`.  Interaction takes
+     * place through the Context object that is passed with activate().
      */
 
     class Participant: public QObject {
@@ -46,8 +46,9 @@ namespace synthclone {
          *
          * @param state
          *   If a session is being restored, then the state argument will
-         *   contain the return value of getState(), called when the session was
-         *   previously loaded; otherwise, the argument is an invalid QVariant.
+         *   contain the return value of getState(), called when the session
+         *   was previously loaded; otherwise, the argument is an invalid
+         *   QVariant.
          */
 
         virtual void
@@ -58,8 +59,8 @@ namespace synthclone {
          * this method, the Context object will be destroyed.
          *
          * @param context
-         *   The Context object that was passed to activate().  This object will
-         *   be destroyed some time after this call returns.
+         *   The Context object that was passed to activate().  This object
+         *   will be destroyed some time after this call returns.
          */
 
         virtual void
@@ -129,9 +130,9 @@ namespace synthclone {
 
         /**
          * Gets the state of an Effect created by this Participant.  The state
-         * should contain all the details necessary to recreate the Effect.  The
-         * state will be passed to the restoreEffect() method if the current
-         * session is reloaded.
+         * should contain all the details necessary to recreate the Effect.
+         * The state will be passed to the restoreEffect() method if the
+         * current session is reloaded.
          *
          * @param effect
          *   An effect created by this participant.
@@ -161,9 +162,9 @@ namespace synthclone {
 
         /**
          * Gets the state of a Target created by this Participant.  The state
-         * should contain all the details necessary to recreate the Target.  The
-         * state will be passed to the restoreTarget() method if the current
-         * session is reloaded.
+         * should contain all the details necessary to recreate the Target.
+         * The state will be passed to the restoreTarget() method if the
+         * current session is reloaded.
          *
          * @param target
          *   A target created by this participant.
@@ -210,9 +211,9 @@ namespace synthclone {
         restoreSampler(const QVariant &state);
 
         /**
-         * Called to restore a Target.  The Participant should create the Target
-         * specified by the given state, and append the Target to the session's
-         * Target list using the Context object.
+         * Called to restore a Target.  The Participant should create the
+         * Target specified by the given state, and append the Target to the
+         * session's Target list using the Context object.
          *
          * @param state
          *   The state of the target.
@@ -251,8 +252,8 @@ namespace synthclone {
          */
 
         Participant(const QString &name, int majorVersion, int minorVersion,
-                    int revision, const QString &author, const QString &summary,
-                    QObject *parent=0);
+                    int revision, const QString &author,
+                    const QString &summary, QObject *parent=0);
 
         /**
          * Destroys a participant.

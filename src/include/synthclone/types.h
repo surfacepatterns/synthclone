@@ -84,9 +84,9 @@ namespace synthclone {
     typedef quint32 SampleRate;
 
     /**
-     * The minimum valid sample rate.  I don't see 1 as being a practical sample
-     * rate, but I don't see a reason why I shouldn't let it happen if that's
-     * the user's wish.
+     * The minimum valid sample rate.  I don't see 1 as being a practical
+     * sample rate, but I don't see a reason why I shouldn't let it happen if
+     * that's the user's wish.
      */
 
     const SampleRate SAMPLE_RATE_MINIMUM = 1;

@@ -52,8 +52,8 @@ namespace synthclone {
          *
          * @par STATUS_SAMPLER_JOB_QUEUE
          *   The Zone object is waiting in the SamplerJob queue.  When the
-         *   SamplerJob pertaining to the Zone is at the front of the queue, the
-         *   Sampler will perform some operation using the Zone.
+         *   SamplerJob pertaining to the Zone is at the front of the queue,
+         *   the Sampler will perform some operation using the Zone.
          *
          * @par STATUS_SAMPLER_PLAYING_DRY_SAMPLE
          *   The Zone object is being used by the Sampler.  The Sampler is
@@ -71,7 +71,8 @@ namespace synthclone {
          *   The Zone object is waiting in the EffectJob queue.  When the
          *   EffectJob pertaining to the Zone is at the front of the queue, the
          *   registered Effect objects will be applied to the Zone object's dry
-         *   sample, and the result will be set as the Zone object's wet sample.
+         *   sample, and the result will be set as the Zone object's wet
+         *   sample.
          *
          * @par STATUS_EFFECTS
          *   The registered Effect objects are being applied to the Zone
@@ -142,9 +143,9 @@ namespace synthclone {
         getControlMap() const = 0;
 
         /**
-         * Returns the MIDI value for a control.  If the control isn't set, then
-         * the value will be MIDI_VALUE_NOT_SET.  Control values are used by the
-         * Sampler to send MIDI control messages before sampling.
+         * Returns the MIDI value for a control.  If the control isn't set,
+         * then the value will be MIDI_VALUE_NOT_SET.  Control values are used
+         * by the Sampler to send MIDI control messages before sampling.
          *
          * @param control
          *   The control index.
@@ -180,8 +181,8 @@ namespace synthclone {
 
         /**
          * Gets the release time.  The release time is used by a Sampler to add
-         * space between the processing of SamplerJob objects in order to give a
-         * note the chance to fade away.  If the release time is set too low,
+         * space between the processing of SamplerJob objects in order to give
+         * a note the chance to fade away.  If the release time is set too low,
          * then a sampled note may overlap another sampled note.
          *
          * @returns
@@ -254,9 +255,9 @@ namespace synthclone {
 
         /**
          * Gets a flag indicating whether or not the wet Sample is stale.  If a
-         * wet Sample is stale, it means that the parameters used to get the wet
-         * Sample (Effect parameters, for example) have changed, or that the dry
-         * Sample that was used to get the wet Sample has changed.
+         * wet Sample is stale, it means that the parameters used to get the
+         * wet Sample (Effect parameters, for example) have changed, or that
+         * the dry Sample that was used to get the wet Sample has changed.
          *
          * @returns
          *   A flag indicating the above.
@@ -451,8 +452,8 @@ namespace synthclone {
                             synthclone::MIDIData value);
 
         /**
-         * Emitted when the dry Sample is changed.  Note that the dry Sample can
-         * be set to 0.
+         * Emitted when the dry Sample is changed.  Note that the dry Sample
+         * can be set to 0.
          *
          * @param drySample
          *   The new dry Sample (or lack thereof).
@@ -522,8 +523,8 @@ namespace synthclone {
         velocityChanged(synthclone::MIDIData velocity);
 
         /**
-         * Emitted when the wet Sample is changed.  Note that the wet Sample can
-         * be set to 0.
+         * Emitted when the wet Sample is changed.  Note that the wet Sample
+         * can be set to 0.
          *
          * @param wetSample
          *   The new wet Sample (or lack thereof).
@@ -556,8 +557,8 @@ namespace synthclone {
         Zone(QObject *parent=0);
 
         /**
-         * Destroys a Zone object.  The memory of Zone objects is managed by the
-         * application.
+         * Destroys a Zone object.  The memory of Zone objects is managed by
+         * the application.
          */
 
         virtual

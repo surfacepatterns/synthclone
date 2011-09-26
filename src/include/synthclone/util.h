@@ -29,9 +29,9 @@
 /**
  * Confirms that a given condition is true, regardless of whether or not NDEBUG
  * is set.  If the condition does not evaluate to true, then an error
- * message is printed that includes the file, line, and function where the error
- * occurred, along with an error message.  The program is then terminated using
- * abort().
+ * message is printed that includes the file, line, and function where the
+ * error occurred, along with an error message.  The program is then terminated
+ * using abort().
  *
  * @param condition
  *   The condition to evaluate.

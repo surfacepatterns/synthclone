@@ -44,8 +44,8 @@ namespace synthclone {
          *
          * @par Valid Participant Identifiers
          * A valid Participant id is a dot-delimited string containing one or
-         * more sub-id parts.  Each sub-id part must start and end with a number
-         * or letter, and contain only numbers, letters, and hyphens.
+         * more sub-id parts.  Each sub-id part must start and end with a
+         * number or letter, and contain only numbers, letters, and hyphens.
          *
          * @par
          * The following ids are considered valid:
@@ -83,8 +83,8 @@ namespace synthclone {
          * 'com.googlecode.synthclone.plugins.[name]'.
          *
          * @par
-         * Ids of the form 'com.googlecode.synthclone.*' are reserved for future
-         * use.
+         * Ids of the form 'com.googlecode.synthclone.*' are reserved for
+         * future use.
          *
          * @returns
          *   The root Participant id.
@@ -94,8 +94,8 @@ namespace synthclone {
         getId() const = 0;
 
         /**
-         * Gets the root Participant for this plugin.  The root Participant will
-         * be registered with the application.
+         * Gets the root Participant for this plugin.  The root Participant
+         * will be registered with the application.
          *
          * @returns
          *   The root participant.

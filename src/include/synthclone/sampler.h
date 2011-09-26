@@ -51,8 +51,8 @@ namespace synthclone {
 
         /**
          * Starts a new job.  Jobs should be run asynchronously, and should be
-         * able to be aborted within a reasonable time interval.  How the job is
-         * handled depends on the job type.
+         * able to be aborted within a reasonable time interval.  How the job
+         * is handled depends on the job type.
          *
          * If the job's type is:
          *   - SamplerJob::TYPE_PLAY_DRY_SAMPLE
@@ -98,7 +98,8 @@ namespace synthclone {
          *      indicate progress.
          *   -# Make sure that all of the audio data has been written to the
          *      given stream.  Whether or not this is done asynchronously or
-         *      after all data is retrieved is up to the sampler implementation.
+         *      after all data is retrieved is up to the sampler
+         *      implementation.
          *   -# When sampling is complete, emit the jobCompleted() signal.
          *   .
          * If an error occurs during the sampling process:
@@ -123,8 +124,8 @@ namespace synthclone {
          *   is:
          *     - SamplerJob::TYPE_SAMPLE
          *     .
-         *   ... then the object will be a SampleOutputStream.  Use qobject_cast
-         *   to cast the object to the appropriate type.
+         *   ... then the object will be a SampleOutputStream.  Use
+         *   qobject_cast to cast the object to the appropriate type.
          */
 
         virtual void

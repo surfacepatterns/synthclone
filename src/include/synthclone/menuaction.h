@@ -146,7 +146,8 @@ namespace synthclone {
         setText(const QString &text);
 
         /**
-         * Triggers the action.  This method is called from within `synthclone`.
+         * Triggers the action.  This method is called from within
+         * `synthclone`.
          */
 
         void
