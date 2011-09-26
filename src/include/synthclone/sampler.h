@@ -86,16 +86,19 @@ namespace synthclone {
          *   -# If the aftertouch value is set, send a MIDI aftertouch message
          *      on the given MIDI channel with the given aftertouch value.
          *   -# If there is any known latency for the MIDI port and/or audio
-         *      ports, then wait that time before sampling.
+         *      ports, then wait that time before sampling.  Note that any time
+         *      spent sending the MIDI aftertouch and/or control pressure
+         *      messages should be subtracted from the wait time.
          *   -# Retrieve data until Zone::getSampleTime() has passed.  Use the
          *      progressChanged() and statusChanged() signals to indicate
          *      progress.
          *   -# After sampling is complete, send a MIDI note off event on the
          *      given MIDI channel.
-         *   -# Send a reset all controllers event on the given channel.
          *   -# Wait the amount of time specified by Zone::getReleaseTime().
          *      Use the progressChanged() and statusChanged() signals to
          *      indicate progress.
+         *   -# Send an all sound off event on the given channel.
+         *   -# Send a reset all controllers event on the given channel.
          *   -# Make sure that all of the audio data has been written to the
          *      given stream.  Whether or not this is done asynchronously or
          *      after all data is retrieved is up to the sampler
@@ -103,12 +106,12 @@ namespace synthclone {
          *   -# When sampling is complete, emit the jobCompleted() signal.
          *   .
          * If an error occurs during the sampling process:
-         *   -# If MIDI messages have been sent, execute steps 6-8 above (if
+         *   -# If MIDI messages have been sent, execute steps 7-10 above (if
          *      possible).
          *   -# Emit a jobError() signal.
          *   .
          * If abort() is called during this operation:
-         *   -# If MIDI messages have been sent, execute steps 6-8 above (if
+         *   -# If MIDI messages have been sent, execute steps 7-10 above (if
          *      possible).
          *   -# Emit a jobAborted() signal.
          *
