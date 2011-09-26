@@ -103,8 +103,6 @@ signals:
 
 private:
 
-    typedef QMultiMap<ZoneKey, const synthclone::Zone *> ZoneMap;
-
     void
     writeElement(QXmlStreamWriter &writer, const QString &name,
                  const QString &value);

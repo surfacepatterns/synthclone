@@ -68,7 +68,7 @@ Target::build(const QList<synthclone::Zone *> &zones)
     emit statusChanged(tr("Building zone map ..."));
     QLocale locale = QLocale::system();
     int zoneCount = zones.count();
-    ZoneMap zoneMap;
+    QMultiMap<ZoneKey, const synthclone::Zone *> zoneMap;
     for (int i = 0; i < zoneCount; i++) {
         emit progressChanged((static_cast<float>(i) / zoneCount) * 0.5);
         synthclone::Zone *zone = zones[i];
