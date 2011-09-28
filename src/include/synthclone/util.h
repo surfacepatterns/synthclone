@@ -93,6 +93,19 @@ namespace synthclone {
     getMIDIControlString(MIDIData control);
 
     /**
+     * Gets the default MIDI control type.
+     *
+     * @param control
+     *   The MIDI control.
+     *
+     * @returns
+     *   The default MIDI control type.
+     */
+
+    ControlType
+    getMIDIControlType(MIDIData control);
+
+    /**
      * Gets a string representation of a MIDI note.
      *
      * @param note

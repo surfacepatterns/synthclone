@@ -26,6 +26,18 @@
 namespace synthclone {
 
     /**
+     * MIDI control types.
+     */
+
+    enum ControlType {
+        CONTROLTYPE_UNDEFINED = 0,
+        CONTROLTYPE_COMMAND = 1,
+        CONTROLTYPE_CONTINUOUS = 2,
+        CONTROLTYPE_MONO_MODE = 3,
+        CONTROLTYPE_SWITCH = 4
+    };
+
+    /**
      * Menu identifiers for default `synthclone` menus.
      */
 
