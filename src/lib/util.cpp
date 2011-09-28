@@ -313,6 +313,66 @@ synthclone::getMIDIControlString(MIDIData control)
         arg(QLocale::system().toString(control), name);
 }
 
+synthclone::ControlType
+synthclone::getMIDIControlType(MIDIData control)
+{
+    CONFIRM(control < 0x80,
+            qApp->tr("'%1': invalid control index").arg(control));
+    ControlType type;
+    switch (control) {
+    case 0x40:
+    case 0x41:
+    case 0x42:
+    case 0x43:
+    case 0x44:
+    case 0x45:
+    case 0x7a:
+        type = synthclone::CONTROLTYPE_SWITCH;
+        break;
+    case 0x55:
+    case 0x56:
+    case 0x57:
+    case 0x59:
+    case 0x5a:
+    case 0x66:
+    case 0x67:
+    case 0x68:
+    case 0x69:
+    case 0x6a:
+    case 0x6b:
+    case 0x6c:
+    case 0x6d:
+    case 0x6e:
+    case 0x6f:
+    case 0x70:
+    case 0x71:
+    case 0x72:
+    case 0x73:
+    case 0x74:
+    case 0x75:
+    case 0x76:
+    case 0x77:
+    case 0x7b:
+    case 0x7c:
+    case 0x7d:
+    case 0x7f:
+        type = synthclone::CONTROLTYPE_UNDEFINED;
+        break;
+    case 0x60:
+    case 0x61:
+    case 0x78:
+    case 0x79:
+        type = synthclone::CONTROLTYPE_COMMAND;
+        break;
+    case 0x7e:
+        type = synthclone::CONTROLTYPE_MONO_MODE;
+        break;
+    default:
+        type = synthclone::CONTROLTYPE_CONTINUOUS;
+    }
+    return type;
+}
+
 QString
 synthclone::getMIDINoteString(MIDIData note)
 {
