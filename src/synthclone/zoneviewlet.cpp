@@ -255,7 +255,7 @@ ZoneViewlet::enableRow(int index)
 {
     assert((index >= 0) && (index < tableModel.rowCount()));
 
-    Qt::ItemFlags flags = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+    Qt::ItemFlags flags = Qt::ItemIsEnabled | Qt::ItemIsSelectable;
     getModelItem(index, ZONETABLECOLUMN_DRY_SAMPLE)->setFlags(flags);
     getModelItem(index, ZONETABLECOLUMN_STATUS)->setFlags(flags);
     getModelItem(index, ZONETABLECOLUMN_WET_SAMPLE)->setFlags(flags);
@@ -271,6 +271,28 @@ ZoneViewlet::enableRow(int index)
     for (int i = 0; i < 0x80; i++) {
         getModelItem(index, ZONETABLECOLUMN_CONTROL_0 + i)->setFlags(flags);
     }
+}
+
+QVariant
+ZoneViewlet::generateSampleProfile(const SampleProfile *profile)
+{
+    QVariant data;
+    if (profile) {
+        const float *highPeaks = profile->getHighPeaks();
+        QVariantList highVariants;
+        const float *lowPeaks = profile->getLowPeaks();
+        QVariantList lowVariants;
+        for (int i = 0; i < 1024; i++) {
+            highVariants.append(highPeaks[i]);
+            lowVariants.append(lowPeaks[i]);
+        }
+        QVariantMap map;
+        map["highPeaks"] = highVariants;
+        map["lowPeaks"] = lowVariants;
+        map["time"] = profile->getTime();
+        data.setValue(map);
+    }
+    return data;
 }
 
 MenuViewlet *
@@ -595,11 +617,11 @@ ZoneViewlet::setDeleteEnabled(bool enabled)
 }
 
 void
-ZoneViewlet::setDrySampleAcquired(int index, bool acquired)
+ZoneViewlet::setDrySampleProfile(int index, const SampleProfile *profile)
 {
     assert((index >= 0) && (index < tableModel.rowCount()));
     setModelData(index, ZONETABLECOLUMN_DRY_SAMPLE,
-                 acquired ? tr("Acquired") : "", Qt::DisplayRole);
+                 generateSampleProfile(profile), Qt::UserRole);
 }
 
 void
@@ -807,11 +829,11 @@ ZoneViewlet::setVelocityPropertyVisible(bool visible)
 }
 
 void
-ZoneViewlet::setWetSampleAcquired(int index, bool acquired)
+ZoneViewlet::setWetSampleProfile(int index, const SampleProfile *profile)
 {
     assert((index >= 0) && (index < tableModel.rowCount()));
     setModelData(index, ZONETABLECOLUMN_WET_SAMPLE,
-                 acquired ? tr("Acquired") : "", Qt::DisplayRole);
+                 generateSampleProfile(profile), Qt::UserRole);
 }
 
 void

@@ -41,6 +41,7 @@ HEADERS += aboutview.h \
     progressbardelegate.h \
     progressview.h \
     registration.h \
+    sampleprofile.h \
     samplerateconverter.h \
     samplerjob.h \
     savechangesview.h \
@@ -95,6 +96,7 @@ SOURCES += aboutview.cpp \
     progressbardelegate.cpp \
     progressview.cpp \
     registration.cpp \
+    sampleprofile.cpp \
     samplerateconverter.cpp \
     samplerjob.cpp \
     savechangesview.cpp \

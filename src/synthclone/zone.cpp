@@ -355,7 +355,13 @@ Zone::setWetSample(synthclone::Sample *sample, bool copy)
             sample->setTemporary(false);
         }
         emit wetSampleChanged(sample);
-        setWetSampleStale(! static_cast<bool>(wetSample));
+        if (wetSample) {
+            if (! drySampleStale) {
+                setWetSampleStale(false);
+            }
+        } else {
+            setWetSampleStale(true);
+        }
     }
 }
 

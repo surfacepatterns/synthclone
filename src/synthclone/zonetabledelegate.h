@@ -43,6 +43,10 @@ public:
     getEditIndex() const;
 
     void
+    paint(QPainter *painter, const QStyleOptionViewItem &option,
+          const QModelIndex &index) const;
+
+    void
     setEditorData(QWidget *editor, const QModelIndex &index) const;
 
     void

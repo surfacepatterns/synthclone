@@ -1105,19 +1105,31 @@ Controller::updateZoneViewlet(const synthclone::Zone *zone, int index)
     viewlet->setAftertouch(index, zone->getAftertouch());
     viewlet->setChannel(index, zone->getChannel());
     viewlet->setChannelPressure(index, zone->getChannelPressure());
-    viewlet->setDrySampleAcquired(index,
-                                  static_cast<bool>(zone->getDrySample()));
     viewlet->setDrySampleStale(index, zone->isDrySampleStale());
     viewlet->setNote(index, zone->getNote());
     viewlet->setReleaseTime(index, zone->getReleaseTime());
     viewlet->setSampleTime(index, zone->getSampleTime());
     viewlet->setStatus(index, zone->getStatus());
     viewlet->setVelocity(index, zone->getVelocity());
-    viewlet->setWetSampleAcquired(index,
-                                  static_cast<bool>(zone->getWetSample()));
     viewlet->setWetSampleStale(index, zone->isWetSampleStale());
+
     for (synthclone::MIDIData i = 0; i < 0x80; i++) {
         viewlet->setControlValue(index, i, zone->getControlValue(i));
+    }
+
+    const synthclone::Sample *sample = zone->getDrySample();
+    if (sample) {
+        SampleProfile profile(*sample);
+        viewlet->setDrySampleProfile(index, &profile);
+    } else {
+        viewlet->setDrySampleProfile(index, 0);
+    }
+    sample = zone->getWetSample();
+    if (sample) {
+        SampleProfile profile(*sample);
+        viewlet->setWetSampleProfile(index, &profile);
+    } else {
+        viewlet->setWetSampleProfile(index, 0);
     }
 }
 
@@ -2417,9 +2429,14 @@ void
 Controller::handleZoneDrySampleChange(const synthclone::Sample *sample)
 {
     synthclone::Zone *zone = qobject_cast<synthclone::Zone *>(sender());
+    int index = session.getZoneIndex(zone);
     ZoneViewlet *zoneViewlet = mainView.getZoneViewlet();
-    zoneViewlet->setDrySampleAcquired(session.getZoneIndex(zone),
-                                      static_cast<bool>(sample));
+    if (sample) {
+        SampleProfile profile(*sample);
+        zoneViewlet->setDrySampleProfile(index, &profile);
+    } else {
+        zoneViewlet->setDrySampleProfile(index, 0);
+    }
     if (session.isZoneSelected(zone)) {
         bool dryEnabled = static_cast<bool>(sample) &&
             static_cast<bool>(session.getSampler());
@@ -2492,9 +2509,14 @@ void
 Controller::handleZoneWetSampleChange(const synthclone::Sample *sample)
 {
     synthclone::Zone *zone = qobject_cast<synthclone::Zone *>(sender());
+    int index = session.getZoneIndex(zone);
     ZoneViewlet *zoneViewlet = mainView.getZoneViewlet();
-    zoneViewlet->setWetSampleAcquired(session.getZoneIndex(zone),
-                                      static_cast<bool>(sample));
+    if (sample) {
+        SampleProfile profile(*sample);
+        zoneViewlet->setWetSampleProfile(index, &profile);
+    } else {
+        zoneViewlet->setWetSampleProfile(index, 0);
+    }
     if (session.isZoneSelected(zone)) {
         bool wetEnabled = static_cast<bool>(sample) &&
             static_cast<bool>(session.getSampler());

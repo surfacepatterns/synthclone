@@ -19,8 +19,10 @@
 
 #include <cassert>
 
+#include <QtCore/QLocale>
 #include <QtGui/QComboBox>
 #include <QtGui/QDoubleSpinBox>
+#include <QtGui/QPainter>
 #include <QtGui/QSpinBox>
 
 #include <synthclone/util.h>
@@ -75,8 +77,8 @@ ZoneTableDelegate::createEditor(QWidget *parent,
     case ZONETABLECOLUMN_SAMPLE_TIME:
         doubleSpinBox = new QDoubleSpinBox(parent);
         doubleSpinBox->setDecimals(2);
-        doubleSpinBox->
-            setRange(0.01, static_cast<float>(synthclone::SAMPLE_TIME_MAXIMUM));
+        doubleSpinBox->setRange
+            (0.01, static_cast<float>(synthclone::SAMPLE_TIME_MAXIMUM));
         doubleSpinBox->setSuffix(tr(" seconds"));
         return doubleSpinBox;
     case ZONETABLECOLUMN_VELOCITY:
@@ -90,6 +92,99 @@ QModelIndex
 ZoneTableDelegate::getEditIndex() const
 {
     return editIndex;
+}
+
+void
+ZoneTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+                         const QModelIndex &index) const
+{
+    assert(index.isValid());
+    QStyledItemDelegate::paint(painter, option, index);
+    QVariant variant;
+    switch (index.column()) {
+    case ZONETABLECOLUMN_DRY_SAMPLE:
+    case ZONETABLECOLUMN_WET_SAMPLE:
+        variant = index.data(Qt::UserRole);
+        if (variant.isValid()) {
+            QRect rectangle = option.rect;
+            int height = rectangle.height();
+            int width = rectangle.width();
+            if (height && width) {
+                float midHeight = height / 2.0;
+                QVariantMap variantMap = variant.toMap();
+                QVariantList highPeaks =
+                    variantMap.value("highPeaks").toList();
+                assert(highPeaks.count() == 1024);
+                QVariantList lowPeaks = variantMap.value("lowPeaks").toList();
+                assert(lowPeaks.count() == 1024);
+                float time = variantMap.value("time").toFloat();
+
+                // Set the operations for drawing the sample.
+                QPainterPath maximumPath(QPointF(0.0, midHeight));
+                QPainterPath minimumPath(QPointF(0.0, midHeight));
+                for (int i = 0; i < 1024; i++) {
+                    float pixelX = (i / 1023.0) * (width - 1);
+                    float value = highPeaks[i].toFloat();
+                    if (value > 1.0) {
+                        value = 1.0;
+                    } else if (value < -1.0) {
+                        value = -1.0;
+                    }
+                    float pixelY = (((- value) + 1.0) * 0.5) * (height - 1);
+                    maximumPath.lineTo(pixelX, pixelY);
+                    value = lowPeaks[i].toFloat();
+                    if (value > 1.0) {
+                        value = 1.0;
+                    } else if (value < -1.0) {
+                        value = 1.0;
+                    }
+                    pixelY = (((- value + 1.0) * 0.5) * (height - 1));
+                    minimumPath.lineTo(pixelX, pixelY);
+                }
+                maximumPath.lineTo(width - 1, midHeight);
+                minimumPath.lineTo(width - 1, midHeight);
+                maximumPath.addPath(minimumPath.toReversed());
+
+                QPixmap pixmap(width, height);
+                QPainter pixmapPainter;
+                QPalette palette = option.palette;
+                QColor color = palette.color(QPalette::Text);
+                pixmap.fill(Qt::transparent);
+                pixmapPainter.begin(&pixmap);
+                pixmapPainter.setPen(color);
+                //pixmapPainter.setRenderHint(QPainter::Antialiasing, true);
+
+                // Draw the sample.
+                pixmapPainter.drawPath(maximumPath);
+                color.setAlpha(0x20);
+                pixmapPainter.fillPath(maximumPath, color);
+
+                // Write the sample time.
+                QString timeString = tr("%1 seconds").
+                    arg(QLocale::system().toString(time));
+                QRect pixmapRectangle = pixmap.rect();
+                int flags = Qt::AlignHCenter | Qt::AlignVCenter;
+                QFont font(pixmapPainter.font());
+                // I wish Qt had font constants for relative sizes.
+                font.setPointSize(10);
+                pixmapPainter.setFont(font);
+                QRect textRectangle =
+                    pixmapPainter.boundingRect(pixmapRectangle, flags,
+                                               timeString);
+                color = palette.color(QPalette::Base);
+                color.setAlpha(0xd0);
+                pixmapPainter.fillRect(textRectangle, color);
+                pixmapPainter.drawText(pixmapRectangle, flags, timeString);
+                pixmapPainter.drawRect(textRectangle);
+
+                pixmapPainter.end();
+
+                painter->save();
+                painter->drawPixmap(rectangle.topLeft(), pixmap);
+                painter->restore();
+            }
+        }
+    }
 }
 
 void

@@ -639,6 +639,7 @@ private:
     PluginParticipantMap pluginParticipantMap;
     PostDirectorySelectAction postDirectorySelectAction;
     PostSaveChangesAction postSaveChangesAction;
+    float sampleProfile[2048];
     QString saveAsPath;
     int sessionLoadWarningCount;
     int targetBuildWarningCount;

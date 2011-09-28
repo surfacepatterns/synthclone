@@ -29,6 +29,7 @@
 
 #include "contextmenueventfilter.h"
 #include "menuviewlet.h"
+#include "sampleprofile.h"
 #include "standarditem.h"
 #include "zonetablecolumn.h"
 #include "zonetabledelegate.h"
@@ -103,7 +104,7 @@ public slots:
     setDeleteEnabled(bool enabled);
 
     void
-    setDrySampleAcquired(int index, bool acquired);
+    setDrySampleProfile(int index, const SampleProfile *profile);
 
     void
     setDrySamplePropertyVisible(bool visible);
@@ -172,7 +173,7 @@ public slots:
     setVelocityPropertyVisible(bool visible);
 
     void
-    setWetSampleAcquired(int index, bool acquired);
+    setWetSampleProfile(int index, const SampleProfile *profile);
 
     void
     setWetSamplePropertyVisible(bool visible);
@@ -344,6 +345,9 @@ private:
 
     void
     enableRow(int index);
+
+    QVariant
+    generateSampleProfile(const SampleProfile *profile);
 
     QStandardItem *
     getModelItem(int row, int column);
