@@ -449,8 +449,7 @@ Sampler::handleProcessEvent(jack_nframes_t frames)
             aborted = true;
             // Fallthrough on purpose.
         case STATE_ERROR:
-            state = STATE_SAMPLE_SEND_POST_MIDI;
-            goto sampleSendPostMIDI;
+            goto sampleSendNoteOff;
         default:
             ;
         }
@@ -476,19 +475,10 @@ Sampler::handleProcessEvent(jack_nframes_t frames)
         }
         sendProgressEvent(static_cast<float>(totalFrames) /
                           (totalFrames + command.totalReleaseFrames));
-        state = STATE_SAMPLE_SEND_POST_MIDI;
-        // Fallthrough on purpose.
-
-    case STATE_SAMPLE_SEND_POST_MIDI:
-    sampleSendPostMIDI:
+    sampleSendNoteOff:
         zone = command.job->getZone();
-        midiChannel = zone->getChannel() - 1;
-        if (! sendMIDIMessage(midiBuffer, 0x80 | midiChannel, zone->getNote(),
-                              zone->getVelocity())) {
-            state = STATE_ERROR;
-            goto error;
-        }
-        if (! sendMIDIMessage(midiBuffer, 0xb0 | midiChannel, 0x79, 0)) {
+        if (! sendMIDIMessage(midiBuffer, 0x80 | (zone->getChannel() - 1),
+                              zone->getNote(), zone->getVelocity())) {
             state = STATE_ERROR;
             goto error;
         }
@@ -500,7 +490,7 @@ Sampler::handleProcessEvent(jack_nframes_t frames)
         updateCommandState();
 
         // We still have to catch abort and error messages.  However, state
-        // changes must wait until the 'release' is finished.
+        // changes must wait until we've sent the post-MIDI messages.
         switch (state) {
         case STATE_ABORT:
             aborted = true;
@@ -521,6 +511,19 @@ Sampler::handleProcessEvent(jack_nframes_t frames)
             break;
         }
         sendProgressEvent(1.0);
+
+        // Send MIDI messages to turn sound off and reset controllers.
+        zone = command.job->getZone();
+        midiChannel = zone->getChannel() - 1;
+        if (! sendMIDIMessage(midiBuffer, 0xb0 | midiChannel, 0x78, 0)) {
+            state = STATE_ERROR;
+            goto error;
+        }
+        if (! sendMIDIMessage(midiBuffer, 0xb0 | midiChannel, 0x79, 0)) {
+            state = STATE_ERROR;
+            goto error;
+        }
+
         if (errorMessage) {
             state = STATE_ERROR;
             goto error;

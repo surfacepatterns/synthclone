@@ -132,7 +132,6 @@ private:
         STATE_IDLE,
         STATE_PLAY,
         STATE_SAMPLE,
-        STATE_SAMPLE_SEND_POST_MIDI,
         STATE_SAMPLE_SEND_PRE_MIDI,
         STATE_SAMPLE_RELEASE
     };
