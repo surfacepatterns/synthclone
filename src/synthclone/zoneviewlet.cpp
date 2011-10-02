@@ -278,17 +278,13 @@ ZoneViewlet::generateSampleProfile(const SampleProfile *profile)
 {
     QVariant data;
     if (profile) {
-        const float *highPeaks = profile->getHighPeaks();
-        QVariantList highVariants;
-        const float *lowPeaks = profile->getLowPeaks();
-        QVariantList lowVariants;
+        const float *peaks = profile->getPeaks();
+        QVariantList variants;
         for (int i = 0; i < 1024; i++) {
-            highVariants.append(highPeaks[i]);
-            lowVariants.append(lowPeaks[i]);
+            variants.append(peaks[i] < -128.0 ? -128.0 : peaks[i]);
         }
         QVariantMap map;
-        map["highPeaks"] = highVariants;
-        map["lowPeaks"] = lowVariants;
+        map["peaks"] = variants;
         map["time"] = profile->getTime();
         data.setValue(map);
     }

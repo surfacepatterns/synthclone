@@ -34,18 +34,17 @@ public:
     ~SampleProfile();
 
     const float *
-    getHighPeaks() const;
-
-    const float *
-    getLowPeaks() const;
+    getPeaks() const;
 
     float
     getTime() const;
 
 private:
 
-    float highPeaks[1024];
-    float lowPeaks[1024];
+    float
+    getDBFS(float sample) const;
+
+    float peaks[1024];
     float time;
 
 };

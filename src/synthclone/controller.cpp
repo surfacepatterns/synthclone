@@ -185,7 +185,7 @@ Controller::Controller(Application &application, QObject *parent):
     connect(zoneViewlet, SIGNAL(aftertouchPropertySortRequest(bool)),
             SLOT(handleZoneViewletAftertouchPropertySortRequest(bool)));
     connect(zoneViewlet, SIGNAL(channelPressurePropertySortRequest(bool)),
-            SLOT(handleZoneViewletChannelPressurePropetySortRequest(bool)));
+            SLOT(handleZoneViewletChannelPressurePropertySortRequest(bool)));
     connect(zoneViewlet, SIGNAL(channelPropertySortRequest(bool)),
             SLOT(handleZoneViewletChannelPropertySortRequest(bool)));
     connect(zoneViewlet,

@@ -124,6 +124,12 @@
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectRows</enum>
           </property>
+          <property name="verticalScrollMode">
+           <enum>QAbstractItemView::ScrollPerPixel</enum>
+          </property>
+          <property name="horizontalScrollMode">
+           <enum>QAbstractItemView::ScrollPerPixel</enum>
+          </property>
           <attribute name="horizontalHeaderStretchLastSection">
            <bool>true</bool>
           </attribute>
@@ -220,6 +226,12 @@
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectRows</enum>
           </property>
+          <property name="verticalScrollMode">
+           <enum>QAbstractItemView::ScrollPerPixel</enum>
+          </property>
+          <property name="horizontalScrollMode">
+           <enum>QAbstractItemView::ScrollPerPixel</enum>
+          </property>
           <attribute name="horizontalHeaderStretchLastSection">
            <bool>true</bool>
           </attribute>
@@ -313,6 +325,12 @@
       <property name="selectionBehavior">
        <enum>QAbstractItemView::SelectRows</enum>
       </property>
+      <property name="verticalScrollMode">
+       <enum>QAbstractItemView::ScrollPerPixel</enum>
+      </property>
+      <property name="horizontalScrollMode">
+       <enum>QAbstractItemView::ScrollPerPixel</enum>
+      </property>
       <property name="sortingEnabled">
        <bool>true</bool>
       </property>
@@ -392,7 +410,7 @@
      <addaction name="channelColumnShowAction"/>
      <addaction name="noteColumnShowAction"/>
      <addaction name="velocityColumnShowAction"/>
-     <addaction name="channelPressureColumnShowAction" />
+     <addaction name="channelPressureColumnShowAction"/>
      <addaction name="aftertouchColumnShowAction"/>
      <addaction name="sampleTimeColumnShowAction"/>
      <addaction name="releaseTimeColumnShowAction"/>

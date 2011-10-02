@@ -22,6 +22,7 @@
 #include <QtCore/QLocale>
 #include <QtGui/QComboBox>
 #include <QtGui/QDoubleSpinBox>
+#include <QtGui/QLinearGradient>
 #include <QtGui/QPainter>
 #include <QtGui/QSpinBox>
 
@@ -112,34 +113,30 @@ ZoneTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
             if (height && width) {
                 float midHeight = height / 2.0;
                 QVariantMap variantMap = variant.toMap();
-                QVariantList highPeaks =
-                    variantMap.value("highPeaks").toList();
-                assert(highPeaks.count() == 1024);
-                QVariantList lowPeaks = variantMap.value("lowPeaks").toList();
-                assert(lowPeaks.count() == 1024);
+                QVariantList peaks = variantMap.value("peaks").toList();
+                assert(peaks.count() == 1024);
                 float time = variantMap.value("time").toFloat();
 
                 // Set the operations for drawing the sample.
+                float dBFSFloor = -64.0;
+                float maximumDBFS = -64.0;
                 QPainterPath maximumPath(QPointF(0.0, midHeight));
                 QPainterPath minimumPath(QPointF(0.0, midHeight));
                 for (int i = 0; i < 1024; i++) {
                     float pixelX = (i / 1023.0) * (width - 1);
-                    float value = highPeaks[i].toFloat();
-                    if (value > 1.0) {
-                        value = 1.0;
-                    } else if (value < -1.0) {
-                        value = -1.0;
+                    float value = peaks[i].toFloat();
+                    if (value > 0.0) {
+                        value = 0.0;
+                    } else if (value < dBFSFloor) {
+                        value = dBFSFloor;
                     }
-                    float pixelY = (((- value) + 1.0) * 0.5) * (height - 1);
-                    maximumPath.lineTo(pixelX, pixelY);
-                    value = lowPeaks[i].toFloat();
-                    if (value > 1.0) {
-                        value = 1.0;
-                    } else if (value < -1.0) {
-                        value = 1.0;
+                    float sampleHeight = ((value + (-dBFSFloor)) /
+                                          (-dBFSFloor)) * midHeight;
+                    maximumPath.lineTo(pixelX, midHeight - sampleHeight);
+                    minimumPath.lineTo(pixelX, midHeight + sampleHeight);
+                    if (value > maximumDBFS) {
+                        maximumDBFS = value;
                     }
-                    pixelY = (((- value + 1.0) * 0.5) * (height - 1));
-                    minimumPath.lineTo(pixelX, pixelY);
                 }
                 maximumPath.lineTo(width - 1, midHeight);
                 minimumPath.lineTo(width - 1, midHeight);
@@ -148,16 +145,23 @@ ZoneTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                 QPixmap pixmap(width, height);
                 QPainter pixmapPainter;
                 QPalette palette = option.palette;
-                QColor color = palette.color(QPalette::Text);
                 pixmap.fill(Qt::transparent);
                 pixmapPainter.begin(&pixmap);
-                pixmapPainter.setPen(color);
-                //pixmapPainter.setRenderHint(QPainter::Antialiasing, true);
 
-                // Draw the sample.
-                pixmapPainter.drawPath(maximumPath);
-                color.setAlpha(0x20);
-                pixmapPainter.fillPath(maximumPath, color);
+                QLinearGradient gradient(0, 0, 0, height);
+                QColor baseColor = palette.color(QPalette::Base);
+                QColor textColor = palette.color(QPalette::Text);
+                baseColor.setAlpha(0x80);
+                textColor.setAlpha(0x80);
+                float maximumHeight = ((maximumDBFS + (-dBFSFloor)) /
+                                       (-dBFSFloor)) * midHeight;
+                gradient.setColorAt((midHeight - maximumHeight) / height,
+                                    textColor);
+                gradient.setColorAt(0.5, baseColor);
+                gradient.setColorAt((midHeight + maximumHeight) / height,
+                                    textColor);
+                gradient.setSpread(QLinearGradient::ReflectSpread);
+                pixmapPainter.fillPath(maximumPath, gradient);
 
                 // Write the sample time.
                 QString timeString = tr("%1 seconds").
@@ -165,15 +169,12 @@ ZoneTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                 QRect pixmapRectangle = pixmap.rect();
                 int flags = Qt::AlignHCenter | Qt::AlignVCenter;
                 QFont font(pixmapPainter.font());
-                // I wish Qt had font constants for relative sizes.
-                font.setPointSize(10);
                 pixmapPainter.setFont(font);
                 QRect textRectangle =
                     pixmapPainter.boundingRect(pixmapRectangle, flags,
                                                timeString);
-                color = palette.color(QPalette::Base);
-                color.setAlpha(0xd0);
-                pixmapPainter.fillRect(textRectangle, color);
+                baseColor.setAlpha(0xd0);
+                pixmapPainter.fillRect(textRectangle, baseColor);
                 pixmapPainter.drawText(pixmapRectangle, flags, timeString);
                 pixmapPainter.drawRect(textRectangle);
 

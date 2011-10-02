@@ -19,6 +19,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <limits>
 
 #include <QtCore/QScopedArrayPointer>
 
@@ -37,55 +38,45 @@ SampleProfile::SampleProfile(const synthclone::Sample &sample,
     size_t bufferSize = static_cast<size_t>(ceil(positionDiff) * channels);
     float *buffer = new float[bufferSize];
     QScopedArrayPointer<float> bufferPtr(buffer);
+    int i;
+    float peak;
+    synthclone::SampleFrameCount readFrameCount;
     if (frames >= 1024) {
-        for (int i = 0; i < 1024; i++) {
+        for (i = 0; i < 1024; i++) {
             float currentPosition = positionDiff * i;
             float nextPosition = positionDiff * (i + 1);
-            synthclone::SampleFrameCount readFrameCount =
+            readFrameCount =
                 static_cast<synthclone::SampleFrameCount>(nextPosition) -
                 static_cast<synthclone::SampleFrameCount>(currentPosition);
             assert(readFrameCount >= 1);
             synthclone::SampleFrameCount readFrames =
                 stream.read(buffer, readFrameCount);
             assert(readFrames == readFrameCount);
-            float maximum = -1.0;
-            float minimum = 1.0;
+            peak = 0.0;
             quint64 sampleCount = readFrames * channels;
             for (quint64 j = 0; j < sampleCount; j++) {
-                float n = buffer[j];
-                if (maximum < n) {
-                    maximum = n;
-                }
-                if (minimum > n) {
-                    minimum = n;
+                float n = fabs(buffer[j]);
+                if (n > peak) {
+                    peak = n;
                 }
             }
-            highPeaks[i] = maximum;
-            lowPeaks[i] = minimum;
+            peaks[i] = getDBFS(peak);
         }
     } else {
-        int i;
         for (i = 0; i < frames; i++) {
-            synthclone::SampleFrameCount readFrameCount =
-                stream.read(buffer, 1);
+            readFrameCount = stream.read(buffer, 1);
             assert(readFrameCount == 1);
-            float maximum = -1.0;
-            float minimum = 1.0;
+            peak = 0.0;
             for (synthclone::SampleChannelCount j = 0; j < channels; j++) {
-                float n = buffer[j];
-                if (maximum < n) {
-                    maximum = n;
-                }
-                if (minimum > n) {
-                    minimum = n;
+                float n = fabs(buffer[j]);
+                if (n > peak) {
+                    peak = n;
                 }
             }
-            highPeaks[i] = maximum;
-            lowPeaks[i] = minimum;
+            peaks[i] = getDBFS(peak);
         }
         for (; i < 1024; i++) {
-            highPeaks[i] = 0.0;
-            lowPeaks[i] = 0.0;
+            peaks[i] = -std::numeric_limits<float>().max();
         }
     }
     time = static_cast<float>(frames) / stream.getSampleRate();
@@ -96,16 +87,17 @@ SampleProfile::~SampleProfile()
     // Empty
 }
 
-const float *
-SampleProfile::getHighPeaks() const
+float
+SampleProfile::getDBFS(float sample) const
 {
-    return highPeaks;
+    return (sample == 0.0) ? -std::numeric_limits<float>().max() :
+        20.0 * std::log10(std::fabs(sample));
 }
 
 const float *
-SampleProfile::getLowPeaks() const
+SampleProfile::getPeaks() const
 {
-    return lowPeaks;
+    return peaks;
 }
 
 float
