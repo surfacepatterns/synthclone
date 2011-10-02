@@ -21,12 +21,11 @@
 #include <cassert>
 #include <cmath>
 
+#include <QtCore/QDebug>
 #include <QtCore/QLocale>
 #include <QtCore/QMutexLocker>
 #include <QtCore/QScopedArrayPointer>
 #include <QtCore/QScopedPointer>
-
-#include <QtCore/QDebug>
 
 #include <jack/midiport.h>
 
@@ -635,9 +634,6 @@ Sampler::monitorEvents()
                 emit sampleRateChanged();
                 continue;
             case PriorityEvent::TYPE_SESSION:
-
-                qDebug() << "Sampler::monitorEvents() - session event";
-
                 emit sessionEvent(client, event.data.session);
                 continue;
             case PriorityEvent::TYPE_SHUTDOWN:
@@ -698,9 +694,6 @@ Sampler::monitorEvents()
             emit progressChanged(0.0);
             break;
         case ProcessEvent::TYPE_ERROR:
-
-            qDebug() << "Sampler::monitorEvents() - error event";
-
             idle = true;
             emit statusChanged(tr("Idle."));
             emit jobError(event.data.error.message);

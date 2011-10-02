@@ -218,10 +218,6 @@ Participant::handleSessionEvent(jack_client_t *client,
 void
 Participant::restoreSampler(const QVariant &state)
 {
-    qDebug() << "Participant::restoreSampler";
-
     sessionId = state.toMap().value("sessionId", QByteArray()).toByteArray();
     addSampler(false);
-
-    qDebug() << "Participant::restoreSampler - exiting";
 }
