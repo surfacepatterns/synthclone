@@ -608,7 +608,8 @@ Sampler::initializeAudioPorts(const QString &prefix, JackPortFlags flags,
     jack_port_t **ports = new jack_port_t *[channels];
     QScopedArrayPointer<jack_port_t *> portsPtr(ports);
     for (synthclone::SampleChannelCount i = 0; i < channels; i++) {
-        ports[i] = openPort((prefix + i).toLocal8Bit().constData(),
+        ports[i] = openPort(tr("%1-%2", "portNameTemplate").arg(prefix).
+                            arg(i + 1).toLocal8Bit().constData(),
                             JACK_DEFAULT_AUDIO_TYPE, flags);
     }
     portsPtr.take();
@@ -723,7 +724,8 @@ Sampler::openPort(const char *name, const char *type, JackPortFlags flags)
 {
     jack_port_t *port = jack_port_register(client, name, type, flags, 0);
     if (! port) {
-        throw synthclone::Error(tr("failed to register JACK port"));
+        throw synthclone::Error(tr("failed to register JACK port '%1'").
+                                arg(name));
     }
     registeredPorts.append(port);
     return port;
