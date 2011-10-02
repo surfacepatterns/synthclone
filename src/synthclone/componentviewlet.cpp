@@ -472,10 +472,14 @@ void
 ComponentViewlet::setEffectEditingEnabled(bool enabled)
 {
     effectAddButton->setEnabled(enabled);
-    effectMoveDownButton->setEnabled(enabled);
-    effectMoveUpButton->setEnabled(enabled);
-    effectRemoveButton->setEnabled(enabled);
     effectRootMenu->setEnabled(enabled);
+    if (! enabled) {
+        effectMoveDownButton->setEnabled(false);
+        effectMoveUpButton->setEnabled(false);
+        effectRemoveButton->setEnabled(false);
+    } else {
+        updateEffectButtons();
+    }
 }
 
 void
