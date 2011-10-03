@@ -51,13 +51,23 @@
       </layout>
      </item>
      <item row="1" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Kit Name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="kitName"/>
+     </item>
+     <item row="2" column="0">
       <widget class="QLabel" name="sampleFormatLabel">
        <property name="text">
         <string>Sample Format:</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="2" column="1">
       <widget class="QComboBox" name="sampleFormatComboBox">
        <property name="currentIndex">
         <number>12</number>
@@ -154,14 +164,14 @@
        </item>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="">
        <property name="text">
         <string>Layer Algorithm:</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="3" column="1">
       <widget class="QComboBox" name="layerAlgorithmComboBox">
        <property name="currentIndex">
         <number>0</number>
@@ -183,22 +193,12 @@
        </item>
       </widget>
      </item>
-     <item row="3" column="0" colspan="2">
+     <item row="4" column="0" colspan="2">
       <widget class="Line" name="line">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
       </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>Name:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QLineEdit" name="name"/>
      </item>
      <item row="5" column="0">
       <widget class="QLabel" name="label">
@@ -248,6 +248,23 @@
         </size>
        </property>
       </widget>
+     </item>
+     <item row="8" column="0" colspan="2">
+      <widget class="Line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Target Name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="1">
+      <widget class="QLineEdit" name="name"/>
      </item>
     </layout>
    </item>

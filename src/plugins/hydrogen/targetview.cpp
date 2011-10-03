@@ -39,6 +39,10 @@ TargetView::TargetView(QObject *parent):
     info = synthclone::getChild<QPlainTextEdit>(widget, "info");
     connect(info, SIGNAL(textChanged()), SLOT(handleInfoChange()));
 
+    kitName = synthclone::getChild<QLineEdit>(widget, "kitName");
+    connect(kitName, SIGNAL(textEdited(const QString &)),
+            SIGNAL(kitNameChangeRequest(const QString &)));
+
     layerAlgorithmComboBox = synthclone::getChild<QComboBox>
         (widget, "layerAlgorithmComboBox");
     connect(layerAlgorithmComboBox, SIGNAL(currentIndexChanged(int)),
@@ -101,6 +105,12 @@ TargetView::setInfo(const QString &info)
     if (this->info->toPlainText() != info) {
         this->info->setPlainText(info);
     }
+}
+
+void
+TargetView::setKitName(const QString &name)
+{
+    kitName->setText(name);
 }
 
 void

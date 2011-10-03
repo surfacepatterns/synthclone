@@ -25,8 +25,8 @@
 
 #include <synthclone/target.h>
 
-#include "layeralgorithm.h"
-#include "sampleformat.h"
+#include "archivewriter.h"
+#include "types.h"
 #include "zonekey.h"
 
 class Target: public synthclone::Target {
@@ -45,6 +45,9 @@ public:
 
     QString
     getInfo() const;
+
+    QString
+    getKitName() const;
 
     LayerAlgorithm
     getLayerAlgorithm() const;
@@ -70,6 +73,9 @@ public slots:
     setInfo(const QString &info);
 
     void
+    setKitName(const QString &name);
+
+    void
     setLayerAlgorithm(LayerAlgorithm algorithm);
 
     void
@@ -90,6 +96,9 @@ signals:
     infoChanged(const QString &info);
 
     void
+    kitNameChanged(const QString &name);
+
+    void
     layerAlgorithmChanged(LayerAlgorithm algorithm);
 
     void
@@ -108,12 +117,13 @@ private:
                  const QString &value);
 
     void
-    writeLayer(QXmlStreamWriter &writer, int instrument, int layer,
-               float lowVelocity, float highVelocity,
-               const synthclone::Zone *zone, const QDir &directory);
+    writeLayer(ArchiveWriter &archiveWriter, QXmlStreamWriter &confWriter,
+               int instrument, int layer, float lowVelocity,
+               float highVelocity, const synthclone::Zone *zone);
 
     QString author;
     QString info;
+    QString kitName;
     LayerAlgorithm layerAlgorithm;
     QString license;
     QString path;

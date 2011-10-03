@@ -63,6 +63,8 @@ Participant::addTarget()
             context, SLOT(setSessionModified()));
     connect(target, SIGNAL(infoChanged(QString)),
             context, SLOT(setSessionModified()));
+    connect(target, SIGNAL(kitNameChanged(QString)),
+            context, SLOT(setSessionModified()));
     connect(target, SIGNAL(layerAlgorithmChanged(LayerAlgorithm)),
             context, SLOT(setSessionModified()));
     connect(target, SIGNAL(licenseChanged(QString)),
@@ -97,6 +99,7 @@ Participant::configureTarget(Target *target)
     assert(! configuredTarget);
     targetView.setAuthor(target->getAuthor());
     targetView.setInfo(target->getInfo());
+    targetView.setKitName(target->getKitName());
     targetView.setLayerAlgorithm(target->getLayerAlgorithm());
     targetView.setLicense(target->getLicense());
     targetView.setName(target->getName());
@@ -107,6 +110,8 @@ Participant::configureTarget(Target *target)
             &targetView, SLOT(setAuthor(const QString &)));
     connect(target, SIGNAL(infoChanged(const QString &)),
             &targetView, SLOT(setInfo(const QString &)));
+    connect(target, SIGNAL(kitNameChanged(const QString &)),
+            &targetView, SLOT(setKitName(const QString &)));
     connect(target, SIGNAL(layerAlgorithmChanged(LayerAlgorithm)),
             &targetView, SLOT(setLayerAlgorithm(LayerAlgorithm)));
     connect(target, SIGNAL(licenseChanged(const QString &)),
@@ -122,6 +127,8 @@ Participant::configureTarget(Target *target)
             target, SLOT(setAuthor(const QString &)));
     connect(&targetView, SIGNAL(infoChangeRequest(const QString &)),
             target, SLOT(setInfo(const QString &)));
+    connect(&targetView, SIGNAL(kitNameChangeRequest(const QString &)),
+            target, SLOT(setKitName(const QString &)));
     connect(&targetView, SIGNAL(layerAlgorithmChangeRequest(LayerAlgorithm)),
             target, SLOT(setLayerAlgorithm(LayerAlgorithm)));
     connect(&targetView, SIGNAL(licenseChangeRequest(const QString &)),
@@ -152,6 +159,7 @@ Participant::getState(const synthclone::Target *target) const
     QVariantMap map;
     map["author"] = t->getAuthor();
     map["info"] = t->getInfo();
+    map["kitName"] = t->getKitName();
     map["layerAlgorithm"] = static_cast<int>(t->getLayerAlgorithm());
     map["license"] = t->getLicense();
     map["name"] = t->getName();
@@ -195,7 +203,10 @@ Participant::handleTargetViewCloseRequest()
                &targetView, SLOT(setAuthor(const QString &)));
     disconnect(configuredTarget, SIGNAL(infoChanged(const QString &)),
                &targetView, SLOT(setInfo(const QString &)));
-    disconnect(configuredTarget, SIGNAL(layerAlgorithmChanged(LayerAlgorithm)),
+    disconnect(configuredTarget, SIGNAL(kitNameChanged(const QString &)),
+               &targetView, SLOT(setKitName(const QString &)));
+    disconnect(configuredTarget,
+               SIGNAL(layerAlgorithmChanged(LayerAlgorithm)),
                &targetView, SLOT(setLayerAlgorithm(LayerAlgorithm)));
     disconnect(configuredTarget, SIGNAL(licenseChanged(const QString &)),
                &targetView, SLOT(setLicense(const QString &)));
@@ -210,7 +221,10 @@ Participant::handleTargetViewCloseRequest()
                configuredTarget, SLOT(setAuthor(const QString &)));
     disconnect(&targetView, SIGNAL(infoChangeRequest(const QString &)),
                configuredTarget, SLOT(setInfo(const QString &)));
-    disconnect(&targetView, SIGNAL(layerAlgorithmChangeRequest(LayerAlgorithm)),
+    disconnect(&targetView, SIGNAL(kitNameChangeRequest(const QString &)),
+               configuredTarget, SLOT(setKitName(const QString &)));
+    disconnect(&targetView,
+               SIGNAL(layerAlgorithmChangeRequest(LayerAlgorithm)),
                configuredTarget, SLOT(setLayerAlgorithm(LayerAlgorithm)));
     disconnect(&targetView, SIGNAL(licenseChangeRequest(const QString &)),
                configuredTarget, SLOT(setLicense(const QString &)));
@@ -240,6 +254,7 @@ Participant::restoreTarget(const QVariant &state)
     Target *target = addTarget();
     target->setAuthor(map.value("author", "").toString());
     target->setInfo(map.value("info", "").toString());
+    target->setKitName(map.value("kitName", "").toString());
     target->setLayerAlgorithm
         (static_cast<LayerAlgorithm>
          (map.value("layerAlgorithm",
@@ -247,7 +262,7 @@ Participant::restoreTarget(const QVariant &state)
     target->setLicense(map.value("license", "").toString());
     target->setName(map.value("name", "").toString());
     target->setPath(map.value("path", "").toString());
-    target->setSampleFormat
-        (static_cast<SampleFormat>(map.value("sampleFormat",
-                                             SAMPLEFORMAT_FLAC_24BIT).toInt()));
+    target->setSampleFormat(static_cast<SampleFormat>
+                            (map.value("sampleFormat",
+                                       SAMPLEFORMAT_FLAC_24BIT).toInt()));
 }

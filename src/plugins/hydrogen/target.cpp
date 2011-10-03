@@ -55,10 +55,17 @@ Target::build(const QList<synthclone::Zone *> &zones)
             arg(path);
         throw synthclone::Error(message);
     }
-    QFile file(directory.absoluteFilePath("drumkit.xml"));
-    if (! file.open(QIODevice::WriteOnly)) {
-        throw synthclone::Error(file.errorString());
+    if (kitName.isEmpty()) {
+        message = tr("the kit name is not set");
+        throw synthclone::Error(message);
     }
+    if (QFileInfo(kitName).fileName() != kitName) {
+        message = tr("'%1' is not a valid kit name").arg(kitName);
+        throw synthclone::Error(message);
+    }
+    ArchiveWriter archiveWriter
+        (directory.absoluteFilePath(QString("%1.h2drumkit").arg(kitName)),
+         kitName);
 
     // This plugin builds different instruments for every different combination
     // of channel, note, channel pressure, aftertouch, and control values.  If
@@ -98,16 +105,17 @@ Target::build(const QList<synthclone::Zone *> &zones)
     }
 
     // Write drumkit data.
-    QXmlStreamWriter writer(&file);
-    writer.setAutoFormatting(true);
-    writer.setAutoFormattingIndent(4);
-    writer.writeStartElement("drumkit_info");
+    QString configuration;
+    QXmlStreamWriter confWriter(&configuration);
+    confWriter.setAutoFormatting(true);
+    confWriter.setAutoFormattingIndent(4);
+    confWriter.writeStartElement("drumkit_info");
 
-    writeElement(writer, "name", getName());
-    writeElement(writer, "author", author);
-    writeElement(writer, "info", info);
-    writeElement(writer, "license", license);
-    writer.writeStartElement("instrumentList");
+    writeElement(confWriter, "name", getName());
+    writeElement(confWriter, "author", author);
+    writeElement(confWriter, "info", info);
+    writeElement(confWriter, "license", license);
+    confWriter.writeStartElement("instrumentList");
 
     emit statusChanged(tr("Writing instrument list ..."));
     int layerOverflows = 0;
@@ -124,24 +132,24 @@ Target::build(const QList<synthclone::Zone *> &zones)
                                locale.toString(instrumentCount)));
 
         // Write instrument data.
-        writer.writeStartElement("instrument");
-        writeElement(writer, "id", QString::number(i));
-        writeElement(writer, "name",
+        confWriter.writeStartElement("instrument");
+        writeElement(confWriter, "id", QString::number(i));
+        writeElement(confWriter, "name",
                      tr("Instrument #%1").arg(locale.toString(i + 1)));
-        writeElement(writer, "Attack", "0.0");
-        writeElement(writer, "Decay", "0.0");
-        writeElement(writer, "Sustain", "1.0");
-        writeElement(writer, "Release", "1000.0");
-        writeElement(writer, "filterActive", "false");
-        writeElement(writer, "filterCutoff", "0.0");
-        writeElement(writer, "filterResonance", "0.0");
-        writeElement(writer, "gain", "1.0");
-        writeElement(writer, "isMuted", "false");
-        writeElement(writer, "muteGroup", "-1");
-        writeElement(writer, "pan_L", "1.0");
-        writeElement(writer, "pan_R", "1.0");
-        writeElement(writer, "randomPitchFactor", "0.0");
-        writeElement(writer, "isStopNote", "false");
+        writeElement(confWriter, "Attack", "0.0");
+        writeElement(confWriter, "Decay", "0.0");
+        writeElement(confWriter, "Sustain", "1.0");
+        writeElement(confWriter, "Release", "1000.0");
+        writeElement(confWriter, "filterActive", "false");
+        writeElement(confWriter, "filterCutoff", "0.0");
+        writeElement(confWriter, "filterResonance", "0.0");
+        writeElement(confWriter, "gain", "1.0");
+        writeElement(confWriter, "isMuted", "false");
+        writeElement(confWriter, "muteGroup", "-1");
+        writeElement(confWriter, "pan_L", "1.0");
+        writeElement(confWriter, "pan_R", "1.0");
+        writeElement(confWriter, "randomPitchFactor", "0.0");
+        writeElement(confWriter, "isStopNote", "false");
 
         QList<const synthclone::Zone *> zones = zoneMap.values(keys[i]);
         int layerCount = zones.count();
@@ -157,8 +165,8 @@ Target::build(const QList<synthclone::Zone *> &zones)
         for (int j = 0; j < layerCount - 1; j++) {
             emit progressChanged(((static_cast<float>(j) / layerCount) *
                                   difference) + startProgress);
-            emit statusChanged(tr("Writing layer %1 of %2 for instrument %3 of "
-                                  "%4 ...").
+            emit statusChanged(tr("Writing layer %1 of %2 for instrument %3 "
+                                  "of %4 ...").
                                arg(locale.toString(j + 1),
                                    locale.toString(layerCount),
                                    locale.toString(i + 1),
@@ -184,8 +192,8 @@ Target::build(const QList<synthclone::Zone *> &zones)
                 assert(false);
             }
             try {
-                writeLayer(writer, i, j, lowVelocity, highVelocity,
-                           currentZone, directory);
+                writeLayer(archiveWriter, confWriter, i, j, lowVelocity,
+                           highVelocity, currentZone);
             } catch (...) {
                 emit progressChanged(0.0);
                 emit statusChanged("Idle.");
@@ -203,20 +211,21 @@ Target::build(const QList<synthclone::Zone *> &zones)
                                locale.toString(instrumentCount)));
 
         try {
-            writeLayer(writer, i, layerCount - 1, lowVelocity, 1.0,
-                       zones[layerCount - 1], directory);
+            writeLayer(archiveWriter, confWriter, i, layerCount - 1,
+                       lowVelocity, 1.0, zones[layerCount - 1]);
         } catch (...) {
             emit progressChanged(0.0);
             emit statusChanged("Idle.");
             throw;
         }
-        writer.writeEndElement();
+        confWriter.writeEndElement();
     }
-    writer.writeEndElement();
+    confWriter.writeEndElement();
 
-    writer.writeEndElement();
-    writer.writeEndDocument();
-    file.close();
+    confWriter.writeEndElement();
+    confWriter.writeEndDocument();
+
+    archiveWriter.addConfiguration(configuration);
 
     if (layerOverflows) {
         message = tr("%1 instruments contained more than %2 layers.  Hydrogen "
@@ -240,6 +249,12 @@ QString
 Target::getInfo() const
 {
     return info;
+}
+
+QString
+Target::getKitName() const
+{
+    return kitName;
 }
 
 LayerAlgorithm
@@ -281,6 +296,15 @@ Target::setInfo(const QString &info)
     if (this->info != info) {
         this->info = info;
         emit infoChanged(info);
+    }
+}
+
+void
+Target::setKitName(const QString &name)
+{
+    if (kitName != name) {
+        kitName = name;
+        emit kitNameChanged(name);
     }
 }
 
@@ -330,9 +354,9 @@ Target::writeElement(QXmlStreamWriter &writer, const QString &name,
 }
 
 void
-Target::writeLayer(QXmlStreamWriter &writer, int instrument, int layer,
-                   float lowVelocity, float highVelocity,
-                   const synthclone::Zone *zone, const QDir &directory)
+Target::writeLayer(ArchiveWriter &archiveWriter, QXmlStreamWriter &confWriter,
+                   int instrument, int layer, float lowVelocity,
+                   float highVelocity, const synthclone::Zone *zone)
 {
     synthclone::SampleStream::SubType sampleStreamSubType;
     synthclone::SampleStream::Type sampleStreamType;
@@ -422,7 +446,7 @@ Target::writeLayer(QXmlStreamWriter &writer, int instrument, int layer,
         assert(sample);
     }
 
-    synthclone::Sample outSample(directory.absoluteFilePath(sampleName));
+    synthclone::Sample outSample;
     synthclone::SampleInputStream inputStream(*sample);
     synthclone::SampleChannelCount channels = inputStream.getChannels();
     synthclone::SampleOutputStream outputStream
@@ -430,12 +454,15 @@ Target::writeLayer(QXmlStreamWriter &writer, int instrument, int layer,
          sampleStreamSubType);
     synthclone::SampleCopier copier;
     copier.copy(inputStream, outputStream, inputStream.getFrames());
+    outputStream.close();
 
-    writer.writeStartElement("layer");
-    writeElement(writer, "filename", sampleName);
-    writeElement(writer, "min", QString::number(lowVelocity));
-    writeElement(writer, "max", QString::number(highVelocity));
-    writeElement(writer, "gain", "1.0");
-    writeElement(writer, "pitch", "0.0");
-    writer.writeEndElement();
+    archiveWriter.addSample(sampleName, outSample);
+
+    confWriter.writeStartElement("layer");
+    writeElement(confWriter, "filename", sampleName);
+    writeElement(confWriter, "min", QString::number(lowVelocity));
+    writeElement(confWriter, "max", QString::number(highVelocity));
+    writeElement(confWriter, "gain", "1.0");
+    writeElement(confWriter, "pitch", "0.0");
+    confWriter.writeEndElement();
 }

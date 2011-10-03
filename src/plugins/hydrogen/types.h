@@ -17,8 +17,14 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __SAMPLEFORMAT_H__
-#define __SAMPLEFORMAT_H__
+#ifndef __TYPES_H__
+#define __TYPES_H__
+
+enum LayerAlgorithm {
+    LAYERALGORITHM_LINEAR_INTERPOLATION = 0,
+    LAYERALGORITHM_MAXIMUM = 1,
+    LAYERALGORITHM_MINIMUM = 2
+};
 
 enum SampleFormat {
     SAMPLEFORMAT_AU_8BIT = 0,

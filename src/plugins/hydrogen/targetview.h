@@ -27,8 +27,7 @@
 
 #include <synthclone/designerview.h>
 
-#include "layeralgorithm.h"
-#include "sampleformat.h"
+#include "types.h"
 
 class TargetView: public synthclone::DesignerView {
 
@@ -48,6 +47,9 @@ public slots:
 
     void
     setInfo(const QString &info);
+
+    void
+    setKitName(const QString &name);
 
     void
     setLayerAlgorithm(LayerAlgorithm algorithm);
@@ -71,6 +73,9 @@ signals:
 
     void
     infoChangeRequest(const QString &info);
+
+    void
+    kitNameChangeRequest(const QString &name);
 
     void
     layerAlgorithmChangeRequest(LayerAlgorithm algorithm);
@@ -106,6 +111,7 @@ private:
     QLineEdit *author;
     QPushButton *closeButton;
     QPlainTextEdit *info;
+    QLineEdit *kitName;
     QComboBox *layerAlgorithmComboBox;
     QLineEdit *license;
     QLineEdit *name;
