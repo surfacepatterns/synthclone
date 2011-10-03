@@ -29,22 +29,6 @@ ArchiveWriter::ArchiveWriter(const QString &path, const QString &kitName,
         if (archive_write_open_filename(arch, p) != ARCHIVE_OK) {
             throw synthclone::Error(archive_error_string(arch));
         }
-
-        /*
-        struct archive_entry *entry = archive_entry_new();
-        if (! entry) {
-            throw std::bad_alloc();
-        }
-        archive_entry_set_pathname(entry, kitName.toLocal8Bit().constData());
-        archive_entry_set_filetype(entry, AE_IFDIR);
-        archive_entry_set_perm(entry, 0755);
-        int result = archive_write_header(arch, entry);
-        archive_entry_free(entry);
-        if (result != ARCHIVE_OK) {
-            throw synthclone::Error(archive_error_string(arch));
-        }
-        */
-
     } catch (...) {
         archive_write_finish(arch);
         throw;
@@ -126,7 +110,6 @@ ArchiveWriter::writeEntry(const QString &fileName, int64_t size)
         throw std::bad_alloc();
     }
     QString path = QString("%1/%2").arg(kitName, fileName);
-
     const char *p = path.toLocal8Bit().constData();
     archive_entry_set_pathname(entry, p);
     archive_entry_set_size(entry, size);
