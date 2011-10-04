@@ -1374,7 +1374,8 @@ Session::load(const QDir &directory)
                                    revision, 0, 255)) {
         quint32 currentVersion = (SYNTHCLONE_MAJOR_VERSION << 16) |
             (SYNTHCLONE_MINOR_VERSION << 8) | SYNTHCLONE_REVISION;
-        quint32 version = (majorVersion << 16) | (minorVersion << 8) | revision;
+        quint32 version = (majorVersion << 16) | (minorVersion << 8) |
+            revision;
         if (currentVersion != version) {
             message = tr("parsing session created by synthclone %1.%2.%3").
                 arg(majorVersion).arg(minorVersion).arg(revision);
@@ -1416,8 +1417,8 @@ Session::load(const QDir &directory)
     notePropertyVisible =
         verifyBooleanAttribute(documentElement, "note-property-visible", true);
     releaseTimePropertyVisible =
-        verifyBooleanAttribute(documentElement, "release-time-property-visible",
-                               true);
+        verifyBooleanAttribute(documentElement,
+                               "release-time-property-visible", true);
     sampleTimePropertyVisible =
         verifyBooleanAttribute(documentElement, "sample-time-property-visible",
                                true);
@@ -1497,7 +1498,7 @@ Session::load(const QDir &directory)
                 continue;
             }
             if (isParticipantActivated(participant)) {
-                message = tr("participant with id '%1' requires re-activation").
+                message = tr("participant with id '%1' must be re-activated").
                     arg(id);
                 emitLoadWarning(element, message);
                 deactivateParticipant(participant);
@@ -2084,8 +2085,10 @@ Session::runEffectJobs()
                 synthclone::SampleRate sampleRate =
                     firstInputStream.getSampleRate();
                 synthclone::SampleOutputStream
-                    firstOutputStream(*tempWetSample, sampleRate, channelCount);
-                effects[0]->process(*zone, firstInputStream, firstOutputStream);
+                    firstOutputStream(*tempWetSample, sampleRate,
+                                      channelCount);
+                effects[0]->process(*zone, firstInputStream,
+                                    firstOutputStream);
                 firstInputStream.close();
                 firstOutputStream.close();
                 synthclone::Sample *tempDrySample = tempWetSample;
@@ -2493,7 +2496,6 @@ Session::setZoneSelected(int index, bool selected)
             assert(removed);
         }
         emit zoneSelectionChanged(zone, index, selected);
-        setModified();
     }
 }
 
@@ -2502,11 +2504,11 @@ Session::sortZones(const synthclone::ZoneComparer &comparer, bool ascending,
                    int leftIndex, int rightIndex)
 {
 
-    // The algorithm here is based on the in-place quick sort algorithm found at
-    // http://en.wikipedia.org/wiki/Quicksort.  We implement the algorithm
+    // The algorithm here is based on the in-place quick sort algorithm found
+    // at http://en.wikipedia.org/wiki/Quicksort.  We implement the algorithm
     // instead of using qStableSort because we want to keep track of each zone
-    // move so that any objects listening for move signals can be updated.  This
-    // makes any sort operation a bit slower than it could be, but allows
+    // move so that any objects listening for move signals can be updated.
+    // This makes any sort operation a bit slower than it could be, but allows
     // objects observing zone order to be notified when zones are moved.
 
     if (leftIndex < rightIndex) {
@@ -2755,8 +2757,8 @@ Session::updateSamplerJobs()
 }
 
 bool
-Session::verifyBooleanAttribute(const QDomElement &element, const QString &name,
-                                bool defaultValue)
+Session::verifyBooleanAttribute(const QDomElement &element,
+                                const QString &name, bool defaultValue)
 {
     try {
         return getBooleanAttribute(element, name);
