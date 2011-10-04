@@ -393,7 +393,6 @@ private:
     QAction *selectAllAction;
     ZoneTableDelegate tableDelegate;
     ZoneTableModel tableModel;
-    QItemSelectionModel tableSelectionModel;
     QTableView *tableView;
     QMenu *zonesMenu;
 

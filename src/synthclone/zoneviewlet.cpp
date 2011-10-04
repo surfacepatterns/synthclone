@@ -26,8 +26,7 @@
 #include "zoneviewlet.h"
 
 ZoneViewlet::ZoneViewlet(QMainWindow *mainWindow, QObject *parent):
-    QObject(parent),
-    tableSelectionModel(&tableModel)
+    QObject(parent)
 {
     // Initialize zones menu and associated actions
 
@@ -131,10 +130,32 @@ ZoneViewlet::ZoneViewlet(QMainWindow *mainWindow, QObject *parent):
 
     // Setup zones table view
 
-    tableView = synthclone::getChild<QTableView>(mainWindow, "zoneTableView");
-    connect(&tableSelectionModel,
-            SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
-            SLOT(handleSelectionChange(QItemSelection, QItemSelection)));
+    connect(&tableDelegate,
+            SIGNAL(aftertouchChangeRequest(int, synthclone::MIDIData)),
+            SIGNAL(aftertouchChangeRequest(int, synthclone::MIDIData)));
+    connect(&tableDelegate,
+            SIGNAL(channelChangeRequest(int, synthclone::MIDIData)),
+            SIGNAL(channelChangeRequest(int, synthclone::MIDIData)));
+    connect(&tableDelegate,
+            SIGNAL(channelPressureChangeRequest(int, synthclone::MIDIData)),
+            SIGNAL(channelPressureChangeRequest(int, synthclone::MIDIData)));
+    connect(&tableDelegate,
+            SIGNAL(controlValueChangeRequest(int, synthclone::MIDIData,
+                                             synthclone::MIDIData)),
+            SIGNAL(controlValueChangeRequest(int, synthclone::MIDIData,
+                                             synthclone::MIDIData)));
+    connect(&tableDelegate,
+            SIGNAL(noteChangeRequest(int, synthclone::MIDIData)),
+            SIGNAL(noteChangeRequest(int, synthclone::MIDIData)));
+    connect(&tableDelegate,
+            SIGNAL(releaseTimeChangeRequest(int, synthclone::SampleTime)),
+            SIGNAL(releaseTimeChangeRequest(int, synthclone::SampleTime)));
+    connect(&tableDelegate,
+            SIGNAL(sampleTimeChangeRequest(int, synthclone::SampleTime)),
+            SIGNAL(sampleTimeChangeRequest(int, synthclone::SampleTime)));
+    connect(&tableDelegate,
+            SIGNAL(velocityChangeRequest(int, synthclone::MIDIData)),
+            SIGNAL(velocityChangeRequest(int, synthclone::MIDIData)));
 
     itemPrototype = new StandardItem();
     connect(&tableModel, SIGNAL(sortRequest(int, bool)),
@@ -169,37 +190,13 @@ ZoneViewlet::ZoneViewlet(QMainWindow *mainWindow, QObject *parent):
                                  Qt::DisplayRole);
     }
 
-    connect(&tableDelegate,
-            SIGNAL(aftertouchChangeRequest(int, synthclone::MIDIData)),
-            SIGNAL(aftertouchChangeRequest(int, synthclone::MIDIData)));
-    connect(&tableDelegate,
-            SIGNAL(channelChangeRequest(int, synthclone::MIDIData)),
-            SIGNAL(channelChangeRequest(int, synthclone::MIDIData)));
-    connect(&tableDelegate,
-            SIGNAL(channelPressureChangeRequest(int, synthclone::MIDIData)),
-            SIGNAL(channelPressureChangeRequest(int, synthclone::MIDIData)));
-    connect(&tableDelegate,
-            SIGNAL(controlValueChangeRequest(int, synthclone::MIDIData,
-                                             synthclone::MIDIData)),
-            SIGNAL(controlValueChangeRequest(int, synthclone::MIDIData,
-                                             synthclone::MIDIData)));
-    connect(&tableDelegate,
-            SIGNAL(noteChangeRequest(int, synthclone::MIDIData)),
-            SIGNAL(noteChangeRequest(int, synthclone::MIDIData)));
-    connect(&tableDelegate,
-            SIGNAL(releaseTimeChangeRequest(int, synthclone::SampleTime)),
-            SIGNAL(releaseTimeChangeRequest(int, synthclone::SampleTime)));
-    connect(&tableDelegate,
-            SIGNAL(sampleTimeChangeRequest(int, synthclone::SampleTime)),
-            SIGNAL(sampleTimeChangeRequest(int, synthclone::SampleTime)));
-    connect(&tableDelegate,
-            SIGNAL(velocityChangeRequest(int, synthclone::MIDIData)),
-            SIGNAL(velocityChangeRequest(int, synthclone::MIDIData)));
-
+    tableView = synthclone::getChild<QTableView>(mainWindow, "zoneTableView");
     tableView->installEventFilter(&contextMenuEventFilter);
     tableView->setItemDelegate(&tableDelegate);
     tableView->setModel(&tableModel);
-    tableView->setSelectionModel(&tableSelectionModel);
+    connect(tableView->selectionModel(),
+            SIGNAL(selectionChanged(QItemSelection, QItemSelection)),
+            SLOT(handleSelectionChange(QItemSelection, QItemSelection)));
 
     connect(&contextMenuEventFilter, SIGNAL(contextMenuRequest(int, int)),
             SLOT(handleContextMenuRequest(int, int)));
@@ -462,14 +459,16 @@ ZoneViewlet::moveZone(int fromIndex, int toIndex)
     assert((fromIndex >= 0) && (fromIndex < rowCount));
     assert((toIndex >= 0) && (toIndex < rowCount));
     assert(fromIndex != toIndex);
-    bool selected = tableSelectionModel.isRowSelected(fromIndex, QModelIndex());
+    bool selected = tableView->selectionModel()->
+        isRowSelected(fromIndex, QModelIndex());
     tableModel.insertRow(toIndex, tableModel.takeRow(fromIndex));
     if (selected) {
         int columnCount = tableModel.columnCount();
         QItemSelection selection(tableModel.index(toIndex, 0),
                                  tableModel.index(toIndex, columnCount - 1));
         emitZoneSelectRequest = false;
-        tableSelectionModel.select(selection, QItemSelectionModel::Select);
+        tableView->selectionModel()->
+            select(selection, QItemSelectionModel::Select);
         emitZoneSelectRequest = true;
     }
 }
@@ -753,7 +752,7 @@ ZoneViewlet::setSelected(int index, bool selected)
     QItemSelectionModel::SelectionFlag flag =
         selected ? QItemSelectionModel::Select : QItemSelectionModel::Deselect;
     emitZoneSelectRequest = false;
-    tableSelectionModel.select(selection, flag);
+    tableView->selectionModel()->select(selection, flag);
     emitZoneSelectRequest = true;
 }
 
