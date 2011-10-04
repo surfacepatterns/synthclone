@@ -118,8 +118,8 @@ ZoneTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                 float time = variantMap.value("time").toFloat();
 
                 // Set the operations for drawing the sample.
-                float dBFSFloor = -64.0;
-                float maximumDBFS = -64.0;
+                float dBFSFloor = -96.0;
+                float maximumDBFS = dBFSFloor;
                 QPainterPath maximumPath(QPointF(0.0, midHeight));
                 QPainterPath minimumPath(QPointF(0.0, midHeight));
                 for (int i = 0; i < 1024; i++) {
@@ -142,24 +142,26 @@ ZoneTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                 minimumPath.lineTo(width - 1, midHeight);
                 maximumPath.addPath(minimumPath.toReversed());
 
+                // Create the off-screen pixmap that we'll draw on.
                 QPixmap pixmap(width, height);
                 QPainter pixmapPainter;
                 QPalette palette = option.palette;
                 pixmap.fill(Qt::transparent);
                 pixmapPainter.begin(&pixmap);
 
+                // Draw the waveform.
                 QLinearGradient gradient(0, 0, 0, height);
-                QColor baseColor = palette.color(QPalette::Base);
-                QColor textColor = palette.color(QPalette::Text);
-                baseColor.setAlpha(0x80);
-                textColor.setAlpha(0x80);
+                QColor insideColor = palette.color(QPalette::Text);
+                QColor outsideColor = palette.color(QPalette::Text);
+                insideColor.setAlpha(0x10);
+                outsideColor.setAlpha(0xf0);
                 float maximumHeight = ((maximumDBFS + (-dBFSFloor)) /
                                        (-dBFSFloor)) * midHeight;
                 gradient.setColorAt((midHeight - maximumHeight) / height,
-                                    textColor);
-                gradient.setColorAt(0.5, baseColor);
+                                    outsideColor);
+                gradient.setColorAt(0.5, insideColor);
                 gradient.setColorAt((midHeight + maximumHeight) / height,
-                                    textColor);
+                                    outsideColor);
                 gradient.setSpread(QLinearGradient::ReflectSpread);
                 pixmapPainter.fillPath(maximumPath, gradient);
 
@@ -173,6 +175,7 @@ ZoneTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                 QRect textRectangle =
                     pixmapPainter.boundingRect(pixmapRectangle, flags,
                                                timeString);
+                QColor baseColor = palette.color(QPalette::Base);
                 baseColor.setAlpha(0xd0);
                 pixmapPainter.fillRect(textRectangle, baseColor);
                 pixmapPainter.drawText(pixmapRectangle, flags, timeString);
