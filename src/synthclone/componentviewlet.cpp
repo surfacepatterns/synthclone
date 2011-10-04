@@ -381,12 +381,12 @@ ComponentViewlet::moveEffect(int fromIndex, int toIndex)
 {
     int selectedIndex = getSelectedEffect();
     int count = effectMenuViewlets.count();
-    emitSelectedEffectChange = false;
     effectTableModel.insertRow(toIndex, effectTableModel.takeRow(fromIndex));
     if (selectedIndex == fromIndex) {
+        emitSelectedEffectChange = false;
         setSelectedEffect(toIndex);
+        emitSelectedEffectChange = true;
     }
-    emitSelectedEffectChange = true;
     updateEffectButtons();
 
     MenuViewlet *effectMenuViewlet = effectMenuViewlets.takeAt(fromIndex);
