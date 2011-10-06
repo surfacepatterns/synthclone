@@ -21,6 +21,7 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QLocale>
+#include <QtCore/QScopedPointer>
 #include <QtCore/QTextStream>
 
 #include <synthclone/error.h>
@@ -28,6 +29,63 @@
 #include <synthclone/util.h>
 
 #include "target.h"
+
+// Static data
+
+// These destructors don't actually destroy their objects; instead, they
+// destroy the dynamically allocated contents of the objects, and leave the
+// objects themselves intact.
+
+struct ControlZoneMapDestructor {
+
+    static void
+    cleanup(Target::ControlZoneMap *controlZoneMap)
+    {
+        if (controlZoneMap) {
+            Target::ControlZoneMap::iterator end = controlZoneMap->end();
+            for (Target::ControlZoneMap::iterator iter =
+                     controlZoneMap->begin();
+                 iter != end; iter++) {
+                delete iter.value();
+            }
+        }
+    }
+
+};
+
+struct ZoneMapDestructor {
+
+    static void
+    cleanup(Target::ZoneMap *zoneMap)
+    {
+        if (zoneMap) {
+            Target::ZoneMap::iterator zoneMapEnd = zoneMap->end();
+            for (Target::ZoneMap::iterator zoneMapIter = zoneMap->begin();
+                 zoneMapIter != zoneMapEnd; zoneMapIter++) {
+                Target::NoteZoneMap *noteMap = zoneMapIter.value();
+                Target::NoteZoneMap::iterator noteMapEnd = noteMap->end();
+                for (Target::NoteZoneMap::iterator noteMapIter =
+                         noteMap->begin();
+                     noteMapIter != noteMapEnd; noteMapIter++) {
+                    Target::VelocityZoneMap *velocityMap = noteMapIter.value();
+                    Target::VelocityZoneMap::iterator velocityMapEnd =
+                        velocityMap->end();
+                    for (Target::VelocityZoneMap::iterator velocityMapIter =
+                             velocityMap->begin();
+                         velocityMapIter != velocityMapEnd;
+                         velocityMapIter++) {
+                        delete velocityMapIter.value();
+                    }
+                    delete velocityMap;
+                }
+                delete noteMap;
+            }
+        }
+    }
+
+};
+
+// Class implementation
 
 Target::Target(const QString &name, QObject *parent):
     synthclone::Target(name, parent)
@@ -90,10 +148,7 @@ Target::build(const QList<synthclone::Zone *> &zones)
     QLocale locale = QLocale::system();
     int zoneCount = zones.count();
     ZoneMap zoneMap;
-
-    // XXX: Set a zone map scoped pointer here with a dynamic destructor that
-    // frees any memory allocated to ZoneList, NoteZoneMap, and VelocityZoneMap
-    // objects in the following loop.
+    QScopedPointer<ZoneMap, ZoneMapDestructor> zoneMapPtr(&zoneMap);
 
     // Assemble the zone map.  It looks something like this:
     //
@@ -432,9 +487,9 @@ Target::constructControlRanges(RegionMap &regionMap, ZoneList &zoneList,
         return;
     }
 
-    QMap<synthclone::MIDIData, ZoneList *> controlZoneMap;
-    // XXX: Dynamic destructor that clears out dynamically allocated zone
-    // lists.
+    ControlZoneMap controlZoneMap;
+    QScopedPointer<ControlZoneMap, ControlZoneMapDestructor>
+        controlZoneMapPtr(&controlZoneMap);
 
     // Separate zones by control value.
     ControlLayer *controlLayer = controlLayers[controlLayerIndex];

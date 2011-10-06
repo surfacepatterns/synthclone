@@ -19,6 +19,9 @@
 
 #include <cassert>
 
+#include <QtCore/QDebug>
+#include <QtCore/QLocale>
+
 #include "participant.h"
 
 Participant::Participant(QObject *parent):
@@ -514,7 +517,9 @@ Participant::restoreTarget(const QVariant &state)
         synthclone::MIDIData control = static_cast<synthclone::MIDIData>
             (layerMap.value("control").toInt());
         if (controls.contains(control)) {
-            // XXX: We could add a qWarning().
+            // X: context->reportWarning()?
+            qWarning() << tr("Control layer with control '%1' already loaded").
+                arg(QLocale::system().toString(static_cast<int>(control)));
             continue;
         }
         ControlLayer *layer = target->addControlLayer(control);

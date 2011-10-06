@@ -33,6 +33,13 @@ class Target: public synthclone::Target {
 public:
 
     typedef QList<synthclone::MIDIData> ControlList;
+    typedef QList<const synthclone::Zone *> ZoneList;
+
+    typedef QMap<synthclone::MIDIData, ZoneList *> VelocityZoneMap;
+    typedef QMap<synthclone::MIDIData, VelocityZoneMap *> NoteZoneMap;
+    typedef QMap<synthclone::MIDIData, NoteZoneMap *> ZoneMap;
+
+    typedef QMap<synthclone::MIDIData, ZoneList *> ControlZoneMap;
 
     explicit
     Target(const QString &name, QObject *parent=0);
@@ -131,14 +138,8 @@ signals:
 private:
 
     typedef QList<ControlLayer *> ControlLayerList;
-    typedef QList<const synthclone::Zone *> ZoneList;
 
     typedef QMap<synthclone::MIDIData, ControlLayer *> ControlLayerMap;
-
-    typedef QMap<synthclone::MIDIData, ZoneList *> VelocityZoneMap;
-    typedef QMap<synthclone::MIDIData, VelocityZoneMap *> NoteZoneMap;
-    typedef QMap<synthclone::MIDIData, NoteZoneMap *> ZoneMap;
-
     typedef QMap<const synthclone::Zone *, QStringList> RegionMap;
 
     void
