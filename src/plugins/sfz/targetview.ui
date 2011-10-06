@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Dialog</class>
+ <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>551</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>SFZ</string>
+  </property>
+  <layout class="QVBoxLayout" stretch="0,1,1,0">
+   <item>
+    <layout class="QHBoxLayout">
+     <item>
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Target Name:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="name"/>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Save Properties</string>
+     </property>
+     <layout class="QFormLayout">
+      <property name="fieldGrowthPolicy">
+       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Directory:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <layout class="QHBoxLayout" stretch="1,0">
+        <item>
+         <widget class="QLineEdit" name="path"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pathLookupButton">
+          <property name="text">
+           <string/>
+          </property>
+          <property name="icon">
+           <iconset resource="../../synthclone/resources.qrc">
+            <normaloff>:/synthclone/images/16x16/folder-new.png</normaloff>:/synthclone/images/16x16/folder-new.png</iconset>
+          </property>
+          <property name="autoDefault">
+           <bool>false</bool>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="sampleFormatLabel">
+        <property name="text">
+         <string>Sample Format:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="sampleFormat">
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
+        <item>
+         <property name="text">
+          <string>OGG Vorbis</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>WAV (8-bit)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>WAV (16-bit)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>WAV (24-bit)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>WAV (32-bit)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>WAV (32-bit float)</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Instrument Properties</string>
+     </property>
+     <layout class="QVBoxLayout">
+      <item>
+       <layout class="QFormLayout">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        </property>
+        <item row="0" column="0" colspan="2">
+         <widget class="QCheckBox" name="drumKit">
+          <property name="text">
+           <string>Drum Kit</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="noteCrossfadeCurveLabel">
+          <property name="text">
+           <string>Note Crossfade Curve:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QComboBox" name="noteCrossfadeCurve">
+          <item>
+           <property name="text">
+            <string>Disabled</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Gain (Linear Crossfade)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Power (RMS Crossfade)</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Velocity Crossfade Curve:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="velocityCrossfadeCurve">
+          <item>
+           <property name="text">
+            <string>Disabled</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Gain (Linear Crossfade)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Power (RMS Crossfade)</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Controls</string>
+        </property>
+        <layout class="QVBoxLayout">
+         <item>
+          <layout class="QHBoxLayout" stretch="0,1">
+           <item>
+            <widget class="QLabel" name="label">
+             <property name="text">
+              <string>Crossfade Curve:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="controlCrossfadeCurve">
+             <item>
+              <property name="text">
+               <string>Gain (Linear Crossfade)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Power (RMS Crossfade)</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Layers:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" stretch="1,0">
+           <item>
+            <widget class="QTableView" name="controlLayerTableView"/>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" stretch="0,0,0,0,1">
+             <item>
+              <widget class="QPushButton" name="addControlLayerButton">
+               <property name="text">
+                <string>Add Layer</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../../synthclone/resources.qrc">
+                 <normaloff>:/synthclone/images/16x16/add.png</normaloff>:/synthclone/images/16x16/add.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="removeControlLayerButton">
+               <property name="text">
+                <string>Remove Layer</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../../synthclone/resources.qrc">
+                 <normaloff>:/synthclone/images/16x16/remove.png</normaloff>:/synthclone/images/16x16/remove.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="moveControlLayerUpButton">
+               <property name="text">
+                <string>Move Layer Up</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../../synthclone/resources.qrc">
+                 <normaloff>:/synthclone/images/16x16/go-up.png</normaloff>:/synthclone/images/16x16/go-up.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="moveControlLayerDownButton">
+               <property name="text">
+                <string>Move Layer Down</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../../synthclone/resources.qrc">
+                 <normaloff>:/synthclone/images/16x16/go-down.png</normaloff>:/synthclone/images/16x16/go-down.png</iconset>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" stretch="1,0">
+     <item>
+      <spacer>
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="closeButton">
+       <property name="text">
+        <string>Close</string>
+       </property>
+       <property name="icon">
+        <iconset resource="../../synthclone/resources.qrc">
+         <normaloff>:/synthclone/images/16x16/close.png</normaloff>:/synthclone/images/16x16/close.png</iconset>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../../synthclone/resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

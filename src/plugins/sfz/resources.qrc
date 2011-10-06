@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/synthclone/plugins/sfz">
+        <file>targetview.ui</file>
+    </qresource>
+</RCC>
