@@ -403,12 +403,12 @@ ComponentViewlet::moveTarget(int fromIndex, int toIndex)
 {
     int selectedIndex = getSelectedTarget();
     int count = targetMenuViewlets.count();
-    emitSelectedTargetChange = false;
     targetTableModel.insertRow(toIndex, targetTableModel.takeRow(fromIndex));
     if (selectedIndex == fromIndex) {
+        emitSelectedTargetChange = false;
         setSelectedTarget(toIndex);
+        emitSelectedTargetChange = true;
     }
-    emitSelectedTargetChange = true;
     updateTargetButtons();
 
     MenuViewlet *targetMenuViewlet = targetMenuViewlets.takeAt(fromIndex);
