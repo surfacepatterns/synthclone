@@ -2,14 +2,25 @@
 <ui version="4.0">
  <class>Dialog</class>
  <widget class="QDialog" name="Dialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>350</width>
+    <height>390</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>Generate Zones</string>
   </property>
   <layout class="QVBoxLayout">
    <item>
     <layout class="QFormLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
      <item row="0" column="0">
-      <widget class="QLabel">
+      <widget class="QLabel" name="label">
        <property name="text">
         <string>Sample Time:</string>
        </property>
@@ -32,7 +43,7 @@
       </widget>
      </item>
      <item row="1" column="0">
-      <widget class="QLabel">
+      <widget class="QLabel" name="label">
        <property name="text">
         <string>Release Time:</string>
        </property>
@@ -55,7 +66,7 @@
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QLabel">
+      <widget class="QLabel" name="label">
        <property name="text">
         <string>MIDI Channel:</string>
        </property>
@@ -74,115 +85,129 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0" colspan="2">
-      <widget class="Line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel">
-       <property name="text">
-        <string>First Note:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QComboBox" name="firstNote"/>
-     </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="lastNoteLabel">
-       <property name="text">
-        <string>Last Note:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QComboBox" name="lastNote"/>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel">
-       <property name="text">
-        <string>Total Notes:</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="1">
-      <widget class="QSpinBox" name="totalNotes">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>128</number>
-       </property>
-       <property name="value">
-        <number>8</number>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0" colspan="2">
-      <widget class="Line">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="0">
-      <widget class="QLabel">
-       <property name="text">
-        <string>Velocity Layers (per note):</string>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="1">
-      <widget class="QSpinBox" name="velocityLayers">
-       <property name="minimum">
-        <number>1</number>
-       </property>
-       <property name="maximum">
-        <number>127</number>
-       </property>
-       <property name="value">
-        <number>8</number>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="0">
-      <widget class="QLabel">
-       <property name="text">
-        <string>Channel Pressure Layers (per aftertouch layer):</string>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1">
-      <widget class="QSpinBox" name="channelPressureLayers">
-       <property name="specialValueText">
-        <string>(not used)</string>
-       </property>
-       <property name="maximum">
-        <number>128</number>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="0">
-      <widget class="QLabel">
-       <property name="text">
-        <string>Aftertouch Layers (per velocity and channel pressure layer):</string>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="1">
-      <widget class="QSpinBox" name="aftertouchLayers">
-       <property name="specialValueText">
-        <string>(not used)</string>
-       </property>
-       <property name="maximum">
-        <number>128</number>
-       </property>
-      </widget>
-     </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>Layers</string>
+     </property>
+     <layout class="QVBoxLayout">
+      <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Note Layers</string>
+        </property>
+        <layout class="QFormLayout">
+         <property name="fieldGrowthPolicy">
+          <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>First Note:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="firstNote"/>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="lastNoteLabel">
+           <property name="text">
+            <string>Last Note:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="lastNote"/>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label">
+           <property name="text">
+            <string>Total Notes:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QSpinBox" name="totalNotes">
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>128</number>
+           </property>
+           <property name="value">
+            <number>8</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <layout class="QFormLayout">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Velocity Layers:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="velocityLayers">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>127</number>
+          </property>
+          <property name="value">
+           <number>8</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Channel Pressure Layers:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="channelPressureLayers">
+          <property name="specialValueText">
+           <string>(not used)</string>
+          </property>
+          <property name="maximum">
+           <number>128</number>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Aftertouch Layers:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QSpinBox" name="aftertouchLayers">
+          <property name="specialValueText">
+           <string>(not used)</string>
+          </property>
+          <property name="maximum">
+           <number>128</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout">
@@ -190,6 +215,12 @@
       <spacer>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
        </property>
       </spacer>
      </item>
@@ -199,7 +230,7 @@
         <string>Cancel</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset resource="../../synthclone/resources.qrc">
          <normaloff>:/synthclone/images/16x16/close.png</normaloff>:/synthclone/images/16x16/close.png</iconset>
        </property>
       </widget>
@@ -210,7 +241,7 @@
         <string>Generate Zones</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset resource="../../synthclone/resources.qrc">
          <normaloff>:/synthclone/images/16x16/ok.png</normaloff>:/synthclone/images/16x16/ok.png</iconset>
        </property>
       </widget>
