@@ -55,7 +55,7 @@
            <string/>
           </property>
           <property name="icon">
-           <iconset resource="../../synthclone/resources.qrc">
+           <iconset resource="../../lib/lib.qrc">
             <normaloff>:/synthclone/images/16x16/folder-new.png</normaloff>:/synthclone/images/16x16/folder-new.png</iconset>
           </property>
           <property name="autoDefault">
@@ -308,7 +308,7 @@
         <string>Close</string>
        </property>
        <property name="icon">
-        <iconset resource="../../synthclone/resources.qrc">
+        <iconset resource="../../lib/lib.qrc">
          <normaloff>:/synthclone/images/16x16/close.png</normaloff>:/synthclone/images/16x16/close.png</iconset>
        </property>
       </widget>
@@ -318,7 +318,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../synthclone/resources.qrc"/>
+  <include location="../../lib/lib.qrc"/>
  </resources>
  <connections/>
 </ui>

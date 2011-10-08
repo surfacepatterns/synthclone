@@ -14,7 +14,7 @@
    <string>synthclone</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset resource="../lib/lib.qrc">
     <normaloff>:/synthclone/images/16x16/synthclone.png</normaloff>:/synthclone/images/16x16/synthclone.png</iconset>
   </property>
   <widget class="QWidget" name="widget">
@@ -47,7 +47,7 @@
              <string>Add</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../lib/lib.qrc">
               <normaloff>:/synthclone/images/16x16/add.png</normaloff>:/synthclone/images/16x16/add.png</iconset>
             </property>
            </widget>
@@ -82,7 +82,7 @@
              <string>Stop</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../lib/lib.qrc">
               <normaloff>:/synthclone/images/16x16/stop.png</normaloff>:/synthclone/images/16x16/stop.png</iconset>
             </property>
            </widget>
@@ -149,7 +149,7 @@
              <string>Add</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../lib/lib.qrc">
               <normaloff>:/synthclone/images/16x16/add.png</normaloff>:/synthclone/images/16x16/add.png</iconset>
             </property>
            </widget>
@@ -163,7 +163,7 @@
              <string>Remove</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../lib/lib.qrc">
               <normaloff>:/synthclone/images/16x16/remove.png</normaloff>:/synthclone/images/16x16/remove.png</iconset>
             </property>
            </widget>
@@ -177,7 +177,7 @@
              <string>Move Up</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../lib/lib.qrc">
               <normaloff>:/synthclone/images/16x16/go-up.png</normaloff>:/synthclone/images/16x16/go-up.png</iconset>
             </property>
            </widget>
@@ -191,7 +191,7 @@
              <string>Move Down</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../lib/lib.qrc">
               <normaloff>:/synthclone/images/16x16/go-down.png</normaloff>:/synthclone/images/16x16/go-down.png</iconset>
             </property>
            </widget>
@@ -251,7 +251,7 @@
              <string>Add</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../lib/lib.qrc">
               <normaloff>:/synthclone/images/16x16/add.png</normaloff>:/synthclone/images/16x16/add.png</iconset>
             </property>
            </widget>
@@ -265,7 +265,7 @@
              <string>Remove</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../lib/lib.qrc">
               <normaloff>:/synthclone/images/16x16/remove.png</normaloff>:/synthclone/images/16x16/remove.png</iconset>
             </property>
            </widget>
@@ -279,7 +279,7 @@
              <string>Move Up</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../lib/lib.qrc">
               <normaloff>:/synthclone/images/16x16/go-up.png</normaloff>:/synthclone/images/16x16/go-up.png</iconset>
             </property>
            </widget>
@@ -293,7 +293,7 @@
              <string>Move Down</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../lib/lib.qrc">
               <normaloff>:/synthclone/images/16x16/go-down.png</normaloff>:/synthclone/images/16x16/go-down.png</iconset>
             </property>
            </widget>
@@ -523,7 +523,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="loadSessionAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/load.png</normaloff>:/synthclone/images/16x16/load.png</iconset>
    </property>
    <property name="text">
@@ -538,7 +538,7 @@
   </action>
   <action name="saveSessionAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/save.png</normaloff>:/synthclone/images/16x16/save.png</iconset>
    </property>
    <property name="text">
@@ -550,7 +550,7 @@
   </action>
   <action name="saveSessionAsAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/save-as.png</normaloff>:/synthclone/images/16x16/save-as.png</iconset>
    </property>
    <property name="text">
@@ -562,7 +562,7 @@
   </action>
   <action name="quitSessionAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/quit.png</normaloff>:/synthclone/images/16x16/quit.png</iconset>
    </property>
    <property name="text">
@@ -574,7 +574,7 @@
   </action>
   <action name="cutZonesAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/cut.png</normaloff>:/synthclone/images/16x16/cut.png</iconset>
    </property>
    <property name="text">
@@ -586,7 +586,7 @@
   </action>
   <action name="copyZonesAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/copy.png</normaloff>:/synthclone/images/16x16/copy.png</iconset>
    </property>
    <property name="text">
@@ -598,7 +598,7 @@
   </action>
   <action name="pasteZonesAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/paste.png</normaloff>:/synthclone/images/16x16/paste.png</iconset>
    </property>
    <property name="text">
@@ -610,7 +610,7 @@
   </action>
   <action name="deleteZonesAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/delete.png</normaloff>:/synthclone/images/16x16/delete.png</iconset>
    </property>
    <property name="text">
@@ -622,7 +622,7 @@
   </action>
   <action name="selectAllZonesAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/select-all.png</normaloff>:/synthclone/images/16x16/select-all.png</iconset>
    </property>
    <property name="text">
@@ -642,7 +642,7 @@
   </action>
   <action name="insertZoneAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/add.png</normaloff>:/synthclone/images/16x16/add.png</iconset>
    </property>
    <property name="text">
@@ -654,7 +654,7 @@
   </action>
   <action name="aboutHelpAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/information.png</normaloff>:/synthclone/images/16x16/information.png</iconset>
    </property>
    <property name="text">
@@ -743,7 +743,7 @@
   </action>
   <action name="getSampleZonesAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/record.png</normaloff>:/synthclone/images/16x16/record.png</iconset>
    </property>
    <property name="text">
@@ -755,7 +755,7 @@
   </action>
   <action name="playDrySampleZonesAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/play.png</normaloff>:/synthclone/images/16x16/play.png</iconset>
    </property>
    <property name="text">
@@ -767,7 +767,7 @@
   </action>
   <action name="playWetSampleZonesAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/play.png</normaloff>:/synthclone/images/16x16/play.png</iconset>
    </property>
    <property name="text">
@@ -779,7 +779,7 @@
   </action>
   <action name="participantsViewAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/view-tree.png</normaloff>:/synthclone/images/16x16/view-tree.png</iconset>
    </property>
    <property name="text">
@@ -788,7 +788,7 @@
   </action>
   <action name="clearZonesSelectionAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/clear.png</normaloff>:/synthclone/images/16x16/clear.png</iconset>
    </property>
    <property name="text">
@@ -800,7 +800,7 @@
   </action>
   <action name="applyEffectsZonesAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/connect.png</normaloff>:/synthclone/images/16x16/connect.png</iconset>
    </property>
    <property name="text">
@@ -828,7 +828,7 @@
   </action>
   <action name="buildTargetsAction">
    <property name="icon">
-    <iconset resource="resources.qrc">
+    <iconset resource="../lib/lib.qrc">
      <normaloff>:/synthclone/images/16x16/folder-music.png</normaloff>:/synthclone/images/16x16/folder-music.png</iconset>
    </property>
    <property name="text">
@@ -840,7 +840,7 @@
   </action>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../lib/lib.qrc"/>
  </resources>
  <connections/>
 </ui>

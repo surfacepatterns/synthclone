@@ -11,7 +11,7 @@ HEADERS += effect.h \
 MOC_DIR = $$MAKEDIR/plugins/trimmer
 OBJECTS_DIR = $$MAKEDIR/plugins/trimmer
 RCC_DIR = $$MAKEDIR/plugins/trimmer
-RESOURCES += resources.qrc
+RESOURCES += trimmer.qrc
 SOURCES += effect.cpp \
     effectview.cpp \
     participant.cpp \

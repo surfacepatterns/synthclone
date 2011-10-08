@@ -17,7 +17,7 @@
    <string>Error</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset resource="../lib/lib.qrc">
     <normaloff>:/synthclone/images/16x16/error.png</normaloff>:/synthclone/images/16x16/error.png</iconset>
   </property>
   <property name="modal">
@@ -44,7 +44,7 @@
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="resources.qrc">:/synthclone/images/32x32/error.png</pixmap>
+        <pixmap resource="../lib/lib.qrc">:/synthclone/images/32x32/error.png</pixmap>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -87,7 +87,7 @@
         <string>Close</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset resource="../lib/lib.qrc">
          <normaloff>:/synthclone/images/16x16/close.png</normaloff>:/synthclone/images/16x16/close.png</iconset>
        </property>
       </widget>
@@ -97,7 +97,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../lib/lib.qrc"/>
  </resources>
  <connections/>
 </ui>

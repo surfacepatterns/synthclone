@@ -71,7 +71,7 @@ LIBS += -L$$BUILDDIR/lib -lsamplerate -lsynthclone
 MOC_DIR = $$MAKEDIR/synthclone
 OBJECTS_DIR = $$MAKEDIR/synthclone
 RCC_DIR = $$MAKEDIR/synthclone
-RESOURCES += resources.qrc
+RESOURCES += synthclone.qrc
 SOURCES += aboutview.cpp \
     application.cpp \
     componentviewlet.cpp \
@@ -129,7 +129,7 @@ TEMPLATE = app
 unix {
     desktop.files += $$BUILDDIR/share/applications/synthclone.desktop
     desktop.path = $$PREFIX/share/applications
-    icon.files += images/32x32/synthclone.png
+    icon.files += ../lib/images/32x32/synthclone.png
     icon.path = $$PREFIX/share/icons/
     INSTALLS += desktop icon
 }

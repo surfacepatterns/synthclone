@@ -44,6 +44,8 @@ INCLUDEPATH += ../include
 LIBS += -lsndfile
 MOC_DIR = $$MAKEDIR/lib
 OBJECTS_DIR = $$MAKEDIR/lib
+RCC_DIR = $$MAKEDIR/lib
+RESOURCES += lib.qrc
 SOURCES += closeeventfilter.cpp \
     component.cpp \
     context.cpp \

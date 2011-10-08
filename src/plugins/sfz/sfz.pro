@@ -14,7 +14,7 @@ HEADERS += controllayer.h \
 MOC_DIR = $$MAKEDIR/plugins/sfz
 OBJECTS_DIR = $$MAKEDIR/plugins/sfz
 RCC_DIR = $$MAKEDIR/plugins/sfz
-RESOURCES += resources.qrc
+RESOURCES += sfz.qrc
 SOURCES += controllayer.cpp \
     controllayerdelegate.cpp \
     participant.cpp \

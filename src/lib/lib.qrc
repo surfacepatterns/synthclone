@@ -1,13 +1,5 @@
 <RCC>
   <qresource prefix="/synthclone">
-    <file>aboutview.ui</file>
-    <file>errorview.ui</file>
-    <file>mainview.ui</file>
-    <file>participantview.ui</file>
-    <file>progressview.ui</file>
-    <file>savechangesview.ui</file>
-    <file>savewarningview.ui</file>
-    <file>sessionloadview.ui</file>
     <file>images/16x16/add.png</file>
     <file>images/16x16/clear.png</file>
     <file>images/16x16/close.png</file>
@@ -43,17 +35,5 @@
     <file>images/32x32/important.png</file>
     <file>images/32x32/information.png</file>
     <file>images/32x32/synthclone.png</file>
-
-    <!-- accepted.png == ok.png -->
-    <!-- document-open.png == load.png -->
-    <!-- document-save.png == save.png -->
-    <!-- document-save-as.png == save-as.png -->
-    <!-- edit-copy.png == copy.png -->
-    <!-- edit-cut.png == cut.png -->
-    <!-- edit-delete.png == delete.png -->
-    <!-- edit-paste.png == paste.png -->
-    <!-- edit-select-all.png == select-all.png -->
-    <!-- rejected.png == quit.png -->
-
   </qresource>
 </RCC>

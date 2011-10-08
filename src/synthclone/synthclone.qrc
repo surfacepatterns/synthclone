@@ -1,0 +1,12 @@
+<RCC>
+  <qresource prefix="/synthclone">
+    <file>aboutview.ui</file>
+    <file>errorview.ui</file>
+    <file>mainview.ui</file>
+    <file>participantview.ui</file>
+    <file>progressview.ui</file>
+    <file>savechangesview.ui</file>
+    <file>savewarningview.ui</file>
+    <file>sessionloadview.ui</file>
+  </qresource>
+</RCC>

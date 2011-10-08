@@ -11,7 +11,7 @@ HEADERS += data.h \
 MOC_DIR = $$MAKEDIR/plugins/zonegenerator
 OBJECTS_DIR = $$MAKEDIR/plugins/zonegenerator
 RCC_DIR = $$MAKEDIR/plugins/zonegenerator
-RESOURCES += resources.qrc
+RESOURCES += zonegenerator.qrc
 SOURCES += data.cpp \
     participant.cpp \
     plugin.cpp \

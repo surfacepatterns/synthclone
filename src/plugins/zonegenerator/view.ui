@@ -230,7 +230,7 @@
         <string>Cancel</string>
        </property>
        <property name="icon">
-        <iconset resource="../../synthclone/resources.qrc">
+        <iconset resource="../../lib/lib.qrc">
          <normaloff>:/synthclone/images/16x16/close.png</normaloff>:/synthclone/images/16x16/close.png</iconset>
        </property>
       </widget>
@@ -241,7 +241,7 @@
         <string>Generate Zones</string>
        </property>
        <property name="icon">
-        <iconset resource="../../synthclone/resources.qrc">
+        <iconset resource="../../lib/lib.qrc">
          <normaloff>:/synthclone/images/16x16/ok.png</normaloff>:/synthclone/images/16x16/ok.png</iconset>
        </property>
       </widget>
@@ -251,7 +251,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../synthclone/resources.qrc"/>
+  <include location="../../lib/lib.qrc"/>
  </resources>
  <connections/>
 </ui>

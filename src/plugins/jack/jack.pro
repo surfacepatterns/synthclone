@@ -14,7 +14,7 @@ LIBS += -ljack
 MOC_DIR = $$MAKEDIR/plugins/jack
 OBJECTS_DIR = $$MAKEDIR/plugins/jack
 RCC_DIR = $$MAKEDIR/plugins/jack
-RESOURCES += resources.qrc
+RESOURCES += jack.qrc
 SOURCES += eventthread.cpp \
     participant.cpp \
     plugin.cpp \

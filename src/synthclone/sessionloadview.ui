@@ -17,7 +17,7 @@
    <string>Load Session</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="resources.qrc">
+   <iconset resource="../lib/lib.qrc">
     <normaloff>:/synthclone/images/16x16/load.png</normaloff>:/synthclone/images/16x16/load.png</iconset>
   </property>
   <property name="modal">
@@ -54,7 +54,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="resources.qrc">
+              <iconset resource="../lib/lib.qrc">
                <normaloff>:/synthclone/images/16x16/folder-new.png</normaloff>:/synthclone/images/16x16/folder-new.png</iconset>
              </property>
              <property name="autoDefault">
@@ -241,7 +241,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="resources.qrc">
+            <iconset resource="../lib/lib.qrc">
              <normaloff>:/synthclone/images/16x16/folder-open.png</normaloff>:/synthclone/images/16x16/folder-open.png</iconset>
            </property>
            <property name="autoDefault">
@@ -303,7 +303,7 @@
         <string>Quit</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset resource="../lib/lib.qrc">
          <normaloff>:/synthclone/images/16x16/close.png</normaloff>:/synthclone/images/16x16/close.png</iconset>
        </property>
        <property name="autoDefault">
@@ -317,7 +317,7 @@
         <string>Create</string>
        </property>
        <property name="icon">
-        <iconset resource="resources.qrc">
+        <iconset resource="../lib/lib.qrc">
          <normaloff>:/synthclone/images/16x16/load.png</normaloff>:/synthclone/images/16x16/load.png</iconset>
        </property>
        <property name="autoDefault">
@@ -330,7 +330,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../lib/lib.qrc"/>
  </resources>
  <connections/>
 </ui>
