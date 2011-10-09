@@ -131,7 +131,8 @@ Participant::handleGenerateRequest()
     // Iterate over note values
     for (int noteIndex = static_cast<int>(totalNotes - 1); noteIndex >= 0;
          noteIndex--) {
-        synthclone::MIDIData note = static_cast<synthclone::MIDIData>
+        synthclone::MIDIData note = totalNotes == 1 ? firstNote :
+            static_cast<synthclone::MIDIData>
             (std::ceil(firstNote + (noteDifference *
                                     (static_cast<float>(noteIndex) /
                                      (totalNotes - 1)))));
