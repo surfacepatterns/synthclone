@@ -300,6 +300,30 @@ Participant::getState(const synthclone::Target *target) const
 }
 
 void
+Participant::handleControlLayerCrossfadingEnabledChange(bool enabled)
+{
+    int index = configuredTarget->
+        getControlLayerIndex(qobject_cast<ControlLayer *>(sender()));
+    targetView.setControlLayerCrossfadingEnabled(index, enabled);
+}
+
+void
+Participant::handleControlLayerDefaultValueChange(synthclone::MIDIData value)
+{
+    int index = configuredTarget->
+        getControlLayerIndex(qobject_cast<ControlLayer *>(sender()));
+    targetView.setControlLayerDefaultValue(index, value);
+}
+
+void
+Participant::handleControlLayerTypeChange(synthclone::ControlType type)
+{
+    int index = configuredTarget->
+        getControlLayerIndex(qobject_cast<ControlLayer *>(sender()));
+    targetView.setControlLayerType(index, type);
+}
+
+void
 Participant::handleDirectoryViewCloseRequest()
 {
     directoryView.setVisible(false);

@@ -61,6 +61,9 @@ public:
     int
     getControlLayerCount() const;
 
+    int
+    getControlLayerIndex(const ControlLayer *layer) const;
+
     CrossfadeCurve
     getNoteCrossfadeCurve() const;
 

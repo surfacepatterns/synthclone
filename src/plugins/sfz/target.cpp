@@ -253,6 +253,8 @@ Target::build(const QList<synthclone::Zone *> &zones)
     QList<synthclone::MIDIData> channels = zoneMap.keys();
     int channelCount = channels.count();
 
+    emit statusChanged("Writing SFZ patch ...");
+    int zonesWritten = 0;
     for (int channelIndex = 0; channelIndex < channelCount; channelIndex++) {
 
         synthclone::MIDIData channel = channels[channelIndex];
@@ -363,10 +365,10 @@ Target::build(const QList<synthclone::Zone *> &zones)
                                 QString::number(hiVelocity + 1));
                 }
                 if (velocityCount != 1) {
+                    QString temp("amp_velcurve_%1");
                     switch (velocityCrossfadeCurve) {
                     case CROSSFADECURVE_NONE:
                         if (velocity != 127) {
-                            QString temp("amp_velcurve_%1");
                             writeOpcode(commonRegionData, temp.arg(velocity),
                                         "1.0");
                             if (hiVelocity != velocity) {
@@ -447,13 +449,19 @@ Target::build(const QList<synthclone::Zone *> &zones)
 
                 // Write each constructed region to the file.
                 for (int i = zoneList->count() - 1; i >= 0; i--) {
-                    stream << regionMap.value(zoneList->at(i)).join("");
+                    stream << regionMap.value(zoneList->at(i)).join("")
+                           << '\n';
                 }
-                stream << '\n';
+
+                zonesWritten += zoneList->count();
+                emit progressChanged(((static_cast<float>(zonesWritten) /
+                                       zoneCount) * 0.5) + 0.5);
             }
         }
     }
     file.close();
+    emit progressChanged(0.0);
+    emit statusChanged("Idle.");
 }
 
 void
@@ -515,10 +523,10 @@ Target::constructControlRanges(RegionMap &regionMap, ZoneList &zoneList,
         default:
             assert(false);
         }
-        ZoneList *controlZoneList = controlZoneMap.value(control, 0);
+        ZoneList *controlZoneList = controlZoneMap.value(controlValue, 0);
         if (! controlZoneList) {
             controlZoneList = new ZoneList();
-            controlZoneMap.insert(control, controlZoneList);
+            controlZoneMap.insert(controlValue, controlZoneList);
         }
         controlZoneList->append(zone);
     }
@@ -537,7 +545,7 @@ Target::constructControlRanges(RegionMap &regionMap, ZoneList &zoneList,
             QString controlValueStr = QString::number(controlValue);
             synthclone::MIDIData loControlValue;
             synthclone::MIDIData hiControlValue;
-            ZoneList *zones = controlZoneMap.value(control);
+            ZoneList *zones = controlZoneMap.value(controlValue);
             int zoneCount = zones->count();
             assert(zones);
             if (! controlValueIndex) {
@@ -627,6 +635,14 @@ int
 Target::getControlLayerCount() const
 {
     return controlLayers.count();
+}
+
+int
+Target::getControlLayerIndex(const ControlLayer *layer) const
+{
+    int index = controlLayers.indexOf(const_cast<ControlLayer *>(layer));
+    assert(index != -1);
+    return index;
 }
 
 CrossfadeCurve

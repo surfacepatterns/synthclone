@@ -52,6 +52,15 @@ public:
 private slots:
 
     void
+    handleControlLayerCrossfadingEnabledChange(bool enabled);
+
+    void
+    handleControlLayerDefaultValueChange(synthclone::MIDIData value);
+
+    void
+    handleControlLayerTypeChange(synthclone::ControlType type);
+
+    void
     handleDirectoryViewCloseRequest();
 
     void

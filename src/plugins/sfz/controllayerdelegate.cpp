@@ -85,8 +85,8 @@ ControlLayerDelegate::setEditorData(QWidget *editor,
         break;
     case CONTROLLAYERTABLECOLUMN_TYPE:
         type = static_cast<synthclone::ControlType>(value.toInt());
-        qobject_cast<QSpinBox *>(editor)->
-            setValue(type == synthclone::CONTROLTYPE_CONTINUOUS ? 0 : 1);
+        qobject_cast<QComboBox *>(editor)->
+            setCurrentIndex(type == synthclone::CONTROLTYPE_SWITCH ? 1 : 0);
     }
 }
 

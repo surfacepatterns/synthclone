@@ -173,6 +173,11 @@ TargetView::addControlLayer(int index, synthclone::MIDIData control)
     }
     setModelData(index, CONTROLLAYERTABLECOLUMN_CONTROL, controlStr,
                  Qt::DisplayRole);
+
+    QStandardItem *item = controlLayerTableModel.itemFromIndex
+        (controlLayerTableModel.index(index, CONTROLLAYERTABLECOLUMN_CONTROL));
+    item->setFlags(item->flags() & (~ Qt::ItemIsEditable));
+
     updateControlLayerButtons();
 
     QAction *action = controlActionMap.value(control, 0);
