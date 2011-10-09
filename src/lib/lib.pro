@@ -73,6 +73,10 @@ SOURCES += closeeventfilter.cpp \
     zonecomparer.cpp
 TARGET = synthclone
 TEMPLATE = lib
+VERSION = $$MAJOR_VERSION.$$MINOR_VERSION.$$REVISION
+VER_MAJ = $$MAJOR_VERSION
+VER_MIN = $$MINOR_VERSION
+VER_PAT = $$REVISION
 
 ################################################################################
 # Install

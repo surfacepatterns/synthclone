@@ -121,6 +121,7 @@ SOURCES += aboutview.cpp \
     zoneviewlet.cpp
 TARGET = synthclone
 TEMPLATE = app
+VERSION = $$MAJOR_VERSION.$$MINOR_VERSION.$$REVISION
 
 ################################################################################
 # Install
