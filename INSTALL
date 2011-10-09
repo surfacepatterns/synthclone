@@ -14,6 +14,7 @@ have the following libraries (and their corresponding development packages)
 installed:
 
   * jack
+  * libarchive
   * libsamplerate
   * libsndfile
   * qt4
@@ -36,3 +37,11 @@ Optionally, you can use your own directory prefix.
 To install `synthclone`, execute the command:
 
   make install
+
+If you are a package maintainer, you may want to set the install path for
+`synthclone` to a different location than the 'prefix' for packaging purposes.
+To do this, execute:
+
+  make install INSTALL_ROOT=/path/to/some/location
+
+Make sure that the path is not a relative path.

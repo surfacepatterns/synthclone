@@ -73,6 +73,21 @@ def main():
     if not isdir(docDir):
         makedirs(docDir)
 
+    data = {
+        "majorVersion": MAJOR_VERSION,
+        "minorVersion": MINOR_VERSION,
+        "platform": platform,
+        "prefix": prefix,
+        "revision": REVISION
+    }
+
+    # Write templates *before* calling qmake.  In order for qmake to add
+    # install items, it must know they exist first.
+    writeTemplate(join(buildDir, "include", "synthclone", "config.h"),
+                  join("templates", "config.h"), data)
+    writeTemplate(join(buildDir, "share", "applications", "synthclone.desktop"),
+                  join("templates", "synthclone.desktop"), data)
+
     qmakeArgs = ["qmake", "-recursive"] + args + \
         ["MAJOR_VERSION=%d" % MAJOR_VERSION, "MINOR_VERSION=%d" % MINOR_VERSION,
          "REVISION=%d" % REVISION, "BUILDDIR=%s" % buildDir,
@@ -84,17 +99,7 @@ def main():
     if call(["doxygen", "Doxyfile"]):
         parser.error("documentation generation failed")
 
-    data = {
-        "majorVersion": MAJOR_VERSION,
-        "minorVersion": MINOR_VERSION,
-        "platform": platform,
-        "prefix": prefix,
-        "revision": REVISION
-    }
-    writeTemplate(join(buildDir, "include", "synthclone", "config.h"),
-                  join("templates", "config.h"), data)
-    writeTemplate(join(buildDir, "share", "applications", "synthclone.desktop"),
-                  join("templates", "synthclone.desktop"), data)
+
 
     stdout.write("Build successful.  Run `make install` to install.\n")
 
