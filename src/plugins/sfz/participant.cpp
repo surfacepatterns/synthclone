@@ -541,7 +541,6 @@ Participant::restoreTarget(const QVariant &state)
         synthclone::MIDIData control = static_cast<synthclone::MIDIData>
             (layerMap.value("control").toInt());
         if (controls.contains(control)) {
-            // X: context->reportWarning()?
             qWarning() << tr("Control layer with control '%1' already loaded").
                 arg(QLocale::system().toString(static_cast<int>(control)));
             continue;

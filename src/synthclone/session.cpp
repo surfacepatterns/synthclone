@@ -1573,8 +1573,6 @@ Session::load(const QDir &directory)
     }
     effectJobThread.start();
 
-    // XXX: Start target apply thread or whatever ...
-
     emit progressChanged(1.0, tr("Loaded."));
 
     state = synthclone::SESSIONSTATE_CURRENT;
