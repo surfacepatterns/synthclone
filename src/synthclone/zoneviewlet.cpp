@@ -571,7 +571,8 @@ void
 ZoneViewlet::setControlPropertyVisible(synthclone::MIDIData control,
                                        bool visible)
 {
-    setColumnVisible(ZONETABLECOLUMN_CONTROL_0 + control, visible);
+    setColumnVisible(ZONETABLECOLUMN_CONTROL_0 + static_cast<int>(control),
+                     visible);
 }
 
 void

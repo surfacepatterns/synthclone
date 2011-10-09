@@ -1402,45 +1402,45 @@ Session::load(const QDir &directory)
     sessionSampleData.setSampleRate(sampleRate);
 
     // Property visibility flags
-    aftertouchPropertyVisible =
-        verifyBooleanAttribute(documentElement, "aftertouch-property-visible",
-                               false);
-    channelPressurePropertyVisible =
-        verifyBooleanAttribute(documentElement,
-                               "channel-pressure-property-visible", false);
-    channelPropertyVisible =
-        verifyBooleanAttribute(documentElement, "channel-property-visible",
-                               true);
-    drySamplePropertyVisible =
-        verifyBooleanAttribute(documentElement, "dry-sample-property-visible",
-                               true);
-    notePropertyVisible =
-        verifyBooleanAttribute(documentElement, "note-property-visible", true);
-    releaseTimePropertyVisible =
-        verifyBooleanAttribute(documentElement,
-                               "release-time-property-visible", true);
-    sampleTimePropertyVisible =
-        verifyBooleanAttribute(documentElement, "sample-time-property-visible",
-                               true);
-    statusPropertyVisible =
-        verifyBooleanAttribute(documentElement, "status-property-visible",
-                               true);
-    velocityPropertyVisible =
-        verifyBooleanAttribute(documentElement, "velocity-property-visible",
-                               true);
-    wetSamplePropertyVisible =
-        verifyBooleanAttribute(documentElement, "wet-sample-property-visible",
-                               true);
-
+    bool visible = verifyBooleanAttribute
+        (documentElement, "aftertouch-property-visible", false);
+    setAftertouchPropertyVisible(visible);
+    visible = verifyBooleanAttribute
+        (documentElement, "channel-pressure-property-visible", false);
+    setChannelPressurePropertyVisible(visible);
+    visible = verifyBooleanAttribute
+        (documentElement, "channel-property-visible", true);
+    setChannelPropertyVisible(visible);
+    visible = verifyBooleanAttribute
+        (documentElement, "dry-sample-property-visible", true);
+    setDrySamplePropertyVisible(visible);
+    visible = verifyBooleanAttribute
+        (documentElement, "note-property-visible", true);
+    setNotePropertyVisible(visible);
+    visible = verifyBooleanAttribute
+        (documentElement, "release-time-property-visible", true);
+    setReleaseTimePropertyVisible(visible);
+    visible = verifyBooleanAttribute
+        (documentElement, "sample-time-property-visible", true);
+    setSampleTimePropertyVisible(visible);
+    visible = verifyBooleanAttribute
+        (documentElement, "status-property-visible", true);
+    setStatusPropertyVisible(visible);
+    visible = verifyBooleanAttribute
+        (documentElement, "velocity-property-visible", true);
+    setVelocityPropertyVisible(visible);
+    visible = verifyBooleanAttribute
+        (documentElement, "wet-sample-property-visible", true);
+    setWetSamplePropertyVisible(visible);
     QString controlPropertyTemplate = "control-property-%1-visible";
-    int i;
     for (synthclone::MIDIData i = 0; i < 0x80; i++) {
-        controlPropertiesVisible[i] =
-            verifyBooleanAttribute(documentElement,
-                                   controlPropertyTemplate.arg(i), false);
+        visible = verifyBooleanAttribute
+            (documentElement, controlPropertyTemplate.arg(i), false);
+        setControlPropertyVisible(i, visible);
     }
 
     int elementCount;
+    int i;
     float progress;
 
     // Zones
