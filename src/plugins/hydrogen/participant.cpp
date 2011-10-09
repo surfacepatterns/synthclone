@@ -160,11 +160,87 @@ Participant::getState(const synthclone::Target *target) const
     map["author"] = t->getAuthor();
     map["info"] = t->getInfo();
     map["kitName"] = t->getKitName();
-    map["layerAlgorithm"] = static_cast<int>(t->getLayerAlgorithm());
     map["license"] = t->getLicense();
     map["name"] = t->getName();
     map["path"] = t->getPath();
-    map["sampleFormat"] = static_cast<int>(t->getSampleFormat());
+
+    QString algorithmStr;
+    switch (t->getLayerAlgorithm()) {
+    case LAYERALGORITHM_LINEAR_INTERPOLATION:
+        algorithmStr = "LINEAR_INTERPOLATION";
+        break;
+    case LAYERALGORITHM_MAXIMUM:
+        algorithmStr = "MAXIMUM";
+        break;
+    case LAYERALGORITHM_MINIMUM:
+        algorithmStr = "MINIMUM";
+        break;
+    default:
+        assert(false);
+    }
+    map["layerAlgorithm"] = algorithmStr;
+
+    QString formatStr;
+    switch (t->getSampleFormat()) {
+    case SAMPLEFORMAT_AU_8BIT:
+        formatStr = "AU_8BIT";
+        break;
+    case SAMPLEFORMAT_AU_16BIT:
+        formatStr = "AU_16BIT";
+        break;
+    case SAMPLEFORMAT_AU_24BIT:
+        formatStr = "AU_24BIT";
+        break;
+    case SAMPLEFORMAT_AU_32BIT:
+        formatStr = "AU_32BIT";
+        break;
+    case SAMPLEFORMAT_AU_32BIT_FLOAT:
+        formatStr = "AU_32BIT_FLOAT";
+        break;
+    case SAMPLEFORMAT_AIFF_8BIT:
+        formatStr = "AIFF_8BIT";
+        break;
+    case SAMPLEFORMAT_AIFF_16BIT:
+        formatStr = "AIFF_16BIT";
+        break;
+    case SAMPLEFORMAT_AIFF_24BIT:
+        formatStr = "AIFF_24BIT";
+        break;
+    case SAMPLEFORMAT_AIFF_32BIT:
+        formatStr = "AIFF_32BIT";
+        break;
+    case SAMPLEFORMAT_AIFF_32BIT_FLOAT:
+        formatStr = "AIFF_32BIT_FLOAT";
+        break;
+    case SAMPLEFORMAT_FLAC_8BIT:
+        formatStr = "FLAC_8BIT";
+        break;
+    case SAMPLEFORMAT_FLAC_16BIT:
+        formatStr = "FLAC_16BIT";
+        break;
+    case SAMPLEFORMAT_FLAC_24BIT:
+        formatStr = "FLAC_24BIT";
+        break;
+    case SAMPLEFORMAT_WAV_8BIT:
+        formatStr = "WAV_8BIT";
+        break;
+    case SAMPLEFORMAT_WAV_16BIT:
+        formatStr = "WAV_16BIT";
+        break;
+    case SAMPLEFORMAT_WAV_24BIT:
+        formatStr = "WAV_24BIT";
+        break;
+    case SAMPLEFORMAT_WAV_32BIT:
+        formatStr = "WAV_32BIT";
+        break;
+    case SAMPLEFORMAT_WAV_32BIT_FLOAT:
+        formatStr = "WAV_32BIT_FLOAT";
+        break;
+    default:
+        assert(false);
+    }
+    map["sampleFormat"] = formatStr;
+
     return map;
 }
 
@@ -255,14 +331,36 @@ Participant::restoreTarget(const QVariant &state)
     target->setAuthor(map.value("author", "").toString());
     target->setInfo(map.value("info", "").toString());
     target->setKitName(map.value("kitName", "").toString());
-    target->setLayerAlgorithm
-        (static_cast<LayerAlgorithm>
-         (map.value("layerAlgorithm",
-                    LAYERALGORITHM_LINEAR_INTERPOLATION).toInt()));
     target->setLicense(map.value("license", "").toString());
     target->setName(map.value("name", "").toString());
     target->setPath(map.value("path", "").toString());
-    target->setSampleFormat(static_cast<SampleFormat>
-                            (map.value("sampleFormat",
-                                       SAMPLEFORMAT_FLAC_24BIT).toInt()));
+
+    QString algorithmStr =
+        map.value("layerAlgorithm", "LINEAR_INTERPOLATION").toString();
+    target->setLayerAlgorithm
+        (algorithmStr == "MAXIMUM" ? LAYERALGORITHM_MAXIMUM :
+         algorithmStr == "MINIMUM" ? LAYERALGORITHM_MINIMUM :
+         LAYERALGORITHM_LINEAR_INTERPOLATION);
+
+    QString formatStr =
+        map.value("sampleFormat", "SAMPLEFORMAT_FLAC_24BIT").toString();
+    target->setSampleFormat
+        (formatStr == "AIFF_8BIT" ? SAMPLEFORMAT_AIFF_8BIT :
+         formatStr == "AIFF_16BIT" ? SAMPLEFORMAT_AIFF_16BIT :
+         formatStr == "AIFF_24BIT" ? SAMPLEFORMAT_AIFF_24BIT :
+         formatStr == "AIFF_32BIT" ? SAMPLEFORMAT_AIFF_32BIT :
+         formatStr == "AIFF_32BIT_FLOAT" ? SAMPLEFORMAT_AIFF_32BIT_FLOAT :
+         formatStr == "AU_8BIT" ? SAMPLEFORMAT_AU_8BIT :
+         formatStr == "AU_16BIT" ? SAMPLEFORMAT_AU_16BIT :
+         formatStr == "AU_24BIT" ? SAMPLEFORMAT_AU_24BIT :
+         formatStr == "AU_32BIT" ? SAMPLEFORMAT_AU_32BIT :
+         formatStr == "AU_32BIT_FLOAT" ? SAMPLEFORMAT_AU_32BIT_FLOAT :
+         formatStr == "FLAC_8BIT" ? SAMPLEFORMAT_FLAC_8BIT :
+         formatStr == "FLAC_16BIT" ? SAMPLEFORMAT_FLAC_16BIT :
+         formatStr == "FLAC_24BIT" ? SAMPLEFORMAT_FLAC_24BIT :
+         formatStr == "WAV_8BIT" ? SAMPLEFORMAT_WAV_8BIT :
+         formatStr == "WAV_16BIT" ? SAMPLEFORMAT_WAV_16BIT :
+         formatStr == "WAV_24BIT" ? SAMPLEFORMAT_WAV_24BIT :
+         formatStr == "WAV_32BIT" ? SAMPLEFORMAT_WAV_32BIT :
+         SAMPLEFORMAT_WAV_32BIT_FLOAT);
 }
