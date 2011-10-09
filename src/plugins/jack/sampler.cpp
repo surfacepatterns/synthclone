@@ -233,8 +233,9 @@ Sampler::activate(synthclone::SampleChannelCount channels)
                                            channels);
         QScopedArrayPointer<jack_port_t *> outputPortsPtr(outputPorts);
 
-        midiPort = openPort(tr("MIDI").toLocal8Bit().constData(),
-                            JACK_DEFAULT_MIDI_TYPE, JackPortIsOutput);
+        QByteArray midiPortName = tr("MIDI").toLocal8Bit();
+        midiPort = openPort(midiPortName.constData(), JACK_DEFAULT_MIDI_TYPE,
+                            JackPortIsOutput);
 
         active = true;
         this->channels = channels;
@@ -606,10 +607,12 @@ Sampler::initializeAudioPorts(const QString &prefix, JackPortFlags flags,
 {
     jack_port_t **ports = new jack_port_t *[channels];
     QScopedArrayPointer<jack_port_t *> portsPtr(ports);
+    QString portNameTemplate = tr("%1-%2", "portNameTemplate");
     for (synthclone::SampleChannelCount i = 0; i < channels; i++) {
-        ports[i] = openPort(tr("%1-%2", "portNameTemplate").arg(prefix).
-                            arg(i + 1).toLocal8Bit().constData(),
-                            JACK_DEFAULT_AUDIO_TYPE, flags);
+        QByteArray portName =
+            portNameTemplate.arg(prefix).arg(i + 1).toLocal8Bit();
+        ports[i] = openPort(portName.constData(), JACK_DEFAULT_AUDIO_TYPE,
+                            flags);
     }
     portsPtr.take();
     return ports;

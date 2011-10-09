@@ -78,7 +78,7 @@ ParticipantView::createParticipantViewlet()
 void
 ParticipantView::destroyParticipantViewlet(ParticipantViewlet *viewlet)
 {
-    viewlet->deleteLater();
+    delete viewlet;
 }
 
 ParticipantViewlet *

@@ -71,6 +71,9 @@ private slots:
     void
     handleTargetViewPathLookupRequest();
 
+    void
+    handleUnregistration(QObject *obj);
+
 private:
 
     Target *

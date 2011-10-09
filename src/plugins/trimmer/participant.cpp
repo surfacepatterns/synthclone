@@ -67,12 +67,12 @@ Participant::addEffect()
     const synthclone::Registration &effectRegistration =
         context->addEffect(effect);
     connect(&effectRegistration, SIGNAL(unregistered(QObject *)),
-            effect, SLOT(deleteLater()));
+            SLOT(handleUnregistration(QObject *)));
 
     const synthclone::Registration &actionRegistration =
         context->addMenuAction(action, effect);
     connect(&actionRegistration, SIGNAL(unregistered(QObject *)),
-            action, SLOT(deleteLater()));
+            SLOT(handleUnregistration(QObject *)));
 
     return effect;
 }
@@ -181,6 +181,12 @@ Participant::handleEffectViewCloseRequest()
                configuredEffect, SLOT(setTrimStart(bool)));
 
     configuredEffect = 0;
+}
+
+void
+Participant::handleUnregistration(QObject *obj)
+{
+    delete obj;
 }
 
 void

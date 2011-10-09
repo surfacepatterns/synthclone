@@ -27,7 +27,7 @@ MenuLeafViewlet::MenuLeafViewlet(QObject *parent):
 
 MenuLeafViewlet::~MenuLeafViewlet()
 {
-    action->deleteLater();
+    delete action;
 }
 
 QAction *

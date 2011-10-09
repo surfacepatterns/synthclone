@@ -32,7 +32,7 @@ ToolViewlet::ToolViewlet(QMainWindow *mainWindow, QObject *parent):
 
 ToolViewlet::~ToolViewlet()
 {
-    menuViewlet->deleteLater();
+    delete menuViewlet;
 }
 
 MenuViewlet *

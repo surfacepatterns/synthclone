@@ -53,8 +53,8 @@ SessionViewlet::SessionViewlet(QMainWindow *mainWindow, QObject *parent):
 
 SessionViewlet::~SessionViewlet()
 {
-    menuViewlet->deleteLater();
-    customItemsSeparator->deleteLater();
+    delete menuViewlet;
+    delete customItemsSeparator;
 }
 
 MenuViewlet *

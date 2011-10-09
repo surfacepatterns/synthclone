@@ -1,5 +1,9 @@
 CONFIG += no_include_pwd
 
+!isEmpty(DEBUG) {
+    CONFIG += debug
+}
+
 isEmpty(MAJOR_VERSION) {
     MAJOR_VERSION = 0
 }
@@ -9,7 +13,7 @@ isEmpty(MINOR_VERSION) {
 }
 
 isEmpty(REVISION) {
-    REVISION = 0
+    REVISION = 1
 }
 
 macx {

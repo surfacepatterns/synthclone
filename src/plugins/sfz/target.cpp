@@ -695,7 +695,7 @@ Target::removeControlLayer(int index)
     emit controlLayerRemoved(layer, index);
     availableControls.append(control);
     qStableSort(availableControls.begin(), availableControls.end());
-    layer->deleteLater();
+    delete layer;
 }
 
 void

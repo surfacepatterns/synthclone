@@ -84,7 +84,7 @@ Participant::addSampler(bool convertSampleRate)
     try {
         Sampler *sampler =
             new Sampler(tr("JACK Sampler"),
-                        sessionId.isEmpty() ? 0 : sessionId.data(), this);
+                        sessionId.isEmpty() ? 0 : sessionId.constData(), this);
         QScopedPointer<Sampler> samplerPtr(sampler);
         synthclone::SampleRate serverSampleRate = sampler->getSampleRate();
         synthclone::SampleRate sessionSampleRate = context->getSampleRate();

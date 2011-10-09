@@ -10,7 +10,7 @@ from sys import argv, exit, stdout
 
 MAJOR_VERSION = 0
 MINOR_VERSION = 1
-REVISION = 0
+REVISION = 1
 
 def writeTemplate(destination, source, data):
     destination = abspath(destination)
@@ -37,6 +37,8 @@ def main():
     parser = OptionParser("usage: %prog [options] [qmake-args]")
     parser.add_option("-b", "--build-dir", action="store", default=None,
                       dest="buildDir", help="Build directory")
+    parser.add_option("-d", "--debug", action="store_true", default=False,
+                      dest="debug", help="Build a debug executable")
     parser.add_option("-m", "--make-dir", action="store", default=None,
                       dest="makeDir", help="Make directory")
     parser.add_option("-p", "--prefix", action="store", default=None,
@@ -59,6 +61,7 @@ def main():
         buildDir = join(scriptDir, "build")
     else:
         buildDir = abspath(buildDir)
+    debug = options.debug
     makeDir = options.makeDir
     if makeDir is None:
         makeDir = join(scriptDir, "make")
@@ -92,14 +95,15 @@ def main():
         ["MAJOR_VERSION=%d" % MAJOR_VERSION, "MINOR_VERSION=%d" % MINOR_VERSION,
          "REVISION=%d" % REVISION, "BUILDDIR=%s" % buildDir,
          "MAKEDIR=%s" % makeDir, "PREFIX=%s" % prefix]
+    if debug:
+        qmakeArgs.append("DEBUG=1")
+
     if call(qmakeArgs):
         parser.error("qmake returned an error")
     if call(["make"]):
         parser.error("make returned an error")
     if call(["doxygen", "Doxyfile"]):
         parser.error("documentation generation failed")
-
-
 
     stdout.write("Build successful.  Run `make install` to install.\n")
 

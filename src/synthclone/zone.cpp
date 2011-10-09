@@ -55,10 +55,10 @@ Zone::Zone(SessionSampleData &sessionSampleData, QObject *parent):
 Zone::~Zone()
 {
     if (drySample) {
-        drySample->deleteLater();
+        delete drySample;
     }
     if (wetSample) {
-        wetSample->deleteLater();
+        delete wetSample;
     }
 }
 
@@ -250,7 +250,7 @@ Zone::setDrySample(synthclone::Sample *sample, bool copy)
     }
     if (this->drySample != sample) {
         if (this->drySample) {
-            this->drySample->deleteLater();
+            delete this->drySample;
         }
         this->drySample = sample;
         if (sample) {
@@ -348,7 +348,7 @@ Zone::setWetSample(synthclone::Sample *sample, bool copy)
     }
     if (this->wetSample != sample) {
         if (this->wetSample) {
-            this->wetSample->deleteLater();
+            delete this->wetSample;
         }
         this->wetSample = sample;
         if (sample) {

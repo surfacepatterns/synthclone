@@ -34,7 +34,7 @@ HelpViewlet::HelpViewlet(QMainWindow *mainWindow, QObject *parent):
 
 HelpViewlet::~HelpViewlet()
 {
-    menuViewlet->deleteLater();
+    delete menuViewlet;
 }
 
 MenuViewlet *

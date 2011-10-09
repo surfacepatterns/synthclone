@@ -87,7 +87,7 @@ ZoneListLoader::loadZones(QDomElement &element, int startIndex,
             verifySampleAttribute(element, "dry-sample", samplesDirectory);
         if (sample) {
             try {
-                zone->setDrySample(sample);
+                zone->setDrySample(sample, false);
             } catch (synthclone::Error &e) {
                 emitWarning(element, e.getMessage());
             }
@@ -95,7 +95,7 @@ ZoneListLoader::loadZones(QDomElement &element, int startIndex,
         sample = verifySampleAttribute(element, "wet-sample", samplesDirectory);
         if (sample) {
             try {
-                zone->setWetSample(sample);
+                zone->setWetSample(sample, false);
             } catch (synthclone::Error &e) {
                 emitWarning(element, e.getMessage());
             }

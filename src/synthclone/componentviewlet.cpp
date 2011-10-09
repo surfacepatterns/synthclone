@@ -164,7 +164,10 @@ ComponentViewlet::ComponentViewlet(QMainWindow *mainWindow, QObject *parent):
 
 ComponentViewlet::~ComponentViewlet()
 {
-    // Empty
+    delete effectAddMenuViewlet;
+    delete samplerAddMenuViewlet;
+    delete samplerMenuViewlet;
+    delete targetAddMenuViewlet;
 }
 
 void
@@ -430,8 +433,8 @@ ComponentViewlet::removeEffect(int index)
     MenuViewlet *effectMenuViewlet = effectMenuViewlets.takeAt(index);
     QMenu *effectMenu = menuViewletMap.take(effectMenuViewlet);
     effectRootMenu->removeAction(effectMenu->menuAction());
-    effectMenuViewlet->deleteLater();
-    effectMenu->deleteLater();
+    delete effectMenuViewlet;
+    delete effectMenu;
 }
 
 void
@@ -458,8 +461,8 @@ ComponentViewlet::removeTarget(int index)
     MenuViewlet *targetMenuViewlet = targetMenuViewlets.takeAt(index);
     QMenu *targetMenu = menuViewletMap.take(targetMenuViewlet);
     targetRootMenu->removeAction(targetMenu->menuAction());
-    targetMenuViewlet->deleteLater();
-    targetMenu->deleteLater();
+    delete targetMenuViewlet;
+    delete targetMenu;
 }
 
 void

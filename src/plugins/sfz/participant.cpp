@@ -106,12 +106,12 @@ Participant::addTarget()
     const synthclone::Registration &targetRegistration =
         context->addTarget(target);
     connect(&targetRegistration, SIGNAL(unregistered(QObject *)),
-            target, SLOT(deleteLater()));
+            SLOT(handleUnregistration(QObject *)));
 
     const synthclone::Registration &actionRegistration =
         context->addMenuAction(action, target);
     connect(&actionRegistration, SIGNAL(unregistered(QObject *)),
-            action, SLOT(deleteLater()));
+            SLOT(handleUnregistration(QObject *)));
 
     return target;
 }
@@ -488,6 +488,12 @@ Participant::handleTargetViewTypeChangeRequest(int index,
                                                synthclone::ControlType type)
 {
     configuredTarget->getControlLayer(index)->setType(type);
+}
+
+void
+Participant::handleUnregistration(QObject *obj)
+{
+    delete obj;
 }
 
 void

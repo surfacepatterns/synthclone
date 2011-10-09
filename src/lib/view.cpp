@@ -35,8 +35,8 @@ View::View(QWidget *rootWidget, QObject *parent):
 
 View::~View()
 {
-    rootWidget->deleteLater();
-    closeEventFilter->deleteLater();
+    delete rootWidget;
+    delete closeEventFilter;
 }
 
 const QWidget *

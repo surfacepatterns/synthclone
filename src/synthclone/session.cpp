@@ -1698,7 +1698,7 @@ Session::recycleCurrentEffectJob()
 {
     bool removed = zoneEffectJobMap.remove(currentEffectJob->getZone());
     assert(removed);
-    currentEffectJob->deleteLater();
+    delete qobject_cast<EffectJob *>(currentEffectJob);
     currentEffectJob = 0;
     emit currentEffectJobChanged(0);
     updateEffectJobs();
@@ -1708,13 +1708,13 @@ void
 Session::recycleCurrentSamplerJob()
 {
     if (currentSamplerJobStream) {
-        currentSamplerJobStream->deleteLater();
+        delete qobject_cast<QObject *>(currentSamplerJobStream);
         currentSamplerJobStream = 0;
     }
     if (currentSamplerJobSample) {
         QString path = currentSamplerJobSample->getPath();
         currentSamplerJobSample->setTemporary(true);
-        currentSamplerJobSample->deleteLater();
+        delete currentSamplerJobSample;
         currentSamplerJobSample = 0;
         if (! QFile(path).remove()) {
             emit samplerJobError("failed to remove sample at '%1'");
@@ -1722,7 +1722,7 @@ Session::recycleCurrentSamplerJob()
     }
     bool removed = zoneSamplerJobMap.remove(currentSamplerJob->getZone());
     assert(removed);
-    currentSamplerJob->deleteLater();
+    delete qobject_cast<SamplerJob *>(currentSamplerJob);
     currentSamplerJob = 0;
     emit currentSamplerJobChanged(0);
     updateSamplerJobs();
@@ -1787,7 +1787,7 @@ Session::removeEffectJob(int index)
     bool removed = zoneEffectJobMap.remove(zone);
     assert(removed);
     zone->setStatus(synthclone::Zone::STATUS_NORMAL);
-    job->deleteLater();
+    delete job;
     setModified();
 }
 
@@ -1979,7 +1979,7 @@ Session::removeSamplerJob(int index)
     bool removed = zoneSamplerJobMap.remove(zone);
     assert(removed);
     zone->setStatus(synthclone::Zone::STATUS_NORMAL);
-    job->deleteLater();
+    delete job;
     setModified();
 }
 
@@ -2618,14 +2618,14 @@ Session::unload()
             if (sampler) {
                 removeSampler();
             } else {
-                currentSamplerJob->deleteLater();
+                delete qobject_cast<SamplerJob *>(currentSamplerJob);
                 currentSamplerJob = 0;
                 if (currentSamplerJobStream) {
-                    currentSamplerJobStream->deleteLater();
+                    delete qobject_cast<QObject *>(currentSamplerJobStream);
                     currentSamplerJobStream = 0;
                 }
                 if (currentSamplerJobSample) {
-                    currentSamplerJobSample->deleteLater();
+                    delete currentSamplerJobSample;
                     currentSamplerJobSample = 0;
                 }
             }

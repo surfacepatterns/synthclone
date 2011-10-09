@@ -207,9 +207,9 @@ ZoneViewlet::ZoneViewlet(QMainWindow *mainWindow, QObject *parent):
 ZoneViewlet::~ZoneViewlet()
 {
     for (int i = 0; i < 0x80; i++) {
-        coreColumnShowActions[ZONETABLECOLUMN_CONTROL_0 + i]->deleteLater();
+        delete coreColumnShowActions[ZONETABLECOLUMN_CONTROL_0 + i];
     }
-    menuViewlet->deleteLater();
+    delete menuViewlet;
 }
 
 void

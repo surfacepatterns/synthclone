@@ -83,12 +83,12 @@ Participant::addTarget()
     const synthclone::Registration &targetRegistration =
         context->addTarget(target);
     connect(&targetRegistration, SIGNAL(unregistered(QObject *)),
-            target, SLOT(deleteLater()));
+            SLOT(handleUnregistration(QObject *)));
 
     const synthclone::Registration &actionRegistration =
         context->addMenuAction(action, target);
     connect(&actionRegistration, SIGNAL(unregistered(QObject *)),
-            action, SLOT(deleteLater()));
+            SLOT(handleUnregistration(QObject *)));
 
     return target;
 }
@@ -321,6 +321,12 @@ Participant::handleTargetViewPathLookupRequest()
     assert(configuredTarget);
     directoryView.setDirectory(configuredTarget->getPath());
     directoryView.setVisible(true);
+}
+
+void
+Participant::handleUnregistration(QObject *obj)
+{
+    delete obj;
 }
 
 void

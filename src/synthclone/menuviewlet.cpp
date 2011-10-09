@@ -49,7 +49,7 @@ MenuViewlet::MenuViewlet(QMenu *menu, QAction *customItemsBoundary,
 MenuViewlet::~MenuViewlet()
 {
     if (manageMenu) {
-        menu->deleteLater();
+        delete menu;
     }
 }
 

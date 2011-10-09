@@ -35,7 +35,7 @@ ViewViewlet::ViewViewlet(QMainWindow *mainWindow, QObject *parent):
 
 ViewViewlet::~ViewViewlet()
 {
-    menuViewlet->deleteLater();
+    delete menuViewlet;
 }
 
 MenuViewlet *

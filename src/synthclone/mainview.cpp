@@ -33,12 +33,12 @@ MainView::MainView(QObject *parent):
 
 MainView::~MainView()
 {
-    componentViewlet->deleteLater();
-    helpViewlet->deleteLater();
-    sessionViewlet->deleteLater();
-    toolViewlet->deleteLater();
-    viewViewlet->deleteLater();
-    zoneViewlet->deleteLater();
+    delete componentViewlet;
+    delete helpViewlet;
+    delete sessionViewlet;
+    delete toolViewlet;
+    delete viewViewlet;
+    delete zoneViewlet;
 }
 
 MenuActionViewlet *
@@ -62,19 +62,19 @@ MainView::createMenuViewlet(const QString &text, QObject *parent)
 void
 MainView::destroyMenuActionViewlet(MenuActionViewlet *viewlet)
 {
-    viewlet->deleteLater();
+    delete viewlet;
 }
 
 void
 MainView::destroyMenuSeparatorViewlet(MenuSeparatorViewlet *viewlet)
 {
-    viewlet->deleteLater();
+    delete viewlet;
 }
 
 void
 MainView::destroyMenuViewlet(MenuViewlet *viewlet)
 {
-    viewlet->deleteLater();
+    delete viewlet;
 }
 
 ComponentViewlet *
