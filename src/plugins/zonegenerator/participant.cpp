@@ -157,8 +157,9 @@ Participant::handleGenerateRequest()
                      aftertouchIndex > 0; aftertouchIndex--) {
                     synthclone::MIDIData aftertouch =
                         static_cast<synthclone::MIDIData>
-                        (std::ceil(0x7f * (static_cast<float>(aftertouchIndex) /
-                                           aftertouchLayers)));
+                        (std::ceil(0x7f *
+                                   (static_cast<float>(aftertouchIndex) /
+                                    aftertouchLayers)));
                     zone = context->addZone(insertIndex);
                     zone->setAftertouch(aftertouch);
                     zone->setChannel(midiChannel);
