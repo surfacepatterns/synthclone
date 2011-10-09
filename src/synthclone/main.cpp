@@ -35,6 +35,7 @@ int
 main(int argc, char **argv)
 {
     Application application(argc, argv);
+    QStringList arguments = application.arguments();
     QString errorMessage;
     try {
         application.setApplicationName("synthclone");
@@ -54,16 +55,16 @@ main(int argc, char **argv)
         qDebug() << application.tr("Translations loaded.");
 
         // Command line arguments
-        qDebug() << application.tr("Scanning command-line arguments ...");
-        QStringList arguments = application.arguments();
+
         bool loadSession;
         QDir sessionDirectory;
         switch (arguments.count()) {
         case 0:
+        case 1:
             loadSession = false;
             break;
-        case 1:
-            if (sessionDirectory.cd(arguments[0])) {
+        case 2:
+            if (sessionDirectory.cd(arguments[1])) {
                 loadSession = true;
                 break;
             }
