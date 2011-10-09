@@ -228,7 +228,14 @@
          <item>
           <layout class="QHBoxLayout" stretch="1,0">
            <item>
-            <widget class="QTableView" name="controlLayerTableView"/>
+            <widget class="QTableView" name="controlLayerTableView">
+             <property name="selectionMode">
+              <enum>QAbstractItemView::SingleSelection</enum>
+             </property>
+             <property name="selectionBehavior">
+              <enum>QAbstractItemView::SelectRows</enum>
+             </property>
+            </widget>
            </item>
            <item>
             <layout class="QVBoxLayout" stretch="0,0,0,0,1">

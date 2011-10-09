@@ -96,6 +96,9 @@ TargetView::TargetView(QObject *parent):
         (rootWidget, "controlLayerTableView");
     controlLayerTableView->setItemDelegate(&controlLayerTableDelegate);
     controlLayerTableView->setModel(&controlLayerTableModel);
+    connect(controlLayerTableView->selectionModel(),
+            SIGNAL(currentRowChanged(QModelIndex, QModelIndex)),
+            SLOT(handleControlLayerTableRowChange()));
 
     drumKit = synthclone::getChild<QCheckBox>(rootWidget, "drumKit");
     connect(drumKit, SIGNAL(toggled(bool)),
@@ -206,6 +209,12 @@ TargetView::handleControlCrossfadeCurveIndexChange(int index)
 {
     emit controlCrossfadeCurveChangeRequest
         (static_cast<CrossfadeCurve>(index + 1));
+}
+
+void
+TargetView::handleControlLayerTableRowChange()
+{
+    updateControlLayerButtons();
 }
 
 void

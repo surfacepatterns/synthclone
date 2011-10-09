@@ -141,6 +141,9 @@ private slots:
     handleControlCrossfadeCurveIndexChange(int index);
 
     void
+    handleControlLayerTableRowChange();
+
+    void
     handleMoveControlLayerDownButtonClick();
 
     void
