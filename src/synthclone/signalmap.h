@@ -21,15 +21,32 @@
 #define __SIGNALMAP_H__
 
 #include <QtCore/QMap>
+#include <QtCore/QObject>
 
 #include "signalpair.h"
 
-class SignalMap: public QMap<QLatin1String, const char *> {
+class SignalMap: public QObject {
+
+    Q_OBJECT
 
 public:
 
+    explicit
+    SignalMap(QObject *parent=0);
+
+    SignalMap(const SignalMap &map, QObject *parent=0);
+
+    ~SignalMap();
+
     SignalMap &
     operator<<(const SignalPair &pair);
+
+    const char *
+    get(const QLatin1String &signal) const;
+
+private:
+
+    QMap<QLatin1String, const char *> map;
 
 };
 

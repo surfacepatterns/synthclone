@@ -877,8 +877,9 @@ Context::connectNotify(const char *signal)
     QObject::connectNotify(signal);
     if (receivers(signal) == 1) {
         QLatin1String strSignal(signal);
-        if (sessionSignalMap.contains(strSignal)) {
-            connect(&session, signal, sessionSignalMap[strSignal]);
+        const char *s = sessionSignalMap.get(strSignal);
+        if (s) {
+            connect(&session, signal, s);
         }
     }
 }
@@ -902,8 +903,9 @@ Context::disconnectNotify(const char *signal)
     QObject::disconnectNotify(signal);
     if (! receivers(signal)) {
         QLatin1String strSignal(signal);
-        if (sessionSignalMap.contains(strSignal)) {
-            disconnect(&session, signal, this, sessionSignalMap[strSignal]);
+        const char *s = sessionSignalMap.get(strSignal);
+        if (s) {
+            disconnect(&session, signal, this, s);
         }
     }
 }

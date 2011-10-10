@@ -19,9 +19,32 @@
 
 #include "signalmap.h"
 
+SignalMap::SignalMap(QObject *parent):
+    QObject(parent)
+{
+    // Empty
+}
+
+SignalMap::SignalMap(const SignalMap &map, QObject *parent):
+    QObject(parent)
+{
+    this->map.unite(map.map);
+}
+
+SignalMap::~SignalMap()
+{
+    // Empty
+}
+
 SignalMap &
 SignalMap::operator<<(const SignalPair &pair)
 {
-    insert(pair.first, pair.second);
+    map.insert(pair.first, pair.second);
     return *this;
+}
+
+const char *
+SignalMap::get(const QLatin1String &signal) const
+{
+    return map.value(signal, 0);
 }
