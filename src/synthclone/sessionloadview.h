@@ -147,7 +147,7 @@ private:
     QListWidget *recentSessions;
     QSpinBox *sampleChannelCount;
     QComboBox *sampleRate;
-    QDoubleValidator sampleRateValidator;
+    QDoubleValidator *sampleRateValidator;
     QLineEdit *sessionCreationDirectory;
     QPushButton *sessionCreationDirectoryLookupButton;
     bool sessionCreationEnabled;

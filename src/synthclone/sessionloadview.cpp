@@ -44,9 +44,10 @@ SessionLoadView::SessionLoadView(QObject *parent):
         synthclone::getChild<QSpinBox>(dialog, "sampleChannelCount");
 
     sampleRate = synthclone::getChild<QComboBox>(dialog, "sampleRate");
-    sampleRateValidator.
-        setRange(1.0, static_cast<double>(synthclone::SAMPLE_RATE_MAXIMUM), 0);
-    sampleRate->setValidator(&sampleRateValidator);
+    sampleRateValidator = new QDoubleValidator(this);
+    sampleRateValidator->setRange
+        (1.0, static_cast<double>(synthclone::SAMPLE_RATE_MAXIMUM), 0);
+    sampleRate->setValidator(sampleRateValidator);
 
     sessionCreationDirectory =
         synthclone::getChild<QLineEdit>(dialog, "sessionCreationDirectory");
@@ -94,7 +95,7 @@ SessionLoadView::SessionLoadView(QObject *parent):
 
 SessionLoadView::~SessionLoadView()
 {
-    // Empty
+    delete sampleRateValidator;
 }
 
 void
