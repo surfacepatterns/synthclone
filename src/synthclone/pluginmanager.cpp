@@ -19,7 +19,7 @@
 
 #include <cassert>
 
-#include <QtCore/QPluginLoader>
+#include <QtCore/QScopedPointer>
 
 #include <synthclone/error.h>
 
@@ -33,6 +33,7 @@ PluginManager::PluginManager(QObject *parent):
 
 PluginManager::~PluginManager()
 {
+    QList<synthclone::IPlugin *> plugins = pluginLoaderMap.keys();
     for (int i = plugins.count() - 1; i >= 0; i--) {
         unloadPlugin(plugins[i]);
     }
@@ -42,20 +43,24 @@ synthclone::IPlugin *
 PluginManager::loadPlugin(const QString &path)
 {
     QString pluginPath = QFileInfo(path).absoluteFilePath();
-    QPluginLoader pluginLoader(pluginPath);
-    QObject *obj = pluginLoader.instance();
+    QPluginLoader *pluginLoader = new QPluginLoader(pluginPath);
+    QScopedPointer<QPluginLoader> pluginLoaderPtr(pluginLoader);
+    QObject *obj = pluginLoader->instance();
     if (! obj) {
-        throw synthclone::Error(pluginLoader.errorString());
+        throw synthclone::Error(pluginLoader->errorString());
     }
     synthclone::IPlugin *plugin = qobject_cast<synthclone::IPlugin *>(obj);
     if (! plugin) {
-        pluginLoader.unload();
+        pluginLoader->unload();
         QString message = tr("'%1' does not contain a synthclone plugin").
             arg(pluginPath);
         throw synthclone::Error(message);
     }
-    if (! plugins.contains(plugin)) {
-        plugins.append(plugin);
+    if (! pluginLoaderMap.contains(plugin)) {
+        pluginLoaderMap.insert(plugin, pluginLoader);
+        pluginLoaderPtr.take();
+    } else {
+        pluginLoader->unload();
     }
     return plugin;
 }
@@ -63,7 +68,8 @@ PluginManager::loadPlugin(const QString &path)
 void
 PluginManager::unloadPlugin(synthclone::IPlugin *plugin)
 {
-    bool removed = plugins.removeOne(plugin);
-    assert(removed);
-    delete plugin;
+    assert(pluginLoaderMap.contains(plugin));
+    QPluginLoader *loader = pluginLoaderMap.take(plugin);
+    loader->unload();
+    delete loader;
 }

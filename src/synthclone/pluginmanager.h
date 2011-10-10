@@ -22,6 +22,7 @@
 
 #include <QtCore/QList>
 #include <QtCore/QMap>
+#include <QtCore/QPluginLoader>
 
 #include <synthclone/iplugin.h>
 
@@ -44,7 +45,9 @@ public:
 
 private:
 
-    QList<synthclone::IPlugin *> plugins;
+    typedef QMap<synthclone::IPlugin *, QPluginLoader *> PluginLoaderMap;
+
+    PluginLoaderMap pluginLoaderMap;
 
 };
 
