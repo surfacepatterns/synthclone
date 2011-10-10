@@ -826,7 +826,7 @@ Controller::loadPlugins(const QDir &directory, QStringList &scannedPaths)
             continue;
         }
         scannedPaths.append(path);
-        qDebug() << tr("Attempting to loading plugin from '%1' ...").arg(path);
+        qDebug() << tr("Attempting to load plugin from '%1' ...").arg(path);
         synthclone::IPlugin *plugin;
         try {
             plugin = pluginManager.loadPlugin(path);
