@@ -25,405 +25,405 @@
 
 // Session signals
 
-static const char *ADDING_EFFECT_SIGNAL =
+static QByteArray ADDING_EFFECT_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingEffect(const synthclone::Effect *, int)));
-static const char *EFFECT_ADDED_SIGNAL =
+static QByteArray EFFECT_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(effectAdded(const synthclone::Effect *, int)));
-static const char *EFFECT_MOVED_SIGNAL =
+static QByteArray EFFECT_MOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(effectMoved(const synthclone::Effect *, int, int)));
-static const char *EFFECT_REMOVED_SIGNAL =
+static QByteArray EFFECT_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(effectRemoved(const synthclone::Effect *, int)));
-static const char *MOVING_EFFECT_SIGNAL =
+static QByteArray MOVING_EFFECT_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(movingEffect(const synthclone::Effect *, int, int)));
-static const char *REMOVING_EFFECT_SIGNAL =
+static QByteArray REMOVING_EFFECT_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingEffect(const synthclone::Effect *, int)));
 
-static const char *ADDING_SAMPLER_SIGNAL =
+static QByteArray ADDING_SAMPLER_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingSampler(const synthclone::Sampler *)));
-static const char *REMOVING_SAMPLER_SIGNAL =
+static QByteArray REMOVING_SAMPLER_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingSampler(const synthclone::Sampler *)));
-static const char *SAMPLER_ADDED_SIGNAL =
+static QByteArray SAMPLER_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(samplerAdded(const synthclone::Sampler *)));
-static const char *SAMPLER_REMOVED_SIGNAL =
+static QByteArray SAMPLER_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(samplerRemoved(const synthclone::Sampler *)));
 
-static const char *ADDING_TARGET_SIGNAL =
+static QByteArray ADDING_TARGET_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingTarget(const synthclone::Target *, int)));
-static const char *TARGET_ADDED_SIGNAL =
+static QByteArray TARGET_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(targetAdded(const synthclone::Target *, int)));
-static const char *TARGET_MOVED_SIGNAL =
+static QByteArray TARGET_MOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(targetMoved(const synthclone::Target *, int, int)));
-static const char *TARGET_REMOVED_SIGNAL =
+static QByteArray TARGET_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(targetRemoved(const synthclone::Target *, int)));
-static const char *MOVING_TARGET_SIGNAL =
+static QByteArray MOVING_TARGET_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(movingTarget(const synthclone::Target *, int, int)));
-static const char *REMOVING_TARGET_SIGNAL =
+static QByteArray REMOVING_TARGET_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingTarget(const synthclone::Target *, int)));
 
-static const char *ADDING_EFFECT_JOB_SIGNAL =
+static QByteArray ADDING_EFFECT_JOB_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingEffectJob(const synthclone::EffectJob *, int)));
-static const char *EFFECT_JOB_ADDED_SIGNAL =
+static QByteArray EFFECT_JOB_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(effectJobAdded(const synthclone::EffectJob *, int)));
-static const char *EFFECT_JOB_MOVED_SIGNAL =
+static QByteArray EFFECT_JOB_MOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(effectJobMoved(const synthclone::EffectJob *, int, int)));
-static const char *EFFECT_JOB_REMOVED_SIGNAL =
+static QByteArray EFFECT_JOB_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(effectJobRemoved(const synthclone::EffectJob *, int)));
-static const char *MOVING_EFFECT_JOB_SIGNAL =
+static QByteArray MOVING_EFFECT_JOB_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(movingEffectJob(const synthclone::EffectJob *, int, int)));
-static const char *REMOVING_EFFECT_JOB_SIGNAL =
+static QByteArray REMOVING_EFFECT_JOB_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingEffectJob(const synthclone::EffectJob *, int)));
 
-static const char *ADDING_SAMPLER_JOB_SIGNAL =
+static QByteArray ADDING_SAMPLER_JOB_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingSamplerJob(const synthclone::SamplerJob *, int)));
-static const char *SAMPLER_JOB_ADDED_SIGNAL =
+static QByteArray SAMPLER_JOB_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(samplerJobAdded(const synthclone::SamplerJob *, int)));
-static const char *SAMPLER_JOB_MOVED_SIGNAL =
+static QByteArray SAMPLER_JOB_MOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(samplerJobMoved(const synthclone::SamplerJob *, int, int)));
-static const char *SAMPLER_JOB_REMOVED_SIGNAL =
+static QByteArray SAMPLER_JOB_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(samplerJobRemoved(const synthclone::SamplerJob *, int)));
-static const char *MOVING_SAMPLER_JOB_SIGNAL =
+static QByteArray MOVING_SAMPLER_JOB_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(movingSamplerJob(const synthclone::SamplerJob *, int, int)));
-static const char *REMOVING_SAMPLER_JOB_SIGNAL =
+static QByteArray REMOVING_SAMPLER_JOB_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingSamplerJob(const synthclone::SamplerJob *, int)));
 
-static const char *SELECTED_EFFECT_CHANGED_SIGNAL =
+static QByteArray SELECTED_EFFECT_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(selectedEffectChanged(const synthclone::Effect *, int)));
-static const char *SELECTED_TARGET_CHANGED_SIGNAL =
+static QByteArray SELECTED_TARGET_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(selectedTargetChanged(const synthclone::Target *, int)));
-static const char *CURRENT_EFFECT_JOB_CHANGED_SIGNAL =
+static QByteArray CURRENT_EFFECT_JOB_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(currentEffectJobChanged(const synthclone::EffectJob *)));
-static const char *CURRENT_SAMPLER_JOB_CHANGED_SIGNAL =
+static QByteArray CURRENT_SAMPLER_JOB_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(currentSamplerJobChanged(const synthclone::SamplerJob *)));
-static const char *FOCUSED_COMPONENT_CHANGED_SIGNAL =
+static QByteArray FOCUSED_COMPONENT_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(focusedComponentChanged(const synthclone::Component *)));
 
-static const char *ADDING_ZONE_SIGNAL =
+static QByteArray ADDING_ZONE_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingZone(const synthclone::Zone *, int)));
-static const char *MOVING_ZONE_SIGNAL =
+static QByteArray MOVING_ZONE_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(movingZone(const synthclone::Zone *, int, int)));
-static const char *REMOVING_ZONE_SIGNAL =
+static QByteArray REMOVING_ZONE_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingZone(const synthclone::Zone *, int)));
-static const char *ZONE_ADDED_SIGNAL =
+static QByteArray ZONE_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(zoneAdded(const synthclone::Zone *, int)));
-static const char *ZONE_MOVED_SIGNAL =
+static QByteArray ZONE_MOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(zoneMoved(const synthclone::Zone *, int, int)));
-static const char *ZONE_REMOVED_SIGNAL =
+static QByteArray ZONE_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(zoneRemoved(const synthclone::Zone *, int)));
 
-static const char *ZONE_SELECTION_CHANGED_SIGNAL =
+static QByteArray ZONE_SELECTION_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(zoneSelectionChanged(const synthclone::Zone *, bool)));
 
-static const char *ADDING_MENU_ACTION_SIGNAL =
+static QByteArray ADDING_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingMenuAction(synthclone::Menu,
                              const synthclone::MenuAction *,
                              const QStringList &)));
-static const char *ADDING_EFFECT_MENU_ACTION_SIGNAL =
+static QByteArray ADDING_EFFECT_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingMenuAction(const synthclone::Effect *,
                              const synthclone::MenuAction *,
                              const QStringList &)));
-static const char *ADDING_SAMPLER_MENU_ACTION_SIGNAL =
+static QByteArray ADDING_SAMPLER_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingMenuAction(const synthclone::Sampler *,
                              const synthclone::MenuAction *,
                              const QStringList &)));
-static const char *ADDING_TARGET_MENU_ACTION_SIGNAL =
+static QByteArray ADDING_TARGET_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingMenuAction(const synthclone::Target *,
                              const synthclone::MenuAction *,
                              const QStringList &)));
 
-static const char *ADDING_MENU_SEPARATOR_SIGNAL =
+static QByteArray ADDING_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingMenuSeparator(synthclone::Menu,
                                 const synthclone::MenuSeparator *,
                                 const QStringList &)));
-static const char *ADDING_EFFECT_MENU_SEPARATOR_SIGNAL =
+static QByteArray ADDING_EFFECT_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingMenuSeparator(const synthclone::Effect *,
                                 const synthclone::MenuSeparator *,
                                 const QStringList &)));
-static const char *ADDING_SAMPLER_MENU_SEPARATOR_SIGNAL =
+static QByteArray ADDING_SAMPLER_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingMenuSeparator(const synthclone::Sampler *,
                                 const synthclone::MenuSeparator *,
                                 const QStringList &)));
-static const char *ADDING_TARGET_MENU_SEPARATOR_SIGNAL =
+static QByteArray ADDING_TARGET_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingMenuSeparator(const synthclone::Target *,
                                 const synthclone::MenuSeparator *,
                                 const QStringList &)));
 
-static const char *MENU_ACTION_ADDED_SIGNAL =
+static QByteArray MENU_ACTION_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuActionAdded(synthclone::Menu,
                             const synthclone::MenuAction *,
                             const QStringList &)));
-static const char *EFFECT_MENU_ACTION_ADDED_SIGNAL =
+static QByteArray EFFECT_MENU_ACTION_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuActionAdded(const synthclone::Effect *,
                             const synthclone::MenuAction *,
                             const QStringList &)));
-static const char *SAMPLER_MENU_ACTION_ADDED_SIGNAL =
+static QByteArray SAMPLER_MENU_ACTION_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuActionAdded(const synthclone::Sampler *,
                             const synthclone::MenuAction *,
                             const QStringList &)));
-static const char *TARGET_MENU_ACTION_ADDED_SIGNAL =
+static QByteArray TARGET_MENU_ACTION_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuActionAdded(const synthclone::Target *,
                             const synthclone::MenuAction *,
                             const QStringList &)));
 
-static const char *MENU_ACTION_REMOVED_SIGNAL =
+static QByteArray MENU_ACTION_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuActionRemoved(synthclone::Menu,
                               const synthclone::MenuAction *,
                               const QStringList &)));
-static const char *EFFECT_MENU_ACTION_REMOVED_SIGNAL =
+static QByteArray EFFECT_MENU_ACTION_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuActionRemoved(const synthclone::Effect *,
                               const synthclone::MenuAction *,
                               const QStringList &)));
-static const char *SAMPLER_MENU_ACTION_REMOVED_SIGNAL =
+static QByteArray SAMPLER_MENU_ACTION_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuActionRemoved(const synthclone::Sampler *,
                               const synthclone::MenuAction *,
                               const QStringList &)));
-static const char *TARGET_MENU_ACTION_REMOVED_SIGNAL =
+static QByteArray TARGET_MENU_ACTION_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuActionRemoved(const synthclone::Target *,
                               const synthclone::MenuAction *,
                               const QStringList &)));
 
-static const char *MENU_SEPARATOR_ADDED_SIGNAL =
+static QByteArray MENU_SEPARATOR_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuSeparatorAdded(synthclone::Menu,
                                const synthclone::MenuSeparator *,
                                const QStringList &)));
-static const char *EFFECT_MENU_SEPARATOR_ADDED_SIGNAL =
+static QByteArray EFFECT_MENU_SEPARATOR_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuSeparatorAdded(const synthclone::Effect *,
                                const synthclone::MenuSeparator *,
                                const QStringList &)));
-static const char *SAMPLER_MENU_SEPARATOR_ADDED_SIGNAL =
+static QByteArray SAMPLER_MENU_SEPARATOR_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuSeparatorAdded(const synthclone::Sampler *,
                                const synthclone::MenuSeparator *,
                                const QStringList &)));
-static const char *TARGET_MENU_SEPARATOR_ADDED_SIGNAL =
+static QByteArray TARGET_MENU_SEPARATOR_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuSeparatorAdded(const synthclone::Target *,
                                const synthclone::MenuSeparator *,
                                const QStringList &)));
 
-static const char *MENU_SEPARATOR_REMOVED_SIGNAL =
+static QByteArray MENU_SEPARATOR_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuSeparatorRemoved(synthclone::Menu,
                                  const synthclone::MenuSeparator *,
                                  const QStringList &)));
-static const char *EFFECT_MENU_SEPARATOR_REMOVED_SIGNAL =
+static QByteArray EFFECT_MENU_SEPARATOR_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuSeparatorRemoved(const synthclone::Effect *,
                                  const synthclone::MenuSeparator *,
                                  const QStringList &)));
-static const char *SAMPLER_MENU_SEPARATOR_REMOVED_SIGNAL =
+static QByteArray SAMPLER_MENU_SEPARATOR_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuSeparatorRemoved(const synthclone::Sampler *,
                                  const synthclone::MenuSeparator *,
                                  const QStringList &)));
-static const char *TARGET_MENU_SEPARATOR_REMOVED_SIGNAL =
+static QByteArray TARGET_MENU_SEPARATOR_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(menuSeparatorRemoved(const synthclone::Target *,
                                  const synthclone::MenuSeparator *,
                                  const QStringList &)));
 
-static const char *REMOVING_MENU_ACTION_SIGNAL =
+static QByteArray REMOVING_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingMenuAction(synthclone::Menu,
                                const synthclone::MenuAction *,
                                const QStringList &)));
-static const char *REMOVING_EFFECT_MENU_ACTION_SIGNAL =
+static QByteArray REMOVING_EFFECT_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingMenuAction(const synthclone::Effect *,
                                const synthclone::MenuAction *,
                                const QStringList &)));
-static const char *REMOVING_SAMPLER_MENU_ACTION_SIGNAL =
+static QByteArray REMOVING_SAMPLER_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingMenuAction(const synthclone::Sampler *,
                                const synthclone::MenuAction *,
                                const QStringList &)));
-static const char *REMOVING_TARGET_MENU_ACTION_SIGNAL =
+static QByteArray REMOVING_TARGET_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingMenuAction(const synthclone::Target *,
                                const synthclone::MenuAction *,
                                const QStringList &)));
 
-static const char *REMOVING_MENU_SEPARATOR_SIGNAL =
+static QByteArray REMOVING_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingMenuSeparator(synthclone::Menu,
                                   const synthclone::MenuSeparator *,
                                   const QStringList &)));
-static const char *REMOVING_EFFECT_MENU_SEPARATOR_SIGNAL =
+static QByteArray REMOVING_EFFECT_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingMenuSeparator(const synthclone::Effect *,
                                   const synthclone::MenuSeparator *,
                                   const QStringList &)));
-static const char *REMOVING_SAMPLER_MENU_SEPARATOR_SIGNAL =
+static QByteArray REMOVING_SAMPLER_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingMenuSeparator(const synthclone::Sampler *,
                                   const synthclone::MenuSeparator *,
                                   const QStringList &)));
-static const char *REMOVING_TARGET_MENU_SEPARATOR_SIGNAL =
+static QByteArray REMOVING_TARGET_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingMenuSeparator(const synthclone::Target *,
                                   const synthclone::MenuSeparator *,
                                   const QStringList &)));
 
-static const char *BUILDING_TARGET_SIGNAL =
+static QByteArray BUILDING_TARGET_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(buildingTarget()));
-static const char *BUILDING_TARGETS_SIGNAL =
+static QByteArray BUILDING_TARGETS_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(buildingTargets()));
-static const char *TARGET_BUILD_ERROR_SIGNAL =
+static QByteArray TARGET_BUILD_ERROR_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(targetBuildError(const synthclone::Target *, const QString &)));
-static const char *TARGET_BUILT_SIGNAL =
+static QByteArray TARGET_BUILT_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(targetBuilt(const synthclone::Target *)));
-static const char *TARGETS_BUILT_SIGNAL =
+static QByteArray TARGETS_BUILT_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(targetBuilt()));
+    (SIGNAL(targetsBuilt()));
 
-static const char *ACTIVATING_PARTICIPANT_SIGNAL =
+static QByteArray ACTIVATING_PARTICIPANT_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(activatingParticipant(const synthclone::Participant *,
                                   const synthclone::Participant *,
                                   const QByteArray &)));
-static const char *ADDING_PARTICIPANT_SIGNAL =
+static QByteArray ADDING_PARTICIPANT_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(addingParticipant(const synthclone::Participant *,
                               const synthclone::Participant *,
                               const QByteArray &)));
-static const char *DEACTIVATING_PARTICIPANT_SIGNAL =
+static QByteArray DEACTIVATING_PARTICIPANT_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(deactivatingParticipant(const synthclone::Participant *,
                                     const synthclone::Participant *,
                                     const QByteArray &)));
-static const char *PARTICIPANT_ACTIVATED_SIGNAL =
+static QByteArray PARTICIPANT_ACTIVATED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(participantActivated(const synthclone::Participant *,
                                  const synthclone::Participant *,
                                  const QByteArray &)));
-static const char *PARTICIPANT_ADDED_SIGNAL =
+static QByteArray PARTICIPANT_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(participantAdded(const synthclone::Participant *,
                              const synthclone::Participant *,
                              const QByteArray &)));
-static const char *PARTICIPANT_DEACTIVATED_SIGNAL =
+static QByteArray PARTICIPANT_DEACTIVATED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(participantDeactivated(const synthclone::Participant *,
                                    const synthclone::Participant *,
                                    const QByteArray &)));
-static const char *PARTICIPANT_REMOVED_SIGNAL =
+static QByteArray PARTICIPANT_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(participantRemoved(const synthclone::Participant *,
                                const synthclone::Participant *,
                                const QByteArray &)));
-static const char *REMOVING_PARTICIPANT_SIGNAL =
+static QByteArray REMOVING_PARTICIPANT_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(removingParticipant(const synthclone::Participant *,
                                 const synthclone::Participant *,
                                 const QByteArray &)));
 
-static const char *AFTERTOUCH_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
+static QByteArray AFTERTOUCH_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(aftertouchPropertyVisibilityChanged(bool)));
-static const char *CHANNEL_PRESSURE_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
+static QByteArray CHANNEL_PRESSURE_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(channelPressurePropertyVisibilityChanged(bool)));
-static const char *CHANNEL_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
+static QByteArray CHANNEL_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(channelPropertyVisibilityChanged(bool)));
-static const char *CONTROL_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
+static QByteArray CONTROL_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(controlPropertyVisibilityChanged(synthclone::MIDIData, bool)));
-static const char *DRY_SAMPLE_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
+static QByteArray DRY_SAMPLE_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(drySamplePropertyVisibilityChanged(bool)));
-static const char *NOTE_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
+static QByteArray NOTE_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(notePropertyVisibilityChanged(bool)));
-static const char *RELEASE_TIME_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
+static QByteArray RELEASE_TIME_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(releaseTimePropertyVisibilityChanged(bool)));
-static const char *SAMPLE_TIME_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
+static QByteArray SAMPLE_TIME_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(sampleTimePropertyVisibilityChanged(bool)));
-static const char *STATUS_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
+static QByteArray STATUS_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(statusPropertyVisibilityChanged(bool)));
-static const char *VELOCITY_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
+static QByteArray VELOCITY_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(velocityPropertyVisibilityChanged(bool)));
-static const char *WET_SAMPLE_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
+static QByteArray WET_SAMPLE_PROPERTY_VISIBILITY_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(wetSamplePropertyVisibilityChanged(bool)));
 
-static const char *SAMPLE_CHANNEL_COUNT_CHANGED_SIGNAL =
+static QByteArray SAMPLE_CHANNEL_COUNT_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(sampleChannelCountChanged(synthclone::SampleChannelCount)));
-static const char *SAMPLE_RATE_CHANGED_SIGNAL =
+static QByteArray SAMPLE_RATE_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(sampleRateChanged(synthclone::SampleRate)));
 
-static const char *SESSION_STATE_CHANGED_SIGNAL =
+static QByteArray SESSION_STATE_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(sessionStateChanged(synthclone::SessionState, const QDir *)));
 
-static const char *STATE_CHANGED_SIGNAL =
+static QByteArray STATE_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(stateChanged(synthclone::SessionState, const QDir *)));
 
