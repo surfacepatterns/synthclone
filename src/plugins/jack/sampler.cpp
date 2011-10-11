@@ -130,7 +130,8 @@ Sampler::Sampler(const QString &name, const char *sessionId, QObject *parent):
     synthclone::Sampler(name, parent),
     eventThread(this)
 {
-    const char *jackName = tr("synthclone").toLocal8Bit().constData();
+    QByteArray jackNameByteArray = tr("synthclone").toLocal8Bit();
+    const char *jackName = jackNameByteArray.constData();
     jack_status_t status;
     client = sessionId ?
         jack_client_open(jackName, JackSessionID, &status, sessionId) :
