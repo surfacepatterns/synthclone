@@ -25,8 +25,9 @@ ArchiveWriter::ArchiveWriter(const QString &path, const QString &kitName,
         if (archive_write_set_format_pax_restricted(arch) != ARCHIVE_OK) {
             throw synthclone::Error(archive_error_string(arch));
         }
-        const char *p = path.toLocal8Bit().constData();
-        if (archive_write_open_filename(arch, p) != ARCHIVE_OK) {
+        QByteArray pathBytes = path.toLocal8Bit();
+        if (archive_write_open_filename(arch, pathBytes.constData()) !=
+            ARCHIVE_OK) {
             throw synthclone::Error(archive_error_string(arch));
         }
     } catch (...) {
@@ -55,8 +56,8 @@ ArchiveWriter::addConfiguration(const QString &configuration)
 {
     int64_t size = static_cast<int64_t>(configuration.count());
     writeEntry("drumkit.xml", configuration.count());
-    const char *data = configuration.toLocal8Bit().constData();
-    ssize_t n = archive_write_data(arch, data, size);
+    QByteArray confBytes = configuration.toLocal8Bit();
+    ssize_t n = archive_write_data(arch, confBytes.constData(), size);
     if (n == -1) {
         throw synthclone::Error(archive_error_string(arch));
     }
@@ -109,9 +110,8 @@ ArchiveWriter::writeEntry(const QString &fileName, int64_t size)
     if (! entry) {
         throw std::bad_alloc();
     }
-    QString path = QString("%1/%2").arg(kitName, fileName);
-    const char *p = path.toLocal8Bit().constData();
-    archive_entry_set_pathname(entry, p);
+    QByteArray path = QString("%1/%2").arg(kitName, fileName).toLocal8Bit();
+    archive_entry_set_pathname(entry, path.constData());
     archive_entry_set_size(entry, size);
     archive_entry_set_filetype(entry, AE_IFREG);
     archive_entry_set_perm(entry, 0644);

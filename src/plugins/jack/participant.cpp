@@ -191,9 +191,9 @@ Participant::handleSessionEvent(jack_client_t *client,
                                 jack_session_event_t *event)
 {
 
-    QString commandStr = QString("%1 ${SESSION_DIR}").
-        arg(qApp->applicationFilePath());
-    const char *commandLine = commandStr.toLocal8Bit().constData();
+    QByteArray commandStr = QString("%1 ${SESSION_DIR}").
+        arg(qApp->applicationFilePath()).toLocal8Bit();
+    const char *commandLine = commandStr.constData();
     event->command_line = new char[strlen(commandLine) + 1];
     QScopedArrayPointer<char> commandLinePtr(event->command_line);
     strcpy(event->command_line, commandLine);
