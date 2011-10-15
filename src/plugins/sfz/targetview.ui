@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>SFZ</string>
+   <string>SFZ Target Configuration</string>
   </property>
   <layout class="QVBoxLayout" stretch="0,1,1,0">
    <item>
