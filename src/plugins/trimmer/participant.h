@@ -63,9 +63,6 @@ private slots:
     handleEffectConfiguration();
 
     void
-    handleEffectUnregistration(QObject *obj);
-
-    void
     handleEffectViewCloseRequest();
 
     void
