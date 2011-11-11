@@ -1,3 +1,4 @@
+-Write a plugin for sampling using PortAudio/PortMIDI.
 -Write a plugin for LADSPA effects.
 -Write a plugin for LV2 effects.
 -Write a plugin for Renoise targets.
