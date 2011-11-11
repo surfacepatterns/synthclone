@@ -38,7 +38,7 @@ PROJECT_NUMBER         = 0.1
 # If a relative path is entered, it will be relative to the location
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = build/share/doc/synthclone
+OUTPUT_DIRECTORY       = build/share/doc/synthclone-devel
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create
 # 4096 sub-directories (in 2 levels) under the output directory of each output
@@ -909,7 +909,7 @@ QCH_FILE               =  synthclone.qch
 # Qt Help Project output. For more information please see
 # http://doc.trolltech.com/qthelpproject.html#namespace
 
-QHP_NAMESPACE          = org.googlecode.synthclone
+QHP_NAMESPACE          = com.googlecode.synthclone
 
 # The QHP_VIRTUAL_FOLDER tag specifies the namespace to use when generating
 # Qt Help Project output. For more information please see

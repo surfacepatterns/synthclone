@@ -34,6 +34,7 @@ def writeTemplate(destination, source, data):
         fp.close()
 
 def main():
+    createMenuEntry = False
     if mac_ver()[0]:
         defaultPrefix = "/Applications/"
         platform = "MACX"
@@ -41,6 +42,7 @@ def main():
         defaultPrefix = "C:\\Program Files\\synthclone"
         platform = "WIN32"
     else:
+        createMenuEntry = True
         defaultPrefix = "/usr/local"
         platform = "UNIX"
 
@@ -98,7 +100,7 @@ def main():
         prefix = abspath(prefix)
     skipAPIDocs = options.skipAPIDocs
     if not skipAPIDocs:
-        docDir = join(scriptDir, "build", "share", "doc", "synthclone")
+        docDir = join(scriptDir, "build", "share", "doc", "synthclone-devel")
         if not isdir(docDir):
             makedirs(docDir)
     skipHeaders = options.skipHeaders
@@ -116,8 +118,10 @@ def main():
     if not skipHeaders:
         writeTemplate(join(buildDir, "include", "synthclone", "config.h"),
                       join("templates", "config.h"), data)
-    writeTemplate(join(buildDir, "share", "applications", "synthclone.desktop"),
-                  join("templates", "synthclone.desktop"), data)
+    if createMenuEntry:
+        writeTemplate(join(buildDir, "share", "applications",
+                           "synthclone.desktop"),
+                      join("templates", "synthclone.desktop"), data)
 
     qmakeArgs = ["qmake", "-recursive"] + args + \
         ["MAJOR_VERSION=%d" % MAJOR_VERSION, "MINOR_VERSION=%d" % MINOR_VERSION,
