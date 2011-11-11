@@ -1,7 +1,7 @@
-`synthclone` is a Qt-based application that "clones" your MIDI-capable
+`synthclone` is a Qt-based application that can "clone" your MIDI-capable
 instruments.  It does this by sending out MIDI data that instructs an
 instrument to emit sounds for a series of notes and velocities.  It then saves
-this data in a format that can be understood by sampling software.
+this data as a sample-based instrument that can be loaded by sampler software.
 
 For more information on `synthclone`, visit:
 
