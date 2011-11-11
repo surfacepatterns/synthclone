@@ -11,7 +11,8 @@ TEMPLATE = subdirs
 # Install
 ################################################################################
 
-documentation.files = $$BUILDDIR/share/doc/synthclone/*
-documentation.path = $$PREFIX/share/doc/synthclone
-
-INSTALLS += documentation
+isEmpty(SKIP_API_DOCS) {
+    documentation.files = $$BUILDDIR/share/doc/synthclone/*
+    documentation.path = $$PREFIX/share/doc/synthclone
+    INSTALLS += documentation
+}

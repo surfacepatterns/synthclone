@@ -93,9 +93,14 @@ macx {
     headers.path = Headers
     headers.version = Versions
     CONFIG += lib_bundle ppc x86
-    QMAKE_BUNDLE_DATA += headers
+    isEmpty(SKIP_HEADERS) {
+        QMAKE_BUNDLE_DATA += headers
+    }
 } else {
     headers.path = $$SYNTHCLONE_HEADER_INSTALL_PATH/synthclone
 }
 
-INSTALLS += headers target
+INSTALLS += target
+isEmpty(SKIP_HEADERS) {
+    INSTALLS += headers
+}
