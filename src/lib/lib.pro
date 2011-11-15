@@ -100,6 +100,12 @@ macx {
     headers.path = $$SYNTHCLONE_HEADER_INSTALL_PATH/synthclone
 }
 
+unix {
+    pkgconfig.files += $$BUILDDIR/lib/pkgconfig/synthclone.pc
+    pkgconfig.path = $$PREFIX/lib/pkgconfig
+    INSTALLS += pkgconfig
+}
+
 INSTALLS += target
 isEmpty(SKIP_HEADERS) {
     INSTALLS += headers
