@@ -62,7 +62,8 @@ SampleOutputStream::initialize(SampleRate sampleRate,
     if (! sf_format_check(&info)) {
         throw Error(tr("format is not supported"));
     }
-    handle = sf_open(sample.path.toLocal8Bit().data(), SFM_WRITE, &info);
+    QByteArray path = sample.path.toLocal8Bit();
+    handle = sf_open(path.data(), SFM_WRITE, &info);
     if (! handle) {
         throw Error(std::strerror(errno));
     }

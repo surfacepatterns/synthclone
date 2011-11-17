@@ -30,7 +30,8 @@ SampleInputStream::SampleInputStream(const Sample &sample, QObject *parent):
     SampleStream(parent)
 {
     info.format = 0;
-    handle = sf_open(sample.path.toLocal8Bit().data(), SFM_READ, &info);
+    QByteArray path = sample.path.toLocal8Bit();
+    handle = sf_open(path.data(), SFM_READ, &info);
     if (! handle) {
         throw Error(std::strerror(errno));
     }
