@@ -198,8 +198,16 @@ ZoneListLoader::verifySampleAttribute(const QDomElement &element,
         }
         path = directory->absoluteFilePath(path);
     }
+    synthclone::Sample *sample;
     try {
-        return new synthclone::Sample(path, parent);
+        sample = new synthclone::Sample(path, parent);
+        try {
+            synthclone::SampleStream(*sample);
+        } catch (...) {
+            delete sample;
+            throw;
+        }
+        return sample;
     } catch (synthclone::Error &e) {
         message = qApp->tr("failed to load sample from '%1': %2").
             arg(path, e.getMessage());
