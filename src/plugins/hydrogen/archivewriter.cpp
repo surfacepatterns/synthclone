@@ -70,6 +70,8 @@ ArchiveWriter::addSample(const QString &fileName,
 {
     QString path = sample.getPath();
     QFileInfo info(path);
+    assert(info.exists());
+    assert(info.isFile());
     writeEntry(fileName, info.size());
     QFile file(path);
     if (! file.open(QFile::ReadOnly)) {
