@@ -87,6 +87,12 @@ SampleStream::getType() const
     return static_cast<Type>(info.format & SF_FORMAT_TYPEMASK);
 }
 
+bool
+SampleStream::isClosed() const
+{
+    return closed;
+}
+
 synthclone::SampleFrameCount
 SampleStream::seek(SampleFrameCount frames, Offset offset)
 {

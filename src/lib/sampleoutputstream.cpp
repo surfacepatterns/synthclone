@@ -21,6 +21,8 @@
 #include <cerrno>
 #include <cstring>
 
+#include <QtCore/QDebug>
+
 #include <synthclone/error.h>
 #include <synthclone/sampleoutputstream.h>
 #include <synthclone/util.h>
@@ -48,7 +50,30 @@ SampleOutputStream::SampleOutputStream(Sample &sample, SampleRate sampleRate,
 
 SampleOutputStream::~SampleOutputStream()
 {
-    // Empty
+    if (! isClosed()) {
+        try {
+            close();
+        } catch (synthclone::Error &e) {
+            qWarning() << e.getMessage();
+        }
+    }
+}
+
+void
+SampleOutputStream::close()
+{
+    if (! getFrames()) {
+        // Hack: Write one silent frame to the buffer if no samples have been
+        // written to the buffer.
+        SampleChannelCount channels = getChannels();
+        float *samples = new float[channels];
+        QScopedArrayPointer<float> samplesPtr(samples);
+        for (SampleChannelCount i = 0; i < channels; i++) {
+            samples[i] = 0.0;
+        }
+        write(samples, 1);
+    }
+    SampleStream::close();
 }
 
 void

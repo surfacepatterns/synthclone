@@ -138,7 +138,7 @@ namespace synthclone {
          * destructor.
          */
 
-        void
+        virtual void
         close();
 
         /**
@@ -200,6 +200,16 @@ namespace synthclone {
 
         Type
         getType() const;
+
+        /**
+         * Gets a boolean indicating whether or not the stream is closed.
+         *
+         * @returns
+         *   The boolean.
+         */
+
+        bool
+        isClosed() const;
 
         /**
          * Sets the position of the stream in the sample file.

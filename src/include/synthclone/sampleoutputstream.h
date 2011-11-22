@@ -95,6 +95,15 @@ namespace synthclone {
         ~SampleOutputStream();
 
         /**
+         * Closes the sample stream, which causes any unwritten data to be
+         * written to the sample.  This is automatically called by the
+         * destructor.
+         */
+
+        void
+        close();
+
+        /**
          * Writes 'frames' data to the stream.  The data is contained in
          * 'buffer'.
          */
