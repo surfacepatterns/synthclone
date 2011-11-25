@@ -202,7 +202,7 @@ ZoneListLoader::verifySampleAttribute(const QDomElement &element,
     try {
         sample = new synthclone::Sample(path, parent);
         try {
-            synthclone::SampleStream(*sample);
+            synthclone::SampleInputStream stream(*sample);
         } catch (...) {
             delete sample;
             throw;
