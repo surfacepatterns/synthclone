@@ -21,12 +21,12 @@ macx {
     isEmpty(PREFIX) {
         PREFIX = /Applications
     }
-    SYNTHCLONE_APP_INSTALL_PATH = $$PREFIX/synthclone.app/Contents/MacOS
-    SYNTHCLONE_DATA_INSTALL_PATH = $$PREFIX/synthclone.app/Contents/Resources
-    SYNTHCLONE_DOC_INSTALL_PATH = $$PREFIX/synthclone.app/Contents/Resources/devel-doc
-    SYNTHCLONE_HEADER_INSTALL_PATH = $$PREFIX/synthclone.app/Contents/Frameworks
-    SYNTHCLONE_LIBRARY_INSTALL_PATH = $$PREFIX/synthclone.app/Contents/PlugIns
-    SYNTHCLONE_PLUGIN_INSTALL_PATH = $$PREFIX/synthclone.app/Contents/PlugIns
+    SYNTHCLONE_APP_INSTALL_PATH = $${PREFIX}/synthclone.app/Contents/MacOS
+    SYNTHCLONE_DATA_INSTALL_PATH = $${PREFIX}/synthclone.app/Contents/Resources
+    SYNTHCLONE_DOC_INSTALL_PATH = $${PREFIX}/synthclone.app/Contents/Resources/devel-doc
+    SYNTHCLONE_HEADER_INSTALL_PATH = $${PREFIX}/synthclone.app/Contents/Frameworks
+    SYNTHCLONE_LIBRARY_INSTALL_PATH = $${PREFIX}/synthclone.app/Contents/PlugIns
+    SYNTHCLONE_PLUGIN_INSTALL_PATH = $${PREFIX}/synthclone.app/Contents/PlugIns
 } else {
     unix {
         DEFINES += SYNTHCLONE_PLATFORM_UNIX
@@ -40,10 +40,10 @@ macx {
             PREFIX = C:/Program Files/synthclone
         }
     }
-    SYNTHCLONE_APP_INSTALL_PATH = $$PREFIX/bin
-    SYNTHCLONE_DATA_INSTALL_PATH = $$PREFIX/share/synthclone
-    SYNTHCLONE_DOC_INSTALL_PATH = $$PREFIX/share/doc/synthclone-devel
-    SYNTHCLONE_HEADER_INSTALL_PATH = $$PREFIX/include
-    SYNTHCLONE_LIBRARY_INSTALL_PATH = $$PREFIX/lib
-    SYNTHCLONE_PLUGIN_INSTALL_PATH = $$PREFIX/lib/synthclone/plugins
+    SYNTHCLONE_APP_INSTALL_PATH = $${PREFIX}/bin
+    SYNTHCLONE_DATA_INSTALL_PATH = $${PREFIX}/share/synthclone
+    SYNTHCLONE_DOC_INSTALL_PATH = $${PREFIX}/share/doc/synthclone-devel
+    SYNTHCLONE_HEADER_INSTALL_PATH = $${PREFIX}/include
+    SYNTHCLONE_LIBRARY_INSTALL_PATH = $${PREFIX}/lib
+    SYNTHCLONE_PLUGIN_INSTALL_PATH = $${PREFIX}/lib/synthclone/plugins
 }

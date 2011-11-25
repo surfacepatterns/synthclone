@@ -22,5 +22,5 @@ TEMPLATE = lib
 # Install
 ################################################################################
 
-target.path = $$SYNTHCLONE_PLUGIN_INSTALL_PATH
+target.path = $${SYNTHCLONE_PLUGIN_INSTALL_PATH}
 INSTALLS += target

@@ -12,7 +12,7 @@ isEmpty(MAKEDIR) {
     MAKEDIR = ../../make
 }
 
-DESTDIR = $$BUILDDIR/lib
+DESTDIR = $${BUILDDIR}/lib
 HEADERS += closeeventfilter.h \
     ../include/synthclone/component.h \
     ../include/synthclone/context.h \
@@ -42,9 +42,9 @@ HEADERS += closeeventfilter.h \
     ../include/synthclone/zonecomparer.h
 INCLUDEPATH += ../include
 LIBS += -lsndfile
-MOC_DIR = $$MAKEDIR/lib
-OBJECTS_DIR = $$MAKEDIR/lib
-RCC_DIR = $$MAKEDIR/lib
+MOC_DIR = $${MAKEDIR}/lib
+OBJECTS_DIR = $${MAKEDIR}/lib
+RCC_DIR = $${MAKEDIR}/lib
 RESOURCES += lib.qrc
 SOURCES += closeeventfilter.cpp \
     component.cpp \
@@ -73,20 +73,20 @@ SOURCES += closeeventfilter.cpp \
     zonecomparer.cpp
 TARGET = synthclone
 TEMPLATE = lib
-VERSION = $$MAJOR_VERSION.$$MINOR_VERSION.$$REVISION
-VER_MAJ = $$MAJOR_VERSION
-VER_MIN = $$MINOR_VERSION
-VER_PAT = $$REVISION
+VERSION = $${MAJOR_VERSION}.$${MINOR_VERSION}.$${REVISION}
+VER_MAJ = $${MAJOR_VERSION}
+VER_MIN = $${MINOR_VERSION}
+VER_PAT = $${REVISION}
 
 ################################################################################
 # Install
 ################################################################################
 
-headers.files = $$HEADERS
-headers.files += $$BUILDDIR/include/synthclone/config.h
+headers.files = $${HEADERS}
+headers.files += $${BUILDDIR}/include/synthclone/config.h
 headers.files -= closeeventfilter.h
 
-target.path = $$SYNTHCLONE_LIBRARY_INSTALL_PATH
+target.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}
 
 macx {
     # XXX: Does this work?
@@ -97,12 +97,12 @@ macx {
         QMAKE_BUNDLE_DATA += headers
     }
 } else {
-    headers.path = $$SYNTHCLONE_HEADER_INSTALL_PATH/synthclone
+    headers.path = $${SYNTHCLONE_HEADER_INSTALL_PATH}/synthclone
 }
 
 unix {
-    pkgconfig.files += $$BUILDDIR/lib/pkgconfig/synthclone.pc
-    pkgconfig.path = $$PREFIX/lib/pkgconfig
+    pkgconfig.files += $${BUILDDIR}/lib/pkgconfig/synthclone.pc
+    pkgconfig.path = $${PREFIX}/lib/pkgconfig
     INSTALLS += pkgconfig
 }
 

@@ -12,7 +12,7 @@ TEMPLATE = subdirs
 ###############################################################################
 
 isEmpty(SKIP_API_DOCS) {
-    documentation.files = $$BUILDDIR/share/doc/synthclone-devel/*
-    documentation.path = $$PREFIX/share/doc/synthclone-devel
+    documentation.files = $${BUILDDIR}/share/doc/synthclone-devel/*
+    documentation.path = $${PREFIX}/share/doc/synthclone-devel
     INSTALLS += documentation
 }

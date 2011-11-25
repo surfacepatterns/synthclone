@@ -13,10 +13,10 @@ isEmpty(MAKEDIR) {
 }
 
 CONFIG += console uitools
-DEFINES += SYNTHCLONE_MAJOR_VERSION=$$MAJOR_VERSION \
-    SYNTHCLONE_MINOR_VERSION=$$MINOR_VERSION \
-    SYNTHCLONE_REVISION=$$REVISION
-DESTDIR = $$BUILDDIR/bin
+DEFINES += SYNTHCLONE_MAJOR_VERSION=$${MAJOR_VERSION} \
+    SYNTHCLONE_MINOR_VERSION=$${MINOR_VERSION} \
+    SYNTHCLONE_REVISION=$${REVISION}
+DESTDIR = $${BUILDDIR}/bin
 HEADERS += aboutview.h \
     application.h \
     componentviewlet.h \
@@ -67,10 +67,10 @@ HEADERS += aboutview.h \
     zonetablemodel.h \
     zoneviewlet.h
 INCLUDEPATH += ../include
-LIBS += -L$$BUILDDIR/lib -lsamplerate -lsynthclone
-MOC_DIR = $$MAKEDIR/synthclone
-OBJECTS_DIR = $$MAKEDIR/synthclone
-RCC_DIR = $$MAKEDIR/synthclone
+LIBS += -L$${BUILDDIR}/lib -lsamplerate -lsynthclone
+MOC_DIR = $${MAKEDIR}/synthclone
+OBJECTS_DIR = $${MAKEDIR}/synthclone
+RCC_DIR = $${MAKEDIR}/synthclone
 RESOURCES += synthclone.qrc
 SOURCES += aboutview.cpp \
     application.cpp \
@@ -121,19 +121,19 @@ SOURCES += aboutview.cpp \
     zoneviewlet.cpp
 TARGET = synthclone
 TEMPLATE = app
-VERSION = $$MAJOR_VERSION.$$MINOR_VERSION.$$REVISION
+VERSION = $${MAJOR_VERSION}.$${MINOR_VERSION}.$${REVISION}
 
 ################################################################################
 # Install
 ################################################################################
 
 unix {
-    desktop.files += $$BUILDDIR/share/applications/synthclone.desktop
-    desktop.path = $$PREFIX/share/applications
+    desktop.files += $${BUILDDIR}/share/applications/synthclone.desktop
+    desktop.path = $${PREFIX}/share/applications
     icon.files += ../lib/images/32x32/synthclone.png
-    icon.path = $$PREFIX/share/icons/
+    icon.path = $${PREFIX}/share/icons/
     INSTALLS += desktop icon
 }
 
-target.path = $$SYNTHCLONE_APP_INSTALL_PATH
+target.path = $${SYNTHCLONE_APP_INSTALL_PATH}
 INSTALLS += target

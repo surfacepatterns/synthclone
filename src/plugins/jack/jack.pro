@@ -11,9 +11,9 @@ HEADERS += eventthread.h \
     sampleratechangeview.h \
     semaphore.h
 LIBS += -ljack
-MOC_DIR = $$MAKEDIR/plugins/jack
-OBJECTS_DIR = $$MAKEDIR/plugins/jack
-RCC_DIR = $$MAKEDIR/plugins/jack
+MOC_DIR = $${MAKEDIR}/plugins/jack
+OBJECTS_DIR = $${MAKEDIR}/plugins/jack
+RCC_DIR = $${MAKEDIR}/plugins/jack
 RESOURCES += jack.qrc
 SOURCES += eventthread.cpp \
     participant.cpp \
