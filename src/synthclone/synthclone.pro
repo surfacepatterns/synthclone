@@ -12,6 +12,16 @@ isEmpty(MAKEDIR) {
     MAKEDIR = ../../make
 }
 
+unix {
+    # On some systems, `qmake` will reference a library installed in a system
+    # library path instead of a library in an included library path.  I'm not
+    # sure why this happens.  'speps' over at AUR sent in a patch that
+    # references the library explicitly.
+    LIBS += -lsamplerate $${BUILDDIR}/lib/libsynthclone.so.$${MAJOR_VERSION}.$${MINOR_VERSION}.$${REVISION}
+} else {
+    LIBS += -L$${BUILDDIR}/lib -lsamplerate -lsynthclone
+}
+
 CONFIG += console uitools
 DEFINES += SYNTHCLONE_MAJOR_VERSION=$${MAJOR_VERSION} \
     SYNTHCLONE_MINOR_VERSION=$${MINOR_VERSION} \
@@ -67,7 +77,6 @@ HEADERS += aboutview.h \
     zonetablemodel.h \
     zoneviewlet.h
 INCLUDEPATH += ../include
-LIBS += -L$${BUILDDIR}/lib -lsamplerate -lsynthclone
 MOC_DIR = $${MAKEDIR}/synthclone
 OBJECTS_DIR = $${MAKEDIR}/synthclone
 RCC_DIR = $${MAKEDIR}/synthclone
