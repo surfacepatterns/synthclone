@@ -10,7 +10,7 @@ from sys import argv, exit, stdout
 
 MAJOR_VERSION = 0
 MINOR_VERSION = 1
-REVISION = 8
+REVISION = 9
 
 def writeTemplate(destination, source, data):
     destination = abspath(destination)
