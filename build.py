@@ -36,9 +36,11 @@ def writeTemplate(destination, source, data):
 def main():
     createMenuEntry = False
     createPkgConfig = False
+    platformArgs = []
     if mac_ver()[0]:
         defaultPrefix = "/Applications/"
         platform = "MACX"
+        platformArgs += ["-spec", "macx-g++"]
     elif win32_ver()[0]:
         defaultPrefix = "C:\\Program Files\\synthclone"
         platform = "WIN32"
@@ -128,7 +130,7 @@ def main():
         writeTemplate(join(buildDir, "lib", "pkgconfig", "synthclone.pc"),
                       join("templates", "synthclone.pc"), data)
 
-    qmakeArgs = ["qmake", "-recursive"] + args + \
+    qmakeArgs = ["qmake", "-recursive"] + platformArgs + args + \
         ["MAJOR_VERSION=%d" % MAJOR_VERSION, "MINOR_VERSION=%d" % MINOR_VERSION,
          "REVISION=%d" % REVISION, "BUILDDIR=%s" % buildDir,
          "MAKEDIR=%s" % makeDir, "PREFIX=%s" % prefix]
