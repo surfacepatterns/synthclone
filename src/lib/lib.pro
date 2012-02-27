@@ -34,6 +34,7 @@ HEADERS += closeeventfilter.h \
     ../include/synthclone/sampler.h \
     ../include/synthclone/samplerjob.h \
     ../include/synthclone/samplestream.h \
+    ../include/synthclone/semaphore.h \
     ../include/synthclone/target.h \
     ../include/synthclone/types.h \
     ../include/synthclone/util.h \
@@ -66,6 +67,7 @@ SOURCES += closeeventfilter.cpp \
     sampler.cpp \
     samplerjob.cpp \
     samplestream.cpp \
+    semaphore.cpp \
     target.cpp \
     util.cpp \
     view.cpp \

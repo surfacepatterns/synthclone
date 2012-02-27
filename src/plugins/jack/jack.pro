@@ -8,8 +8,7 @@ HEADERS += eventthread.h \
     participant.h \
     plugin.h \
     sampler.h \
-    sampleratechangeview.h \
-    semaphore.h
+    sampleratechangeview.h
 LIBS += -ljack
 MOC_DIR = $${MAKEDIR}/plugins/jack
 OBJECTS_DIR = $${MAKEDIR}/plugins/jack
@@ -19,6 +18,5 @@ SOURCES += eventthread.cpp \
     participant.cpp \
     plugin.cpp \
     sampler.cpp \
-    sampleratechangeview.cpp \
-    semaphore.cpp
+    sampleratechangeview.cpp
 TARGET = $$qtLibraryTarget(synthclone_jack)

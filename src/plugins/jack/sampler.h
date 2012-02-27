@@ -29,9 +29,9 @@
 #include <QtCore/QMutex>
 
 #include <synthclone/sampler.h>
+#include <synthclone/semaphore.h>
 
 #include "eventthread.h"
-#include "semaphore.h"
 
 class Sampler: public synthclone::Sampler {
 
@@ -227,7 +227,7 @@ private:
     jack_ringbuffer_t *commandBuffer;
     jack_nframes_t currentFrame;
     const char *errorMessage;
-    Semaphore eventSemaphore;
+    synthclone::Semaphore eventSemaphore;
     EventThread eventThread;
     bool idle;
     jack_port_t **inputPorts;
