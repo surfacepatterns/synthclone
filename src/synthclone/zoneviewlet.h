@@ -31,7 +31,7 @@
 #include "menuviewlet.h"
 #include "sampleprofile.h"
 #include "standarditem.h"
-#include "zonetablecolumn.h"
+#include "types.h"
 #include "zonetabledelegate.h"
 #include "zonetablemodel.h"
 

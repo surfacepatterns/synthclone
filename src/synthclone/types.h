@@ -1,6 +1,6 @@
 /*
  * synthclone - Synthesizer-cloning software
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2012 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -17,8 +17,18 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __ZONETABLECOLUMN_H__
-#define __ZONETABLECOLUMN_H__
+#ifndef __TYPES_H__
+#define __TYPES_H__
+
+enum ParticipantTreeColumn {
+    PARTICIPANTTREECOLUMN_NAME = 0,
+    PARTICIPANTTREECOLUMN_STATE = 1,
+    PARTICIPANTTREECOLUMN_VERSION = 2,
+    PARTICIPANTTREECOLUMN_AUTHOR = 3,
+    PARTICIPANTTREECOLUMN_SUMMARY = 4,
+
+    PARTICIPANTTREECOLUMN_TOTAL = 5
+};
 
 enum ZoneTableColumn {
     ZONETABLECOLUMN_STATUS = 0,
@@ -28,11 +38,13 @@ enum ZoneTableColumn {
     ZONETABLECOLUMN_CHANNEL_PRESSURE = 4,
     ZONETABLECOLUMN_AFTERTOUCH = 5,
     ZONETABLECOLUMN_CONTROL_0 = 6,
+
     ZONETABLECOLUMN_CONTROL_127 = 133,
     ZONETABLECOLUMN_SAMPLE_TIME = 134,
     ZONETABLECOLUMN_RELEASE_TIME = 135,
     ZONETABLECOLUMN_DRY_SAMPLE = 136,
     ZONETABLECOLUMN_WET_SAMPLE = 137,
+
     ZONETABLECOLUMN_BASE_TOTAL = 138
 };
 

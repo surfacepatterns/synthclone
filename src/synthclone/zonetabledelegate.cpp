@@ -28,7 +28,7 @@
 
 #include <synthclone/util.h>
 
-#include "zonetablecolumn.h"
+#include "types.h"
 #include "zonetabledelegate.h"
 
 ZoneTableDelegate::ZoneTableDelegate(QObject *parent):

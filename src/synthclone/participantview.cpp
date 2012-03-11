@@ -23,8 +23,8 @@
 
 #include <synthclone/util.h>
 
-#include "participanttreecolumn.h"
 #include "participantview.h"
+#include "types.h"
 
 ParticipantView::ParticipantView(QObject *parent):
     DialogView(":/synthclone/participantview.ui", parent)

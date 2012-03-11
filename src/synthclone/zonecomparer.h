@@ -23,7 +23,7 @@
 #include <synthclone/sample.h>
 #include <synthclone/zonecomparer.h>
 
-#include "zonetablecolumn.h"
+#include "types.h"
 
 class ZoneComparer: public synthclone::ZoneComparer {
 

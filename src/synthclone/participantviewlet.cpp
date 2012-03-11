@@ -21,8 +21,8 @@
 
 #include <QtCore/QLocale>
 
-#include "participanttreecolumn.h"
 #include "participantviewlet.h"
+#include "types.h"
 
 ParticipantViewlet::ParticipantViewlet(QTreeView *treeView, QObject *parent):
     QObject(parent)

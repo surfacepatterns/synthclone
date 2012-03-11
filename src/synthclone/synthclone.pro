@@ -44,7 +44,6 @@ HEADERS += aboutview.h \
     menuleafviewlet.h \
     menuseparatorviewlet.h \
     menuviewlet.h \
-    participanttreecolumn.h \
     participantview.h \
     participantviewlet.h \
     pluginmanager.h \
@@ -65,6 +64,7 @@ HEADERS += aboutview.h \
     signalpair.h \
     standarditem.h \
     toolviewlet.h \
+    types.h \
     util.h \
     viewviewlet.h \
     zone.h \
@@ -72,7 +72,6 @@ HEADERS += aboutview.h \
     zonecomparerproxy.h \
     zoneindexcomparer.h \
     zonelistloader.h \
-    zonetablecolumn.h \
     zonetabledelegate.h \
     zonetablemodel.h \
     zoneviewlet.h
