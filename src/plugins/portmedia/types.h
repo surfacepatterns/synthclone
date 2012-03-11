@@ -1,0 +1,10 @@
+#ifndef __TYPES_H__
+#define __TYPES_H__
+
+enum ChannelMapTableColumn {
+    CHANNELMAPTABLECOLUMN_INPUT_CHANNEL = 0,
+    CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL = 1,
+    CHANNELMAPTABLECOLUMN_TOTAL = 2
+};
+
+#endif

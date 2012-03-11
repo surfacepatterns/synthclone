@@ -75,6 +75,9 @@ def main():
     parser.add_option("--skip-jack", action="store", default=0,
                       dest="skipJACK", help="Don't build the JACK plugin",
                       type="int")
+    parser.add_option("--skip-portmedia", action="store", default=0,
+                      dest="skipPortMedia",
+                      help="Don't build the PortMedia plugin", type="int")
     parser.add_option("--skip-sfz", action="store", default=0, dest="skipSFZ",
                       help="Don't build the SFZ plugin", type="int")
     parser.add_option("--skip-trimmer", action="store", default=0,
@@ -144,6 +147,8 @@ def main():
         qmakeArgs.append("SKIP_HYDROGEN_PLUGIN=1")
     if options.skipJACK:
         qmakeArgs.append("SKIP_JACK_PLUGIN=1")
+    if options.skipPortMedia:
+        qmakeArgs.append("SKIP_PORTMEDIA_PLUGIN=1")
     if options.skipSFZ:
         qmakeArgs.append("SKIP_SFZ_PLUGIN=1")
     if options.skipTrimmer:

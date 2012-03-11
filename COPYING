@@ -1,7 +1,16 @@
 Files in this tree are mainly licensed under the GPL, as noted in the file
-headers.  However, the files under the 'src/include' and 'src/lib' trees are
-licensed under the LGPL in order to allow for proprietary usage of
-libsynthclone, a plugin API for synthclone, and the files under the
-'src/lib/images' tree are licensed under the LGPL in accordance with the
-licensing of the Oxygen Icon Theme.  Please see COPYING.GPL and COPYING.LGPL
-for more information on these two licenses.
+headers, with the following exceptions:
+
+    1.) Files under the 'src/include' and 'src/lib' trees are licensed under
+        the LGPL in order to allow for proprietary usage of libsynthclone, a
+        plugin API for synthclone.
+
+    2.) Files under the 'src/lib/images' tree are licensed under the LGPL in
+        accordance with the licensing of the Oxygen Icon Theme.
+
+    3.) Files under the 'src/plugins/portmedia/portaudio' tree are taken from
+        the PortAudio source tree.  These files are licensed under the
+        PortAudio license.
+
+Please see COPYING.GPL, COPYING.LGPL, and COPYING.PA for more information on
+these three licenses.

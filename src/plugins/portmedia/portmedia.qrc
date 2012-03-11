@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/synthclone/plugins/portmedia">
+        <file>samplerview.ui</file>
+    </qresource>
+</RCC>

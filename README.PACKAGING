@@ -19,6 +19,7 @@ A full `synthclone` install is made up of several parts:
   4. Plugins distributed with `synthclone`, including:
     * libsynthclone_hydrogen
     * libsynthclone_jack
+    * libsynthclone_portmedia
     * libsynthclone_sfz
     * libsynthclone_trimmer
     * libsynthclone_zonegenerator
@@ -50,6 +51,8 @@ order to select what will or will not be built:
     --skip-hydrogen=SKIPHYDROGEN
                           Don't build the Hydrogen plugin
     --skip-jack=SKIPJACK  Don't build the JACK plugin
+    --skip-portmedia=SKIPPORTMEDIA
+                          Don't build the PortMedia plugin
     --skip-sfz=SKIPSFZ    Don't build the SFZ plugin
     --skip-trimmer=SKIPTRIMMER
                           Don't build the trimmer plugin
