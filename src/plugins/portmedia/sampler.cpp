@@ -104,13 +104,15 @@ Sampler::Sampler(const QString &name, synthclone::SampleChannelCount channels,
                     if (deviceInfo->maxInputChannels) {
                         data.inputDevices.append(deviceData);
                         if (deviceIndex == defaultInputDevice) {
-                            potentialInputDevice = j;
+                            potentialInputDevice =
+                                data.inputDevices.count() - 1;
                         }
                     }
                     if (deviceInfo->maxOutputChannels) {
                         data.outputDevices.append(deviceData);
                         if (deviceIndex == defaultOutputDevice) {
-                            potentialOutputDevice = j;
+                            potentialOutputDevice =
+                                data.outputDevices.count() - 1;
                         }
                     }
                 }
@@ -121,7 +123,7 @@ Sampler::Sampler(const QString &name, synthclone::SampleChannelCount channels,
                     data.info = apiInfo;
                     audioAPIs.append(data);
                     if (apiIndex == defaultAudioAPIIndex) {
-                        audioAPIIndex = i;
+                        audioAPIIndex = audioAPIs.count() - 1;
                         audioInputDeviceIndex = potentialInputDevice;
                         audioOutputDeviceIndex = potentialOutputDevice;
                     }
@@ -152,7 +154,7 @@ Sampler::Sampler(const QString &name, synthclone::SampleChannelCount channels,
                     data.info = info;
                     midiDevices.append(data);
                     if (deviceId == defaultDeviceId) {
-                        midiDeviceIndex = i;
+                        midiDeviceIndex = midiDevices.count() - 1;
                     }
                 }
             }
@@ -198,8 +200,10 @@ Sampler::~Sampler()
     if (active) {
         deactivate();
     }
+
     delete[] audioInputChannelIndices;
     delete[] audioOutputChannelIndices;
+
     PmError pmError = Pm_Terminate();
     if (pmError != pmNoError) {
         qWarning() << tr("Error terminating PortMidi: %1").
@@ -245,7 +249,7 @@ Sampler::activate()
         inputParameters.device = inputData.index;
         inputParameters.hostApiSpecificStreamInfo = 0;
         inputParameters.sampleFormat = paFloat32;
-        inputParameters.suggestedLatency = info->defaultLowInputLatency;
+        inputParameters.suggestedLatency = info->defaultHighInputLatency;
 
         PaStreamParameters outputParameters;
         const AudioDeviceData &outputData = getAudioOutputDeviceData();
@@ -255,7 +259,7 @@ Sampler::activate()
         outputParameters.device = outputData.index;
         outputParameters.hostApiSpecificStreamInfo = 0;
         outputParameters.sampleFormat = paFloat32;
-        outputParameters.suggestedLatency = info->defaultLowOutputLatency;
+        outputParameters.suggestedLatency = info->defaultHighOutputLatency;
 
         PaError paError = Pa_OpenStream(&audioStream, &inputParameters,
                                         &outputParameters, sampleRate,
@@ -765,6 +769,18 @@ Sampler::monitorEvents()
             emit jobError(event.data.error.message);
             command = &(event.data.error.command);
             break;
+        case Event::TYPE_INPUT_OVERFLOW:
+            qWarning() << "PortMedia input overflow detected.";
+            continue;
+        case Event::TYPE_INPUT_UNDERFLOW:
+            qWarning() << "PortMedia input underflow detected.";
+            continue;
+        case Event::TYPE_OUTPUT_OVERFLOW:
+            qWarning() << "PortMedia output overflow detected.";
+            continue;
+        case Event::TYPE_OUTPUT_UNDERFLOW:
+            qWarning() << "PortMedia output underflow detected.";
+            continue;
         case Event::TYPE_PROGRESS:
             emit progressChanged(event.data.progress);
             continue;
