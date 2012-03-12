@@ -615,7 +615,7 @@ Sampler::handleProcessEvent(const float *input, float *output,
                                command.totalReleaseFrames));
             break;
         }
-        copyData(input, output, frames, frames - processedFrames);
+        copyData(input, output, frames, processedFrames);
         sendProgressEvent(static_cast<float>(command.totalSampleFrames) /
                           (command.totalSampleFrames +
                            command.totalReleaseFrames));
