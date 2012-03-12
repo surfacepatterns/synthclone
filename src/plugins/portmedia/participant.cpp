@@ -207,6 +207,10 @@ Participant::deactivate(synthclone::Context &context)
                this, SLOT(handleSampleRateChange(synthclone::SampleRate)));
 
     context.removeMenuAction(&addSamplerAction);
+
+    if (sampler->isActive()) {
+        context.removeSampler();
+    }
     delete sampler;
     this->context = 0;
 }
