@@ -99,7 +99,7 @@ ChannelMapDelegate::setEditorData(QWidget *editor,
     case CHANNELMAPTABLECOLUMN_INPUT_CHANNEL:
     case CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL:
         qobject_cast<QComboBox *>(editor)->
-            setCurrentIndex(index.data(Qt::EditRole).toInt());
+            setCurrentIndex(index.data(Qt::UserRole).toInt());
         break;
     default:
         assert(false);

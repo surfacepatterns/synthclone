@@ -132,7 +132,7 @@ private:
 
     void
     setModelData(int row, int column, const QVariant &value,
-                 int role=Qt::EditRole);
+                 int role=Qt::UserRole);
 
     QPushButton *addButton;
     QComboBox *audioDriver;

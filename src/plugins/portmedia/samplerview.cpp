@@ -20,6 +20,7 @@
 #include <cassert>
 
 #include <QtCore/QLocale>
+#include <QtGui/QHeaderView>
 
 #include <synthclone/util.h>
 
@@ -74,6 +75,7 @@ SamplerView::SamplerView(QObject *parent):
 
     channelMapTableView = synthclone::getChild<QTableView>
         (rootWidget, "channelMap");
+    channelMapTableView->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
     channelMapTableView->setItemDelegate(&channelMapTableDelegate);
     channelMapTableView->setModel(&channelMapTableModel);
 
@@ -152,7 +154,7 @@ void
 SamplerView::setAudioInputChannel(synthclone::SampleChannelCount sampleChannel,
                                   synthclone::SampleChannelCount inputChannel)
 {
-    QString channel = QLocale::system().toString(inputChannel);
+    QString channel = QLocale::system().toString(inputChannel + 1);
     int row = static_cast<int>(sampleChannel);
     setModelData(row, CHANNELMAPTABLECOLUMN_INPUT_CHANNEL, inputChannel);
     setModelData(row, CHANNELMAPTABLECOLUMN_INPUT_CHANNEL,
@@ -171,12 +173,14 @@ SamplerView::setAudioInputDevice(int index)
         QModelIndex index = channelMapTableModel.index
             (i, CHANNELMAPTABLECOLUMN_INPUT_CHANNEL);
         QString channel =
-            locale.toString(channelMapTableModel.data(index).toInt());
+            locale.toString(channelMapTableModel.data(index).toInt() + 1);
         setModelData(i, CHANNELMAPTABLECOLUMN_INPUT_CHANNEL,
                      tr("%1 - Channel %2").arg(name, channel),
                      Qt::DisplayRole);
     }
     channelMapTableDelegate.setAudioInputDeviceName(name);
+    channelMapTableView->resizeColumnToContents
+        (CHANNELMAPTABLECOLUMN_INPUT_CHANNEL);
 }
 
 void
@@ -191,7 +195,7 @@ SamplerView::
 setAudioOutputChannel(synthclone::SampleChannelCount sampleChannel,
                       synthclone::SampleChannelCount outputChannel)
 {
-    QString channel = QLocale::system().toString(outputChannel);
+    QString channel = QLocale::system().toString(outputChannel + 1);
     int row = static_cast<int>(sampleChannel);
     setModelData(row, CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL, outputChannel);
     setModelData(row, CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL,
@@ -210,12 +214,14 @@ SamplerView::setAudioOutputDevice(int index)
         QModelIndex index = channelMapTableModel.index
             (i, CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL);
         QString channel =
-            locale.toString(channelMapTableModel.data(index).toInt());
+            locale.toString(channelMapTableModel.data(index).toInt() + 1);
         setModelData(i, CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL,
                      tr("%1 - Channel %2").arg(name, channel),
                      Qt::DisplayRole);
     }
     channelMapTableDelegate.setAudioOutputDeviceName(name);
+    channelMapTableView->resizeColumnToContents
+        (CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL);
 }
 
 void
