@@ -117,6 +117,7 @@ namespace synthclone {
         initialize(SampleRate sampleRate, SampleChannelCount channels,
                    int format);
 
+        bool framesWritten;
         Sample &sample;
 
     };

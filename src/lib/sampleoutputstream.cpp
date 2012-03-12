@@ -62,7 +62,7 @@ SampleOutputStream::~SampleOutputStream()
 void
 SampleOutputStream::close()
 {
-    if (! getFrames()) {
+    if (! framesWritten) {
         // Hack: Write one silent frame to the buffer if no samples have been
         // written to the buffer.
         SampleChannelCount channels = getChannels();
@@ -92,6 +92,7 @@ SampleOutputStream::initialize(SampleRate sampleRate,
     if (! handle) {
         throw Error(std::strerror(errno));
     }
+    framesWritten = false;
 }
 
 void
@@ -106,4 +107,5 @@ SampleOutputStream::write(const float *buffer, SampleFrameCount frames)
         assert(errorNumber != SF_ERR_NO_ERROR);
         throw synthclone::Error(sf_error_number(errorNumber));
     }
+    framesWritten = true;
 }
