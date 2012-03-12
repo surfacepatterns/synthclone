@@ -13,7 +13,7 @@ isEmpty(MINOR_VERSION) {
 }
 
 isEmpty(REVISION) {
-    REVISION = 9
+    REVISION = 10
 }
 
 macx {
