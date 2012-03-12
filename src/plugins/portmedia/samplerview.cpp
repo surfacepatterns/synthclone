@@ -37,17 +37,17 @@ SamplerView::SamplerView(QObject *parent):
     connect(addButton, SIGNAL(clicked()), SIGNAL(addRequest()));
 
     audioDriver = synthclone::getChild<QComboBox>(rootWidget, "audioDriver");
-    connect(audioDriver, SIGNAL(currentIndexChanged(int)),
+    connect(audioDriver, SIGNAL(activated(int)),
             SIGNAL(audioAPIChangeRequest(int)));
 
     audioInputDevice = synthclone::getChild<QComboBox>
         (rootWidget, "audioInputDevice");
-    connect(audioInputDevice, SIGNAL(currentIndexChanged(int)),
+    connect(audioInputDevice, SIGNAL(activated(int)),
             SIGNAL(audioInputDeviceChangeRequest(int)));
 
     audioOutputDevice = synthclone::getChild<QComboBox>
         (rootWidget, "audioOutputDevice");
-    connect(audioOutputDevice, SIGNAL(currentIndexChanged(int)),
+    connect(audioOutputDevice, SIGNAL(activated(int)),
             SIGNAL(audioOutputDeviceChangeRequest(int)));
 
     connect(&channelMapTableDelegate,
@@ -83,7 +83,7 @@ SamplerView::SamplerView(QObject *parent):
     connect(closeButton, SIGNAL(clicked()), SIGNAL(closeRequest()));
 
     midiDevice = synthclone::getChild<QComboBox>(rootWidget, "midiDevice");
-    connect(midiDevice, SIGNAL(currentIndexChanged(int)),
+    connect(midiDevice, SIGNAL(activated(int)),
             SIGNAL(midiDeviceChangeRequest(int)));
 
     name = synthclone::getChild<QLineEdit>(rootWidget, "name");

@@ -123,7 +123,7 @@ Participant::activate(synthclone::Context &context, const QVariant &/*state*/)
 	    sampler, SLOT(setName(const QString &)));
 
     connect(sampler, SIGNAL(audioAPIIndexChanged(int)),
-            &samplerView, SLOT(setAudioAPI(int)));
+            SLOT(handleAudioAPIIndexChange(int)));
     connect(sampler,
             SIGNAL(audioInputChannelChanged
                    (synthclone::SampleChannelCount,
@@ -263,6 +263,14 @@ Participant::handleAddSamplerRequest()
     if (addSampler()) {
         samplerView.setVisible(false);
     }
+}
+
+void
+Participant::handleAudioAPIIndexChange(int index)
+{
+    samplerView.clearAudioInputDevices();
+    samplerView.clearAudioOutputDevices();
+    samplerView.setAudioAPI(index);
 }
 
 void

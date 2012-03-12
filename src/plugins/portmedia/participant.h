@@ -57,6 +57,9 @@ private slots:
     handleAddSamplerRequest();
 
     void
+    handleAudioAPIIndexChange(int index);
+
+    void
     handleChannelCountChange(synthclone::SampleChannelCount channels);
 
     void
