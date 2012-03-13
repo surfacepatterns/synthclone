@@ -17,6 +17,7 @@ isEmpty(REVISION) {
 }
 
 macx {
+    CONFIG += x86_64
     DEFINES += SYNTHCLONE_PLATFORM_MACX
     isEmpty(PREFIX) {
         PREFIX = /Applications
@@ -27,6 +28,11 @@ macx {
     SYNTHCLONE_HEADER_INSTALL_PATH = $${PREFIX}/synthclone.app/Contents/Frameworks
     SYNTHCLONE_LIBRARY_INSTALL_PATH = $${PREFIX}/synthclone.app/Contents/PlugIns
     SYNTHCLONE_PLUGIN_INSTALL_PATH = $${PREFIX}/synthclone.app/Contents/PlugIns
+
+    # Dependencies installed with MacPorts.  Is this the correct way to handle Mac?
+    INCLUDEPATH += /opt/local/include
+    LIBS += -L/opt/local/lib
+
 } else {
     unix {
         DEFINES += SYNTHCLONE_PLATFORM_UNIX

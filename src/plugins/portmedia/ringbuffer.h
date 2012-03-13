@@ -39,7 +39,9 @@ public:
         // given element count.
         size_t realCount;
         for (realCount = 1; (realCount < elementCount) && realCount;
-             realCount <<= 1);
+             realCount <<= 1) {
+            // Empty
+        }
         assert(realCount);
 
         data = malloc(sizeof(T) * realCount);

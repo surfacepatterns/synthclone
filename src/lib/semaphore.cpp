@@ -75,24 +75,24 @@ Semaphore::~Semaphore()
 #endif
     if (sem_destroy(semaphore)) {
         qWarning() << tr("Failed to destroy semaphore: %1").
-	    arg(getErrorMessage());
-	return;
+            arg(getErrorMessage());
+        return;
     }
 #if defined(SYNTHCLONE_PLATFORM_MACX)
     if (sem_close(semaphore)) {
         qWarning() << tr("Failed to close semaphore: %1").
-	    arg(getErrorMessage());
-	return;
+            arg(getErrorMessage());
+        return;
     }
     if (sem_unlink(name)) {
         qWarning() << tr("Failed to unlink semaphore '%1': %2").
-	    arg(name).arg(getErrorMessage());
+            arg(name.constData()).arg(getErrorMessage());
     }
 #endif
 #elif defined(SYNTHCLONE_PLATFORM_WIN32)
     if (! CloseHandle(semaphore)) {
         qWarning() << tr("Failed to close semaphore handle: %1").
-	    arg(getErrorMessage());
+            arg(getErrorMessage());
     }
 #endif
 

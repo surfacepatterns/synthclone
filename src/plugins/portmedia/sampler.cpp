@@ -542,7 +542,7 @@ Sampler::handleProcessEvent(const float *input, float *output,
         }
         genericCopy = false;
         processedFrames = playData(input, output, frames);
-        if (processedFrames < frames) {
+        if (static_cast<unsigned long>(processedFrames) < frames) {
             copyData(input, output, frames, frames - processedFrames);
             sendProgressEvent(1.0);
             state = STATE_COMPLETED;
@@ -612,7 +612,7 @@ Sampler::handleProcessEvent(const float *input, float *output,
         }
         genericCopy = false;
         processedFrames = recordData(input, output, frames);
-        if (processedFrames >= frames) {
+        if (static_cast<unsigned long>(processedFrames) >= frames) {
             currentFrame += frames;
             sendProgressEvent(static_cast<float>(currentFrame) /
                               (command.totalSampleFrames +

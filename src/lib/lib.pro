@@ -12,6 +12,7 @@ isEmpty(MAKEDIR) {
     MAKEDIR = ../../make
 }
 
+CONFIG += uitools
 DESTDIR = $${BUILDDIR}/lib
 HEADERS += closeeventfilter.h \
     ../include/synthclone/component.h \
@@ -90,17 +91,17 @@ headers.files -= closeeventfilter.h
 
 target.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}
 
-macx {
+#macx {
     # XXX: Does this work?
-    headers.path = Headers
-    headers.version = Versions
-    CONFIG += lib_bundle ppc x86
-    isEmpty(SKIP_HEADERS) {
-        QMAKE_BUNDLE_DATA += headers
-    }
-} else {
+#    headers.path = Headers
+#    headers.version = Versions
+#    CONFIG += lib_bundle ppc x86
+#    isEmpty(SKIP_HEADERS) {
+#        QMAKE_BUNDLE_DATA += headers
+#    }
+#} else {
     headers.path = $${SYNTHCLONE_HEADER_INSTALL_PATH}/synthclone
-}
+#}
 
 unix {
     pkgconfig.files += $${BUILDDIR}/lib/pkgconfig/synthclone.pc

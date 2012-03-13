@@ -138,7 +138,11 @@ SessionSampleData::updateSample(synthclone::Sample &sample, QObject *parent)
     // At this point, some sort of conversion is required.
 
     float *channelBuffer;
-    QScopedArrayPointer<float> channelBufferPtr;
+
+    // For some reason, the empty QScopedArrayPointer constructor is not
+    // available on the Mac OSX platform.
+    QScopedArrayPointer<float> channelBufferPtr(static_cast<float *>(0));
+
     float *convertBuffer = new float[sampleChannelCount * 512];
     QScopedArrayPointer<float> convertBufferPtr(convertBuffer);
     SampleRateConverter *converter;

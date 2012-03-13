@@ -2569,8 +2569,8 @@ handleZoneViewletAftertouchChangeRequest(int index,
 void
 Controller::handleZoneViewletAftertouchPropertySortRequest(bool ascending)
 {
-    session.sortZones(ZoneComparer(ZoneComparer::PROPERTY_AFTERTOUCH),
-                      ascending);
+    ZoneComparer comparer(ZoneComparer::PROPERTY_AFTERTOUCH);
+    session.sortZones(comparer, ascending);
 }
 
 void
@@ -2600,14 +2600,15 @@ handleZoneViewletChannelPressureChangeRequest(int index,
 void
 Controller::handleZoneViewletChannelPressurePropertySortRequest(bool ascending)
 {
-    session.sortZones(ZoneComparer(ZoneComparer::PROPERTY_CHANNEL_PRESSURE),
-                      ascending);
+    ZoneComparer comparer(ZoneComparer::PROPERTY_CHANNEL_PRESSURE);
+    session.sortZones(comparer, ascending);
 }
 
 void
 Controller::handleZoneViewletChannelPropertySortRequest(bool ascending)
 {
-    session.sortZones(ZoneComparer(ZoneComparer::PROPERTY_CHANNEL), ascending);
+    ZoneComparer comparer(ZoneComparer::PROPERTY_CHANNEL);
+    session.sortZones(comparer, ascending);
 }
 
 void
@@ -2624,7 +2625,8 @@ handleZoneViewletControlPropertySortRequest(synthclone::MIDIData control,
                                             bool ascending)
 {
     int property = static_cast<int>(control) + ZoneComparer::PROPERTY_CONTROL_0;
-    session.sortZones(ZoneComparer(property), ascending);
+    ZoneComparer comparer(property);
+    session.sortZones(comparer, ascending);
 }
 
 void
@@ -2658,8 +2660,8 @@ Controller::handleZoneViewletDeleteRequest()
 void
 Controller::handleZoneViewletDrySamplePropertySortRequest(bool ascending)
 {
-    session.sortZones(ZoneComparer(ZoneComparer::PROPERTY_DRY_SAMPLE),
-                      ascending);
+    ZoneComparer comparer(ZoneComparer::PROPERTY_DRY_SAMPLE);
+    session.sortZones(comparer, ascending);
 }
 
 void
@@ -2688,7 +2690,8 @@ Controller::handleZoneViewletNoteChangeRequest(int index,
 void
 Controller::handleZoneViewletNotePropertySortRequest(bool ascending)
 {
-    session.sortZones(ZoneComparer(ZoneComparer::PROPERTY_NOTE), ascending);
+    ZoneComparer comparer(ZoneComparer::PROPERTY_NOTE);
+    session.sortZones(comparer, ascending);
 }
 
 void
@@ -2739,8 +2742,8 @@ handleZoneViewletReleaseTimeChangeRequest(int index,
 void
 Controller::handleZoneViewletReleaseTimePropertySortRequest(bool ascending)
 {
-    session.sortZones(ZoneComparer(ZoneComparer::PROPERTY_RELEASE_TIME),
-                      ascending);
+    ZoneComparer comparer(ZoneComparer::PROPERTY_RELEASE_TIME);
+    session.sortZones(comparer, ascending);
 }
 
 void
@@ -2782,8 +2785,8 @@ handleZoneViewletSampleTimeChangeRequest(int index,
 void
 Controller::handleZoneViewletSampleTimePropertySortRequest(bool ascending)
 {
-    session.sortZones(ZoneComparer(ZoneComparer::PROPERTY_SAMPLE_TIME),
-                      ascending);
+    ZoneComparer comparer(ZoneComparer::PROPERTY_SAMPLE_TIME);
+    session.sortZones(comparer, ascending);
 }
 
 void
@@ -2797,7 +2800,8 @@ Controller::handleZoneViewletSelectAllRequest()
 void
 Controller::handleZoneViewletStatusPropertySortRequest(bool ascending)
 {
-    session.sortZones(ZoneComparer(ZoneComparer::PROPERTY_STATUS), ascending);
+    ZoneComparer comparer(ZoneComparer::PROPERTY_STATUS);
+    session.sortZones(comparer, ascending);
 }
 
 void
@@ -2810,12 +2814,13 @@ handleZoneViewletVelocityChangeRequest(int index, synthclone::MIDIData velocity)
 void
 Controller::handleZoneViewletVelocityPropertySortRequest(bool ascending)
 {
-    session.sortZones(ZoneComparer(ZoneComparer::PROPERTY_VELOCITY), ascending);
+    ZoneComparer comparer(ZoneComparer::PROPERTY_VELOCITY);
+    session.sortZones(comparer, ascending);
 }
 
 void
 Controller::handleZoneViewletWetSamplePropertySortRequest(bool ascending)
 {
-    session.sortZones(ZoneComparer(ZoneComparer::PROPERTY_WET_SAMPLE),
-                      ascending);
+    ZoneComparer comparer(ZoneComparer::PROPERTY_WET_SAMPLE);
+    session.sortZones(comparer, ascending);
 }
