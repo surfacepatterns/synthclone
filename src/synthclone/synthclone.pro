@@ -12,25 +12,21 @@ isEmpty(MAKEDIR) {
     MAKEDIR = ../../make
 }
 
-macx {
-    LIBS += -L$${BUILDDIR}/lib -lsamplerate -lsynthclone
+unix:!macx {
+    # On some systems, `qmake` will reference a library installed in a system
+    # library path instead of a library in an included library path.  I'm not
+    # sure why this happens.  'speps' over at AUR sent in a patch that
+    # references the library explicitly.
+    LIBS += -lsamplerate $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/libsynthclone.so.$${MAJOR_VERSION}.$${MINOR_VERSION}.$${REVISION}
 } else {
-    unix {
-        # On some systems, `qmake` will reference a library installed in a
-        # system library path instead of a library in an included library path.
-        # I'm not sure why this happens.  'speps' over at AUR sent in a patch
-        # that references the library explicitly.
-        LIBS += -lsamplerate $${BUILDDIR}/lib/libsynthclone.so.$${MAJOR_VERSION}.$${MINOR_VERSION}.$${REVISION}
-    } else {
-        LIBS += -L$${BUILDDIR}/lib -lsamplerate -lsynthclone
-    }
+    LIBS += -L$${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX} -lsamplerate -lsynthclone
 }
 
 CONFIG += console uitools
 DEFINES += SYNTHCLONE_MAJOR_VERSION=$${MAJOR_VERSION} \
     SYNTHCLONE_MINOR_VERSION=$${MINOR_VERSION} \
     SYNTHCLONE_REVISION=$${REVISION}
-DESTDIR = $${BUILDDIR}/bin
+DESTDIR = $${BUILDDIR}/$${SYNTHCLONE_APP_SUFFIX}
 HEADERS += aboutview.h \
     application.h \
     componentviewlet.h \

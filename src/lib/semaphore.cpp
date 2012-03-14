@@ -69,26 +69,20 @@ Semaphore::Semaphore(QObject *parent):
 Semaphore::~Semaphore()
 {
 
-#if defined(SYNTHCLONE_PLATFORM_MACX) || defined(SYNTHCLONE_PLATFORM_UNIX)
-#if defined(SYNTHCLONE_PLATFORM_UNIX)
-    sem_t *semaphore = &(this->semaphore);
-#endif
-    if (sem_destroy(semaphore)) {
-        qWarning() << tr("Failed to destroy semaphore: %1").
-            arg(getErrorMessage());
-        return;
-    }
 #if defined(SYNTHCLONE_PLATFORM_MACX)
     if (sem_close(semaphore)) {
         qWarning() << tr("Failed to close semaphore: %1").
             arg(getErrorMessage());
-        return;
     }
     if (sem_unlink(name)) {
         qWarning() << tr("Failed to unlink semaphore '%1': %2").
             arg(name.constData()).arg(getErrorMessage());
     }
-#endif
+#elif defined(SYNTHCLONE_PLATFORM_UNIX)
+    if (sem_destroy(&semaphore)) {
+        qWarning() << tr("Failed to destroy semaphore: %1").
+            arg(getErrorMessage());
+    }
 #elif defined(SYNTHCLONE_PLATFORM_WIN32)
     if (! CloseHandle(semaphore)) {
         qWarning() << tr("Failed to close semaphore handle: %1").

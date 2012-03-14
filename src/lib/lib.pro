@@ -13,7 +13,7 @@ isEmpty(MAKEDIR) {
 }
 
 CONFIG += uitools
-DESTDIR = $${BUILDDIR}/lib
+DESTDIR = $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}
 HEADERS += closeeventfilter.h \
     ../include/synthclone/component.h \
     ../include/synthclone/context.h \
@@ -86,7 +86,7 @@ VER_PAT = $${REVISION}
 ################################################################################
 
 headers.files = $${HEADERS}
-headers.files += $${BUILDDIR}/include/synthclone/config.h
+headers.files += $${BUILDDIR}/$${SYNTHCLONE_HEADER_SUFFIX}/config.h
 headers.files -= closeeventfilter.h
 
 target.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}
@@ -100,12 +100,12 @@ target.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}
 #        QMAKE_BUNDLE_DATA += headers
 #    }
 #} else {
-    headers.path = $${SYNTHCLONE_HEADER_INSTALL_PATH}/synthclone
+    headers.path = $${SYNTHCLONE_HEADER_INSTALL_PATH}
 #}
 
 unix {
-    pkgconfig.files += $${BUILDDIR}/lib/pkgconfig/synthclone.pc
-    pkgconfig.path = $${PREFIX}/lib/pkgconfig
+    pkgconfig.files += $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/pkgconfig/synthclone.pc
+    pkgconfig.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}/pkgconfig
     INSTALLS += pkgconfig
 }
 
