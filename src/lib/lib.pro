@@ -103,7 +103,7 @@ target.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}
     headers.path = $${SYNTHCLONE_HEADER_INSTALL_PATH}
 #}
 
-unix {
+unix:!macx {
     pkgconfig.files += $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/pkgconfig/synthclone.pc
     pkgconfig.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}/pkgconfig
     INSTALLS += pkgconfig

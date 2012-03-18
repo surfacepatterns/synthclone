@@ -17,7 +17,7 @@ unix:!macx {
     # library path instead of a library in an included library path.  I'm not
     # sure why this happens.  'speps' over at AUR sent in a patch that
     # references the library explicitly.
-    LIBS += -lsamplerate $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/libsynthclone.so.$${MAJOR_VERSION}.$${MINOR_VERSION}.$${REVISION}
+    LIBS += -lsamplerate $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/libsynthclone.so.$${SYNTHCLONE_VERSION}
 } else {
     LIBS += -L$${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX} -lsamplerate -lsynthclone
 }
@@ -129,13 +129,19 @@ SOURCES += aboutview.cpp \
     zoneviewlet.cpp
 TARGET = synthclone
 TEMPLATE = app
-VERSION = $${MAJOR_VERSION}.$${MINOR_VERSION}.$${REVISION}
+VERSION = $${SYNTHCLONE_VERSION}
 
 ################################################################################
 # Install
 ################################################################################
 
-unix {
+macx {
+    icon.files += ../lib/images/32x32/synthclone.png
+    icon.path = $$SYNTHCLONE_DATA_INSTALL_PATH/
+    INSTALLS += icon
+}
+
+unix:!macx {
     desktop.files += $${BUILDDIR}/share/applications/synthclone.desktop
     desktop.path = $${PREFIX}/share/applications
     icon.files += ../lib/images/32x32/synthclone.png
