@@ -30,6 +30,16 @@ FileSelectionView::FileSelectionView(QObject *parent):
     View(new QFileDialog(), parent)
 {
     QFileDialog *dialog = qobject_cast<QFileDialog *>(getRootWidget());
+
+#ifdef SYNTHCLONE_PLATFORM_MACX
+    // Native file dialogs on Mac OSX behave strangely.  Sometimes, they don't
+    // become visible when trying to make them visible.  Sometimes, they don't
+    // become modal correctly when a modal window is already present.  I don't
+    // quite understand.  Maybe I'm not using the static QFileDialog functions
+    // or the exec() function, which is why this bug bit me.
+    dialog->setOption(QFileDialog::DontUseNativeDialog, true);
+#endif
+
     dialog->setModal(true);
     connect(dialog, SIGNAL(accepted()), SLOT(handleDialogAccept()));
     connect(dialog, SIGNAL(rejected()), SLOT(handleDialogReject()));
