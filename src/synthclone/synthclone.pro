@@ -12,14 +12,18 @@ isEmpty(MAKEDIR) {
     MAKEDIR = ../../make
 }
 
-unix:!macx {
-    # On some systems, `qmake` will reference a library installed in a system
-    # library path instead of a library in an included library path.  I'm not
-    # sure why this happens.  'speps' over at AUR sent in a patch that
-    # references the library explicitly.
-    LIBS += -lsamplerate $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/libsynthclone.so.$${SYNTHCLONE_VERSION}
+macx {
+    LIBS += -F$${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX} -framework synthclone -lsamplerate
 } else {
-    LIBS += -L$${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX} -lsamplerate -lsynthclone
+    unix {
+        # On some systems, `qmake` will reference a library installed in a
+        # system library path instead of a library in an included library path.
+        # I'm not sure why this happens.  'speps' over at AUR sent in a patch
+        # that references the library explicitly.
+        LIBS += -lsamplerate $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/libsynthclone.so.$${SYNTHCLONE_VERSION}
+    } else {
+        LIBS += -L$${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX} -lsamplerate -lsynthclone
+    }
 }
 
 CONFIG += console uitools

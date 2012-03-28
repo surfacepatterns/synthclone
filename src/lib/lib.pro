@@ -76,7 +76,7 @@ SOURCES += closeeventfilter.cpp \
     zonecomparer.cpp
 TARGET = synthclone
 TEMPLATE = lib
-VERSION = $${MAJOR_VERSION}.$${MINOR_VERSION}.$${REVISION}
+VERSION = $${SYNTHCLONE_VERSION}
 VER_MAJ = $${MAJOR_VERSION}
 VER_MIN = $${MINOR_VERSION}
 VER_PAT = $${REVISION}
@@ -86,30 +86,42 @@ VER_PAT = $${REVISION}
 ################################################################################
 
 headers.files = $${HEADERS}
-headers.files += $${BUILDDIR}/$${SYNTHCLONE_HEADER_SUFFIX}/config.h
 headers.files -= closeeventfilter.h
+exists(../include/synthclone/config.h) {
+    headers.files += ../include/synthclone/config.h
+}
 
 target.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}
 
-#macx {
-    # XXX: Does this work?
-#    headers.path = Headers
-#    headers.version = Versions
-#    CONFIG += lib_bundle ppc x86
-#    isEmpty(SKIP_HEADERS) {
-#        QMAKE_BUNDLE_DATA += headers
-#    }
-#} else {
-    headers.path = $${SYNTHCLONE_HEADER_INSTALL_PATH}
-#}
+macx {
 
-unix:!macx {
-    pkgconfig.files += $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/pkgconfig/synthclone.pc
-    pkgconfig.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}/pkgconfig
-    INSTALLS += pkgconfig
+    # Install library and headers as a framework on Mac OSX.
+    CONFIG += lib_bundle x86 x86_64
+    QMAKE_FRAMEWORK_BUNDLE_NAME = synthclone
+    QMAKE_FRAMEWORK_VERSION = $${SYNTHCLONE_VERSION}
+    headers.path = Headers
+    headers.version = Versions
+    isEmpty(SKIP_HEADERS) {
+        QMAKE_BUNDLE_DATA += headers
+    }
+
+    # We can't guarantee that the shared libraries we use are going to be
+    # available on all platforms.  So, we package them with the framework
+    # bundle.  The libraries are installed via build.py.
+    libraries.files = $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/synthclone.framework/Libraries/*
+    libraries.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}/synthclone.framework/Libraries
+    INSTALLS += libraries
+
+} else {
+    headers.path = $${SYNTHCLONE_HEADER_INSTALL_PATH}
+    unix {
+        pkgconfig.files += $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/pkgconfig/synthclone.pc
+        pkgconfig.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}/pkgconfig
+        INSTALLS += pkgconfig
+    }
+    isEmpty(SKIP_HEADERS) {
+        INSTALLS += headers
+    }
 }
 
 INSTALLS += target
-isEmpty(SKIP_HEADERS) {
-    INSTALLS += headers
-}

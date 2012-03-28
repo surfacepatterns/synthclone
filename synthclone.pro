@@ -12,7 +12,7 @@ TEMPLATE = subdirs
 ###############################################################################
 
 isEmpty(SKIP_API_DOCS) {
-    documentation.files = $${BUILDDIR}/$${SYNTHCLONE_DOC_SUFFIX}/*
-    documentation.path = $${SYNTHCLONE_DOC_INSTALL_PATH}
+    documentation.files = $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_DOC_SUFFIX}/*
+    documentation.path = $${SYNTHCLONE_LIBRARY_DOC_INSTALL_PATH}
     INSTALLS += documentation
 }

@@ -1,16 +1,96 @@
 #!/usr/bin/env python
 
 from optparse import OptionParser
-from os import makedirs
-from os.path import abspath, dirname, isdir, join
+from os import listdir, makedirs, sep
+from os.path import abspath, basename, dirname, isdir, isfile, join
 from platform import mac_ver, win32_ver
+from shutil import copyfile
 from string import Template
-from subprocess import call
+from subprocess import PIPE, Popen, call
 from sys import argv, exit, stdout
 
 MAJOR_VERSION = 0
 MINOR_VERSION = 1
 REVISION = 10
+
+################################################################################
+# Mac OSX
+################################################################################
+
+def copyLibraries(binaryFile, installPath, libDestinationDir,
+                  ignoreDirectories=[], executablePath=None, dependencyMap={}):
+    if executablePath is None:
+        executablePath = binaryFile
+    ignoreDirectories = [(abspath(d) + sep) for d in ignoreDirectories]
+    for dependency in getDependencies(binaryFile):
+        dependencyPath = join(executablePath, dependency)
+        if any((dependencyPath.startswith(d) for d in ignoreDirectories)):
+            continue
+        libFile = basename(dependency)
+        if libFile == basename(binaryFile):
+            continue
+
+        # The dependency isn't a self-reference.  See if it's in the dependency
+        # map.
+        location = dependencyMap.get(libFile)
+        if location is None:
+
+            # We'll infer the new location of the dependency.
+            destinationPath = join(libDestinationDir, libFile)
+            location = join(installPath, libFile)
+            if not isfile(destinationPath):
+
+                # The dependency hasn't been copied over.  So, copy it over,
+                # and update library references.
+                if not isfile(dependencyPath):
+                    raise Exception("dependency '%s' does not exist" %
+                                    dependencyPath)
+                destinationDir = dirname(destinationPath)
+                if not isdir(destinationDir):
+                    makedirs(destinationDir)
+                stdout.write("Copying library '%s' to '%s' ...\n" %
+                             (dependencyPath, destinationPath))
+                copyfile(dependencyPath, destinationPath)
+                copyLibraries(destinationPath, installPath, libDestinationDir,
+                              ignoreDirectories, executablePath)
+                setLibraryLocation(destinationPath, location)
+
+        replaceDependency(binaryFile, dependency, location)
+
+def getDependencies(binaryFile):
+    args = ["otool", "-L", binaryFile]
+    process = Popen(args, stdout=PIPE)
+    stdoutData, stderrData = process.communicate()
+    if process.returncode:
+        raise Exception("error getting dependencies for '%s'" % binaryFile)
+    dependencies = []
+    for s in stdoutData.strip().splitlines()[1:]:
+        s = s.strip()
+        pos = s.find(" (compatibility ")
+        if pos == -1:
+            raise Exception("unexpected line output from libtool: '%s'" % s)
+        dependencies.append(s[:pos].strip())
+    return dependencies
+
+def replaceDependency(binaryFile, find, replace):
+    stdout.write("Replacing dependency '%s' with '%s' in '%s' ...\n" %
+                 (find, replace, binaryFile))
+    args = ["install_name_tool", "-change", find, replace, binaryFile]
+    if call(args):
+        raise Exception("error replacing dependency '%s' with '%s' in '%s'" %
+                        (find, replace, binaryFile))
+
+def setLibraryLocation(libraryFile, location):
+    stdout.write("Setting library location of '%s' to '%s' ...\n" %
+                 (libraryFile, location))
+    args = ["install_name_tool", "-id", location, libraryFile]
+    if call(args):
+        raise Exception("error setting library location to '%s' for '%s'" %
+                        (location, libraryFile))
+
+################################################################################
+# Shared code
+################################################################################
 
 def writeTemplate(destination, source, data):
     destination = abspath(destination)
@@ -34,20 +114,26 @@ def writeTemplate(destination, source, data):
         fp.close()
 
 def main():
+    bundleDynamicLibs = False
     createMenuEntry = False
     createPkgConfig = False
     platformArgs = []
     if mac_ver()[0]:
-        defaultPrefix = "/Applications/"
+        bundleDynamicLibs = True
+        frameworkDir = join("Library", "Frameworks", "synthclone.framework")
+        defaultPrefix = "/"
+        libraryDocSuffix = join(frameworkDir, "Documentation")
         platform = "MACX"
         platformArgs += ["-spec", "macx-g++"]
     elif win32_ver()[0]:
         defaultPrefix = "C:\\Program Files\\synthclone"
+        libraryDocSuffix = join("share", "doc", "synthclone-devel")
         platform = "WIN32"
     else:
         createMenuEntry = True
         createPkgConfig = True
         defaultPrefix = "/usr/local"
+        libraryDocSuffix = join("share", "doc", "synthclone-devel")
         platform = "UNIX"
 
     parser = OptionParser("usage: %prog [options] [qmake-args]")
@@ -105,14 +191,14 @@ def main():
         prefix = defaultPrefix
     else:
         prefix = abspath(prefix)
+    libraryDocDir = join(scriptDir, "build", libraryDocSuffix)
     skipAPIDocs = options.skipAPIDocs
-    if not skipAPIDocs:
-        docDir = join(scriptDir, "build", "share", "doc", "synthclone-devel")
-        if not isdir(docDir):
-            makedirs(docDir)
+    if not (skipAPIDocs or isdir(libraryDocDir)):
+        makedirs(libraryDocDir)
     skipHeaders = options.skipHeaders
 
     data = {
+        "libraryDocDir": libraryDocDir,
         "majorVersion": MAJOR_VERSION,
         "minorVersion": MINOR_VERSION,
         "platform": platform,
@@ -122,8 +208,12 @@ def main():
 
     # Write templates *before* calling qmake.  In order for qmake to add
     # install items, it must know they exist first.
+    if not skipAPIDocs:
+        writeTemplate(join(makeDir, "Doxyfile"), join("templates", "Doxyfile"),
+                      data)
     if not skipHeaders:
-        writeTemplate(join(buildDir, "include", "synthclone", "config.h"),
+        writeTemplate(join(scriptDir, "src", "include", "synthclone",
+                           "config.h"),
                       join("templates", "config.h"), data)
     if createMenuEntry:
         writeTemplate(join(buildDir, "share", "applications",
@@ -160,7 +250,54 @@ def main():
         parser.error("qmake returned an error")
     if call(["make"]):
         parser.error("make returned an error")
-    if (not skipAPIDocs) and call(["doxygen", "Doxyfile"]):
+
+    # On Mac, we bundle dynamic libraries in the application and framework
+    # bundles.
+    if bundleDynamicLibs:
+        appDir = join(buildDir, "Applications", "synthclone.app")
+        contentsDir = join(appDir, "Contents")
+        executablePath = join(contentsDir, "MacOS", "synthclone")
+        frameworksDir = join(contentsDir, "Frameworks")
+        ignoreDirectories = ["/lib", "/usr/lib", "/Library/Frameworks",
+                             "/System/Library/Frameworks",
+                             join(prefix, frameworkDir)]
+        relativeFrameworksPath = "@executable_path/../Frameworks/"
+        version = "%d.%d.%d" % (MAJOR_VERSION, MINOR_VERSION, REVISION)
+
+        # Copy libraries linked to application.
+        stdout.write("Copying dependencies for '%s' ...\n" %
+                     executablePath)
+        if call(["macdeployqt", appDir]):
+            parser.error("macdeployqt returned an error")
+
+        # The libraries are now linked correctly in the executable.  Make a map
+        # of correctly linked Qt libraries.
+        qtDependencyMap = {}
+        for dependency in getDependencies(executablePath):
+            baseLibName = basename(dependency)
+            if baseLibName.startswith("Qt"):
+                qtDependencyMap[baseLibName] = dependency
+
+        # Copy libraries linked to plugins.
+        pluginsDir = join(contentsDir, "PlugIns")
+        for f in listdir(pluginsDir):
+            plugin = join(pluginsDir, f)
+            if not isfile(plugin):
+                continue
+            setLibraryLocation(plugin, "@executable_path/../PlugIns/%s" % f)
+            stdout.write("Copying dependencies for '%s' ...\n" % plugin)
+            copyLibraries(plugin, relativeFrameworksPath, frameworksDir,
+                          ignoreDirectories, executablePath, qtDependencyMap)
+
+        # Copy libraries linked to synthclone library.
+        libPath = join(buildDir, frameworkDir, "Versions", version,
+                       "synthclone")
+        stdout.write("Copying dependencies for '%s' ...\n" % libPath)
+        copyLibraries(libPath, relativeFrameworksPath, frameworksDir,
+                      ignoreDirectories, executablePath, qtDependencyMap)
+
+    # Build documentation
+    if (not skipAPIDocs) and call(["doxygen", join(makeDir, "Doxyfile")]):
         parser.error("documentation generation failed")
 
     stdout.write("Build successful.  Run `make install` to install.\n")
