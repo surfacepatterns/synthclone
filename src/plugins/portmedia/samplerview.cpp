@@ -76,6 +76,10 @@ SamplerView::SamplerView(QObject *parent):
     channelMapTableView = synthclone::getChild<QTableView>
         (rootWidget, "channelMap");
     channelMapTableView->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+    channelMapTableView->setHorizontalScrollMode
+        (QAbstractItemView::ScrollPerPixel);
+    channelMapTableView->setVerticalScrollMode
+        (QAbstractItemView::ScrollPerPixel);
     channelMapTableView->setItemDelegate(&channelMapTableDelegate);
     channelMapTableView->setModel(&channelMapTableModel);
 
@@ -160,6 +164,8 @@ SamplerView::setAudioInputChannel(synthclone::SampleChannelCount sampleChannel,
     setModelData(row, CHANNELMAPTABLECOLUMN_INPUT_CHANNEL,
                  tr("%1 - Channel %2").arg(audioInputDevice->currentText(),
                                            channel), Qt::DisplayRole);
+    channelMapTableView->resizeColumnToContents
+        (CHANNELMAPTABLECOLUMN_INPUT_CHANNEL);
 }
 
 void
@@ -201,6 +207,8 @@ setAudioOutputChannel(synthclone::SampleChannelCount sampleChannel,
     setModelData(row, CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL,
                  tr("%1 - Channel %2").arg(audioOutputDevice->currentText(),
                                            channel), Qt::DisplayRole);
+    channelMapTableView->resizeColumnToContents
+        (CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL);
 }
 
 void
