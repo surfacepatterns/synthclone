@@ -11,7 +11,7 @@ Contents:
 1. Install Parts
 ----------------
 
-A full `synthclone` install is made up of several parts:
+A `synthclone` install can be made up of several parts:
 
   1. `synthclone` - The application
   2. A desktop menu entry for `synthclone` (on UNIX-type platforms)
@@ -75,18 +75,31 @@ You *must* make sure that the path is not a relative path.
 3. Install Locations
 --------------------
 
+Mac OSX:
+
+  (1) and (4) are installed in a Mac application directory at
+  [install-dir]/Applications/synthclone.app.  (3), (5), and (6) are installed
+  in a Mac framework directory at
+  [install-dir]/Library/Frameworks/synthclone.framework.  (2) is not installed.
+
 UNIX:
+
   1. [install-dir]/bin/synthclone
   2. [install-dir]/share/applications/synthclone.desktop
   3. [install-dir]/lib/libsynthclone.so*
-  4. [install-dir]/lib/synthclone/plugins/libsynthclone_*.so
+  4. [install-dir]/lib/synthclone/plugins/*.so
   5. [install-dir]/include/synthclone/*.h
   6. [install-dir]/share/doc/synthclone-devel/
 
 4. Package Recommendations
 --------------------------
 
-For packaging purposes, I suggest the following:
+Mac OSX:
+
+  The application and framework bundles should be distributed together in a
+  Mac package creating using PackageMaker.
+
+UNIX:
 
   * Parts 1-4 should be placed into the main `synthclone` package.
   * Part 5 should be placed into a development package (e.g. synthclone-devel).
