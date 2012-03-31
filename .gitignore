@@ -1,4 +1,7 @@
 Makefile
 build
 make
+resources
+src/include/synthclone/config.h
 *.pro.user
+*.pyc

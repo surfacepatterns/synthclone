@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+
+from optparse import OptionParser
+from os import makedirs
+from os.path import dirname, isdir, join
+
+from util import (
+    MAJOR_VERSION,
+    MINOR_VERSION,
+    REVISION,
+    getResourcesDirectory,
+    getTemplatesDirectory,
+    writeTemplate
+)
+
+def main():
+    parser = OptionParser("usage: %prog [options]")
+    parser.add_option("-d", "--destination", action="store",
+                      default=join(getResourcesDirectory(), "synthclone.pc"),
+                      dest="destination", help="File to write pkgconfig to")
+    parser.add_option("-p", "--prefix", action="store", default="/usr/local",
+                      dest="prefix", help="Install prefix")
+    options, args = parser.parse_args()
+    if len(args):
+        parser.error("incorrect number of required arguments")
+    pkgconfigFile = options.destination
+    pkgconfigDir = dirname(pkgconfigFile)
+    if not isdir(pkgconfigDir):
+        makedirs(pkgconfigDir)
+    data = {
+        "majorVersion": MAJOR_VERSION,
+        "minorVersion": MINOR_VERSION,
+        "prefix": options.prefix,
+        "revision": REVISION
+    }
+    writeTemplate(pkgconfigFile, join(getTemplatesDirectory(), "synthclone.pc"),
+                  data)
+
+if __name__ == "__main__":
+    main()

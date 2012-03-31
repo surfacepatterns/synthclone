@@ -29,11 +29,13 @@ A `synthclone` install can be made up of several parts:
 2. Install Options For Packagers
 --------------------------------
 
-There are several options that you can pass to the build script (build.py) in
-order to select what will or will not be built:
+`synthclone` is built using the typical UNIX build process (`configure`, `make`,
+`make install`).  There are several options that you can pass to the configure
+script in order to select what will or will not be built:
 
-  $ ./build.py --help
-  Usage: build.py [options] [qmake-args]
+  $ ./configure --help
+
+  Usage: configure [options] [qmake-args]
 
   Options:
     -h, --help            show this help message and exit

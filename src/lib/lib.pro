@@ -114,11 +114,6 @@ macx {
 
 } else {
     headers.path = $${SYNTHCLONE_HEADER_INSTALL_PATH}
-    unix {
-        pkgconfig.files += $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/pkgconfig/synthclone.pc
-        pkgconfig.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}/pkgconfig
-        INSTALLS += pkgconfig
-    }
     isEmpty(SKIP_HEADERS) {
         INSTALLS += headers
     }

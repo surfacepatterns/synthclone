@@ -139,19 +139,5 @@ VERSION = $${SYNTHCLONE_VERSION}
 # Install
 ################################################################################
 
-macx {
-    icon.files += ../lib/images/32x32/synthclone.png
-    icon.path = $$SYNTHCLONE_DATA_INSTALL_PATH/
-    INSTALLS += icon
-}
-
-unix:!macx {
-    desktop.files += $${BUILDDIR}/share/applications/synthclone.desktop
-    desktop.path = $${PREFIX}/share/applications
-    icon.files += ../lib/images/32x32/synthclone.png
-    icon.path = $${PREFIX}/share/icons/
-    INSTALLS += desktop icon
-}
-
 target.path = $${SYNTHCLONE_APP_INSTALL_PATH}
 INSTALLS += target
