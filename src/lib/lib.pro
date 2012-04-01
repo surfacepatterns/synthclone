@@ -15,6 +15,7 @@ isEmpty(MAKEDIR) {
 CONFIG += uitools
 DESTDIR = $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}
 HEADERS += closeeventfilter.h \
+    samplefile.h \
     ../include/synthclone/component.h \
     ../include/synthclone/context.h \
     ../include/synthclone/designerview.h \
@@ -63,6 +64,7 @@ SOURCES += closeeventfilter.cpp \
     registration.cpp \
     sample.cpp \
     samplecopier.cpp \
+    samplefile.cpp \
     sampleinputstream.cpp \
     sampleoutputstream.cpp \
     sampler.cpp \

@@ -20,6 +20,7 @@
 #ifndef __SYNTHCLONE_SAMPLEOUTPUTSTREAM_H__
 #define __SYNTHCLONE_SAMPLEOUTPUTSTREAM_H__
 
+#include <synthclone/sample.h>
 #include <synthclone/samplestream.h>
 
 namespace synthclone {
@@ -91,17 +92,7 @@ namespace synthclone {
          * Destroys the stream.  This will close the stream if it isn't closed.
          */
 
-        virtual
         ~SampleOutputStream();
-
-        /**
-         * Closes the sample stream, which causes any unwritten data to be
-         * written to the sample.  This is automatically called by the
-         * destructor.
-         */
-
-        void
-        close();
 
         /**
          * Writes 'frames' data to the stream.  The data is contained in
@@ -110,15 +101,6 @@ namespace synthclone {
 
         void
         write(const float *buffer, SampleFrameCount frames);
-
-    private:
-
-        void
-        initialize(SampleRate sampleRate, SampleChannelCount channels,
-                   int format);
-
-        bool framesWritten;
-        Sample &sample;
 
     };
 

@@ -1,6 +1,6 @@
 /*
  * libsynthclone - a plugin API for `synthclone`
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2012 Devin Anderson
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the
@@ -20,17 +20,16 @@
 #ifndef __SYNTHCLONE_SAMPLESTREAM_H__
 #define __SYNTHCLONE_SAMPLESTREAM_H__
 
-#include <sndfile.h>
+#include <QtCore/QObject>
 
-#include <synthclone/sample.h>
 #include <synthclone/types.h>
 
 namespace synthclone {
 
+    class SampleFile;
+
     /**
-     * Base class for reading/writing Sample files.  The object uses the
-     * excellent libsndfile in its implementation, which can be found at
-     * http://www.mega-nerd.com/libsndfile/.
+     * Base class for reading/writing Sample files.
      *
      * @sa
      *   SampleInputStream, SampleOutputStream
@@ -47,10 +46,10 @@ namespace synthclone {
          */
 
         enum EndianType {
-            ENDIANTYPE_FILE = SF_ENDIAN_FILE,
-            ENDIANTYPE_LITTLE = SF_ENDIAN_LITTLE,
-            ENDIANTYPE_BIG = SF_ENDIAN_BIG,
-            ENDIANTYPE_CPU = SF_ENDIAN_CPU
+            ENDIANTYPE_FILE = 0,
+            ENDIANTYPE_LITTLE,
+            ENDIANTYPE_BIG,
+            ENDIANTYPE_CPU
         };
 
         /**
@@ -69,35 +68,36 @@ namespace synthclone {
          */
 
         enum SubType {
-            SUBTYPE_PCM_S8 = SF_FORMAT_PCM_S8,
-            SUBTYPE_PCM_U8 = SF_FORMAT_PCM_U8,
-            SUBTYPE_PCM_16 = SF_FORMAT_PCM_16,
-            SUBTYPE_PCM_24 = SF_FORMAT_PCM_24,
-            SUBTYPE_PCM_32 = SF_FORMAT_PCM_32,
-            SUBTYPE_FLOAT = SF_FORMAT_FLOAT,
-            SUBTYPE_DOUBLE = SF_FORMAT_DOUBLE,
+            SUBTYPE_UNKNOWN = -1,
+            SUBTYPE_PCM_S8 = 0,
+            SUBTYPE_PCM_U8,
+            SUBTYPE_PCM_16,
+            SUBTYPE_PCM_24,
+            SUBTYPE_PCM_32,
+            SUBTYPE_FLOAT,
+            SUBTYPE_DOUBLE,
 
-            SUBTYPE_ULAW = SF_FORMAT_ULAW,
-            SUBTYPE_ALAW = SF_FORMAT_ALAW,
-            SUBTYPE_IMA_ADPCM = SF_FORMAT_IMA_ADPCM,
-            SUBTYPE_MS_ADPCM = SF_FORMAT_MS_ADPCM,
+            SUBTYPE_ULAW,
+            SUBTYPE_ALAW,
+            SUBTYPE_IMA_ADPCM,
+            SUBTYPE_MS_ADPCM,
 
-            SUBTYPE_GSM610 = SF_FORMAT_GSM610,
-            SUBTYPE_VOX_ADPCM = SF_FORMAT_VOX_ADPCM,
+            SUBTYPE_GSM610,
+            SUBTYPE_VOX_ADPCM,
 
-            SUBTYPE_G721_32 = SF_FORMAT_G721_32,
-            SUBTYPE_G723_24 = SF_FORMAT_G723_24,
-            SUBTYPE_G723_40 = SF_FORMAT_G723_40,
+            SUBTYPE_G721_32,
+            SUBTYPE_G723_24,
+            SUBTYPE_G723_40,
 
-            SUBTYPE_DWVW_12 = SF_FORMAT_DWVW_12,
-            SUBTYPE_DWVW_16 = SF_FORMAT_DWVW_16,
-            SUBTYPE_DWVW_24 = SF_FORMAT_DWVW_24,
-            SUBTYPE_DWVW_N = SF_FORMAT_DWVW_N,
+            SUBTYPE_DWVW_12,
+            SUBTYPE_DWVW_16,
+            SUBTYPE_DWVW_24,
+            SUBTYPE_DWVW_N,
 
-            SUBTYPE_DPCM_8 = SF_FORMAT_DPCM_8,
-            SUBTYPE_DPCM_16 = SF_FORMAT_DPCM_16,
+            SUBTYPE_DPCM_8,
+            SUBTYPE_DPCM_16,
 
-            SUBTYPE_VORBIS = SF_FORMAT_VORBIS
+            SUBTYPE_VORBIS
         };
 
         /**
@@ -105,31 +105,32 @@ namespace synthclone {
          */
 
         enum Type {
-            TYPE_AIFF = SF_FORMAT_AIFF,
-            TYPE_AU = SF_FORMAT_AU,
-            TYPE_AVR = SF_FORMAT_AVR,
-            TYPE_CAF = SF_FORMAT_CAF,
-            TYPE_FLAC = SF_FORMAT_FLAC,
-            TYPE_HTK = SF_FORMAT_HTK,
-            TYPE_IRCAM = SF_FORMAT_IRCAM,
-            TYPE_MAT4 = SF_FORMAT_MAT4,
-            TYPE_MAT5 = SF_FORMAT_MAT5,
-            TYPE_MPC2K = SF_FORMAT_MPC2K,
-            TYPE_NIST = SF_FORMAT_NIST,
-            TYPE_OGG = SF_FORMAT_OGG,
-            TYPE_PAF = SF_FORMAT_PAF,
-            TYPE_PVF = SF_FORMAT_PVF,
-            TYPE_RAW = SF_FORMAT_RAW,
-            TYPE_RF64 = SF_FORMAT_RF64,
-            TYPE_SD2 = SF_FORMAT_SD2,
-            TYPE_SDS = SF_FORMAT_SDS,
-            TYPE_SVX = SF_FORMAT_SVX,
-            TYPE_VOC = SF_FORMAT_VOC,
-            TYPE_W64 = SF_FORMAT_W64,
-            TYPE_WAV = SF_FORMAT_WAV,
-            TYPE_WAVEX = SF_FORMAT_WAVEX,
-            TYPE_WVE = SF_FORMAT_WVE,
-            TYPE_XI = SF_FORMAT_XI
+            TYPE_UNKNOWN = -1,
+            TYPE_AIFF = 0,
+            TYPE_AU,
+            TYPE_AVR,
+            TYPE_CAF,
+            TYPE_FLAC,
+            TYPE_HTK,
+            TYPE_IRCAM,
+            TYPE_MAT4,
+            TYPE_MAT5,
+            TYPE_MPC2K,
+            TYPE_NIST,
+            TYPE_OGG,
+            TYPE_PAF,
+            TYPE_PVF,
+            TYPE_RAW,
+            TYPE_RF64,
+            TYPE_SD2,
+            TYPE_SDS,
+            TYPE_SVX,
+            TYPE_VOC,
+            TYPE_W64,
+            TYPE_WAV,
+            TYPE_WAVEX,
+            TYPE_WVE,
+            TYPE_XI
         };
 
         /**
@@ -138,7 +139,7 @@ namespace synthclone {
          * destructor.
          */
 
-        virtual void
+        void
         close();
 
         /**
@@ -230,30 +231,13 @@ namespace synthclone {
 
     protected:
 
-        /**
-         * Constructs a new SampleStream.  This constructor should not be
-         * called directly; instead, subclasses of SampleStream should be used
-         * to create stream objects.
-         *
-         * @param parent
-         *   The parent object of the new stream object.
-         *
-         * @sa
-         *   SampleInputStream, SampleOutputStream
-         */
-
         explicit
         SampleStream(QObject *parent=0);
 
         virtual
         ~SampleStream();
 
-        SNDFILE *handle;
-        SF_INFO info;
-
-    private:
-
-        bool closed;
+        SampleFile *file;
 
     };
 
