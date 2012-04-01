@@ -4,8 +4,9 @@ from platform import mac_ver, win32_ver
 from string import Template
 
 MAJOR_VERSION = 0
-MINOR_VERSION = 1
-REVISION = 10
+MINOR_VERSION = 2
+REVISION = 0
+VERSION = "%d.%d.%d" % (MAJOR_VERSION, MINOR_VERSION, REVISION)
 
 PLATFORM_MACX = 1
 PLATFORM_UNIX = 2
@@ -18,10 +19,13 @@ def getPlatform():
     return _PLATFORM
 
 def getResourcesDirectory():
-    return abspath(join(dirname(__file__), pardir, "resources"))
+    return join(getRootDirectory(), "resources")
+
+def getRootDirectory():
+    return abspath(join(dirname(__file__), pardir))
 
 def getTemplatesDirectory():
-    return abspath(join(dirname(__file__), pardir, "templates"))
+    return join(getRootDirectory(), "templates")
 
 def writeTemplate(destination, source, data):
     destination = abspath(destination)

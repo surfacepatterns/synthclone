@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+
+from gzip import open
+from optparse import OptionParser
+from os import chdir, getcwd, makedirs, pardir, sep
+from os.path import abspath, basename, isdir, join
+from subprocess import PIPE, Popen
+
+from util import VERSION, getRootDirectory
+
+def main():
+    rootDirectory = getRootDirectory()
+
+    parser = OptionParser("usage: %prog [options]")
+    parser.add_option("-a", "--archive-name", action="store",
+                      default="synthclone-%s.tar.gz" % VERSION,
+                      dest="archiveName", help="The archive file name")
+    parser.add_option("-d", "--destination-dir", action="store",
+                      default=abspath(join(getRootDirectory(), pardir)),
+                      dest="destinationDir",
+                      help="Directory to store the source archive in")
+    options, args = parser.parse_args()
+
+    if len(args):
+        parser.error("incorrect number of required arguments")
+    archiveName = options.archiveName
+    if basename(archiveName) != archiveName:
+        parser.error("'%s': invalid archive name" % archiveName)
+    destinationDir = options.destinationDir
+    if not isdir(destinationDir):
+        makedirs(destinationDir)
+
+    gzipStream = open(filename=join(destinationDir, archiveName), mode="wb")
+    try:
+        gitArgs = ["git", "archive", "--format=tar",
+                   "--prefix=synthclone-%s%s" % (VERSION, sep), "HEAD"]
+        oldDirectory = getcwd()
+        chdir(rootDirectory)
+        try:
+            process = Popen(gitArgs, stdout=PIPE, bufsize=-1)
+            try:
+                processOut = process.stdout
+                while True:
+                    data = processOut.read(8192)
+                    if not data:
+                        break
+                    gzipStream.write(data)
+            finally:
+                result = process.wait()
+            if result:
+                parser.error("git returned an error")
+        finally:
+            chdir(oldDirectory)
+    finally:
+        gzipStream.close()
+
+if __name__ == "__main__":
+    main()
