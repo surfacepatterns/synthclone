@@ -28,8 +28,6 @@ def main():
     if not isdir(desktopDir):
         makedirs(desktopDir)
     data = {
-        "majorVersion": MAJOR_VERSION,
-        "minorVersion": MINOR_VERSION,
         "prefix": options.prefix
     }
     writeTemplate(desktopFile,
