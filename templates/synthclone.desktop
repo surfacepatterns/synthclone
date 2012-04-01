@@ -1,5 +1,5 @@
 [Desktop Entry]
-Categories=Audio;AudioVideo;Qt;X-Jack;X-Sound;
+Categories=Audio;AudioVideo;Qt;
 Comment=Clones MIDI-capable devices
 Exec=${prefix}/bin/synthclone
 GenericName=Synthesizer Cloner
