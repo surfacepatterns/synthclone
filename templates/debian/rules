@@ -43,7 +43,7 @@ install: build
 	dh_installdirs
 	make install INSTALL_ROOT=$${CURDIR}/debian/tmp
 
-binary: build install
+binary: install
 	dh_testdir
 	dh_testroot
 	dh_install -a --list-missing
