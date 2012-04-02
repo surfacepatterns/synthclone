@@ -18,7 +18,7 @@ TEMPLATE = subdirs
 isEmpty(SKIP_API_DOCS) {
     documentation.CONFIG += directory no_check_exist
     documentation.extra = ./install/build-api-docs
-    documentation.files = resources/devel-doc/*
+    documentation.files = resources/devel-doc/html resources/devel-doc/latex
     documentation.path = $${SYNTHCLONE_LIBRARY_DOC_INSTALL_PATH}
     INSTALLS += documentation
 }
