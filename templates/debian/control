@@ -1,0 +1,61 @@
+Source: synthclone
+Section: sound
+Priority: optional
+Maintainer: Devin Anderson <surfacepatterns@gmail.com>
+Build-Depends: python,
+ libsamplerate0-dev,
+ libqt4-dev,
+ libsndfile1-dev,
+ libarchive-dev,
+ libjack-dev,
+ portaudio19-dev,
+ libportmidi-dev
+Standards-Version: 3.9.3
+Homepage: http://synthclone.googlecode.com/
+Vcs-Git: https://code.google.com/p/synthclone/
+Vcs-browser: http://code.google.com/p/synthclone/source/browse/
+
+Package: synthclone
+Architecture: any
+Section: sound
+Depends: $${shlibs:Depends},
+ $${misc:Depends},
+ $${python:Depends}
+Description: Synthesizer-cloning software
+ `synthclone` is a Qt-based application that can "clone" your MIDI-capable
+ instruments. It does this by sending out MIDI data that instructs an
+ instrument to emit sounds for a series of notes, velocities, controls, and
+ aftertouch values. It then saves this data as a sample-based instrument that
+ can be loaded by sampler software.
+ .
+ This package contains the `synthclone` executable, the `synthclone` plugin
+ library, and the standard plugins distributed with `synthclone`.
+
+Package: synthclone-dev
+Architecture: any
+Section: libdevel
+Depends: synthclone (= $${binary:Version}),
+ $${misc:Depends},
+ $${shlib:Depends},
+ pkg-config
+Description: `synthclone` plugin API header files
+ `synthclone` is a Qt-based application that can "clone" your MIDI-capable
+ instruments. It does this by sending out MIDI data that instructs an
+ instrument to emit sounds for a series of notes, velocities, controls, and
+ aftertouch values. It then saves this data as a sample-based instrument that
+ can be loaded by sampler software.
+ .
+ This package contains the headers for the `synthclone` plugin API.
+
+Package: synthclone-dev-doc
+Architecture: all
+Section: libdevel
+Description: Documentation on the `synthclone` plugin API
+ `synthclone` is a Qt-based application that can "clone" your MIDI-capable
+ instruments. It does this by sending out MIDI data that instructs an
+ instrument to emit sounds for a series of notes, velocities, controls, and
+ aftertouch values. It then saves this data as a sample-based instrument that
+ can be loaded by sampler software.
+ .
+ This package contains doxygen-generated documentation about the `synthclone`
+ plugin API.

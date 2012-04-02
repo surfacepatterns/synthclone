@@ -1,0 +1,5 @@
+synthclone (0.2.0-1) unstable; urgency=low
+
+  * Created Debian package.
+
+ -- Devin Anderson <surfacepatterns@gmail.com>  Sun,  1 Apr 2012 01:49:00 -0700

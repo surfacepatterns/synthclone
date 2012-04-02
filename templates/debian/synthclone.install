@@ -1,0 +1,6 @@
+usr/bin/synthclone usr/bin
+usr/share/applications/synthclone.desktop usr/share/applications
+usr/lib/libsynthclone.so* usr/lib
+usr/lib/synthclone/plugins/*.so usr/lib/synthclone/plugins
+usr/share/icons/synthclone.png usr/share/icons
+usr/lib/pkgconfig/synthclone.pc usr/lib/pkgconfig

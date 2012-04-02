@@ -1,0 +1,92 @@
+Format-Specification: http://svn.debian.org/wsvn/dep/web/deps/dep5.mdwn?rev=135
+Name: synthclone
+Maintainer: Devin Anderson <surfacepatterns@gmail.com>
+Source: http://code.google.com/p/synthclone/downloads/list
+
+Files: *
+Copyright: 2011-2012 Devin Anderson <surfacepatterns@gmail.com>
+License: GPL-2+
+
+Files: src/include/*
+Copyright: 2011-2012 Devin Anderson <surfacepatterns@gmail.com>
+License: LGPL-2.1+
+
+Files: src/lib/*
+Copyright: 2011-2012 Devin Anderson <surfacepatterns@gmail.com>
+License: LGPL-2.1+
+
+Files: src/lib/images/*
+Copyright: 2007-2009 David Vignoni <david@icon-king.com>
+           2007-2009 Johann Ollivier Lapeyre <johann@oxygen-icons.org>
+           2007-2009 Kenneth Wimer <kwwii@bootsplash.org>
+           2007-2009 Nuno Fernades Pinheiro <nf.pinheiro@gmail.com>
+           2007-2009 Riccardo Iaconelli <riccardo@oxygen-icons.org>
+           2007-2009 David Miller <miller@oxygen-icons.org>
+           2007-2009 others
+License: LGPL-2.1+
+
+Files: src/lib/images/32x32/synthclone.png
+Copyright: 2011-2012 Devin Anderson <surfacepatterns@gmail.com>
+License: LGPL-2.1+
+
+Files: src/plugins/portmedia/portaudio/*
+Copyright: 1999-2011 Ross Bencina <rossb@audiomulch.com>
+           1999-2011 Phil Burk
+License: Port Audio License
+
+License: LGPL-2.1+
+ This library is free software; you can redistribute it and/or modify
+ it under the terms of the GNU Lesser General Public License as
+ published by the Free Software Foundation; either version 2.1 of the
+ License, or (at your option) any later version.
+ .
+ See /usr/share/common-licenses/LGPL-2.1 for the full license text.
+
+License: GPL-2+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version. 
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ GNU General Public License for more details.
+ .
+ You should have received a copy of the GNU General Public License along
+ with this program; if not, write to the Free Software Foundation, Inc.,
+ 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ .
+ On Debian systems, the full text of the GNU General Public
+ License version 2 can be found in the file
+ `/usr/share/common-licenses/GPL-2'.
+
+License: Port Audio
+ PortAudio Portable Real-Time Audio Library
+ Copyright (c) 1999-2011 Ross Bencina and Phil Burk
+ .
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+ OR OTHER DEALINGS IN THE SOFTWARE.
+ .
+ The text above constitutes the entire PortAudio license; however, the
+ PortAudio community also makes the following non-binding requests:
+ .
+ Any person wishing to distribute modifications to the Software is requested to
+ send the modifications to the original developer so that they can be
+ incorporated into the canonical version. It is also requested that these
+ non-binding requests be included along with the license above.

@@ -31,12 +31,12 @@ macx {
 unix:!macx {
     icon.path = $${PREFIX}/share/icons/
 
-    desktop.extra = "./install/build-desktop-file --prefix='$${PREFIX}'"
+    desktop.extra = ./install/build-desktop-file --prefix='$${PREFIX}'
     desktop.files = resources/synthclone.desktop
     desktop.path = $${PREFIX}/share/applications
     INSTALLS += desktop
 
-    pkgconfig.extra = "./install/build-pkgconfig --prefix='$${PREFIX}'"
+    pkgconfig.extra = ./install/build-pkgconfig --prefix='$${PREFIX}'
     pkgconfig.files = resources/synthclone.pc
     pkgconfig.path = $${PREFIX}/lib/pkgconfig
     INSTALLS += pkgconfig

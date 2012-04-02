@@ -1,0 +1,68 @@
+#!/usr/bin/env python
+
+from optparse import OptionParser
+from os import chdir, getcwd, listdir, makedirs, pardir
+from os.path import abspath, isdir, join
+from shutil import rmtree
+from subprocess import call
+from tempfile import mkdtemp, mkstemp
+
+from util import (
+    VERSION,
+    createSourcePackage,
+    getRootDirectory,
+    getTemplatesDirectory,
+    writeTemplate
+)
+
+def main():
+    rootDirectory = getRootDirectory()
+
+    parser = OptionParser("usage: %prog [options]")
+    parser.add_option("-d", "--destination-dir", action="store",
+                      default=abspath(join(rootDirectory, pardir)),
+                      dest="destinationDir",
+                      help="Directory to store package in")
+    parser.add_option("-p", "--prefix", action="store", default="/usr/local",
+                      dest="prefix", help="Application install prefix")
+    options, args = parser.parse_args()
+
+    if len(args):
+        parser.error("incorrect number of required arguments")
+    destinationDir = options.destinationDir
+    prefix = options.prefix
+
+    tempDir = mkdtemp()
+    try:
+        sourceArchive = join(tempDir, "synthclone-%s.tar.gz" % VERSION)
+        createSourcePackage(sourceArchive)
+        oldDirectory = getcwd()
+        chdir(tempDir)
+        try:
+            if call(["tar", "xzf", sourceArchive]):
+                parser.error("error while uncompressing source archive")
+            sourceDir = join(tempDir, "synthclone-%s" % VERSION)
+            debianTemplateDir = join(getTemplatesDirectory(), "debian")
+            debianDir = join(sourceDir, "debian")
+            data = {
+                "prefix": abspath(prefix)
+            }
+            for name in listdir(debianTemplateDir):
+                writeTemplate(join(debianDir, name),
+                              join(debianTemplateDir, name), data)
+            chdir(sourceDir)
+            if call(["dpkg-buildpackage", "-us", "-uc"]):
+                parser.error("error while building Debian package")
+            if not isdir(destinationDir):
+                makedirs(destinationDir)
+
+            # XXX: Copy package to destinationDir.
+
+        finally:
+            chdir(oldDirectory)
+    finally:
+        #rmtree(tempDir)
+        pass
+
+if __name__ == "__main__":
+   main()
