@@ -16,6 +16,7 @@ TEMPLATE = subdirs
 ###############################################################################
 
 isEmpty(SKIP_API_DOCS) {
+    documentation.CONFIG += no_check_exist
     documentation.extra = ./install/build-api-docs
     documentation.files = resources/devel-doc/*
     documentation.path = $${SYNTHCLONE_LIBRARY_DOC_INSTALL_PATH}
@@ -31,11 +32,13 @@ macx {
 unix:!macx {
     icon.path = $${PREFIX}/share/icons/
 
+    desktop.CONFIG += no_check_exist
     desktop.extra = ./install/build-desktop-file --prefix='$${PREFIX}'
     desktop.files = resources/synthclone.desktop
     desktop.path = $${PREFIX}/share/applications
     INSTALLS += desktop
 
+    pkgconfig.CONFIG += no_check_exist
     pkgconfig.extra = ./install/build-pkgconfig --prefix='$${PREFIX}'
     pkgconfig.files = resources/synthclone.pc
     pkgconfig.path = $${PREFIX}/lib/pkgconfig
