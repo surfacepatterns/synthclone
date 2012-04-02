@@ -16,27 +16,11 @@ TEMPLATE = subdirs
 ###############################################################################
 
 isEmpty(SKIP_API_DOCS) {
-    documentationBuilder.CONFIG += target_predeps
-    documentationBuilder.clean = resources/devel-docs
-    documentationBuilder.commands = ./install/build-api-docs
-    documentationBuilder.name = build-api-docs
-    documentationBuilder.output = resources/devel-docs
-    QMAKE_EXTRA_COMPILERS += documentationBuilder
-
-    htmlDocumentation.CONFIG += no_check_exist
-    htmlDocumentation.files = resources/devel-doc/html/*
-    htmlDocumentation.path = $${SYNTHCLONE_LIBRARY_DOC_INSTALL_PATH}/html
-    INSTALLS += htmlDocumentation
-
-    htmlSearchDocumentation.CONFIG += no_check_exist
-    htmlSearchDocumentation.files = resources/devel-doc/html/search/*
-    htmlSearchDocumentation.path = $${SYNTHCLONE_LIBRARY_DOC_INSTALL_PATH}/html/search
-    INSTALLS += htmlSearchDocumentation
-
-    latexDocumentation.CONFIG += no_check_exist
-    latexDocumentation.files = resources/devel-doc/latex/*
-    latexDocumentation.path = $${SYNTHCLONE_LIBRARY_DOC_INSTALL_PATH}/latex
-    INSTALLS += latexDocumentation
+    documentation.CONFIG += directory no_check_exist
+    documentation.extra = ./install/build-api-docs
+    documentation.files = resources/devel-doc/*
+    documentation.path = $${SYNTHCLONE_LIBRARY_DOC_INSTALL_PATH}
+    INSTALLS += documentation
 }
 
 icon.files = src/lib/images/32x32/synthclone.png
