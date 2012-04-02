@@ -1,3 +1,3 @@
 ?package(synthclone):needs="X11|text|vc|wm" section="Applications/Sound" \
-  title="synthclone" command="${prefix}/bin/synthclone" \
-  icon="${prefix}/share/icons/synthclone.png"
+  title="synthclone" command="/usr/bin/synthclone" \
+  icon="/usr/share/icons/synthclone.png"

@@ -1,0 +1,9 @@
+Document: synthclone-dev
+Title: Synthclone Plugin API Documentation
+Author: Devin Anderson <surfacepatterns@gmail.com>
+Abstract: Doxygen-generated documentation on the synthclone plugin API.
+Section: Programming
+
+Format: HTML
+Index: /usr/share/doc/synthclone-dev/html/index.html
+Files: /usr/share/doc/synthclone-dev/html/*.html

@@ -2,7 +2,9 @@ Source: synthclone
 Section: sound
 Priority: optional
 Maintainer: Devin Anderson <surfacepatterns@gmail.com>
-Build-Depends: python,
+Build-Depends: doc-base,
+ doxygen,
+ python,
  libsamplerate0-dev,
  libqt4-dev,
  libsndfile1-dev,
@@ -31,11 +33,10 @@ Description: Synthesizer-cloning software
  library, and the standard plugins distributed with `synthclone`.
 
 Package: synthclone-dev
-Architecture: any
+Architecture: all
 Section: libdevel
 Depends: synthclone (= $${binary:Version}),
  $${misc:Depends}
- pkg-config
 Description: `synthclone` plugin API header files
  `synthclone` is a Qt-based application that can "clone" your MIDI-capable
  instruments. It does this by sending out MIDI data that instructs an
@@ -43,17 +44,5 @@ Description: `synthclone` plugin API header files
  aftertouch values. It then saves this data as a sample-based instrument that
  can be loaded by sampler software.
  .
- This package contains the headers for the `synthclone` plugin API.
-
-Package: synthclone-dev-doc
-Architecture: all
-Section: doc
-Description: Documentation on the `synthclone` plugin API
- `synthclone` is a Qt-based application that can "clone" your MIDI-capable
- instruments. It does this by sending out MIDI data that instructs an
- instrument to emit sounds for a series of notes, velocities, controls, and
- aftertouch values. It then saves this data as a sample-based instrument that
- can be loaded by sampler software.
- .
- This package contains doxygen-generated documentation about the `synthclone`
- plugin API.
+ This package contains the headers for the `synthclone` plugin API, and
+ doxygen-generated documentation for the plugin API.
