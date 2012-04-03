@@ -23,26 +23,26 @@ Section: sound
 Depends: $${shlibs:Depends},
  $${misc:Depends}
 Description: Synthesizer-cloning software
- `synthclone` is a Qt-based application that can "clone" your MIDI-capable
+ synthclone is a Qt-based application that can "clone" your MIDI-capable
  instruments. It does this by sending out MIDI data that instructs an
  instrument to emit sounds for a series of notes, velocities, controls, and
  aftertouch values. It then saves this data as a sample-based instrument that
  can be loaded by sampler software.
  .
- This package contains the `synthclone` executable, the `synthclone` plugin
- library, and the standard plugins distributed with `synthclone`.
+ This package contains the synthclone executable, the synthclone plugin
+ library, and the standard plugins distributed with synthclone.
 
 Package: synthclone-dev
-Architecture: all
+Architecture: any
 Section: libdevel
 Depends: synthclone (= $${binary:Version}),
  $${misc:Depends}
-Description: `synthclone` plugin API header files
- `synthclone` is a Qt-based application that can "clone" your MIDI-capable
+Description: synthclone plugin API header files
+ synthclone is a Qt-based application that can "clone" your MIDI-capable
  instruments. It does this by sending out MIDI data that instructs an
  instrument to emit sounds for a series of notes, velocities, controls, and
  aftertouch values. It then saves this data as a sample-based instrument that
  can be loaded by sampler software.
  .
- This package contains the headers for the `synthclone` plugin API, and
+ This package contains the headers for the synthclone plugin API, and
  doxygen-generated documentation for the plugin API.

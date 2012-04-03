@@ -1,5 +1,4 @@
 usr/include/synthclone/* usr/include/synthclone
 usr/lib/pkgconfig/synthclone.pc usr/lib/pkgconfig
-usr/share/doc/synthclone-dev/html/* usr/share/doc/synthclone-dev/html
-usr/share/doc/synthclone-dev/html/search/* usr/share/doc/synthclone-dev/html/search
-usr/share/doc/synthclone-dev/latex/* usr/share/doc/synthclone-dev/latex
+usr/share/doc/synthclone-devel/html/* usr/share/doc/synthclone-dev/html
+usr/share/doc/synthclone-devel/latex/* usr/share/doc/synthclone-dev/latex

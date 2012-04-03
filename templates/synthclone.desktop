@@ -1,10 +1,14 @@
 [Desktop Entry]
-Categories=Audio;AudioVideo;Qt;
-Comment=Clones MIDI-capable devices
+Categories=Applications;Audio;AudioVideo;Qt;
+Comment=Synthesizer-cloning software
+Encoding=UTF-8
 Exec=${prefix}/bin/synthclone
-GenericName=Synthesizer Cloner
+GenericName=Synthclone
+GenericName[en_US]=Synthclone
 Hidden=false
 Icon=${prefix}/share/icons/synthclone.png
+MultipleArgs=false
 Name=Synthclone
 Terminal=false
 Type=Application
+Version=1.0

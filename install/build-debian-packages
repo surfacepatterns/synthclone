@@ -3,7 +3,7 @@
 from optparse import OptionParser
 from os import chdir, getcwd, listdir, makedirs, pardir
 from os.path import abspath, isdir, join
-from shutil import rmtree
+from shutil import copyfile, rmtree
 from subprocess import call
 from tempfile import mkdtemp, mkstemp
 
@@ -41,6 +41,8 @@ def main():
         try:
             if call(["tar", "xzf", sourceArchive]):
                 parser.error("error while uncompressing source archive")
+
+            # Add Debian package data to source folder.
             sourceDir = join(tempDir, "synthclone-%s" % VERSION)
             debianTemplateDir = join(getTemplatesDirectory(), "debian")
             debianDir = join(sourceDir, "debian")
@@ -50,18 +52,34 @@ def main():
             for name in listdir(debianTemplateDir):
                 writeTemplate(join(debianDir, name),
                               join(debianTemplateDir, name), data)
+
+            # Build the Debian packages.
             chdir(sourceDir)
             if call(["dpkg-buildpackage", "-us", "-uc"]):
                 parser.error("error while building Debian package")
+
+            # Copy .deb files to destination directory.
             if not isdir(destinationDir):
                 makedirs(destinationDir)
-
-            # XXX: Copy package to destinationDir.
+            fp = file(join(debianDir, "files"))
+            try:
+                while True:
+                    line = fp.readline()
+                    if not line:
+                        break
+                    line = line.strip()
+                    if not line:
+                        continue
+                    packageName = line[:line.index(".deb ") + 4]
+                    copyfile(join(tempDir, packageName),
+                             join(destinationDir, packageName))
+            finally:
+                fp.close()
 
         finally:
             chdir(oldDirectory)
     finally:
-        #rmtree(tempDir)
+        rmtree(tempDir)
         pass
 
 if __name__ == "__main__":

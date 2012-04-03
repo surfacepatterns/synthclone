@@ -11,7 +11,7 @@
 # build-arch and build-indep targets  by Bill Allombert 2001
 
 # Uncomment this to turn on verbose mode.
-#export DH_VERBOSE=1
+export DH_VERBOSE=1
 
 # This has to be exported to make some magic below work.
 export DH_OPTIONS
@@ -47,7 +47,7 @@ binary: install
 	dh_testdir
 	dh_testroot
 	dh_install -a --list-missing
-	#dh_installdocs -a
+	dh_installdocs -a
 	dh_installmenu
 	dh_link
 	dh_compress -a
