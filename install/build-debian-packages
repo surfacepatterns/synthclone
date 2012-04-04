@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 
 from optparse import OptionParser
-from os import chdir, getcwd, listdir, makedirs, pardir
+from os import chdir, getcwd, listdir, makedirs, pardir, sep
 from os.path import abspath, isdir, join
 from shutil import copyfile, rmtree
 from subprocess import call
-from tempfile import mkdtemp, mkstemp
 
 from util import (
     VERSION,
@@ -17,11 +16,11 @@ from util import (
 
 def main():
     rootDirectory = getRootDirectory()
+    distDirectory = abspath(join(rootDirectory, pardir))
 
     parser = OptionParser("usage: %prog [options]")
     parser.add_option("-d", "--destination-dir", action="store",
-                      default=abspath(join(rootDirectory, pardir)),
-                      dest="destinationDir",
+                      default=distDirectory, dest="destinationDir",
                       help="Directory to store package in")
     parser.add_option("-p", "--prefix", action="store", default="/usr/local",
                       dest="prefix", help="Application install prefix")
@@ -32,55 +31,48 @@ def main():
     destinationDir = options.destinationDir
     prefix = options.prefix
 
-    tempDir = mkdtemp()
+    # Add Debian package data to source folder.
+    debianTemplateDir = join(getTemplatesDirectory(), "debian")
+    debianDir = join(rootDirectory, "debian")
+    if isdir(debianDir):
+        rmtree(debianDir)
+    prefix = abspath(prefix)
+    data = {
+        "prefix": prefix,
+        "prefixDirs": prefix[len(sep):]
+    }
+    for f in listdir(debianTemplateDir):
+        writeTemplate(join(debianDir, f), join(debianTemplateDir, f), data)
+
+    # Build the Debian package.
+    oldDirectory = getcwd()
+    chdir(rootDirectory)
     try:
-        sourceArchive = join(tempDir, "synthclone-%s.tar.gz" % VERSION)
-        createSourcePackage(sourceArchive)
-        oldDirectory = getcwd()
-        chdir(tempDir)
+        if call(["dpkg-buildpackage", "-us", "-uc"]):
+            parser.error("error while building Debian package")
+
+        # Copy .deb files to destination directory.
+        if not isdir(destinationDir):
+            makedirs(destinationDir)
+        fp = file(join(debianDir, "files"))
         try:
-            if call(["tar", "xzf", sourceArchive]):
-                parser.error("error while uncompressing source archive")
-
-            # Add Debian package data to source folder.
-            sourceDir = join(tempDir, "synthclone-%s" % VERSION)
-            debianTemplateDir = join(getTemplatesDirectory(), "debian")
-            debianDir = join(sourceDir, "debian")
-            data = {
-                "prefix": abspath(prefix)
-            }
-            for name in listdir(debianTemplateDir):
-                writeTemplate(join(debianDir, name),
-                              join(debianTemplateDir, name), data)
-
-            # Build the Debian packages.
-            chdir(sourceDir)
-            if call(["dpkg-buildpackage", "-us", "-uc"]):
-                parser.error("error while building Debian package")
-
-            # Copy .deb files to destination directory.
-            if not isdir(destinationDir):
-                makedirs(destinationDir)
-            fp = file(join(debianDir, "files"))
-            try:
-                while True:
-                    line = fp.readline()
-                    if not line:
-                        break
-                    line = line.strip()
-                    if not line:
-                        continue
-                    packageName = line[:line.index(".deb ") + 4]
-                    copyfile(join(tempDir, packageName),
-                             join(destinationDir, packageName))
-            finally:
-                fp.close()
-
+            while True:
+                line = fp.readline()
+                if not line:
+                    break
+                line = line.strip()
+                if not line:
+                    continue
+                packageName = line[:line.index(".deb ") + 4]
+                source = abspath(join(distDirectory, packageName))
+                destination = abspath(join(destinationDir, packageName))
+                if source != destination:
+                    copyfile(source, destination)
         finally:
-            chdir(oldDirectory)
+            fp.close()
+
     finally:
-        rmtree(tempDir)
-        pass
+        chdir(oldDirectory)
 
 if __name__ == "__main__":
    main()

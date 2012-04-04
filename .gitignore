@@ -1,5 +1,7 @@
 Makefile
 build
+build-stamp
+debian
 make
 resources
 src/include/synthclone/config.h

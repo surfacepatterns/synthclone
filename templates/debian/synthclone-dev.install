@@ -1,4 +1,4 @@
-usr/include/synthclone/* usr/include/synthclone
-usr/lib/pkgconfig/synthclone.pc usr/lib/pkgconfig
-usr/share/doc/synthclone-devel/html/* usr/share/doc/synthclone-dev/html
-usr/share/doc/synthclone-devel/latex/* usr/share/doc/synthclone-dev/latex
+${prefixDirs}/include/synthclone/* ${prefixDirs}/include/synthclone
+${prefixDirs}/lib/pkgconfig/synthclone.pc ${prefixDirs}/lib/pkgconfig
+${prefixDirs}/share/doc/synthclone-devel/html/* ${prefixDirs}/share/doc/synthclone-dev/html
+${prefixDirs}/share/doc/synthclone-devel/latex/* ${prefixDirs}/share/doc/synthclone-dev/latex

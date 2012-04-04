@@ -43,6 +43,11 @@ unix:!macx {
     pkgconfig.files = resources/synthclone.pc
     pkgconfig.path = $${PREFIX}/lib/pkgconfig
     INSTALLS += pkgconfig
+
+    debian.commands = ./install/build-debian-packages -p '$${PREFIX}'
+    debian.depends = FORCE
+    debian.target = ./debian
+    QMAKE_EXTRA_TARGETS = debian
 }
 
 INSTALLS += icon

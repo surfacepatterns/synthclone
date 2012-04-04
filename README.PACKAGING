@@ -113,11 +113,9 @@ UNIX:
 --------------------
 
 Simple packaging scripts have been developed that take care of packaging on
-the following operating systems.
+the following operating systems:
 
   Debian Linux:
 
-    To create a .deb package, execute `./install/build-debian-package` from the
-    top directory of the `synthclone` source tree.  If no errors occur, you'll
-    find two .deb packages (synthclone and synthclone-dev) in the directory
-    above the source directory.
+    ./configure --prefix=/usr
+    make debian
