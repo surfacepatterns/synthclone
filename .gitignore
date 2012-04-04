@@ -1,9 +1,10 @@
 Makefile
-build
+build/
 build-stamp
-debian
-make
-resources
+debian/
+make/
+resources/
 src/include/synthclone/config.h
 *.pro.user
 *.pyc
+!templates/debian/
