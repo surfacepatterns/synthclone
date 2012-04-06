@@ -168,6 +168,7 @@ Session::Session(QCoreApplication &application, QObject *parent):
     currentSamplerJobStream = 0;
     directory = 0;
     drySamplePropertyVisible = true;
+    focusedComponent = 0;
     notePropertyVisible = true;
     releaseTimePropertyVisible = true;
     sampler = 0;
