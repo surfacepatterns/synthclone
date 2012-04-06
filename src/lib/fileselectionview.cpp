@@ -1,6 +1,6 @@
 /*
  * libsynthclone - a plugin API for `synthclone`
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2012 Devin Anderson
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the
