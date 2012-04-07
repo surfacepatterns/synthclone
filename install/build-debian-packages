@@ -5,6 +5,7 @@ from os import chdir, getcwd, listdir, makedirs, pardir, sep
 from os.path import abspath, isdir, join
 from shutil import copyfile, rmtree
 from subprocess import call
+from time import altzone, daylight, strftime, timezone
 
 from util import (
     VERSION,
@@ -37,9 +38,23 @@ def main():
     if isdir(debianDir):
         rmtree(debianDir)
     prefix = abspath(prefix)
+    if daylight:
+        zone = altzone
+    else:
+        zone = timezone
+    negativeZone = zone < 0
+    if negativeZone:
+        sign = '+'
+        zone = -zone
+    else:
+        sign = '-'
+    zone /= 60
+    offset = "%s%02d%02d" % (sign, zone / 60, zone % 60)
     data = {
         "prefix": prefix,
-        "prefixDirs": prefix[len(sep):]
+        "prefixDirs": prefix[len(sep):],
+        "timestamp": strftime("%a, %d %b %Y %H:%M:%S ") + offset,
+        "version": VERSION
     }
     for f in listdir(debianTemplateDir):
         writeTemplate(join(debianDir, f), join(debianTemplateDir, f), data)
