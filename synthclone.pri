@@ -1,4 +1,4 @@
-CONFIG += no_include_pwd
+CONFIG += no_include_pwd warn_on
 
 !isEmpty(DEBUG) {
     CONFIG += debug
