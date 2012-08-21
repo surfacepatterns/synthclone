@@ -33,10 +33,14 @@
 #include "zonecomparer.h"
 #include "zonelistloader.h"
 
+#define STRINGIFY(s) #s
+#define XSTRINGIFY(s) STRINGIFY(s)
+
 Controller::Controller(Application &application, QObject *parent):
     QObject(parent),
     application(application),
-    session(application),
+    participantManager(this),
+    session(application, participantManager),
     settings(session)
 {
     // Setup views
@@ -312,6 +316,37 @@ Controller::Controller(Application &application, QObject *parent):
             setControlPropertyVisible(i, session.isControlPropertyVisible(i));
     }
 
+    // Setup controller objects
+
+    connect(&participantManager,
+            SIGNAL(participantActivated(const synthclone::Participant *,
+                                        const synthclone::Participant *,
+                                        const QByteArray &)),
+            SLOT(handleParticipantManagerParticipantActivation
+                 (const synthclone::Participant *,
+                  const synthclone::Participant *, const QByteArray &)));
+    connect(&participantManager,
+            SIGNAL(participantAdded(const synthclone::Participant *,
+                                    const synthclone::Participant *,
+                                    const QByteArray &)),
+            SLOT(handleParticipantManagerParticipantAddition
+                 (const synthclone::Participant *,
+                  const synthclone::Participant *, const QByteArray &)));
+    connect(&participantManager,
+            SIGNAL(participantDeactivated(const synthclone::Participant *,
+                                          const synthclone::Participant *,
+                                          const QByteArray &)),
+            SLOT(handleParticipantManagerParticipantDeactivation
+                 (const synthclone::Participant *,
+                  const synthclone::Participant *, const QByteArray &)));
+    connect(&participantManager,
+            SIGNAL(participantRemoved(const synthclone::Participant *,
+                                      const synthclone::Participant *,
+                                      const QByteArray &)),
+            SLOT(handleParticipantManagerParticipantRemoval
+                 (const synthclone::Participant *,
+                  const synthclone::Participant *, const QByteArray &)));
+
     // Setup models
 
     connect(&session, SIGNAL(aftertouchPropertyVisibilityChanged(bool)),
@@ -471,35 +506,6 @@ Controller::Controller(Application &application, QObject *parent):
                   const QStringList &)));
 
     connect(&session,
-            SIGNAL(participantActivated(const synthclone::Participant *,
-                                        const synthclone::Participant *,
-                                        const QByteArray &)),
-            SLOT(handleSessionParticipantActivation
-                 (const synthclone::Participant *,
-                  const synthclone::Participant *, const QByteArray &)));
-    connect(&session,
-            SIGNAL(participantAdded(const synthclone::Participant *,
-                                    const synthclone::Participant *,
-                                    const QByteArray &)),
-            SLOT(handleSessionParticipantAddition
-                 (const synthclone::Participant *,
-                  const synthclone::Participant *, const QByteArray &)));
-    connect(&session,
-            SIGNAL(participantDeactivated(const synthclone::Participant *,
-                                          const synthclone::Participant *,
-                                          const QByteArray &)),
-            SLOT(handleSessionParticipantDeactivation
-                 (const synthclone::Participant *,
-                  const synthclone::Participant *, const QByteArray &)));
-    connect(&session,
-            SIGNAL(participantRemoved(const synthclone::Participant *,
-                                      const synthclone::Participant *,
-                                      const QByteArray &)),
-            SLOT(handleSessionParticipantRemoval
-                 (const synthclone::Participant *,
-                  const synthclone::Participant *, const QByteArray &)));
-
-    connect(&session,
             SIGNAL(currentSamplerJobChanged(const synthclone::SamplerJob *)),
             SLOT(handleSessionCurrentSamplerJobChange
                  (const synthclone::SamplerJob *)));
@@ -579,7 +585,7 @@ Controller::~Controller()
     session.unload();
     QList<synthclone::Participant *> participants = pluginParticipantMap.keys();
     for (int i = participants.count() - 1; i >= 0; i--) {
-        session.removeParticipant(participants[i]);
+        participantManager.removeParticipant(participants[i]);
     }
     assert(! participantViewletMap.count());
     assert(! pluginParticipantMap.count());
@@ -736,14 +742,11 @@ Controller::executePostSaveChangesAction()
 QDir
 Controller::getCorePluginDirectory()
 {
-    QDir pluginDirectory = application.applicationDirPath();
-    if (pluginDirectory.cdUp()) {
+    QDir pluginDirectory;
 
-#ifdef SYNTHCLONE_PLATFORM_MACX
-        if (pluginDirectory.cd("PlugIns")) {
-            return pluginDirectory;
-        }
-#else
+#ifdef SYNTHCLONE_DEBUG
+    pluginDirectory.setPath(application.applicationDirPath());
+    if (pluginDirectory.cdUp()) {
         if (pluginDirectory.cd("lib")) {
             if (pluginDirectory.cd("synthclone")) {
                 if (pluginDirectory.cd("plugins")) {
@@ -751,10 +754,20 @@ Controller::getCorePluginDirectory()
                 }
             }
         }
+    }
 #endif
 
+    pluginDirectory.setPath(XSTRINGIFY(SYNTHCLONE_PLUGIN_PATH));
+    if (pluginDirectory.exists()) {
+        return pluginDirectory;
     }
     throw synthclone::Error("core plugin directory is not accessible");
+}
+
+MainView &
+Controller::getMainView()
+{
+    return mainView;
 }
 
 MenuViewlet *
@@ -790,6 +803,12 @@ Controller::getMenuViewlet(synthclone::Menu menu)
         assert(false);
     }
     return viewlet;
+}
+
+Session &
+Controller::getSession()
+{
+    return session;
 }
 
 bool
@@ -841,7 +860,7 @@ Controller::loadPlugins(const QDir &directory, QStringList &scannedPaths)
         synthclone::Participant *participant = plugin->getParticipant();
         pluginParticipantMap.insert(participant, plugin);
         const synthclone::Registration &registration =
-            session.addParticipant(participant, plugin->getId());
+            participantManager.addParticipant(participant, plugin->getId());
         connect(&registration, SIGNAL(unregistered(QObject*)),
                 SLOT(handleParticipantUnregistration(QObject *)));
     }
@@ -1392,6 +1411,102 @@ Controller::handleParticipantUnregistration(QObject *obj)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+// ParticipantManager signal handlers
+////////////////////////////////////////////////////////////////////////////////
+
+void
+Controller::
+handleParticipantManagerParticipantActivation(const synthclone::Participant *
+                                              participant,
+                                              const synthclone::Participant *
+                                              /*parent*/,
+                                              const QByteArray &/*id*/)
+{
+    ParticipantViewlet *viewlet = participantViewletMap.value(participant, 0);
+    assert(viewlet);
+    viewlet->setActivated(true);
+
+    qDebug() << tr("Participant activated: %1 %2.%3-%4").
+        arg(participant->getName()).arg(participant->getMajorVersion()).
+        arg(participant->getMinorVersion()).arg(participant->getRevision());
+}
+
+void
+Controller::
+handleParticipantManagerParticipantAddition(const synthclone::Participant *
+                                            participant,
+                                            const synthclone::Participant *
+                                            parent,
+                                            const QByteArray &/*id*/)
+{
+    ParticipantViewlet *viewlet = participantView.createParticipantViewlet();
+    if (! parent) {
+        participantView.add(viewlet);
+    } else {
+        ParticipantViewlet *parentViewlet =
+            participantViewletMap.value(parent, 0);
+        assert(parentViewlet);
+        parentViewlet->add(viewlet);
+    }
+    viewlet->setActivated(false);
+    viewlet->setAuthor(participant->getAuthor());
+    viewlet->setMajorVersion(participant->getMajorVersion());
+    viewlet->setMinorVersion(participant->getMinorVersion());
+    viewlet->setName(participant->getName());
+    viewlet->setRevision(participant->getRevision());
+    viewlet->setSummary(participant->getSummary());
+    connect(viewlet, SIGNAL(activationChangeRequest(bool)),
+            SLOT(handleParticipantViewletActivationChangeRequest(bool)));
+    participantViewletMap.insert(participant, viewlet);
+
+    qDebug() << tr("Participant added to session manager: %1 %2.%3-%4").
+        arg(participant->getName()).arg(participant->getMajorVersion()).
+        arg(participant->getMinorVersion()).arg(participant->getRevision());
+}
+
+void
+Controller::
+handleParticipantManagerParticipantDeactivation(const synthclone::Participant *
+                                                participant,
+                                                const synthclone::Participant *
+                                                /*parent*/,
+                                                const QByteArray &/*id*/)
+{
+    ParticipantViewlet *viewlet = participantViewletMap.value(participant, 0);
+    assert(viewlet);
+    viewlet->setActivated(false);
+
+    qDebug() << tr("Participant deactivated: %1 %2.%3-%4").
+        arg(participant->getName()).arg(participant->getMajorVersion()).
+        arg(participant->getMinorVersion()).arg(participant->getRevision());
+}
+
+void
+Controller::
+handleParticipantManagerParticipantRemoval(const synthclone::Participant *
+                                           participant,
+                                           const synthclone::Participant *
+                                           parent,
+                                           const QByteArray &/*id*/)
+{
+    ParticipantViewlet *viewlet = participantViewletMap.take(participant);
+    assert(viewlet);
+    if (! parent) {
+        participantView.remove(viewlet);
+    } else {
+        ParticipantViewlet *parentViewlet =
+            participantViewletMap.value(parent, 0);
+        assert(parentViewlet);
+        parentViewlet->remove(viewlet);
+    }
+    participantView.destroyParticipantViewlet(viewlet);
+
+    qDebug() << tr("Participant removed from session manager: %1 %2.%3.%4").
+        arg(participant->getName()).arg(participant->getMajorVersion()).
+        arg(participant->getMinorVersion()).arg(participant->getRevision());
+}
+
+////////////////////////////////////////////////////////////////////////////////
 // ParticipantView signal handlers
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -1414,9 +1529,9 @@ Controller::handleParticipantViewletActivationChangeRequest(bool activate)
         participantViewletMap.key(viewlet, 0);
     assert(participant);
     if (activate) {
-        session.activateParticipant(participant);
+        participantManager.activateParticipant(participant);
     } else {
-        session.deactivateParticipant(participant);
+        participantManager.deactivateParticipant(participant);
     }
 }
 
@@ -1814,90 +1929,6 @@ handleSessionMenuSeparatorRemoval(const synthclone::MenuSeparator *separator,
     MenuViewlet *viewlet = qobject_cast<MenuViewlet *>
         (mainView.getComponentViewlet()->getTargetMenuViewlet(index));
     removeMenuSeparator(separator, subMenus, viewlet);
-}
-
-void
-Controller::
-handleSessionParticipantActivation(const synthclone::Participant *participant,
-                                   const synthclone::Participant */*parent*/,
-                                   const QByteArray &/*id*/)
-{
-    ParticipantViewlet *viewlet = participantViewletMap.value(participant, 0);
-    assert(viewlet);
-    viewlet->setActivated(true);
-
-    qDebug() << tr("Participant activated: %1 %2.%3-%4").
-        arg(participant->getName()).arg(participant->getMajorVersion()).
-        arg(participant->getMinorVersion()).arg(participant->getRevision());
-}
-
-void
-Controller::
-handleSessionParticipantAddition(const synthclone::Participant *participant,
-                                 const synthclone::Participant *parent,
-                                 const QByteArray &/*id*/)
-{
-    ParticipantViewlet *viewlet = participantView.createParticipantViewlet();
-    if (! parent) {
-        participantView.add(viewlet);
-    } else {
-        ParticipantViewlet *parentViewlet =
-            participantViewletMap.value(parent, 0);
-        assert(parentViewlet);
-        parentViewlet->add(viewlet);
-    }
-    viewlet->setActivated(false);
-    viewlet->setAuthor(participant->getAuthor());
-    viewlet->setMajorVersion(participant->getMajorVersion());
-    viewlet->setMinorVersion(participant->getMinorVersion());
-    viewlet->setName(participant->getName());
-    viewlet->setRevision(participant->getRevision());
-    viewlet->setSummary(participant->getSummary());
-    connect(viewlet, SIGNAL(activationChangeRequest(bool)),
-            SLOT(handleParticipantViewletActivationChangeRequest(bool)));
-    participantViewletMap.insert(participant, viewlet);
-
-    qDebug() << tr("Participant added to session manager: %1 %2.%3-%4").
-        arg(participant->getName()).arg(participant->getMajorVersion()).
-        arg(participant->getMinorVersion()).arg(participant->getRevision());
-}
-
-void
-Controller::
-handleSessionParticipantDeactivation(const synthclone::Participant *participant,
-                                     const synthclone::Participant */*parent*/,
-                                     const QByteArray &/*id*/)
-{
-    ParticipantViewlet *viewlet = participantViewletMap.value(participant, 0);
-    assert(viewlet);
-    viewlet->setActivated(false);
-
-    qDebug() << tr("Participant deactivated: %1 %2.%3-%4").
-        arg(participant->getName()).arg(participant->getMajorVersion()).
-        arg(participant->getMinorVersion()).arg(participant->getRevision());
-}
-
-void
-Controller::
-handleSessionParticipantRemoval(const synthclone::Participant *participant,
-                                const synthclone::Participant *parent,
-                                const QByteArray &/*id*/)
-{
-    ParticipantViewlet *viewlet = participantViewletMap.take(participant);
-    assert(viewlet);
-    if (! parent) {
-        participantView.remove(viewlet);
-    } else {
-        ParticipantViewlet *parentViewlet =
-            participantViewletMap.value(parent, 0);
-        assert(parentViewlet);
-        parentViewlet->remove(viewlet);
-    }
-    participantView.destroyParticipantViewlet(viewlet);
-
-    qDebug() << tr("Participant removed from session manager: %1 %2.%3.%4").
-        arg(participant->getName()).arg(participant->getMajorVersion()).
-        arg(participant->getMinorVersion()).arg(participant->getRevision());
 }
 
 void

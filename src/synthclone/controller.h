@@ -1,6 +1,6 @@
 /*
  * synthclone - Synthesizer-cloning software
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2012 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -26,6 +26,7 @@
 #include "application.h"
 #include "errorview.h"
 #include "mainview.h"
+#include "participantmanager.h"
 #include "participantview.h"
 #include "pluginmanager.h"
 #include "progressview.h"
@@ -45,6 +46,12 @@ public:
     Controller(Application &application, QObject *parent=0);
 
     ~Controller();
+
+    MainView &
+    getMainView();
+
+    Session &
+    getSession();
 
 public slots:
 
@@ -86,6 +93,30 @@ private slots:
 
     void
     handleMainViewCloseRequest();
+
+    void
+    handleParticipantManagerParticipantActivation
+    (const synthclone::Participant *participant,
+     const synthclone::Participant *parent, const QByteArray &id);
+
+    void
+    handleParticipantManagerParticipantAddition(const synthclone::Participant *
+                                                participant,
+                                                const synthclone::Participant *
+                                                parent,
+                                                const QByteArray &id);
+
+    void
+    handleParticipantManagerParticipantDeactivation
+    (const synthclone::Participant *participant,
+     const synthclone::Participant *parent, const QByteArray &id);
+
+    void
+    handleParticipantManagerParticipantRemoval(const synthclone::Participant *
+                                               participant,
+                                               const synthclone::Participant *
+                                               parent,
+                                               const QByteArray &id);
 
     void
     handleParticipantUnregistration(QObject *obj);
@@ -235,28 +266,6 @@ private slots:
                                       separator,
                                       const synthclone::Target *target,
                                       const QStringList &subMenus);
-
-    void
-    handleSessionParticipantActivation(const synthclone::Participant *
-                                       participant,
-                                       const synthclone::Participant *parent,
-                                       const QByteArray &id);
-
-    void
-    handleSessionParticipantAddition(const synthclone::Participant *participant,
-                                     const synthclone::Participant *parent,
-                                     const QByteArray &id);
-
-    void
-    handleSessionParticipantDeactivation(const synthclone::Participant *
-                                         participant,
-                                         const synthclone::Participant *parent,
-                                         const QByteArray &id);
-
-    void
-    handleSessionParticipantRemoval(const synthclone::Participant *participant,
-                                    const synthclone::Participant *parent,
-                                    const QByteArray &id);
 
     void
     handleSessionProgressChange(float progress, const QString &status);
@@ -643,6 +652,8 @@ private:
     QString saveAsPath;
     int sessionLoadWarningCount;
     int targetBuildWarningCount;
+
+    ParticipantManager participantManager;
 
     Session session;
     Settings settings;

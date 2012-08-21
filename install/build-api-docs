@@ -7,8 +7,7 @@ from tempfile import mkstemp
 from subprocess import call
 
 from util import (
-    MAJOR_VERSION,
-    MINOR_VERSION,
+    VERSION,
     getResourcesDirectory,
     getTemplatesDirectory,
     writeTemplate
@@ -26,13 +25,12 @@ def main():
         close(fd)
         docDir = options.docDir
         if docDir is None:
-            docDir = join(getResourcesDirectory(), "devel-doc")
+            docDir = join(getResourcesDirectory(), "documentation", "api")
         if not isdir(docDir):
             makedirs(docDir)
         data = {
             "docDir": docDir,
-            "majorVersion": MAJOR_VERSION,
-            "minorVersion": MINOR_VERSION
+            "version": VERSION
         }
         writeTemplate(doxyfilePath, join(getTemplatesDirectory(), "Doxyfile"),
                       data)

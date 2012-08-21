@@ -12,23 +12,23 @@ isEmpty(MAKEDIR) {
     MAKEDIR = ../../make
 }
 
-macx {
-    LIBS += -F$${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX} -framework synthclone -lsamplerate
+unix:!macx {
+    # On some systems, `qmake` will reference a library installed in a system
+    # library path instead of a library in an included library path.  I'm not
+    # sure why this happens.  'speps' over at AUR sent in a patch that
+    # references the library explicitly.
+    LIB_BUILDDIR = $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}
+    LIB_VERSION = $${MAJOR_VERSION}.$${MINOR_VERSION}.$${REVISION}
+    LIBS += -lsamplerate $${LIB_BUILDDIR}/libsynthclone.so.$${LIB_VERSION}
 } else {
-    unix {
-        # On some systems, `qmake` will reference a library installed in a
-        # system library path instead of a library in an included library path.
-        # I'm not sure why this happens.  'speps' over at AUR sent in a patch
-        # that references the library explicitly.
-        LIBS += -lsamplerate $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/libsynthclone.so.$${SYNTHCLONE_VERSION}
-    } else {
-        LIBS += -L$${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX} -lsamplerate -lsynthclone
-    }
+    LIBS += -L$${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX} -lsamplerate \
+        -lsynthclone
 }
 
 CONFIG += console uitools
 DEFINES += SYNTHCLONE_MAJOR_VERSION=$${MAJOR_VERSION} \
     SYNTHCLONE_MINOR_VERSION=$${MINOR_VERSION} \
+    SYNTHCLONE_PLUGIN_PATH=$${SYNTHCLONE_PLUGIN_INSTALL_PATH} \
     SYNTHCLONE_REVISION=$${REVISION}
 DESTDIR = $${BUILDDIR}/$${SYNTHCLONE_APP_SUFFIX}
 HEADERS += aboutview.h \
@@ -48,6 +48,7 @@ HEADERS += aboutview.h \
     menuleafviewlet.h \
     menuseparatorviewlet.h \
     menuviewlet.h \
+    participantmanager.h \
     participantview.h \
     participantviewlet.h \
     pluginmanager.h \
@@ -102,6 +103,7 @@ SOURCES += aboutview.cpp \
     menuleafviewlet.cpp \
     menuseparatorviewlet.cpp \
     menuviewlet.cpp \
+    participantmanager.cpp \
     participantview.cpp \
     participantviewlet.cpp \
     pluginmanager.cpp \

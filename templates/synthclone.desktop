@@ -1,12 +1,12 @@
 [Desktop Entry]
-Categories=AudioEditing;Audio;AudioVideo;Qt;
+Categories=Audio;AudioVideo;Qt;
 Comment=Synthesizer-cloning software
 Encoding=UTF-8
-Exec=${prefix}/bin/synthclone
+Exec=${binDir}/synthclone
 GenericName=Synthclone
 GenericName[en_US]=Synthclone
 Hidden=false
-Icon=${prefix}/share/icons/synthclone.png
+Icon=${dataDir}/icons/synthclone.png
 Name=Synthclone
 Terminal=false
 Type=Application

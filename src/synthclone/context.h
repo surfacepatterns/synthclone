@@ -25,7 +25,9 @@
 
 #include <synthclone/context.h>
 
+class ParticipantManager;
 class Session;
+class MainView;
 
 class Context: public synthclone::Context {
 
@@ -33,8 +35,9 @@ class Context: public synthclone::Context {
 
 public:
 
-    Context(synthclone::Participant &participant, Session &session,
-            QObject *parent=0);
+    Context(synthclone::Participant &participant,
+            ParticipantManager &participantManager, Session &session,
+            MainView &mainView, QObject *parent=0);
 
     ~Context();
 
@@ -454,10 +457,12 @@ private:
                      const QStringList &subMenus);
 
     EffectList effects;
+    MainView &mainView;
     MenuActionList menuActions;
     MenuSeparatorList menuSeparators;
     synthclone::Participant &participant;
     ParticipantList participants;
+    ParticipantManager &participantManager;
     synthclone::Sampler *sampler;
     Session &session;
     TargetList targets;

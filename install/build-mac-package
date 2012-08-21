@@ -1,5 +1,44 @@
 #!/usr/bin/env python
 
+# prefix = "/Applications/synthclone.app/Contents"
+# dataDir = join(prefix, "Resources")
+
+# The application is handled using a Mac application bundle.
+# SYNTHCLONE_APP_SUFFIX = Applications
+#
+# Headers and libraries are handled using a Mac framework.
+# SYNTHCLONE_HEADER_SUFFIX = Library/Frameworks
+# SYNTHCLONE_LIBRARY_SUFFIX = Library/Frameworks
+#
+# SYNTHCLONE_LIBRARY_DOC_SUFFIX = \
+#     Library/Frameworks/synthclone.framework/Documentation
+#
+# SYNTHCLONE_DATA_SUFFIX = Applications/synthclone.app/Contents/Resources
+# SYNTHCLONE_PLUGIN_SUFFIX = Applications/synthclone.app/Contents/PlugIns
+
+# Install library and headers as a framework on Mac OSX.
+# CONFIG += lib_bundle x86 x86_64
+# QMAKE_FRAMEWORK_BUNDLE_NAME = synthclone
+# QMAKE_FRAMEWORK_VERSION = $${SYNTHCLONE_VERSION}
+# headers.path = Headers
+# headers.version = Versions
+# isEmpty(SKIP_HEADERS) {
+#     QMAKE_BUNDLE_DATA += headers
+# }
+# 
+# We can't guarantee that the shared libraries we use are going to be
+# available on all platforms.  So, we package them with the framework
+# bundle.  The libraries are installed via build.py.
+# libraries.files = $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/synthclone.framework/Libraries/*
+# libraries.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}/synthclone.framework/Libraries
+# INSTALLS += libraries
+
+# Plugin shared data:
+# LIBS += -F$${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX} -framework synthclone
+
+# Application:
+# LIBS += -F$${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX} -framework synthclone -lsamplerate
+
 from optparse import OptionParser
 from os import listdir, makedirs
 from os.path import abspath, basename, dirname, isdir, isfile, join

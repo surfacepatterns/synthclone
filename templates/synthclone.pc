@@ -1,12 +1,5 @@
-prefix=${prefix}
-exec_prefix=$${prefix}
-libdir=$${exec_prefix}/lib
-includedir=$${prefix}/include
-
 Name: libsynthclone
 Description: Plugin API for `synthclone`
-Version: ${majorVersion}.${minorVersion}.${revision}
-
-Requires: 
-Libs: -L$${libdir} -lsynthclone
-Cflags: -I$${includedir}
+Version: ${version}
+Libs: -L${libDir} -lsynthclone
+Cflags: -I${includeDir}

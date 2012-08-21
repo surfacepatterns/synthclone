@@ -5,9 +5,8 @@ Contents:
 
 1. Install Parts
 2. Install Options For Packagers
-3. Standard Install Locations
-4. Packaging Recommendations
-5. Packaging Scripts
+3. Packaging Recommendations
+4. Packaging Scripts
 
 1. Install Parts
 ----------------
@@ -31,21 +30,30 @@ A `synthclone` install can be made up of several common parts:
 
 `synthclone` is built using the typical UNIX build process (`configure`, `make`,
 `make install`).  There are several options that you can pass to the configure
-script in order to select what will or will not be built:
+script in order to select what will or will not be built, and where each item
+will be installed:
 
   $ ./configure --help
-
   Usage: configure [options] [qmake-args]
 
   Options:
     -h, --help            show this help message and exit
-    -b BUILDDIR, --build-dir=BUILDDIR
-                          Build directory
-    -d, --debug           Build a debug executable
-    -m MAKEDIR, --make-dir=MAKEDIR
-                          Make directory
-    -p PREFIX, --prefix=PREFIX
-                          Install prefix
+    --bin-dir=BINDIR      Install directory for synthclone executable
+    --build-dir=BUILDDIR  Build directory
+    --data-dir=DATADIR    Install directory for general data files
+    --data-root-dir=DATAROOTDIR
+                          Install root for data files
+    --debug               Build a debug executable
+    --doc-dir=DOCDIR      Install directory for synthclone documentation
+    --exec-prefix=EXECPREFIX
+                          Install prefix for executable data
+    --include-dir=INCLUDEDIR
+                          Install directory for system header files
+    --lib-dir=LIBDIR      Install directory for synthclone shared library
+    --make-dir=MAKEDIR    Make directory
+    --plugin-dir=PLUGINDIR
+                          Install directory for synthclone plugins
+    --prefix=PREFIX       Install prefix
     --skip-api-docs=SKIPAPIDOCS
                           Don't build API documentation
     --skip-headers=SKIPHEADERS
@@ -74,48 +82,18 @@ To do this, execute:
 
 You *must* make sure that the path is not a relative path.
 
-3. Standard Install Locations
------------------------------
-
-These are standard install locations by platform.  These locations may be
-modified on certain platforms to correspond to the platform's standards.
-
-Mac OSX:
-
-  (1) and (3) are installed in a Mac application directory at
-  [install-dir]/Applications/synthclone.app.  (2), (4), and (5) are installed
-  in a Mac framework directory at
-  [install-dir]/Library/Frameworks/synthclone.framework.
-
-UNIX:
-
-  1. [install-dir]/bin/synthclone
-  2. [install-dir]/lib/libsynthclone.so*
-  3. [install-dir]/lib/synthclone/plugins/*.so
-  4. [install-dir]/include/synthclone/*.h
-  5. [install-dir]/share/doc/synthclone-devel/
-
-4. Package Recommendations
+3. Package Recommendations
 --------------------------
 
-Mac OSX:
+Parts 1-3 should be placed into the main `synthclone` package.
 
-  The application and framework bundles should be distributed together in a
-  Mac package creating using PackageMaker.
+Parts 4-5 should be placed into a development package (e.g. synthclone-devel).
 
-UNIX:
-
-  * Parts 1-3 should be placed into the main `synthclone` package.
-  * Parts 4-5 should be placed into a development package (e.g.
-    synthclone-devel).
-
-5. Packaging Scripts
+4. Packaging Scripts
 --------------------
 
 Simple packaging scripts have been developed that take care of packaging on
 the following operating systems:
 
   Debian Linux:
-
-    ./configure --prefix=/usr
-    make debian
+    ./install/build-debian-packages

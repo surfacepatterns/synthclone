@@ -92,33 +92,10 @@ headers.files -= closeeventfilter.h
 exists(../include/synthclone/config.h) {
     headers.files += ../include/synthclone/config.h
 }
-
-target.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}
-
-macx {
-
-    # Install library and headers as a framework on Mac OSX.
-    CONFIG += lib_bundle x86 x86_64
-    QMAKE_FRAMEWORK_BUNDLE_NAME = synthclone
-    QMAKE_FRAMEWORK_VERSION = $${SYNTHCLONE_VERSION}
-    headers.path = Headers
-    headers.version = Versions
-    isEmpty(SKIP_HEADERS) {
-        QMAKE_BUNDLE_DATA += headers
-    }
-
-    # We can't guarantee that the shared libraries we use are going to be
-    # available on all platforms.  So, we package them with the framework
-    # bundle.  The libraries are installed via build.py.
-    libraries.files = $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/synthclone.framework/Libraries/*
-    libraries.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}/synthclone.framework/Libraries
-    INSTALLS += libraries
-
-} else {
-    headers.path = $${SYNTHCLONE_HEADER_INSTALL_PATH}
-    isEmpty(SKIP_HEADERS) {
-        INSTALLS += headers
-    }
+headers.path = $${SYNTHCLONE_HEADER_INSTALL_PATH}
+isEmpty(SKIP_HEADERS) {
+    INSTALLS += headers
 }
 
+target.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}
 INSTALLS += target

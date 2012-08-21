@@ -1,5 +1,5 @@
-${prefixDirs}/bin/synthclone ${prefixDirs}/bin
-${prefixDirs}/share/applications/synthclone.desktop ${prefixDirs}/share/applications
-${prefixDirs}/lib/libsynthclone.so* ${prefixDirs}/lib
-${prefixDirs}/lib/synthclone/plugins/*.so ${prefixDirs}/lib/synthclone/plugins
-${prefixDirs}/share/icons/synthclone.png ${prefixDirs}/share/icons
+usr/bin/synthclone usr/bin
+usr/share/applications/synthclone.desktop usr/share/applications
+usr/lib/libsynthclone.so* usr/lib
+usr/lib/synthclone/plugins/*.so usr/lib/synthclone/plugins
+usr/share/icons/synthclone.png usr/share/icons

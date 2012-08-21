@@ -23,21 +23,17 @@ def main():
     parser.add_option("-d", "--destination-dir", action="store",
                       default=distDirectory, dest="destinationDir",
                       help="Directory to store package in")
-    parser.add_option("-p", "--prefix", action="store", default="/usr/local",
-                      dest="prefix", help="Application install prefix")
     options, args = parser.parse_args()
-
     if len(args):
         parser.error("incorrect number of required arguments")
+
     destinationDir = options.destinationDir
-    prefix = options.prefix
 
     # Add Debian package data to source folder.
     debianTemplateDir = join(getTemplatesDirectory(), "debian")
     debianDir = join(rootDirectory, "debian")
     if isdir(debianDir):
         rmtree(debianDir)
-    prefix = abspath(prefix)
     if daylight:
         zone = altzone
     else:
@@ -50,9 +46,8 @@ def main():
         sign = '-'
     zone /= 60
     offset = "%s%02d%02d" % (sign, zone / 60, zone % 60)
+    sepLength = len(sep)
     data = {
-        "prefix": prefix,
-        "prefixDirs": prefix[len(sep):],
         "timestamp": strftime("%a, %d %b %Y %H:%M:%S ") + offset,
         "version": VERSION
     }

@@ -1,6 +1,6 @@
 /*
  * synthclone - Synthesizer-cloning software
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2012 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -32,7 +32,6 @@
 #include <synthclone/effect.h>
 #include <synthclone/menuaction.h>
 #include <synthclone/menuseparator.h>
-#include <synthclone/participant.h>
 #include <synthclone/sampleoutputstream.h>
 #include <synthclone/sampler.h>
 #include <synthclone/samplerjob.h>
@@ -40,7 +39,7 @@
 #include <synthclone/zonecomparer.h>
 
 #include "effectjobthread.h"
-#include "registration.h"
+#include "participantmanager.h"
 #include "zone.h"
 #include "zoneindexcomparer.h"
 
@@ -61,12 +60,10 @@ public:
     static bool
     isDirectory(const QDir &directory);
 
-    Session(QCoreApplication &application, QObject *parent=0);
+    Session(QCoreApplication &application,
+            ParticipantManager &participantManager, QObject *parent=0);
 
     ~Session();
-
-    int
-    getActivatedParticipantCount(const synthclone::Participant *parent=0) const;
 
     const synthclone::EffectJob *
     getCurrentEffectJob() const;
@@ -106,21 +103,6 @@ public:
 
     int
     getMinorVersion() const;
-
-    const synthclone::Participant *
-    getParticipant(const QByteArray &id) const;
-
-    const synthclone::Participant *
-    getParticipant(int index, const synthclone::Participant *parent=0) const;
-
-    int
-    getParticipantCount(const synthclone::Participant *parent=0) const;
-
-    QByteArray
-    getParticipantId(const synthclone::Participant *participant) const;
-
-    const synthclone::Participant *
-    getParticipantParent(const synthclone::Participant *participant) const;
 
     int
     getRevision() const;
@@ -198,9 +180,6 @@ public:
     isNotePropertyVisible() const;
 
     bool
-    isParticipantActivated(const synthclone::Participant *participant) const;
-
-    bool
     isReleaseTimePropertyVisible() const;
 
     bool
@@ -225,9 +204,6 @@ public slots:
 
     void
     abortCurrentSamplerJob();
-
-    void
-    activateParticipant(const synthclone::Participant *participant);
 
     const synthclone::Registration &
     addEffect(synthclone::Effect *effect,
@@ -276,14 +252,6 @@ public slots:
                      const QStringList &subMenus=QStringList());
 
     const synthclone::Registration &
-    addParticipant(synthclone::Participant *participant, const QByteArray &id);
-
-    const synthclone::Registration &
-    addParticipant(synthclone::Participant *participant,
-                   const synthclone::Participant *parent,
-                   const QByteArray &subId);
-
-    const synthclone::Registration &
     addSampler(synthclone::Sampler *sampler,
                const synthclone::Participant *participant);
 
@@ -300,9 +268,6 @@ public slots:
 
     void
     buildTargets();
-
-    void
-    deactivateParticipant(const synthclone::Participant *participant);
 
     void
     load(const QDir &directory);
@@ -342,9 +307,6 @@ public slots:
 
     void
     removeMenuSeparator(const synthclone::MenuSeparator *separator);
-
-    void
-    removeParticipant(const synthclone::Participant *participant);
 
     void
     removeSampler();
@@ -448,11 +410,6 @@ public slots:
 signals:
 
     void
-    activatingParticipant(const synthclone::Participant *participant,
-                          const synthclone::Participant *parent,
-                          const QByteArray &id);
-
-    void
     addingEffect(const synthclone::Effect *effect, int index);
 
     void
@@ -497,11 +454,6 @@ signals:
                         const QStringList &subMenus);
 
     void
-    addingParticipant(const synthclone::Participant *participant,
-                      const synthclone::Participant *parent,
-                      const QByteArray &id);
-
-    void
     addingSampler(const synthclone::Sampler *sampler);
 
     void
@@ -537,11 +489,6 @@ signals:
 
     void
     currentSamplerJobChanged(const synthclone::SamplerJob *job);
-
-    void
-    deactivatingParticipant(const synthclone::Participant *participant,
-                            const synthclone::Participant *parent,
-                            const QByteArray &id);
 
     void
     drySamplePropertyVisibilityChanged(bool visible);
@@ -677,26 +624,6 @@ signals:
     notePropertyVisibilityChanged(bool visible);
 
     void
-    participantActivated(const synthclone::Participant *participant,
-                         const synthclone::Participant *parent,
-                         const QByteArray &id);
-
-    void
-    participantAdded(const synthclone::Participant *participant,
-                     const synthclone::Participant *parent,
-                     const QByteArray &id);
-
-    void
-    participantDeactivated(const synthclone::Participant *participant,
-                           const synthclone::Participant *parent,
-                           const QByteArray &id);
-
-    void
-    participantRemoved(const synthclone::Participant *participant,
-                       const synthclone::Participant *parent,
-                       const QByteArray &id);
-
-    void
     progressChanged(float progress, const QString &status);
 
     void
@@ -745,11 +672,6 @@ signals:
     removingMenuSeparator(const synthclone::MenuSeparator *separator,
                           const synthclone::Target *target,
                           const QStringList &subMenus);
-
-    void
-    removingParticipant(const synthclone::Participant *participant,
-                        const synthclone::Participant *parent,
-                        const QByteArray &id);
 
     void
     removingSampler(const synthclone::Sampler *sampler);
@@ -872,7 +794,6 @@ private:
     typedef QList<synthclone::Effect *> EffectList;
     typedef QList<const synthclone::MenuAction *> MenuActionList;
     typedef QList<const synthclone::MenuSeparator *> MenuSeparatorList;
-    typedef QList<synthclone::Participant *> ParticipantList;
     typedef QList<synthclone::SamplerJob *> SamplerJobList;
     typedef QList<synthclone::Target *> TargetList;
     typedef QList<synthclone::Zone *> ZoneList;
@@ -896,23 +817,11 @@ private:
         QStringList subMenus;
     };
 
-    struct ParticipantData {
-        ParticipantList children;
-        Context *context;
-        QByteArray id;
-        const synthclone::Participant *parent;
-        synthclone::Participant *participant;
-        Registration *registration;
-    };
-
     typedef QMap<const synthclone::Effect *, ComponentData *> EffectDataMap;
     typedef QMap<const synthclone::MenuAction *,
                  MenuItemData *> MenuActionDataMap;
     typedef QMap<const synthclone::MenuSeparator *,
                  MenuItemData *> MenuSeparatorDataMap;
-    typedef QMap<const synthclone::Participant *,
-                 ParticipantData *> ParticipantDataMap;
-    typedef QMap<QByteArray, synthclone::Participant *> ParticipantIdMap;
     typedef QMap<const synthclone::Target *, ComponentData *> TargetDataMap;
     typedef QMap<const synthclone::Zone *,
                  synthclone::EffectJob *> ZoneEffectJobMap;
@@ -928,10 +837,6 @@ private:
 
     static bool
     loadXML(const QDir &directory, QDomDocument &document);
-
-    void
-    activateParticipant(const synthclone::Participant *participant,
-                        const QVariant &state);
 
     QString
     createUniqueSampleFile(const QDir &sessionDirectory);
@@ -993,9 +898,6 @@ private:
                            bool defaultValue);
 
     bool
-    verifySubId(const QByteArray &subId);
-
-    bool
     verifyWholeNumberAttribute(const QDomElement &element, const QString &name,
                                quint32 &value, quint32 minimumValue=0,
                                quint32 maximumValue=
@@ -1007,7 +909,7 @@ private:
 
     void
     writeXMLParticipantList(QXmlStreamWriter &writer,
-                            const ParticipantList &participants);
+                            const synthclone::Participant *participant);
 
     void
     writeXMLState(QXmlStreamWriter &writer, const QVariant &value);
@@ -1033,10 +935,8 @@ private:
     bool notePropertyVisible;
     MenuActionDataMap menuActionDataMap;
     MenuSeparatorDataMap menuSeparatorDataMap;
-    ParticipantDataMap participantDataMap;
-    ParticipantIdMap participantIdMap;
+    ParticipantManager &participantManager;
     bool releaseTimePropertyVisible;
-    ParticipantList rootParticipants;
     synthclone::Sampler *sampler;
     ComponentData samplerData;
     SamplerJobList samplerJobs;

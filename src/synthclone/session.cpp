@@ -145,16 +145,40 @@ Session::loadXML(const QDir &directory, QDomDocument &document)
 
 // Class definition
 
-Session::Session(QCoreApplication &application, QObject *parent):
+Session::Session(QCoreApplication &application,
+                 ParticipantManager &participantManager, QObject *parent):
     QObject(parent),
     application(application),
     effectJobThread(this),
+    participantManager(participantManager),
     zoneIndexComparer(zones)
 {
     connect(this, SIGNAL(effectJobCompletion()),
             SLOT(handleEffectJobCompletion()));
     connect(this, SIGNAL(effectJobError(QString)),
             SLOT(handleEffectJobError(QString)));
+
+    connect(&participantManager,
+            SIGNAL(participantActivated(const synthclone::Participant *,
+                                        const synthclone::Participant *,
+                                        const QByteArray &)),
+            SLOT(setModified()));
+    connect(&participantManager,
+            SIGNAL(participantAdded(const synthclone::Participant *,
+                                    const synthclone::Participant *,
+                                    const QByteArray &)),
+            SLOT(setModified()));
+    connect(&participantManager,
+            SIGNAL(participantDeactivated(const synthclone::Participant *,
+                                          const synthclone::Participant *,
+                                          const QByteArray &)),
+            SLOT(setModified()));
+    connect(&participantManager,
+            SIGNAL(participantRemoved(const synthclone::Participant *,
+                                      const synthclone::Participant *,
+                                      const QByteArray &)),
+            SLOT(setModified()));
+
     for (int i = 0; i < 0x80; i++) {
         controlPropertiesVisible[i] = false;
     }
@@ -184,17 +208,10 @@ Session::Session(QCoreApplication &application, QObject *parent):
 Session::~Session()
 {
     unload();
-    QList<const synthclone::Participant *> participants =
-        participantDataMap.keys();
-    for (int i = participants.count() - 1; i >= 0; i--) {
-        ParticipantData *data = participantDataMap[participants[i]];
-        if (! data->parent) {
-            removeParticipant(data->participant);
-        }
+    for (int i = participantManager.getParticipantCount() - 1; i >= 0; i--) {
+        participantManager.removeParticipant
+            (participantManager.getParticipant(i));
     }
-    assert(! participantDataMap.count());
-    assert(! participantIdMap.count());
-    assert(! rootParticipants.count());
 }
 
 void
@@ -202,34 +219,6 @@ Session::abortCurrentSamplerJob()
 {
     CONFIRM(sampler, tr("sampler is not registered with session"));
     sampler->abortJob();
-}
-
-void
-Session::activateParticipant(const synthclone::Participant *participant)
-{
-    activateParticipant(participant, QVariant());
-}
-
-void
-Session::activateParticipant(const synthclone::Participant *participant,
-                             const QVariant &state)
-{
-    CONFIRM(participant, tr("participant is set to NULL"));
-
-    ParticipantData *data = participantDataMap.value(participant, 0);
-
-    CONFIRM(data, tr("participant is not registered with session"));
-    CONFIRM(! data->context, tr("participant is already activated"));
-
-    QByteArray &id = data->id;
-    const synthclone::Participant *parent = data->parent;
-    synthclone::Participant *mutableParticipant = data->participant;
-    emit activatingParticipant(participant, parent, id);
-    Context *context = new Context(*mutableParticipant, *this, this);
-    mutableParticipant->activate(*context, state);
-    data->context = context;
-    emit participantActivated(participant, parent, id);
-    setModified();
 }
 
 const synthclone::Registration &
@@ -242,7 +231,7 @@ Session::addEffect(synthclone::Effect *effect,
     CONFIRM((index >= -1) && (index <= effects.count()),
             tr("'%1': index is out of range").arg(index));
     CONFIRM(participant, tr("participant is set to NULL"));
-    CONFIRM(isParticipantActivated(participant),
+    CONFIRM(participantManager.isParticipantActivated(participant),
             tr("participant is not activated"));
     CONFIRM(! currentEffectJob, tr("effects are currently in use"));
 
@@ -496,72 +485,6 @@ Session::addMenuSeparator(synthclone::MenuSeparator *separator,
 }
 
 const synthclone::Registration &
-Session::addParticipant(synthclone::Participant *participant,
-                        const QByteArray &id)
-{
-    CONFIRM(participant, tr("participant is set to NULL"));
-    CONFIRM(! participantDataMap.value(participant, 0),
-            tr("participant is already registered with session"));
-    QList<QByteArray> parts = id.split('.');
-    for (int i = parts.count() - 1; i >= 0; i--) {
-        CONFIRM(verifySubId(parts[i]),
-                tr("'%1': invalid participant id").arg(id.constData()));
-    }
-
-    emit addingParticipant(participant, 0, id);
-    ParticipantData *data = new ParticipantData();
-    Registration *registration = new Registration(participant, this);
-    data->context = 0;
-    data->id = id;
-    data->parent = 0;
-    data->participant = participant;
-    data->registration = registration;
-    participantDataMap[participant] = data;
-    participantIdMap[id] = participant;
-    rootParticipants.append(participant);
-    emit participantAdded(participant, 0, id);
-    setModified();
-    return *registration;
-}
-
-const synthclone::Registration &
-Session::addParticipant(synthclone::Participant *participant,
-                        const synthclone::Participant *parent,
-                        const QByteArray &subId)
-{
-    CONFIRM(participant, tr("participant is set to NULL"));
-    CONFIRM(participantDataMap.contains(participant),
-            tr("participant is already registered with session"));
-    CONFIRM(verifySubId(subId),
-            tr("'%1': invalid participant sub-id").arg(subId.constData()));
-    assert(parent);
-
-    ParticipantData *parentData = participantDataMap.value(parent, 0);
-
-    assert(parentData);
-    assert(parentData->context);
-
-    QByteArray id;
-    id.append(parentData->id);
-    id.append('.');
-    id.append(subId);
-    emit addingParticipant(participant, parent, id);
-    ParticipantData *data = new ParticipantData();
-    Registration *registration = new Registration(participant, this);
-    data->context = 0;
-    data->id = id;
-    data->parent = parent;
-    data->participant = participant;
-    data->registration = registration;
-    participantDataMap[participant] = data;
-    participantIdMap[id] = participant;
-    parentData->children.append(participant);
-    emit participantAdded(participant, parent, id);
-    setModified();
-    return *registration;
-}
-
-const synthclone::Registration &
 Session::addSampler(synthclone::Sampler *sampler,
                     const synthclone::Participant *participant)
 {
@@ -569,7 +492,7 @@ Session::addSampler(synthclone::Sampler *sampler,
     CONFIRM(sampler != this->sampler,
             tr("sampler is already registered with session"));
     CONFIRM(participant, tr("participant is set to NULL"));
-    CONFIRM(isParticipantActivated(participant),
+    CONFIRM(participantManager.isParticipantActivated(participant),
             tr("participant is not activated"));
 
     if (this->sampler) {
@@ -641,7 +564,7 @@ Session::addTarget(synthclone::Target *target,
     CONFIRM((index >= -1) && (index <= targets.count()),
             tr("'%1': index is out of range").arg(index));
     CONFIRM(participant, tr("participant is set to NULL"));
-    CONFIRM(isParticipantActivated(participant),
+    CONFIRM(participantManager.isParticipantActivated(participant),
             tr("participant is not activated"));
 
     if (index == -1) {
@@ -742,33 +665,6 @@ Session::createUniqueSampleFile(const QDir &sessionDirectory)
 }
 
 void
-Session::deactivateParticipant(const synthclone::Participant *participant)
-{
-    CONFIRM(participant, tr("participant is set to NULL"));
-
-    ParticipantData *data = participantDataMap.value(participant, 0);
-
-    CONFIRM(data, tr("participant is not registered with session"));
-
-    Context *context = data->context;
-
-    CONFIRM(data->context, tr("participant is not currently activated"));
-
-    ParticipantList &children = data->children;
-    for (int i = children.count() - 1; i >= 0; i--) {
-        removeParticipant(children[i]);
-    }
-    const QByteArray &id = data->id;
-    const synthclone::Participant *parent = data->parent;
-    emit deactivatingParticipant(participant, parent, id);
-    data->participant->deactivate(*context);
-    data->context = 0;
-    delete context;
-    emit participantDeactivated(participant, parent, id);
-    setModified();
-}
-
-void
 Session::emitLoadWarning(const QDomElement &element, const QString &message)
 {
     emit loadWarning(element.lineNumber(), element.columnNumber(), message);
@@ -784,42 +680,20 @@ Session::getActivatedParticipant(const QDomElement &element)
         emitLoadWarning(element, message);
         return 0;
     }
-    synthclone::Participant *participant =
-        participantIdMap.value(id.toAscii(), 0);
-    if (! participant) {
-        message = tr("participant with id '%1' not found").arg(id);
-        emitLoadWarning(element, message);
+    QByteArray idBytes = id.toAscii();
+    synthclone::Participant *participant;
+    try {
+        participant = participantManager.getParticipant(idBytes);
+    } catch (synthclone::Error &e) {
+        emitLoadWarning(element, e.getMessage());
         return 0;
     }
-    ParticipantData *data = participantDataMap.value(participant, 0);
-    assert(data);
-    if (! data->context) {
+    if (! participantManager.isParticipantActivated(participant)) {
         message = tr("participant with id '%1' is not activated").arg(id);
         emitLoadWarning(element, message);
         return 0;
     }
     return participant;
-}
-
-int
-Session::
-getActivatedParticipantCount(const synthclone::Participant *parent) const
-{
-    const ParticipantList *participants;
-    if (! parent) {
-        participants = &rootParticipants;
-    } else {
-        ParticipantData *data = participantDataMap.value(parent, 0);
-        CONFIRM(data, tr("the given parent is not a registered participant"));
-        participants = &(data->children);
-    }
-    int activatedCount = 0;
-    for (int i = participants->count() - 1; i >= 0; i--) {
-        if (isParticipantActivated(participants->at(i))) {
-            activatedCount++;
-        }
-    }
-    return activatedCount;
 }
 
 const synthclone::EffectJob *
@@ -920,72 +794,6 @@ int
 Session::getMinorVersion() const
 {
     return SYNTHCLONE_MINOR_VERSION;
-}
-
-const synthclone::Participant *
-Session::getParticipant(const QByteArray &id) const
-{
-    const synthclone::Participant *participant = participantIdMap.value(id, 0);
-    CONFIRM(participant,
-            tr("'%1': id does not belong to a registered participant"));
-    return participant;
-}
-
-const synthclone::Participant *
-Session::getParticipant(int index, const synthclone::Participant *parent) const
-{
-    const ParticipantList *participants;
-    if (! parent) {
-        participants = &rootParticipants;
-    } else {
-        ParticipantData *data = participantDataMap.value(parent, 0);
-
-        CONFIRM(data, tr("the given parent is not a registered participant"));
-
-        participants = &(data->children);
-    }
-
-    CONFIRM((index >= 0) && (index < participants->count()),
-            tr("'%1': index is out of range").arg(index));
-
-    return participants->at(index);
-}
-
-int
-Session::getParticipantCount(const synthclone::Participant *parent) const
-{
-    if (! parent) {
-        return rootParticipants.count();
-    }
-    ParticipantData *data = participantDataMap.value(parent, 0);
-
-    CONFIRM(data, tr("the given parent is not a registered participant"));
-
-    return data->children.count();
-}
-
-QByteArray
-Session::getParticipantId(const synthclone::Participant *participant) const
-{
-    CONFIRM(participant, tr("participant is set to NULL"));
-
-    ParticipantData *data = participantDataMap.value(participant, 0);
-
-    CONFIRM(data, tr("participant is not registered with session"));
-
-    return data->id;
-}
-
-const synthclone::Participant *
-Session::getParticipantParent(const synthclone::Participant *participant) const
-{
-    CONFIRM(participant, tr("participant is set to NULL"));
-
-    ParticipantData *data = participantDataMap.value(participant, 0);
-
-    CONFIRM(data, tr("participant is not registered with session"));
-
-    return data->parent;
 }
 
 int
@@ -1293,15 +1101,6 @@ Session::isNotePropertyVisible() const
 }
 
 bool
-Session::
-isParticipantActivated(const synthclone::Participant *participant) const
-{
-    ParticipantData *data = participantDataMap.value(participant, 0);
-    CONFIRM(data, tr("participant is not registered with session"));
-    return static_cast<bool>(data->context);
-}
-
-bool
 Session::isReleaseTimePropertyVisible() const
 {
     return releaseTimePropertyVisible;
@@ -1492,19 +1291,20 @@ Session::load(const QDir &directory)
                 emitLoadWarning(element, message);
                 continue;
             }
-            participant = participantIdMap.value(id.toAscii(), 0);
-            if (! participant) {
-                message = tr("no participant with id '%1'").arg(id);
-                emitLoadWarning(element, message);
+            try {
+                participant = participantManager.getParticipant(id.toAscii());
+            } catch (synthclone::Error &e) {
+                emitLoadWarning(element, e.getMessage());
                 continue;
             }
-            if (isParticipantActivated(participant)) {
+            if (participantManager.isParticipantActivated(participant)) {
                 message = tr("participant with id '%1' must be re-activated").
                     arg(id);
                 emitLoadWarning(element, message);
-                deactivateParticipant(participant);
+                participantManager.deactivateParticipant(participant);
             }
-            activateParticipant(participant, readXMLState(element));
+            participantManager.activateParticipant(participant,
+                                                   readXMLState(element));
             loadedIds.append(id);
         }
     }
@@ -1893,40 +1693,6 @@ Session::removeMenuSeparator(const synthclone::MenuSeparator *separator)
 }
 
 void
-Session::removeParticipant(const synthclone::Participant *participant)
-{
-    CONFIRM(participant, tr("participant is set to NULL"));
-
-    ParticipantData *data = participantDataMap.value(participant, 0);
-
-    CONFIRM(data, tr("participant is not registered with session"));
-
-    if (data->context) {
-        deactivateParticipant(participant);
-    }
-    QByteArray &id = data->id;
-    const synthclone::Participant *parent = data->parent;
-    emit removingParticipant(participant, parent, id);
-    assert(participantDataMap.contains(participant));
-    assert(participantIdMap.contains(id));
-    participantDataMap.remove(participant);
-    participantIdMap.remove(id);
-    bool removed;
-    if (parent) {
-        ParticipantData *parentData = participantDataMap.value(parent, 0);
-        assert(parentData);
-        removed = parentData->children.removeOne(data->participant);
-    } else {
-        removed = rootParticipants.removeOne(data->participant);
-    }
-    assert(removed);
-    QScopedPointer<Registration> registrationPtr(data->registration);
-    delete data;
-    emit participantRemoved(participant, parent, id);
-    setModified();
-}
-
-void
 Session::removeSampler()
 {
     CONFIRM(sampler, tr("sampler is not registered with session"));
@@ -2214,7 +1980,7 @@ Session::save(const QDir &directory)
     // Participants
     emit progressChanged(0.6, "Saving participants ...");
     writer.writeStartElement("participants");
-    writeXMLParticipantList(writer, rootParticipants);
+    writeXMLParticipantList(writer, 0);
     writer.writeEndElement();
 
     const synthclone::Participant *participant;
@@ -2642,12 +2408,15 @@ Session::unload()
 
         // Removing activated root participants should remove all components,
         // menu items, child participants, etc.
-        for (int i = rootParticipants.count() - 1; i >= 0; i--) {
-            synthclone::Participant *participant = rootParticipants[i];
-            if (isParticipantActivated(participant)) {
-                deactivateParticipant(participant);
+        for (int i = participantManager.getParticipantCount() - 1; i >= 0;
+             i--) {
+            synthclone::Participant *participant =
+                participantManager.getParticipant(i);
+            if (participantManager.isParticipantActivated(participant)) {
+                participantManager.deactivateParticipant(participant);
             }
         }
+
         for (int i = zones.count() - 1; i >= 0; i--) {
             removeZone(i);
         }
@@ -2768,27 +2537,6 @@ Session::verifyBooleanAttribute(const QDomElement &element,
 }
 
 bool
-Session::verifySubId(const QByteArray &subId)
-{
-    if (subId.isEmpty()) {
-        return false;
-    }
-    char c = subId[0];
-    if (! (std::islower(c) || std::isdigit(c))) {
-        return false;
-    }
-    int lastIndex = subId.count() - 1;
-    for (int i = 1; i < lastIndex; i++) {
-        c = subId[i];
-        if (! (std::islower(c) || std::isdigit(c) || (c == '-'))) {
-            return false;
-        }
-    }
-    c = subId[lastIndex];
-    return std::islower(c) || std::isdigit(c);
-}
-
-bool
 Session::verifyWholeNumberAttribute(const QDomElement &element,
                                     const QString &name, quint32 &value,
                                     quint32 minimumValue, quint32 maximumValue)
@@ -2808,29 +2556,28 @@ Session::writeXMLParticipantId(QXmlStreamWriter &writer,
                                const synthclone::Participant *participant)
 {
     assert(participant);
-    ParticipantData *data = participantDataMap.value(participant, 0);
-    assert(data);
-    writer.writeAttribute("participant-id", data->id);
+    writer.writeAttribute("participant-id",
+                          participantManager.getParticipantId(participant));
     return participant;
 }
 
 void
 Session::writeXMLParticipantList(QXmlStreamWriter &writer,
-                                 const ParticipantList &participants)
+                                 const synthclone::Participant *parent)
 {
-    int count = participants.count();
+    int count = participantManager.getParticipantCount(parent);
     for (int i = 0; i < count; i++) {
-        const synthclone::Participant *participant = participants[i];
-        ParticipantData *data = participantDataMap.value(participant, 0);
-        assert(data);
-        if (! data->context) {
+        const synthclone::Participant *participant =
+            participantManager.getParticipant(i, parent);
+        if (! participantManager.isParticipantActivated(participant)) {
             continue;
         }
         writer.writeStartElement("participant");
-        writer.writeAttribute("id", data->id);
+        writer.writeAttribute
+            ("id", participantManager.getParticipantId(participant));
         writeXMLState(writer, participant->getState());
         writer.writeEndElement();
-        writeXMLParticipantList(writer, data->children);
+        writeXMLParticipantList(writer, participant);
     }
 }
 

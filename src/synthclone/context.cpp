@@ -1,6 +1,6 @@
 /*
  * synthclone - Synthesizer-cloning software
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2012 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,6 +20,8 @@
 #include <cassert>
 
 #include "context.h"
+#include "mainview.h"
+#include "participantmanager.h"
 #include "session.h"
 #include "signalmap.h"
 
@@ -427,6 +429,27 @@ static QByteArray STATE_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(stateChanged(synthclone::SessionState, const QDir *)));
 
+static SignalMap mainViewSignalMap = SignalMap();
+
+static SignalMap participantManagerSignalMap =
+    SignalMap() <<
+    SignalPair(QLatin1String(ACTIVATING_PARTICIPANT_SIGNAL),
+               ACTIVATING_PARTICIPANT_SIGNAL) <<
+    SignalPair(QLatin1String(ADDING_PARTICIPANT_SIGNAL),
+               ADDING_PARTICIPANT_SIGNAL) <<
+    SignalPair(QLatin1String(DEACTIVATING_PARTICIPANT_SIGNAL),
+               DEACTIVATING_PARTICIPANT_SIGNAL) <<
+    SignalPair(QLatin1String(PARTICIPANT_ACTIVATED_SIGNAL),
+               PARTICIPANT_ACTIVATED_SIGNAL) <<
+    SignalPair(QLatin1String(PARTICIPANT_ADDED_SIGNAL),
+               PARTICIPANT_ADDED_SIGNAL) <<
+    SignalPair(QLatin1String(PARTICIPANT_DEACTIVATED_SIGNAL),
+               PARTICIPANT_DEACTIVATED_SIGNAL) <<
+    SignalPair(QLatin1String(PARTICIPANT_REMOVED_SIGNAL),
+               PARTICIPANT_REMOVED_SIGNAL) <<
+    SignalPair(QLatin1String(REMOVING_PARTICIPANT_SIGNAL),
+               REMOVING_PARTICIPANT_SIGNAL);
+
 static SignalMap sessionSignalMap =
     SignalMap() <<
 
@@ -601,23 +624,6 @@ static SignalMap sessionSignalMap =
     SignalPair(QLatin1String(TARGETS_BUILT_SIGNAL),
                TARGETS_BUILT_SIGNAL) <<
 
-    SignalPair(QLatin1String(ACTIVATING_PARTICIPANT_SIGNAL),
-               ACTIVATING_PARTICIPANT_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_PARTICIPANT_SIGNAL),
-               ADDING_PARTICIPANT_SIGNAL) <<
-    SignalPair(QLatin1String(DEACTIVATING_PARTICIPANT_SIGNAL),
-               DEACTIVATING_PARTICIPANT_SIGNAL) <<
-    SignalPair(QLatin1String(PARTICIPANT_ACTIVATED_SIGNAL),
-               PARTICIPANT_ACTIVATED_SIGNAL) <<
-    SignalPair(QLatin1String(PARTICIPANT_ADDED_SIGNAL),
-               PARTICIPANT_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(PARTICIPANT_DEACTIVATED_SIGNAL),
-               PARTICIPANT_DEACTIVATED_SIGNAL) <<
-    SignalPair(QLatin1String(PARTICIPANT_REMOVED_SIGNAL),
-               PARTICIPANT_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_PARTICIPANT_SIGNAL),
-               REMOVING_PARTICIPANT_SIGNAL) <<
-
     SignalPair(QLatin1String(AFTERTOUCH_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
                AFTERTOUCH_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
     SignalPair(QLatin1String
@@ -652,10 +658,13 @@ static SignalMap sessionSignalMap =
 
 // And now, back to our regularly scheduled class definition.
 
-Context::Context(synthclone::Participant &participant, Session &session,
-                 QObject *parent):
+Context::Context(synthclone::Participant &participant,
+                 ParticipantManager &participantManager, Session &session,
+                 MainView &mainView, QObject *parent):
     synthclone::Context(parent),
+    mainView(mainView),
     participant(participant),
+    participantManager(participantManager),
     session(session)
 {
     sampler = 0;
@@ -666,7 +675,7 @@ Context::~Context()
     int i;
 
     for (i = participants.count() - 1; i >= 0; i--) {
-        session.removeParticipant(participants[i]);
+        participantManager.removeParticipant(participants[i]);
     }
     if (sampler) {
         session.removeSampler();
@@ -683,9 +692,11 @@ Context::~Context()
     // items associated with components that weren't created in this context.
 
     for (i = menuActions.count() - 1; i >= 0; i--) {
+        // XXX: Change Remove from main view.
         session.removeMenuAction(menuActions[i]);
     }
     for (i = menuSeparators.count() - 1; i >= 0; i--) {
+        // XXX: Change to remove from main view.
         session.removeMenuSeparator(menuSeparators[i]);
     }
 
@@ -706,7 +717,7 @@ Context::abortCurrentSamplerJob()
 void
 Context::activateParticipant(const synthclone::Participant *participant)
 {
-    session.activateParticipant(participant);
+    participantManager.activateParticipant(participant);
 }
 
 const synthclone::Registration &
@@ -823,7 +834,8 @@ Context::addParticipant(synthclone::Participant *participant,
                         const QByteArray &subId)
 {
     const synthclone::Registration &registration =
-        session.addParticipant(participant, &(this->participant), subId);
+        participantManager.addParticipant(participant, &(this->participant),
+                                          subId);
     participants.append(participant);
     connect(&registration, SIGNAL(unregistered(QObject *)),
             SLOT(handleParticipantRemoval(QObject *)));
@@ -880,6 +892,16 @@ Context::connectNotify(const char *signal)
         const char *s = sessionSignalMap.get(strSignal);
         if (s) {
             connect(&session, signal, s);
+        } else {
+            s = participantManagerSignalMap.get(strSignal);
+            if (s) {
+                connect(&participantManager, signal, s);
+            } else {
+                s = mainViewSignalMap.get(strSignal);
+                if (s) {
+                    connect(&mainView, signal, s);
+                }
+            }
         }
     }
 }
@@ -894,7 +916,7 @@ Context::createSession(const QDir &directory, synthclone::SampleRate sampleRate,
 void
 Context::deactivateParticipant(const synthclone::Participant *participant)
 {
-    session.deactivateParticipant(participant);
+    participantManager.deactivateParticipant(participant);
 }
 
 void
@@ -906,6 +928,16 @@ Context::disconnectNotify(const char *signal)
         const char *s = sessionSignalMap.get(strSignal);
         if (s) {
             disconnect(&session, signal, this, s);
+        } else {
+            s = participantManagerSignalMap.get(strSignal);
+            if (s) {
+                disconnect(&participantManager, signal, this, s);
+            } else {
+                s = mainViewSignalMap.get(strSignal);
+                if (s) {
+                    disconnect(&mainView, signal, this, s);
+                }
+            }
         }
     }
 }
@@ -979,31 +1011,31 @@ Context::getMinorVersion() const
 const synthclone::Participant *
 Context::getParticipant(const QByteArray &id) const
 {
-    return session.getParticipant(id);
+    return participantManager.getParticipant(id);
 }
 
 const synthclone::Participant *
 Context::getParticipant(int index, const synthclone::Participant *parent) const
 {
-    return session.getParticipant(index, parent);
+    return participantManager.getParticipant(index, parent);
 }
 
 int
 Context::getParticipantCount(const synthclone::Participant *parent) const
 {
-    return session.getParticipantCount(parent);
+    return participantManager.getParticipantCount(parent);
 }
 
 QByteArray
 Context::getParticipantId(const synthclone::Participant *participant) const
 {
-    return session.getParticipantId(participant);
+    return participantManager.getParticipantId(participant);
 }
 
 const synthclone::Participant *
 Context::getParticipantParent(const synthclone::Participant *participant) const
 {
-    return session.getParticipantParent(participant);
+    return participantManager.getParticipantParent(participant);
 }
 
 int
@@ -1217,7 +1249,7 @@ bool
 Context::
 isParticipantActivated(const synthclone::Participant *participant) const
 {
-    return session.isParticipantActivated(participant);
+    return participantManager.isParticipantActivated(participant);
 }
 
 bool
@@ -1349,7 +1381,7 @@ Context::removeMenuSeparator(const synthclone::MenuSeparator *separator)
 void
 Context::removeParticipant(const synthclone::Participant *participant)
 {
-    session.removeParticipant(participant);
+    participantManager.removeParticipant(participant);
 }
 
 void

@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+#if platform == PLATFORM_WIN32:
+#    prefix = "C:\\Program Files\\synthclone"
+
 from optparse import OptionParser
 from os.path import abspath, dirname, join
 from subprocess import call
@@ -18,28 +21,35 @@ from install.util import (
 )
 
 def main():
-    platform = getPlatform()
-    platformArgs = []
-    if platform == PLATFORM_MACX:
-        defaultPrefix = "/"
-        platformArgs += ["-spec", "macx-g++"]
-        platformStr = "MACX"
-    elif platform == PLATFORM_WIN32:
-        defaultPrefix = "C:\\Program Files\\synthclone"
-        platformStr = "WIN32"
-    else:
-        defaultPrefix = "/usr/local"
-        platformStr = "UNIX"
-
     parser = OptionParser("usage: %prog [options] [qmake-args]")
-    parser.add_option("-b", "--build-dir", action="store", default=None,
+    parser.add_option("--bin-dir", action="store", default=None, dest="binDir",
+                      help="Install directory for synthclone executable")
+    parser.add_option("--build-dir", action="store", default=None,
                       dest="buildDir", help="Build directory")
-    parser.add_option("-d", "--debug", action="store_true", default=False,
+    parser.add_option("--data-dir", action="store", default=None,
+                      dest="dataDir",
+                      help="Install directory for general data files")
+    parser.add_option("--data-root-dir", action="store", default=None,
+                      dest="dataRootDir", help="Install root for data files")
+    parser.add_option("--debug", action="store_true", default=False,
                       dest="debug", help="Build a debug executable")
-    parser.add_option("-m", "--make-dir", action="store", default=None,
+    parser.add_option("--doc-dir", action="store", default=None, dest="docDir",
+                      help="Install directory for synthclone documentation")
+    parser.add_option("--exec-prefix", action="store", default=None,
+                      dest="execPrefix",
+                      help="Install prefix for executable data")
+    parser.add_option("--include-dir", action="store", default=None,
+                      dest="includeDir",
+                      help="Install directory for system header files")
+    parser.add_option("--lib-dir", action="store", default=None, dest="libDir",
+                      help="Install directory for synthclone shared library")
+    parser.add_option("--make-dir", action="store", default=None,
                       dest="makeDir", help="Make directory")
-    parser.add_option("-p", "--prefix", action="store", default=None,
-                      dest="prefix", help="Install prefix")
+    parser.add_option("--plugin-dir", action="store", default=None,
+                      dest="pluginDir",
+                      help="Install directory for synthclone plugins")
+    parser.add_option("--prefix", action="store", default=None, dest="prefix",
+                      help="Install prefix")
     parser.add_option("--skip-api-docs", action="store", default=0,
                       dest="skipAPIDocs", help="Don't build API documentation",
                       type="int")
@@ -65,22 +75,75 @@ def main():
                       help="Don't build the zone generator plugin", type="int")
     options, args = parser.parse_args()
 
+    platform = getPlatform()
+    platformArgs = []
+    if platform == PLATFORM_MACX:
+        platformArgs += ["-spec", "macx-g++"]
+        platformStr = "MACX"
+    elif platform == PLATFORM_WIN32:
+        platformStr = "WIN32"
+    else:
+        platformStr = "UNIX"
+
     scriptDir = abspath(dirname(argv[0]))
+
     buildDir = options.buildDir
     if buildDir is None:
-        buildDir = join(scriptDir, "build")
-    else:
-        buildDir = abspath(buildDir)
+        buildDir = "build"
+    buildDir = abspath(join(scriptDir, buildDir))
+
     makeDir = options.makeDir
     if makeDir is None:
-        makeDir = join(scriptDir, "make")
-    else:
-        makeDir = abspath(makeDir)
+        makeDir = "make"
+    makeDir = abspath(join(scriptDir, makeDir))
+
     prefix = options.prefix
     if prefix is None:
-        prefix = defaultPrefix
+        prefix = "/usr/local"
     else:
         prefix = abspath(prefix)
+
+    dataRootDir = options.dataRootDir
+    if dataRootDir is None:
+        dataRootDir = "share"
+    dataRootDir = abspath(join(prefix, dataRootDir))
+
+    execPrefix = options.execPrefix
+    if execPrefix is None:
+        execPrefix = prefix
+    else:
+        execPrefix = abspath(execPrefix)
+
+    binDir = options.binDir
+    if binDir is None:
+        binDir = "bin"
+    binDir = abspath(join(execPrefix, binDir))
+
+    dataDir = options.dataDir
+    if dataDir is None:
+        dataDir = dataRootDir
+    else:
+        dataDir = abspath(join(prefix, dataDir))
+
+    docDir = options.docDir
+    if docDir is None:
+        docDir = "doc"
+    docDir = abspath(join(dataRootDir, docDir))
+
+    includeDir = options.includeDir
+    if includeDir is None:
+        includeDir = "include"
+    includeDir = abspath(join(prefix, includeDir))
+
+    libDir = options.libDir
+    if libDir is None:
+        libDir = "lib"
+    libDir = abspath(join(execPrefix, libDir))
+
+    pluginDir = options.pluginDir
+    if pluginDir is None:
+        pluginDir = join("lib", "synthclone", "plugins")
+    pluginDir = abspath(join(execPrefix, pluginDir))
 
     # Write config.h
     data = {
@@ -96,13 +159,17 @@ def main():
     qmakeArgs = ["qmake", "-recursive"] + platformArgs + args + \
         ["MAJOR_VERSION=%d" % MAJOR_VERSION, "MINOR_VERSION=%d" % MINOR_VERSION,
          "REVISION=%d" % REVISION, "BUILDDIR=%s" % buildDir,
-         "MAKEDIR=%s" % makeDir, "PREFIX=%s" % prefix]
+         "MAKEDIR=%s" % makeDir, "PREFIX=%s" % prefix,
+         "DATAROOTDIR=%s" % dataRootDir, "EXECPREFIX=%s" % execPrefix,
+         "BINDIR=%s" % binDir, "DATADIR=%s" % dataDir, "DOCDIR=%s" % docDir,
+         "INCLUDEDIR=%s" % includeDir, "LIBDIR=%s" % libDir,
+         "PLUGINDIR=%s" % pluginDir]
+    if options.debug:
+        qmakeArgs.append("DEBUG=1")
     if options.skipAPIDocs:
         qmakeArgs.append("SKIP_API_DOCS=1")
     if options.skipHeaders:
         qmakeArgs.append("SKIP_HEADERS=1")
-    if options.debug:
-        qmakeArgs.append("DEBUG=1")
     if options.skipHydrogen:
         qmakeArgs.append("SKIP_HYDROGEN_PLUGIN=1")
     if options.skipJACK:

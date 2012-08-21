@@ -5,5 +5,5 @@ Abstract: Doxygen-generated documentation on the synthclone plugin API.
 Section: Programming
 
 Format: HTML
-Index: ${prefix}/share/doc/synthclone-dev/html/index.html
-Files: ${prefix}/share/doc/synthclone-dev/html/*.html
+Index: /usr/share/doc/synthclone-${version}/api/html/index.html
+Files: /usr/share/doc/synthclone-${version}/api/html/*.html

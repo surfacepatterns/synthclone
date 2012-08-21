@@ -1,68 +1,79 @@
 CONFIG += no_include_pwd warn_on
 
+SYNTHCLONE_APP_SUFFIX = bin
+SYNTHCLONE_DATA_SUFFIX = share
+SYNTHCLONE_DOC_SUFFIX = doc
+SYNTHCLONE_HEADER_SUFFIX = include/synthclone
+SYNTHCLONE_LIBRARY_SUFFIX = lib
+SYNTHCLONE_PLUGIN_SUFFIX = lib/synthclone/plugins
+
 !isEmpty(DEBUG) {
     CONFIG += debug
+    DEFINES += SYNTHCLONE_DEBUG
 }
 
 isEmpty(MAJOR_VERSION) {
     MAJOR_VERSION = 0
 }
-
 isEmpty(MINOR_VERSION) {
     MINOR_VERSION = 2
 }
-
 isEmpty(REVISION) {
     REVISION = 0
 }
-
 SYNTHCLONE_VERSION = $${MAJOR_VERSION}.$${MINOR_VERSION}.$${REVISION}
 
 macx {
     CONFIG += x86_64
     DEFINES += SYNTHCLONE_PLATFORM_MACX
-    isEmpty(PREFIX) {
-        PREFIX = ""
-    }
-
-    # The application is handled using a Mac application bundle.
-    SYNTHCLONE_APP_SUFFIX = Applications
-
-    # Headers and libraries are handled using a Mac framework.
-    SYNTHCLONE_HEADER_SUFFIX = Library/Frameworks
-    SYNTHCLONE_LIBRARY_SUFFIX = Library/Frameworks
-
-    SYNTHCLONE_LIBRARY_DOC_SUFFIX = Library/Frameworks/synthclone.framework/Documentation
-
-    SYNTHCLONE_DATA_SUFFIX = Applications/synthclone.app/Contents/Resources
-    SYNTHCLONE_PLUGIN_SUFFIX = Applications/synthclone.app/Contents/PlugIns
+} else:unix {
+    DEFINES += SYNTHCLONE_PLATFORM_UNIX
+} else:win32 {
+    DEFINES += SYNTHCLONE_PLATFORM_WIN32
 } else {
-
-    unix:!macx {
-        DEFINES += SYNTHCLONE_PLATFORM_UNIX
-        isEmpty(PREFIX) {
-            PREFIX = /usr/local
-        }
-    }
-
-    win32 {
-        DEFINES += SYNTHCLONE_PLATFORM_WIN32
-        isEmpty(PREFIX) {
-            PREFIX = C:/Program Files/synthclone
-        }
-    }
-
-    SYNTHCLONE_APP_SUFFIX = bin
-    SYNTHCLONE_DATA_SUFFIX = share/synthclone
-    SYNTHCLONE_HEADER_SUFFIX = include/synthclone
-    SYNTHCLONE_LIBRARY_SUFFIX = lib
-    SYNTHCLONE_LIBRARY_DOC_SUFFIX = share/doc/synthclone-devel
-    SYNTHCLONE_PLUGIN_SUFFIX = lib/synthclone/plugins
+    warning(Your platform has not been detected successfully.  Expect errors.)
 }
 
-SYNTHCLONE_APP_INSTALL_PATH = $${PREFIX}/$${SYNTHCLONE_APP_SUFFIX}
-SYNTHCLONE_DATA_INSTALL_PATH = $${PREFIX}/$${SYNTHCLONE_DATA_SUFFIX}
-SYNTHCLONE_HEADER_INSTALL_PATH = $${PREFIX}/$${SYNTHCLONE_HEADER_SUFFIX}
-SYNTHCLONE_LIBRARY_DOC_INSTALL_PATH = $${PREFIX}/$${SYNTHCLONE_LIBRARY_DOC_SUFFIX}
-SYNTHCLONE_LIBRARY_INSTALL_PATH = $${PREFIX}/$${SYNTHCLONE_LIBRARY_SUFFIX}
-SYNTHCLONE_PLUGIN_INSTALL_PATH = $${PREFIX}/$${SYNTHCLONE_PLUGIN_SUFFIX}
+isEmpty(PREFIX) {
+    win32 {
+        PREFIX = C:/Program Files/synthclone
+    } else {
+        PREFIX = /usr/local
+    }
+}
+isEmpty(DATAROOTDIR) {
+    DATAROOTDIR = $${PREFIX}/$${SYNTHCLONE_DATA_SUFFIX}
+}
+isEmpty(EXECPREFIX) {
+    EXECPREFIX = $${PREFIX}
+}
+isEmpty(BINDIR) {
+    SYNTHCLONE_APP_INSTALL_PATH = $${EXECPREFIX}/$${SYNTHCLONE_APP_SUFFIX}
+} else {
+    SYNTHCLONE_APP_INSTALL_PATH = $${BINDIR}
+}
+isEmpty(DATADIR) {
+    SYNTHCLONE_DATA_INSTALL_PATH = $${DATAROOTDIR}
+} else {
+    SYNTHCLONE_DATA_INSTALL_PATH = $${DATADIR}
+}
+isEmpty(DOCDIR) {
+    SYNTHCLONE_DOC_INSTALL_PATH = $${DATAROOTDIR}/$${SYNTHCLONE_DOC_SUFFIX}
+} else {
+    SYNTHCLONE_DOC_INSTALL_PATH = $${DOCDIR}
+}
+isEmpty(INCLUDEDIR) {
+    INCLUDEDIR = $${PREFIX}/include
+}
+SYNTHCLONE_HEADER_INSTALL_PATH = $${INCLUDEDIR}/synthclone
+isEmpty(LIBDIR) {
+    SYNTHCLONE_LIBRARY_INSTALL_PATH = \
+        $${EXECPREFIX}/$${SYNTHCLONE_LIBRARY_SUFFIX}
+} else {
+    SYNTHCLONE_LIBRARY_INSTALL_PATH = $${LIBDIR}
+}
+isEmpty(PLUGINDIR) {
+    SYNTHCLONE_PLUGIN_INSTALL_PATH = $${EXECPREFIX}/$${SYNTHCLONE_PLUGIN_SUFFIX}
+} else {
+    SYNTHCLONE_PLUGIN_INSTALL_PATH = $${PLUGINDIR}
+}
