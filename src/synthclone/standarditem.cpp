@@ -1,6 +1,6 @@
 /*
  * synthclone - Synthesizer-cloning software
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2012 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -45,12 +45,10 @@ StandardItem::data(int role) const
 void
 StandardItem::setData(const QVariant &value, int role)
 {
-    if (role == Qt::EditRole) {
-        if (editValue != value) {
-            editValue = value;
-            emitDataChanged();
-        }
-    } else {
+    if (role != Qt::EditRole) {
         QStandardItem::setData(value, role);
+    } else if (editValue != value) {
+        editValue = value;
+        emitDataChanged();
     }
 }

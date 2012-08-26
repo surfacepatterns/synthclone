@@ -28,7 +28,6 @@
 #include <synthclone/error.h>
 #include <synthclone/util.h>
 
-#include "context.h"
 #include "effectjob.h"
 #include "samplerjob.h"
 #include "session.h"
@@ -276,212 +275,6 @@ Session::addEffectJob(synthclone::Zone *zone, int index)
     }
     setModified();
     return job;
-}
-
-const synthclone::Registration &
-Session::addMenuAction(synthclone::MenuAction *action, synthclone::Menu menu,
-                       const QStringList &subMenus)
-{
-    CONFIRM(action, tr("action is set to NULL"));
-    CONFIRM(! menuActionDataMap.contains(action),
-            tr("menu action is already registered with session"));
-
-    emit addingMenuAction(action, menu, subMenus);
-    MenuItemData *data = new MenuItemData();
-    Registration *registration = new Registration(action, this);
-    data->menuBase.menu = menu;
-    data->menuBaseType = MENUBASETYPE_MENU;
-    data->registration = registration;
-    data->subMenus = subMenus;
-    menuActionDataMap.insert(action, data);
-    emit menuActionAdded(action, menu, subMenus);
-    setModified();
-    return *registration;
-}
-
-const synthclone::Registration &
-Session::addMenuAction(synthclone::MenuAction *action,
-                       const synthclone::Effect *effect,
-                       const QStringList &subMenus)
-{
-    CONFIRM(action, tr("action is set to NULL"));
-    CONFIRM(! menuActionDataMap.contains(action),
-            tr("menu action is already registered with session"));
-    CONFIRM(effect, tr("effect is set to NULL"));
-
-    ComponentData *effectData = effectDataMap.value(effect, 0);
-
-    CONFIRM(effectData, tr("effect is not registered with session"));
-
-    emit addingMenuAction(action, effect, subMenus);
-    MenuItemData *data = new MenuItemData();
-    Registration *registration = new Registration(action, this);
-    data->menuBase.effect = effect;
-    data->menuBaseType = MENUBASETYPE_EFFECT;
-    data->registration = registration;
-    data->subMenus = subMenus;
-    menuActionDataMap.insert(action, data);
-    effectData->menuActions.append(action);
-    emit menuActionAdded(action, effect, subMenus);
-    setModified();
-    return *registration;
-}
-
-const synthclone::Registration &
-Session::addMenuAction(synthclone::MenuAction *action,
-                       const synthclone::Sampler *sampler,
-                       const QStringList &subMenus)
-{
-    CONFIRM(action, tr("action is set to NULL"));
-    CONFIRM(! menuActionDataMap.contains(action),
-            tr("menu action is already registered with session"));
-    CONFIRM(sampler, tr("sampler is set to NULL"));
-    CONFIRM(sampler == this->sampler,
-            tr("sampler is not registered with session"));
-
-    emit addingMenuAction(action, sampler, subMenus);
-    MenuItemData *data = new MenuItemData();
-    Registration *registration = new Registration(action, this);
-    data->menuBase.sampler = sampler;
-    data->menuBaseType = MENUBASETYPE_SAMPLER;
-    data->registration = registration;
-    data->subMenus = subMenus;
-    menuActionDataMap.insert(action, data);
-    samplerData.menuActions.append(action);
-    emit menuActionAdded(action, sampler, subMenus);
-    setModified();
-    return *registration;
-}
-
-const synthclone::Registration &
-Session::addMenuAction(synthclone::MenuAction *action,
-                       const synthclone::Target *target,
-                       const QStringList &subMenus)
-{
-    CONFIRM(action, tr("action is set to NULL"));
-    CONFIRM(! menuActionDataMap.contains(action),
-            tr("menu action is already registered with session"));
-    CONFIRM(target, tr("target is set to NULL"));
-
-    ComponentData *targetData = targetDataMap.value(target, 0);
-
-    CONFIRM(targetData, tr("target is not registered with session"));
-
-    emit addingMenuAction(action, target, subMenus);
-    MenuItemData *data = new MenuItemData();
-    Registration *registration = new Registration(action, this);
-    data->menuBase.target = target;
-    data->menuBaseType = MENUBASETYPE_TARGET;
-    data->registration = registration;
-    data->subMenus = subMenus;
-    menuActionDataMap.insert(action, data);
-    targetData->menuActions.append(action);
-    emit menuActionAdded(action, target, subMenus);
-    setModified();
-    return *registration;
-}
-
-const synthclone::Registration &
-Session::addMenuSeparator(synthclone::MenuSeparator *separator,
-                          synthclone::Menu menu, const QStringList &subMenus)
-{
-    CONFIRM(separator, tr("separator is set to NULL"));
-    CONFIRM(! menuSeparatorDataMap.contains(separator),
-            tr("menu separator is already registered with session"));
-
-    emit addingMenuSeparator(separator, menu, subMenus);
-    MenuItemData *data = new MenuItemData();
-    Registration *registration = new Registration(separator, this);
-    data->menuBase.menu = menu;
-    data->menuBaseType = MENUBASETYPE_MENU;
-    data->registration = registration;
-    data->subMenus = subMenus;
-    menuSeparatorDataMap.insert(separator, data);
-    emit menuSeparatorAdded(separator, menu, subMenus);
-    setModified();
-    return *registration;
-}
-
-const synthclone::Registration &
-Session::addMenuSeparator(synthclone::MenuSeparator *separator,
-                          const synthclone::Effect *effect,
-                          const QStringList &subMenus)
-{
-    CONFIRM(separator, tr("separator is set to NULL"));
-    CONFIRM(! menuSeparatorDataMap.contains(separator),
-            tr("menu separator is already registered with session"));
-    CONFIRM(effect, tr("effect is set to NULL"));
-
-    ComponentData *effectData = effectDataMap.value(effect, 0);
-
-    CONFIRM(effectData, tr("effect is not registered with session"));
-
-    emit addingMenuSeparator(separator, effect, subMenus);
-    MenuItemData *data = new MenuItemData();
-    Registration *registration = new Registration(separator, this);
-    data->menuBase.effect = effect;
-    data->menuBaseType = MENUBASETYPE_EFFECT;
-    data->registration = registration;
-    data->subMenus = subMenus;
-    menuSeparatorDataMap.insert(separator, data);
-    effectData->menuSeparators.append(separator);
-    emit menuSeparatorAdded(separator, effect, subMenus);
-    setModified();
-    return *registration;
-}
-
-const synthclone::Registration &
-Session::addMenuSeparator(synthclone::MenuSeparator *separator,
-                          const synthclone::Sampler *sampler,
-                          const QStringList &subMenus)
-{
-    CONFIRM(separator, tr("separator is set to NULL"));
-    CONFIRM(! menuSeparatorDataMap.contains(separator),
-            tr("menu separator is already registered with session"));
-    CONFIRM(sampler, tr("sampler is set to NULL"));
-    CONFIRM(sampler == this->sampler,
-            tr("sampler is not registered with session"));
-
-    emit addingMenuSeparator(separator, sampler, subMenus);
-    MenuItemData *data = new MenuItemData();
-    Registration *registration = new Registration(separator, this);
-    data->menuBase.sampler = sampler;
-    data->menuBaseType = MENUBASETYPE_SAMPLER;
-    data->registration = registration;
-    data->subMenus = subMenus;
-    menuSeparatorDataMap.insert(separator, data);
-    samplerData.menuSeparators.append(separator);
-    emit menuSeparatorAdded(separator, sampler, subMenus);
-    setModified();
-    return *registration;
-}
-
-const synthclone::Registration &
-Session::addMenuSeparator(synthclone::MenuSeparator *separator,
-                          const synthclone::Target *target,
-                          const QStringList &subMenus)
-{
-    CONFIRM(separator, tr("separator is set to NULL"));
-    CONFIRM(! menuSeparatorDataMap.contains(separator),
-            tr("menu separator is already registered with session"));
-    CONFIRM(target, tr("target is set to NULL"));
-
-    ComponentData *targetData = targetDataMap.value(target, 0);
-
-    CONFIRM(targetData, tr("target is not registered with session"));
-
-    emit addingMenuSeparator(separator, target, subMenus);
-    MenuItemData *data = new MenuItemData();
-    Registration *registration = new Registration(separator, this);
-    data->menuBase.target = target;
-    data->menuBaseType = MENUBASETYPE_TARGET;
-    data->registration = registration;
-    data->subMenus = subMenus;
-    menuSeparatorDataMap.insert(separator, data);
-    targetData->menuSeparators.append(separator);
-    emit menuSeparatorAdded(separator, target, subMenus);
-    setModified();
-    return *registration;
 }
 
 const synthclone::Registration &
@@ -1530,21 +1323,6 @@ Session::recycleCurrentSamplerJob()
 }
 
 void
-Session::removeComponentMenuItems(ComponentData *data)
-{
-    assert(data);
-    int i;
-    MenuActionList &actions = data->menuActions;
-    for (i = actions.count() - 1; i >= 0; i--) {
-        removeMenuAction(actions[i]);
-    }
-    MenuSeparatorList &separators = data->menuSeparators;
-    for (i = separators.count() - 1; i >= 0; i--) {
-        removeMenuSeparator(separators[i]);
-    }
-}
-
-void
 Session::removeEffect(const synthclone::Effect *effect)
 {
     removeEffect(getEffectIndex(effect));
@@ -1559,7 +1337,7 @@ Session::removeEffect(int index)
 
     synthclone::Effect *effect = effects[index];
     ComponentData *data = effectDataMap.value(effect, 0);
-    removeComponentMenuItems(data);
+    assert(data);
     if (effect == selectedEffect) {
         setSelectedEffect(-1);
     }
@@ -1593,106 +1371,6 @@ Session::removeEffectJob(int index)
 }
 
 void
-Session::removeMenuAction(const synthclone::MenuAction *action)
-{
-    CONFIRM(action, tr("action is set to NULL"));
-
-    MenuItemData *data = menuActionDataMap.value(action, 0);
-
-    CONFIRM(data, tr("menu action is not registered with session"));
-
-    QScopedPointer<Registration> registrationPtr(data->registration);
-    const synthclone::Effect *effect;
-    synthclone::Menu menu;
-    bool removed;
-    const synthclone::Target *target;
-    QStringList &subMenus = data->subMenus;
-    switch (data->menuBaseType) {
-    case MENUBASETYPE_EFFECT:
-        effect = data->menuBase.effect;
-        emit removingMenuAction(action, effect, subMenus);
-        removed = effectDataMap.value(effect)->menuActions.removeOne(action);
-        assert(removed);
-        menuActionDataMap.remove(action);
-        emit menuActionRemoved(action, effect, subMenus);
-        break;
-    case MENUBASETYPE_MENU:
-        menu = data->menuBase.menu;
-        emit removingMenuAction(action, menu, subMenus);
-        menuActionDataMap.remove(action);
-        emit menuActionRemoved(action, menu, subMenus);
-        break;
-    case MENUBASETYPE_SAMPLER:
-        emit removingMenuAction(action, sampler, subMenus);
-        removed = samplerData.menuActions.removeOne(action);
-        assert(removed);
-        menuActionDataMap.remove(action);
-        emit menuActionRemoved(action, sampler, subMenus);
-        break;
-    case MENUBASETYPE_TARGET:
-        target = data->menuBase.target;
-        emit removingMenuAction(action, target, subMenus);
-        removed = targetDataMap.value(target)->menuActions.removeOne(action);
-        assert(removed);
-        menuActionDataMap.remove(action);
-        emit menuActionRemoved(action, target, subMenus);
-    }
-    delete data;
-    setModified();
-}
-
-void
-Session::removeMenuSeparator(const synthclone::MenuSeparator *separator)
-{
-    CONFIRM(separator, tr("separator is set to NULL"));
-
-    MenuItemData *data = menuSeparatorDataMap.value(separator, 0);
-
-    CONFIRM(data, tr("menu separator is not registered with session"));
-
-    QScopedPointer<Registration> registrationPtr(data->registration);
-    const synthclone::Effect *effect;
-    synthclone::Menu menu;
-    bool removed;
-    const synthclone::Target *target;
-    QStringList &subMenus = data->subMenus;
-    switch (data->menuBaseType) {
-    case MENUBASETYPE_EFFECT:
-        effect = data->menuBase.effect;
-        emit removingMenuSeparator(separator, effect, subMenus);
-        removed = effectDataMap.value(effect)->
-            menuSeparators.removeOne(separator);
-        assert(removed);
-        menuSeparatorDataMap.remove(separator);
-        emit menuSeparatorRemoved(separator, effect, subMenus);
-        break;
-    case MENUBASETYPE_MENU:
-        menu = data->menuBase.menu;
-        emit removingMenuSeparator(separator, menu, subMenus);
-        menuSeparatorDataMap.remove(separator);
-        emit menuSeparatorRemoved(separator, menu, subMenus);
-        break;
-    case MENUBASETYPE_SAMPLER:
-        emit removingMenuSeparator(separator, sampler, subMenus);
-        removed = samplerData.menuSeparators.removeOne(separator);
-        assert(removed);
-        menuSeparatorDataMap.remove(separator);
-        emit menuSeparatorRemoved(separator, sampler, subMenus);
-        break;
-    case MENUBASETYPE_TARGET:
-        target = data->menuBase.target;
-        emit removingMenuSeparator(separator, target, subMenus);
-        removed = targetDataMap.value(target)->
-            menuSeparators.removeOne(separator);
-        assert(removed);
-        menuSeparatorDataMap.remove(separator);
-        emit menuSeparatorRemoved(separator, target, subMenus);
-    }
-    delete data;
-    setModified();
-}
-
-void
 Session::removeSampler()
 {
     CONFIRM(sampler, tr("sampler is not registered with session"));
@@ -1709,8 +1387,9 @@ Session::removeSampler()
         recycleCurrentSamplerJob();
         zone->setStatus(synthclone::Zone::STATUS_NORMAL);
     }
-
-    removeComponentMenuItems(&samplerData);
+    if (sampler == focusedComponent) {
+        setFocusedComponent(0);
+    }
 
     emit removingSampler(sampler);
 
@@ -1764,7 +1443,7 @@ Session::removeTarget(int index)
 
     synthclone::Target *target = targets[index];
     ComponentData *data = targetDataMap.value(target, 0);
-    removeComponentMenuItems(data);
+    assert(data);
     if (target == selectedTarget) {
         setSelectedTarget(-1);
     }
@@ -2061,6 +1740,9 @@ Session::setSelectedEffect(int index)
 
     synthclone::Effect *effect = (index == -1) ? 0 : effects[index];
     if (effect != selectedEffect) {
+        if (selectedEffect == focusedComponent) {
+            setFocusedComponent(0);
+        }
         selectedEffect = effect;
         emit selectedEffectChanged(selectedEffect, index);
         setModified();
@@ -2081,6 +1763,9 @@ Session::setSelectedTarget(int index)
 
     synthclone::Target *target = (index == -1) ? 0 : targets[index];
     if (target != selectedTarget) {
+        if (selectedTarget == focusedComponent) {
+            setFocusedComponent(0);
+        }
         selectedTarget = target;
         emit selectedTargetChanged(selectedTarget, index);
         setModified();
@@ -2407,7 +2092,7 @@ Session::unload()
         effectJobThread.wait();
 
         // Removing activated root participants should remove all components,
-        // menu items, child participants, etc.
+        // child participants, etc.
         for (int i = participantManager.getParticipantCount() - 1; i >= 0;
              i--) {
             synthclone::Participant *participant =
@@ -2432,11 +2117,7 @@ Session::unload()
         assert(! effects.count());
         assert(! effectDataMap.count());
         assert(! effectJobs.count());
-        assert(! menuActionDataMap.count());
-        assert(! menuSeparatorDataMap.count());
         assert(! sampler);
-        assert(! samplerData.menuActions.count());
-        assert(! samplerData.menuSeparators.count());
         assert(! samplerJobs.count());
         assert(! selectedEffect);
         assert(! selectedTarget);

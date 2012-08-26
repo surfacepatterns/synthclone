@@ -25,13 +25,10 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDir>
 #include <QtCore/QSemaphore>
-#include <QtCore/QStringList>
 #include <QtCore/QXmlStreamWriter>
 #include <QtXml/QDomDocument>
 
 #include <synthclone/effect.h>
-#include <synthclone/menuaction.h>
-#include <synthclone/menuseparator.h>
 #include <synthclone/sampleoutputstream.h>
 #include <synthclone/sampler.h>
 #include <synthclone/samplerjob.h>
@@ -42,8 +39,6 @@
 #include "participantmanager.h"
 #include "zone.h"
 #include "zoneindexcomparer.h"
-
-class Context;
 
 class Session: public QObject {
 
@@ -213,45 +208,6 @@ public slots:
     addEffectJob(synthclone::Zone *zone, int index=-1);
 
     const synthclone::Registration &
-    addMenuAction(synthclone::MenuAction *action, synthclone::Menu menu,
-                  const QStringList &subMenus=QStringList());
-
-    const synthclone::Registration &
-    addMenuAction(synthclone::MenuAction *action,
-                  const synthclone::Effect *effect,
-                  const QStringList &subMenus=QStringList());
-
-    const synthclone::Registration &
-    addMenuAction(synthclone::MenuAction *action,
-                  const synthclone::Sampler *sampler,
-                  const QStringList &subMenus=QStringList());
-
-    const synthclone::Registration &
-    addMenuAction(synthclone::MenuAction *action,
-                  const synthclone::Target *target,
-                  const QStringList &subMenus=QStringList());
-
-    const synthclone::Registration &
-    addMenuSeparator(synthclone::MenuSeparator *separator,
-                     synthclone::Menu menu,
-                     const QStringList &subMenus=QStringList());
-
-    const synthclone::Registration &
-    addMenuSeparator(synthclone::MenuSeparator *separator,
-                     const synthclone::Effect *effect,
-                     const QStringList &subMenus=QStringList());
-
-    const synthclone::Registration &
-    addMenuSeparator(synthclone::MenuSeparator *separator,
-                     const synthclone::Sampler *sampler,
-                     const QStringList &subMenus=QStringList());
-
-    const synthclone::Registration &
-    addMenuSeparator(synthclone::MenuSeparator *separator,
-                     const synthclone::Target *target,
-                     const QStringList &subMenus=QStringList());
-
-    const synthclone::Registration &
     addSampler(synthclone::Sampler *sampler,
                const synthclone::Participant *participant);
 
@@ -301,12 +257,6 @@ public slots:
 
     void
     removeEffectJob(int index);
-
-    void
-    removeMenuAction(const synthclone::MenuAction *action);
-
-    void
-    removeMenuSeparator(const synthclone::MenuSeparator *separator);
 
     void
     removeSampler();
@@ -416,44 +366,6 @@ signals:
     addingEffectJob(const synthclone::EffectJob *job, int index);
 
     void
-    addingMenuAction(const synthclone::MenuAction *action,
-                     synthclone::Menu menu, const QStringList &subMenus);
-
-    void
-    addingMenuAction(const synthclone::MenuAction *action,
-                     const synthclone::Effect *effect,
-                     const QStringList &subMenus);
-
-    void
-    addingMenuAction(const synthclone::MenuAction *action,
-                     const synthclone::Sampler *sampler,
-                     const QStringList &subMenus);
-
-    void
-    addingMenuAction(const synthclone::MenuAction *action,
-                     const synthclone::Target *target,
-                     const QStringList &subMenus);
-
-    void
-    addingMenuSeparator(const synthclone::MenuSeparator *separator,
-                        synthclone::Menu menu, const QStringList &subMenus);
-
-    void
-    addingMenuSeparator(const synthclone::MenuSeparator *separator,
-                        const synthclone::Effect *effect,
-                        const QStringList &subMenus);
-
-    void
-    addingMenuSeparator(const synthclone::MenuSeparator *separator,
-                        const synthclone::Sampler *sampler,
-                        const QStringList &subMenus);
-
-    void
-    addingMenuSeparator(const synthclone::MenuSeparator *separator,
-                        const synthclone::Target *target,
-                        const QStringList &subMenus);
-
-    void
     addingSampler(const synthclone::Sampler *sampler);
 
     void
@@ -528,82 +440,6 @@ signals:
     loadWarning(int line, int column, const QString &message);
 
     void
-    menuActionAdded(const synthclone::MenuAction *action, synthclone::Menu menu,
-                    const QStringList &subMenus);
-
-    void
-    menuActionAdded(const synthclone::MenuAction *action,
-                    const synthclone::Effect *effect,
-                    const QStringList &subMenus);
-
-    void
-    menuActionAdded(const synthclone::MenuAction *action,
-                    const synthclone::Sampler *sampler,
-                    const QStringList &subMenus);
-
-    void
-    menuActionAdded(const synthclone::MenuAction *action,
-                    const synthclone::Target *target,
-                    const QStringList &subMenus);
-
-    void
-    menuActionRemoved(const synthclone::MenuAction *action,
-                      synthclone::Menu menu, const QStringList &subMenus);
-
-    void
-    menuActionRemoved(const synthclone::MenuAction *action,
-                      const synthclone::Effect *effect,
-                      const QStringList &subMenus);
-
-    void
-    menuActionRemoved(const synthclone::MenuAction *action,
-                      const synthclone::Sampler *sampler,
-                      const QStringList &subMenus);
-
-    void
-    menuActionRemoved(const synthclone::MenuAction *action,
-                      const synthclone::Target *target,
-                      const QStringList &subMenus);
-
-    void
-    menuSeparatorAdded(const synthclone::MenuSeparator *separator,
-                       synthclone::Menu menu, const QStringList &subMenus);
-
-    void
-    menuSeparatorAdded(const synthclone::MenuSeparator *separator,
-                       const synthclone::Effect *effect,
-                       const QStringList &subMenus);
-
-    void
-    menuSeparatorAdded(const synthclone::MenuSeparator *separator,
-                       const synthclone::Sampler *sampler,
-                       const QStringList &subMenus);
-
-    void
-    menuSeparatorAdded(const synthclone::MenuSeparator *separator,
-                       const synthclone::Target *target,
-                       const QStringList &subMenus);
-
-    void
-    menuSeparatorRemoved(const synthclone::MenuSeparator *separator,
-                         synthclone::Menu menu, const QStringList &subMenus);
-
-    void
-    menuSeparatorRemoved(const synthclone::MenuSeparator *separator,
-                         const synthclone::Effect *effect,
-                         const QStringList &subMenus);
-
-    void
-    menuSeparatorRemoved(const synthclone::MenuSeparator *separator,
-                         const synthclone::Sampler *sampler,
-                         const QStringList &subMenus);
-
-    void
-    menuSeparatorRemoved(const synthclone::MenuSeparator *separator,
-                         const synthclone::Target *target,
-                         const QStringList &subMenus);
-
-    void
     movingEffect(const synthclone::Effect *effect, int fromIndex, int toIndex);
 
     void
@@ -634,44 +470,6 @@ signals:
 
     void
     removingEffectJob(const synthclone::EffectJob *job, int index);
-
-    void
-    removingMenuAction(const synthclone::MenuAction *action,
-                       synthclone::Menu menu, const QStringList &subMenus);
-
-    void
-    removingMenuAction(const synthclone::MenuAction *action,
-                       const synthclone::Effect *effect,
-                       const QStringList &subMenus);
-
-    void
-    removingMenuAction(const synthclone::MenuAction *action,
-                       const synthclone::Sampler *sampler,
-                       const QStringList &subMenus);
-
-    void
-    removingMenuAction(const synthclone::MenuAction *action,
-                       const synthclone::Target *target,
-                       const QStringList &subMenus);
-
-    void
-    removingMenuSeparator(const synthclone::MenuSeparator *separator,
-                          synthclone::Menu menu, const QStringList &subMenus);
-
-    void
-    removingMenuSeparator(const synthclone::MenuSeparator *separator,
-                          const synthclone::Effect *effect,
-                          const QStringList &subMenus);
-
-    void
-    removingMenuSeparator(const synthclone::MenuSeparator *separator,
-                          const synthclone::Sampler *sampler,
-                          const QStringList &subMenus);
-
-    void
-    removingMenuSeparator(const synthclone::MenuSeparator *separator,
-                          const synthclone::Target *target,
-                          const QStringList &subMenus);
 
     void
     removingSampler(const synthclone::Sampler *sampler);
@@ -783,45 +581,18 @@ private slots:
 
 private:
 
-    enum MenuBaseType {
-        MENUBASETYPE_EFFECT,
-        MENUBASETYPE_MENU,
-        MENUBASETYPE_SAMPLER,
-        MENUBASETYPE_TARGET
-    };
-
     typedef QList<synthclone::EffectJob *> EffectJobList;
     typedef QList<synthclone::Effect *> EffectList;
-    typedef QList<const synthclone::MenuAction *> MenuActionList;
-    typedef QList<const synthclone::MenuSeparator *> MenuSeparatorList;
     typedef QList<synthclone::SamplerJob *> SamplerJobList;
     typedef QList<synthclone::Target *> TargetList;
     typedef QList<synthclone::Zone *> ZoneList;
 
     struct ComponentData {
-        MenuActionList menuActions;
-        MenuSeparatorList menuSeparators;
         const synthclone::Participant *participant;
         Registration *registration;
     };
 
-    struct MenuItemData {
-        union {
-            synthclone::Menu menu;
-            const synthclone::Effect *effect;
-            const synthclone::Sampler *sampler;
-            const synthclone::Target *target;
-        } menuBase;
-        MenuBaseType menuBaseType;
-        Registration *registration;
-        QStringList subMenus;
-    };
-
     typedef QMap<const synthclone::Effect *, ComponentData *> EffectDataMap;
-    typedef QMap<const synthclone::MenuAction *,
-                 MenuItemData *> MenuActionDataMap;
-    typedef QMap<const synthclone::MenuSeparator *,
-                 MenuItemData *> MenuSeparatorDataMap;
     typedef QMap<const synthclone::Target *, ComponentData *> TargetDataMap;
     typedef QMap<const synthclone::Zone *,
                  synthclone::EffectJob *> ZoneEffectJobMap;
@@ -867,9 +638,6 @@ private:
 
     void
     refreshWetSample(Zone *zone);
-
-    void
-    removeComponentMenuItems(ComponentData *data);
 
     void
     runEffectJobs();
@@ -933,8 +701,6 @@ private:
     EffectList effects;
     const synthclone::Component *focusedComponent;
     bool notePropertyVisible;
-    MenuActionDataMap menuActionDataMap;
-    MenuSeparatorDataMap menuSeparatorDataMap;
     ParticipantManager &participantManager;
     bool releaseTimePropertyVisible;
     synthclone::Sampler *sampler;

@@ -39,9 +39,10 @@
 Controller::Controller(Application &application, QObject *parent):
     QObject(parent),
     application(application),
-    participantManager(this),
+    participantManager(*this),
     session(application, participantManager),
-    settings(session)
+    settings(session),
+    menuManager(mainView, session)
 {
     // Setup views
 
@@ -131,6 +132,7 @@ Controller::Controller(Application &application, QObject *parent):
             SIGNAL(focusedComponentChangeRequest(ComponentViewlet::Type, int)),
             SLOT(handleComponentViewletFocusedChangeRequest
                  (ComponentViewlet::Type, int)));
+
     componentViewlet->getEffectAddMenuViewlet()->setVisible(false);
     componentViewlet->getSamplerAddMenuViewlet()->setVisible(false);
     componentViewlet->getTargetAddMenuViewlet()->setVisible(false);
@@ -391,119 +393,6 @@ Controller::Controller(Application &application, QObject *parent):
     connect(&session, SIGNAL(removingEffect(const synthclone::Effect *, int)),
             SLOT(handleSessionEffectRemoval(const synthclone::Effect *, int)));
 
-    connect(&session,
-            SIGNAL(menuActionAdded(const synthclone::MenuAction *,
-                                   synthclone::Menu,
-                                   const QStringList &)),
-            SLOT(handleSessionMenuActionAddition(const synthclone::MenuAction *,
-                                                 synthclone::Menu,
-                                                 const QStringList &)));
-    connect(&session,
-            SIGNAL(menuActionAdded(const synthclone::MenuAction *,
-                                   const synthclone::Effect *,
-                                   const QStringList &)),
-            SLOT(handleSessionMenuActionAddition(const synthclone::MenuAction *,
-                                                 const synthclone::Effect *,
-                                                 const QStringList &)));
-    connect(&session,
-            SIGNAL(menuActionAdded(const synthclone::MenuAction *,
-                                   const synthclone::Sampler *,
-                                   const QStringList &)),
-            SLOT(handleSessionMenuActionAddition(const synthclone::MenuAction *,
-                                                 const synthclone::Sampler *,
-                                                 const QStringList &)));
-    connect(&session,
-            SIGNAL(menuActionAdded(const synthclone::MenuAction *,
-                                   const synthclone::Target *,
-                                   const QStringList &)),
-            SLOT(handleSessionMenuActionAddition(const synthclone::MenuAction *,
-                                                 const synthclone::Target *,
-                                                 const QStringList &)));
-    connect(&session,
-            SIGNAL(removingMenuAction(const synthclone::MenuAction *,
-                                      synthclone::Menu,
-                                      const QStringList &)),
-            SLOT(handleSessionMenuActionRemoval(const synthclone::MenuAction *,
-                                                synthclone::Menu,
-                                                const QStringList &)));
-    connect(&session,
-            SIGNAL(removingMenuAction(const synthclone::MenuAction *,
-                                      const synthclone::Effect *,
-                                      const QStringList &)),
-            SLOT(handleSessionMenuActionRemoval(const synthclone::MenuAction *,
-                                                const synthclone::Effect *,
-                                                const QStringList &)));
-    connect(&session,
-            SIGNAL(removingMenuAction(const synthclone::MenuAction *,
-                                      const synthclone::Sampler *,
-                                      const QStringList &)),
-            SLOT(handleSessionMenuActionRemoval(const synthclone::MenuAction *,
-                                                const synthclone::Sampler *,
-                                                const QStringList &)));
-    connect(&session,
-            SIGNAL(removingMenuAction(const synthclone::MenuAction *,
-                                      const synthclone::Target *,
-                                      const QStringList &)),
-            SLOT(handleSessionMenuActionRemoval(const synthclone::MenuAction *,
-                                                const synthclone::Target *,
-                                                const QStringList &)));
-
-    connect(&session,
-            SIGNAL(menuSeparatorAdded(const synthclone::MenuSeparator *,
-                                      synthclone::Menu,
-                                      const QStringList &)),
-            SLOT(handleSessionMenuSeparatorAddition
-                 (const synthclone::MenuSeparator *, synthclone::Menu,
-                  const QStringList &)));
-    connect(&session,
-            SIGNAL(menuSeparatorAdded(const synthclone::MenuSeparator *,
-                                      const synthclone::Effect *,
-                                      const QStringList &)),
-            SLOT(handleSessionMenuSeparatorAddition
-                 (const synthclone::MenuSeparator *, const synthclone::Effect *,
-                  const QStringList &)));
-    connect(&session,
-            SIGNAL(menuSeparatorAdded(const synthclone::MenuSeparator *,
-                                      const synthclone::Sampler *,
-                                      const QStringList &)),
-            SLOT(handleSessionMenuSeparatorAddition
-                 (const synthclone::MenuSeparator *,
-                  const synthclone::Sampler *, const QStringList &)));
-    connect(&session,
-            SIGNAL(menuSeparatorAdded(const synthclone::MenuSeparator *,
-                                      const synthclone::Target *,
-                                      const QStringList &)),
-            SLOT(handleSessionMenuSeparatorAddition
-                 (const synthclone::MenuSeparator *, const synthclone::Target *,
-                  const QStringList &)));
-    connect(&session,
-            SIGNAL(removingMenuSeparator(const synthclone::MenuSeparator *,
-                                         synthclone::Menu,
-                                         const QStringList &)),
-            SLOT(handleSessionMenuSeparatorRemoval
-                 (const synthclone::MenuSeparator *, synthclone::Menu,
-                  const QStringList &)));
-    connect(&session,
-            SIGNAL(removingMenuSeparator(const synthclone::MenuSeparator *,
-                                         const synthclone::Effect *,
-                                         const QStringList &)),
-            SLOT(handleSessionMenuSeparatorRemoval
-                 (const synthclone::MenuSeparator *, const synthclone::Effect *,
-                  const QStringList &)));
-    connect(&session,
-            SIGNAL(removingMenuSeparator(const synthclone::MenuSeparator *,
-                                         const synthclone::Sampler *,
-                                         const QStringList &)),
-            SLOT(handleSessionMenuSeparatorRemoval
-                 (const synthclone::MenuSeparator *,
-                  const synthclone::Sampler *, const QStringList &)));
-    connect(&session,
-            SIGNAL(removingMenuSeparator(const synthclone::MenuSeparator *,
-                                         const synthclone::Target *,
-                                         const QStringList &)),
-            SLOT(handleSessionMenuSeparatorRemoval
-                 (const synthclone::MenuSeparator *, const synthclone::Target *,
-                  const QStringList &)));
 
     connect(&session,
             SIGNAL(currentSamplerJobChanged(const synthclone::SamplerJob *)),
@@ -592,86 +481,6 @@ Controller::~Controller()
 }
 
 void
-Controller::addMenuAction(const synthclone::MenuAction *action,
-                          const QStringList &subMenus, MenuViewlet *topMenu)
-{
-    assert(action);
-    assert(topMenu);
-    MenuViewlet *menu = addSubMenus(topMenu, subMenus);
-    MenuActionViewlet *viewlet = mainView.createMenuActionViewlet(menu);
-    viewlet->setDescription(action->getDescription());
-    viewlet->setEnabled(action->isEnabled());
-    viewlet->setText(action->getText());
-
-    connect(action, SIGNAL(descriptionChanged(const QString)),
-            viewlet, SLOT(setDescription(const QString)));
-    connect(action, SIGNAL(enabledChanged(bool)),
-            viewlet, SLOT(setEnabled(bool)));
-    connect(action, SIGNAL(textChanged(const QString)),
-            viewlet, SLOT(setText(const QString)));
-
-    connect(viewlet, SIGNAL(triggered()), action, SIGNAL(triggered()));
-
-    addMenuItem(action, menu, viewlet);
-}
-
-void
-Controller::addMenuItem(const synthclone::MenuItem *item, MenuViewlet *menu,
-                        MenuLeafViewlet *viewlet)
-{
-    assert(item);
-    assert(menu);
-    assert(viewlet);
-    menu->add(viewlet);
-    menuItemViewletMap.insert(item, viewlet);
-    viewlet->setVisible(item->isVisible());
-    connect(item, SIGNAL(visibilityChanged(bool)),
-            viewlet, SLOT(setVisible(bool)));
-}
-
-void
-Controller::addMenuSeparator(const synthclone::MenuSeparator *separator,
-                             const QStringList &subMenus, MenuViewlet *topMenu)
-{
-    assert(separator);
-    assert(topMenu);
-    MenuViewlet *menu = addSubMenus(topMenu, subMenus);
-    addMenuItem(separator, menu, mainView.createMenuSeparatorViewlet(menu));
-}
-
-MenuViewlet *
-Controller::addSubMenus(MenuViewlet *topMenu, const QStringList &subMenus)
-{
-    assert(topMenu);
-    if (! topMenu->getChildCount()) {
-        topMenu->setVisible(true);
-    }
-    MenuViewlet *menu = topMenu;
-    int subMenuCount = subMenus.count();
-    for (int i = 0; i < subMenuCount; i++) {
-        QString text = subMenus[i];
-        MenuViewlet *subMenu = menu->getSubMenuViewlet(text);
-        if (! subMenu) {
-            subMenu = mainView.createMenuViewlet(text, menu);
-            menu->add(subMenu);
-            menu = subMenu;
-        }
-    }
-    return menu;
-}
-
-void
-Controller::cleanupMenus(MenuViewlet *menu, const MenuViewlet *topMenu)
-{
-    while ((menu != topMenu) && (! menu->getChildCount())) {
-        MenuViewlet *parentMenu = qobject_cast<MenuViewlet *>(menu->parent());
-        parentMenu->remove(menu);
-        mainView.destroyMenuViewlet(menu);
-        menu = parentMenu;
-    }
-}
-
-void
 Controller::clearProgressView()
 {
     progressView.clearMessages();
@@ -699,32 +508,6 @@ Controller::copySelectedZones()
     QMimeData *mimeData = new QMimeData();
     mimeData->setData("text/xml", data);
     application.clipboard()->setMimeData(mimeData);
-}
-
-void
-Controller::destroyMenuItems(MenuViewlet *menu)
-{
-    for (int i = menu->getChildCount() - 1; i >= 0; i--) {
-        MenuItemViewlet *item = menu->getChild(i);
-        MenuViewlet *menuViewlet = qobject_cast<MenuViewlet *>(item);
-        if (menuViewlet) {
-            destroyMenuItems(menuViewlet);
-            mainView.destroyMenuViewlet(menuViewlet);
-            continue;
-        }
-        MenuLeafViewlet *leaf = qobject_cast<MenuLeafViewlet *>(item);
-        assert(leaf);
-        menu->remove(leaf);
-        MenuActionViewlet *action = qobject_cast<MenuActionViewlet *>(item);
-        if (action) {
-            mainView.destroyMenuActionViewlet(action);
-            continue;
-        }
-        MenuSeparatorViewlet *separator =
-            qobject_cast<MenuSeparatorViewlet *>(item);
-        assert(separator);
-        mainView.destroyMenuSeparatorViewlet(separator);
-    }
 }
 
 void
@@ -770,39 +553,10 @@ Controller::getMainView()
     return mainView;
 }
 
-MenuViewlet *
-Controller::getMenuViewlet(synthclone::Menu menu)
+MenuManager &
+Controller::getMenuManager()
 {
-    MenuViewlet *viewlet;
-    switch (menu) {
-    case synthclone::MENU_ADD_EFFECT:
-        viewlet = mainView.getComponentViewlet()->getEffectAddMenuViewlet();
-        break;
-    case synthclone::MENU_ADD_SAMPLER:
-        viewlet = mainView.getComponentViewlet()->getSamplerAddMenuViewlet();
-        break;
-    case synthclone::MENU_ADD_TARGET:
-        viewlet = mainView.getComponentViewlet()->getTargetAddMenuViewlet();
-        break;
-    case synthclone::MENU_HELP:
-        viewlet = mainView.getHelpViewlet()->getMenuViewlet();
-        break;
-    case synthclone::MENU_SESSION:
-        viewlet = mainView.getSessionViewlet()->getMenuViewlet();
-        break;
-    case synthclone::MENU_TOOLS:
-        viewlet = mainView.getToolViewlet()->getMenuViewlet();
-        break;
-    case synthclone::MENU_VIEW:
-        viewlet = mainView.getViewViewlet()->getMenuViewlet();
-        break;
-    case synthclone::MENU_ZONES:
-        viewlet = mainView.getZoneViewlet()->getMenuViewlet();
-        break;
-    default:
-        assert(false);
-    }
-    return viewlet;
+    return menuManager;
 }
 
 Session &
@@ -995,61 +749,7 @@ Controller::removeDirectoryContents(QDir &directory)
     }
 }
 
-void
-Controller::removeMenuAction(const synthclone::MenuAction *action,
-                             const QStringList &subMenus, MenuViewlet *topMenu)
-{
-    assert(action);
-    assert(topMenu);
-    MenuActionViewlet *viewlet = qobject_cast<MenuActionViewlet *>
-        (removeMenuItem(action, subMenus, topMenu));
-    disconnect(action, SIGNAL(descriptionChanged(const QString)),
-               viewlet, SLOT(setDescription(const QString)));
-    disconnect(action, SIGNAL(enabledChanged(bool)),
-               viewlet, SLOT(setEnabled(bool)));
-    disconnect(action, SIGNAL(textChanged(const QString)),
-               viewlet, SLOT(setText(const QString)));
-    disconnect(viewlet, SIGNAL(triggered()), action, SIGNAL(triggered()));
-    mainView.destroyMenuActionViewlet(viewlet);
-}
 
-MenuLeafViewlet *
-Controller::removeMenuItem(const synthclone::MenuItem *item,
-                           const QStringList &subMenus, MenuViewlet *topMenu)
-{
-    assert(item);
-    assert(topMenu);
-    MenuViewlet *menu = topMenu;
-    int subMenuCount = subMenus.count();
-    for (int i = 0; i < subMenuCount; i++) {
-        const QString &subMenuText = subMenus[i];
-        MenuViewlet *subMenu = menu->getSubMenuViewlet(subMenuText);
-        assert(subMenu);
-        menu = subMenu;
-    }
-    MenuLeafViewlet *viewlet =
-        qobject_cast<MenuLeafViewlet *>(menuItemViewletMap.take(item));
-    menu->remove(viewlet);
-    cleanupMenus(menu, topMenu);
-    if (! topMenu->getChildCount()) {
-        topMenu->setVisible(false);
-    }
-    disconnect(item, SIGNAL(visibilityChanged(bool)),
-               viewlet, SLOT(setVisible(bool)));
-    return viewlet;
-}
-
-void
-Controller::removeMenuSeparator(const synthclone::MenuSeparator *separator,
-                                const QStringList &subMenus,
-                                MenuViewlet *topMenu)
-{
-    assert(separator);
-    assert(topMenu);
-    MenuSeparatorViewlet *viewlet = qobject_cast<MenuSeparatorViewlet *>
-        (removeMenuItem(separator, subMenus, topMenu));
-    mainView.destroyMenuSeparatorViewlet(viewlet);
-}
 
 void
 Controller::removeSelectedZones()
@@ -1759,176 +1459,6 @@ Controller::handleSessionLoadWarning(int line, int column,
     progressView.addMessage(msg);
     sessionLoadWarningCount++;
     application.processEvents(QEventLoop::ExcludeUserInputEvents);
-}
-
-void
-Controller::
-handleSessionMenuActionAddition(const synthclone::MenuAction *action,
-                                synthclone::Menu menu,
-                                const QStringList &subMenus)
-{
-    addMenuAction(action, subMenus, getMenuViewlet(menu));
-}
-
-void
-Controller::
-handleSessionMenuActionAddition(const synthclone::MenuAction *action,
-                                const synthclone::Effect *effect,
-                                const QStringList &subMenus)
-{
-    int index = session.getEffectIndex(effect);
-    MenuViewlet *viewlet = qobject_cast<MenuViewlet *>
-        (mainView.getComponentViewlet()->getEffectMenuViewlet(index));
-    addMenuAction(action, subMenus, viewlet);
-}
-
-void
-Controller::
-handleSessionMenuActionAddition(const synthclone::MenuAction *action,
-                                const synthclone::Sampler */*sampler*/,
-                                const QStringList &subMenus)
-{
-    addMenuAction(action, subMenus,
-                  mainView.getComponentViewlet()->getSamplerMenuViewlet());
-}
-
-void
-Controller::
-handleSessionMenuActionAddition(const synthclone::MenuAction *action,
-                                const synthclone::Target *target,
-                                const QStringList &subMenus)
-{
-    int index = session.getTargetIndex(target);
-    MenuViewlet *viewlet = qobject_cast<MenuViewlet *>
-        (mainView.getComponentViewlet()->getTargetMenuViewlet(index));
-    addMenuAction(action, subMenus, viewlet);
-}
-
-void
-Controller::handleSessionMenuActionRemoval(const synthclone::MenuAction *action,
-                                           synthclone::Menu menu,
-                                           const QStringList &subMenus)
-{
-    removeMenuAction(action, subMenus, getMenuViewlet(menu));
-}
-
-void
-Controller::handleSessionMenuActionRemoval(const synthclone::MenuAction *action,
-                                           const synthclone::Effect *effect,
-                                           const QStringList &subMenus)
-{
-    int index = session.getEffectIndex(effect);
-    MenuViewlet *viewlet = qobject_cast<MenuViewlet *>
-        (mainView.getComponentViewlet()->getEffectMenuViewlet(index));
-    removeMenuAction(action, subMenus, viewlet);
-}
-
-void
-Controller::
-handleSessionMenuActionRemoval(const synthclone::MenuAction *action,
-                               const synthclone::Sampler */*sampler*/,
-                               const QStringList &subMenus)
-{
-    removeMenuAction(action, subMenus,
-                     mainView.getComponentViewlet()->getSamplerMenuViewlet());
-}
-
-void
-Controller::handleSessionMenuActionRemoval(const synthclone::MenuAction *action,
-                                           const synthclone::Target *target,
-                                           const QStringList &subMenus)
-{
-    int index = session.getTargetIndex(target);
-    MenuViewlet *viewlet = qobject_cast<MenuViewlet *>
-        (mainView.getComponentViewlet()->getTargetMenuViewlet(index));
-    removeMenuAction(action, subMenus, viewlet);
-}
-
-void
-Controller::
-handleSessionMenuSeparatorAddition(const synthclone::MenuSeparator *separator,
-                                   synthclone::Menu menu,
-                                   const QStringList &subMenus)
-{
-    addMenuSeparator(separator, subMenus, getMenuViewlet(menu));
-}
-
-void
-Controller::
-handleSessionMenuSeparatorAddition(const synthclone::MenuSeparator *separator,
-                                   const synthclone::Effect *effect,
-                                   const QStringList &subMenus)
-{
-    int index = session.getEffectIndex(effect);
-    MenuViewlet *viewlet = qobject_cast<MenuViewlet *>
-        (mainView.getComponentViewlet()->getEffectMenuViewlet(index));
-    addMenuSeparator(separator, subMenus, viewlet);
-}
-
-void
-Controller::
-handleSessionMenuSeparatorAddition(const synthclone::MenuSeparator *separator,
-                                   const synthclone::Sampler */*sampler*/,
-                                   const QStringList &subMenus)
-{
-    addMenuSeparator(separator, subMenus,
-                     mainView.getComponentViewlet()->getSamplerMenuViewlet());
-}
-
-void
-Controller::
-handleSessionMenuSeparatorAddition(const synthclone::MenuSeparator *separator,
-                                   const synthclone::Target *target,
-                                   const QStringList &subMenus)
-{
-    int index = session.getTargetIndex(target);
-    MenuViewlet *viewlet = qobject_cast<MenuViewlet *>
-        (mainView.getComponentViewlet()->getTargetMenuViewlet(index));
-    addMenuSeparator(separator, subMenus, viewlet);
-}
-
-void
-Controller::
-handleSessionMenuSeparatorRemoval(const synthclone::MenuSeparator *separator,
-                                  synthclone::Menu menu,
-                                  const QStringList &subMenus)
-{
-    removeMenuSeparator(separator, subMenus, getMenuViewlet(menu));
-}
-
-void
-Controller::
-handleSessionMenuSeparatorRemoval(const synthclone::MenuSeparator *separator,
-                                  const synthclone::Effect *effect,
-                                  const QStringList &subMenus)
-{
-    int index = session.getEffectIndex(effect);
-    MenuViewlet *viewlet = qobject_cast<MenuViewlet *>
-        (mainView.getComponentViewlet()->getEffectMenuViewlet(index));
-    removeMenuSeparator(separator, subMenus, viewlet);
-}
-
-void
-Controller::
-handleSessionMenuSeparatorRemoval(const synthclone::MenuSeparator *separator,
-                                  const synthclone::Sampler */*sampler*/,
-                                  const QStringList &subMenus)
-{
-    MenuViewlet *viewlet =
-        mainView.getComponentViewlet()->getSamplerMenuViewlet();
-    removeMenuSeparator(separator, subMenus, viewlet);
-}
-
-void
-Controller::
-handleSessionMenuSeparatorRemoval(const synthclone::MenuSeparator *separator,
-                                  const synthclone::Target *target,
-                                  const QStringList &subMenus)
-{
-    int index = session.getTargetIndex(target);
-    MenuViewlet *viewlet = qobject_cast<MenuViewlet *>
-        (mainView.getComponentViewlet()->getTargetMenuViewlet(index));
-    removeMenuSeparator(separator, subMenus, viewlet);
 }
 
 void

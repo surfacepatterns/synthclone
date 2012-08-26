@@ -149,7 +149,7 @@ SessionSampleData::updateSample(synthclone::Sample &sample, QObject *parent)
     QScopedPointer<SampleRateConverter> converterPtr;
     float *inputBuffer = new float[inputChannels * 512];
     QScopedArrayPointer<float> inputBufferPtr(inputBuffer);
-    if (sampleConversionRequired) {
+    if (! sampleConversionRequired) {
         channelBuffer = convertBuffer;
         converter = 0;
     } else {

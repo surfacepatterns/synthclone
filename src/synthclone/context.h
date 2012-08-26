@@ -25,6 +25,8 @@
 
 #include <synthclone/context.h>
 
+class Controller;
+class MenuManager;
 class ParticipantManager;
 class Session;
 class MainView;
@@ -36,8 +38,8 @@ class Context: public synthclone::Context {
 public:
 
     Context(synthclone::Participant &participant,
-            ParticipantManager &participantManager, Session &session,
-            MainView &mainView, QObject *parent=0);
+            ParticipantManager &participantManager, Controller &controller,
+            QObject *parent=0);
 
     ~Context();
 
@@ -456,9 +458,11 @@ private:
     addMenuSeparator(synthclone::MenuSeparator *separator, T rootMenuItem,
                      const QStringList &subMenus);
 
+    Controller &controller;
     EffectList effects;
     MainView &mainView;
     MenuActionList menuActions;
+    MenuManager &menuManager;
     MenuSeparatorList menuSeparators;
     synthclone::Participant &participant;
     ParticipantList participants;

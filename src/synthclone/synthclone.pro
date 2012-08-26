@@ -46,6 +46,7 @@ HEADERS += aboutview.h \
     menuactionviewlet.h \
     menuitemviewlet.h \
     menuleafviewlet.h \
+    menumanager.h \
     menuseparatorviewlet.h \
     menuviewlet.h \
     participantmanager.h \
@@ -101,6 +102,7 @@ SOURCES += aboutview.cpp \
     menuactionviewlet.cpp \
     menuitemviewlet.cpp \
     menuleafviewlet.cpp \
+    menumanager.cpp \
     menuseparatorviewlet.cpp \
     menuviewlet.cpp \
     participantmanager.cpp \

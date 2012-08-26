@@ -26,6 +26,7 @@
 #include "application.h"
 #include "errorview.h"
 #include "mainview.h"
+#include "menumanager.h"
 #include "participantmanager.h"
 #include "participantview.h"
 #include "pluginmanager.h"
@@ -49,6 +50,9 @@ public:
 
     MainView &
     getMainView();
+
+    MenuManager &
+    getMenuManager();
 
     Session &
     getSession();
@@ -178,94 +182,6 @@ private slots:
 
     void
     handleSessionLoadWarning(int line, int column, const QString &message);
-
-    void
-    handleSessionMenuActionAddition(const synthclone::MenuAction *action,
-                                    synthclone::Menu menu,
-                                    const QStringList &subMenus);
-
-    void
-    handleSessionMenuActionAddition(const synthclone::MenuAction *action,
-                                    const synthclone::Effect *effect,
-                                    const QStringList &subMenus);
-
-    void
-    handleSessionMenuActionAddition(const synthclone::MenuAction *action,
-                                    const synthclone::Sampler *sampler,
-                                    const QStringList &subMenus);
-
-    void
-    handleSessionMenuActionAddition(const synthclone::MenuAction *action,
-                                    const synthclone::Target *target,
-                                    const QStringList &subMenus);
-
-    void
-    handleSessionMenuActionRemoval(const synthclone::MenuAction *action,
-                                   synthclone::Menu menu,
-                                   const QStringList &subMenus);
-
-    void
-    handleSessionMenuActionRemoval(const synthclone::MenuAction *action,
-                                   const synthclone::Effect *effect,
-                                   const QStringList &subMenus);
-
-    void
-    handleSessionMenuActionRemoval(const synthclone::MenuAction *action,
-                                   const synthclone::Sampler *sampler,
-                                   const QStringList &subMenus);
-
-    void
-    handleSessionMenuActionRemoval(const synthclone::MenuAction *action,
-                                   const synthclone::Target *target,
-                                   const QStringList &subMenus);
-
-    void
-    handleSessionMenuSeparatorAddition(const synthclone::MenuSeparator *
-                                       separator,
-                                       synthclone::Menu menu,
-                                       const QStringList &subMenus);
-
-    void
-    handleSessionMenuSeparatorAddition(const synthclone::MenuSeparator *
-                                       separator,
-                                       const synthclone::Effect *effect,
-                                       const QStringList &subMenus);
-
-    void
-    handleSessionMenuSeparatorAddition(const synthclone::MenuSeparator *
-                                       separator,
-                                       const synthclone::Sampler *sampler,
-                                       const QStringList &subMenus);
-
-    void
-    handleSessionMenuSeparatorAddition(const synthclone::MenuSeparator *
-                                       separator,
-                                       const synthclone::Target *target,
-                                       const QStringList &subMenus);
-
-    void
-    handleSessionMenuSeparatorRemoval(const synthclone::MenuSeparator *
-                                      separator,
-                                      synthclone::Menu menu,
-                                      const QStringList &subMenus);
-
-    void
-    handleSessionMenuSeparatorRemoval(const synthclone::MenuSeparator *
-                                      separator,
-                                      const synthclone::Effect *effect,
-                                      const QStringList &subMenus);
-
-    void
-    handleSessionMenuSeparatorRemoval(const synthclone::MenuSeparator *
-                                      separator,
-                                      const synthclone::Sampler *sampler,
-                                      const QStringList &subMenus);
-
-    void
-    handleSessionMenuSeparatorRemoval(const synthclone::MenuSeparator *
-                                      separator,
-                                      const synthclone::Target *target,
-                                      const QStringList &subMenus);
 
     void
     handleSessionProgressChange(float progress, const QString &status);
@@ -545,30 +461,10 @@ private:
         POSTSAVECHANGESACTION_QUIT
     };
 
-    typedef QMap<const synthclone::MenuItem *,
-                 MenuLeafViewlet *> MenuItemViewletMap;
     typedef QMap<synthclone::Participant *,
                  synthclone::IPlugin *> PluginParticipantMap;
     typedef QMap<const synthclone::Participant *,
                  ParticipantViewlet *> ParticipantViewletMap;
-
-    void
-    addMenuAction(const synthclone::MenuAction *action,
-                  const QStringList &subMenus, MenuViewlet *topMenu);
-
-    void
-    addMenuItem(const synthclone::MenuItem *item, MenuViewlet *menu,
-                MenuLeafViewlet *viewlet);
-
-    void
-    addMenuSeparator(const synthclone::MenuSeparator *separator,
-                     const QStringList &subMenus, MenuViewlet *topMenu);
-
-    MenuViewlet *
-    addSubMenus(MenuViewlet *topMenu, const QStringList &subMenus);
-
-    void
-    cleanupMenus(MenuViewlet *menu, const MenuViewlet *topMenu);
 
     void
     clearProgressView();
@@ -577,16 +473,10 @@ private:
     copySelectedZones();
 
     void
-    destroyMenuItems(MenuViewlet *menu);
-
-    void
     executePostSaveChangesAction();
 
     QDir
     getCorePluginDirectory();
-
-    MenuViewlet *
-    getMenuViewlet(synthclone::Menu menu);
 
     bool
     loadClipboardZoneList(QDomDocument &document);
@@ -605,18 +495,6 @@ private:
 
     void
     removeDirectoryContents(QDir &directory);
-
-    void
-    removeMenuAction(const synthclone::MenuAction *action,
-                     const QStringList &subMenus, MenuViewlet *topMenu);
-
-    MenuLeafViewlet *
-    removeMenuItem(const synthclone::MenuItem *item,
-                   const QStringList &subMenus, MenuViewlet *topMenu);
-
-    void
-    removeMenuSeparator(const synthclone::MenuSeparator *separator,
-                        const QStringList &subMenus, MenuViewlet *topMenu);
 
     void
     removeSelectedZones();
@@ -642,7 +520,6 @@ private:
     Application &application;
     QString createSessionName;
     synthclone::SessionState lastSessionState;
-    MenuItemViewletMap menuItemViewletMap;
     ParticipantViewletMap participantViewletMap;
     PluginManager pluginManager;
     PluginParticipantMap pluginParticipantMap;
@@ -667,6 +544,8 @@ private:
     SaveChangesView saveChangesView;
     SaveWarningView saveWarningView;
     SessionLoadView sessionLoadView;
+
+    MenuManager menuManager;
 
 };
 

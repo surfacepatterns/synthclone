@@ -28,10 +28,11 @@
 #include "context.h"
 #include "controller.h"
 
-ParticipantManager::ParticipantManager(Controller *controller, QObject *parent):
-    QObject(parent)
+ParticipantManager::ParticipantManager(Controller &controller, QObject *parent):
+    QObject(parent),
+    controller(controller)
 {
-    this->controller = controller;
+    // Empty
 }
 
 ParticipantManager::~ParticipantManager()
@@ -63,9 +64,7 @@ activateParticipant(const synthclone::Participant *participant,
     const synthclone::Participant *parent = data->parent;
     synthclone::Participant *mutableParticipant = data->participant;
     emit activatingParticipant(participant, parent, id);
-    Context *context = new Context(*mutableParticipant, *this,
-                                   controller->getSession(),
-                                   controller->getMainView());
+    Context *context = new Context(*mutableParticipant, *this, controller);
     mutableParticipant->activate(*context, state);
     data->context = context;
     emit participantActivated(participant, parent, id);

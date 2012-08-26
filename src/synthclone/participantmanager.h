@@ -37,7 +37,7 @@ class ParticipantManager: public QObject {
 public:
 
     explicit
-    ParticipantManager(Controller *controller, QObject *parent=0);
+    ParticipantManager(Controller &controller, QObject *parent=0);
 
     ~ParticipantManager();
 
@@ -153,7 +153,7 @@ private:
     bool
     verifySubId(const QByteArray &subId);
 
-    Controller *controller;
+    Controller &controller;
     ParticipantDataMap participantDataMap;
     ParticipantIdMap participantIdMap;
     ParticipantList rootParticipants;

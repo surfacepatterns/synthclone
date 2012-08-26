@@ -20,9 +20,8 @@
 #include <cassert>
 
 #include "context.h"
-#include "mainview.h"
+#include "controller.h"
 #include "participantmanager.h"
-#include "session.h"
 #include "signalmap.h"
 
 // Session signals
@@ -429,7 +428,80 @@ static QByteArray STATE_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(stateChanged(synthclone::SessionState, const QDir *)));
 
-static SignalMap mainViewSignalMap = SignalMap();
+static SignalMap menuManagerSignalMap =
+    SignalMap() <<
+
+    SignalPair(QLatin1String(ADDING_MENU_ACTION_SIGNAL),
+               ADDING_MENU_ACTION_SIGNAL) <<
+    SignalPair(QLatin1String(ADDING_EFFECT_MENU_ACTION_SIGNAL),
+               ADDING_EFFECT_MENU_ACTION_SIGNAL) <<
+    SignalPair(QLatin1String(ADDING_SAMPLER_MENU_ACTION_SIGNAL),
+               ADDING_SAMPLER_MENU_ACTION_SIGNAL) <<
+    SignalPair(QLatin1String(ADDING_TARGET_MENU_ACTION_SIGNAL),
+               ADDING_TARGET_MENU_ACTION_SIGNAL) <<
+
+    SignalPair(QLatin1String(ADDING_MENU_SEPARATOR_SIGNAL),
+               ADDING_MENU_SEPARATOR_SIGNAL) <<
+    SignalPair(QLatin1String(ADDING_EFFECT_MENU_SEPARATOR_SIGNAL),
+               ADDING_EFFECT_MENU_SEPARATOR_SIGNAL) <<
+    SignalPair(QLatin1String(ADDING_SAMPLER_MENU_SEPARATOR_SIGNAL),
+               ADDING_SAMPLER_MENU_SEPARATOR_SIGNAL) <<
+    SignalPair(QLatin1String(ADDING_TARGET_MENU_SEPARATOR_SIGNAL),
+               ADDING_TARGET_MENU_SEPARATOR_SIGNAL) <<
+
+    SignalPair(QLatin1String(MENU_ACTION_ADDED_SIGNAL),
+               MENU_ACTION_ADDED_SIGNAL) <<
+    SignalPair(QLatin1String(EFFECT_MENU_ACTION_ADDED_SIGNAL),
+               EFFECT_MENU_ACTION_ADDED_SIGNAL) <<
+    SignalPair(QLatin1String(SAMPLER_MENU_ACTION_ADDED_SIGNAL),
+               SAMPLER_MENU_ACTION_ADDED_SIGNAL) <<
+    SignalPair(QLatin1String(TARGET_MENU_ACTION_ADDED_SIGNAL),
+               TARGET_MENU_ACTION_ADDED_SIGNAL) <<
+
+    SignalPair(QLatin1String(MENU_ACTION_REMOVED_SIGNAL),
+               MENU_ACTION_REMOVED_SIGNAL) <<
+    SignalPair(QLatin1String(EFFECT_MENU_ACTION_REMOVED_SIGNAL),
+               EFFECT_MENU_ACTION_REMOVED_SIGNAL) <<
+    SignalPair(QLatin1String(SAMPLER_MENU_ACTION_REMOVED_SIGNAL),
+               SAMPLER_MENU_ACTION_REMOVED_SIGNAL) <<
+    SignalPair(QLatin1String(TARGET_MENU_ACTION_REMOVED_SIGNAL),
+               TARGET_MENU_ACTION_REMOVED_SIGNAL) <<
+
+    SignalPair(QLatin1String(MENU_SEPARATOR_ADDED_SIGNAL),
+               MENU_SEPARATOR_ADDED_SIGNAL) <<
+    SignalPair(QLatin1String(EFFECT_MENU_SEPARATOR_ADDED_SIGNAL),
+               EFFECT_MENU_SEPARATOR_ADDED_SIGNAL) <<
+    SignalPair(QLatin1String(SAMPLER_MENU_SEPARATOR_ADDED_SIGNAL),
+               SAMPLER_MENU_SEPARATOR_ADDED_SIGNAL) <<
+    SignalPair(QLatin1String(TARGET_MENU_SEPARATOR_ADDED_SIGNAL),
+               TARGET_MENU_SEPARATOR_ADDED_SIGNAL) <<
+
+    SignalPair(QLatin1String(MENU_SEPARATOR_REMOVED_SIGNAL),
+               MENU_SEPARATOR_REMOVED_SIGNAL) <<
+    SignalPair(QLatin1String(EFFECT_MENU_SEPARATOR_REMOVED_SIGNAL),
+               EFFECT_MENU_SEPARATOR_REMOVED_SIGNAL) <<
+    SignalPair(QLatin1String(SAMPLER_MENU_SEPARATOR_REMOVED_SIGNAL),
+               SAMPLER_MENU_SEPARATOR_REMOVED_SIGNAL) <<
+    SignalPair(QLatin1String(TARGET_MENU_SEPARATOR_REMOVED_SIGNAL),
+               TARGET_MENU_SEPARATOR_REMOVED_SIGNAL) <<
+
+    SignalPair(QLatin1String(REMOVING_MENU_ACTION_SIGNAL),
+               REMOVING_MENU_ACTION_SIGNAL) <<
+    SignalPair(QLatin1String(REMOVING_EFFECT_MENU_ACTION_SIGNAL),
+               REMOVING_EFFECT_MENU_ACTION_SIGNAL) <<
+    SignalPair(QLatin1String(REMOVING_SAMPLER_MENU_ACTION_SIGNAL),
+               REMOVING_SAMPLER_MENU_ACTION_SIGNAL) <<
+    SignalPair(QLatin1String(REMOVING_TARGET_MENU_ACTION_SIGNAL),
+               REMOVING_TARGET_MENU_ACTION_SIGNAL) <<
+
+    SignalPair(QLatin1String(REMOVING_MENU_SEPARATOR_SIGNAL),
+               REMOVING_MENU_SEPARATOR_SIGNAL) <<
+    SignalPair(QLatin1String(REMOVING_EFFECT_MENU_SEPARATOR_SIGNAL),
+               REMOVING_EFFECT_MENU_SEPARATOR_SIGNAL) <<
+    SignalPair(QLatin1String(REMOVING_SAMPLER_MENU_SEPARATOR_SIGNAL),
+               REMOVING_SAMPLER_MENU_SEPARATOR_SIGNAL) <<
+    SignalPair(QLatin1String(REMOVING_TARGET_MENU_SEPARATOR_SIGNAL),
+               REMOVING_TARGET_MENU_SEPARATOR_SIGNAL);
 
 static SignalMap participantManagerSignalMap =
     SignalMap() <<
@@ -541,78 +613,6 @@ static SignalMap sessionSignalMap =
     SignalPair(QLatin1String(ZONE_SELECTION_CHANGED_SIGNAL),
                ZONE_SELECTION_CHANGED_SIGNAL) <<
 
-    SignalPair(QLatin1String(ADDING_MENU_ACTION_SIGNAL),
-               ADDING_MENU_ACTION_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_EFFECT_MENU_ACTION_SIGNAL),
-               ADDING_EFFECT_MENU_ACTION_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_SAMPLER_MENU_ACTION_SIGNAL),
-               ADDING_SAMPLER_MENU_ACTION_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_TARGET_MENU_ACTION_SIGNAL),
-               ADDING_TARGET_MENU_ACTION_SIGNAL) <<
-
-    SignalPair(QLatin1String(ADDING_MENU_SEPARATOR_SIGNAL),
-               ADDING_MENU_SEPARATOR_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_EFFECT_MENU_SEPARATOR_SIGNAL),
-               ADDING_EFFECT_MENU_SEPARATOR_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_SAMPLER_MENU_SEPARATOR_SIGNAL),
-               ADDING_SAMPLER_MENU_SEPARATOR_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_TARGET_MENU_SEPARATOR_SIGNAL),
-               ADDING_TARGET_MENU_SEPARATOR_SIGNAL) <<
-
-    SignalPair(QLatin1String(MENU_ACTION_ADDED_SIGNAL),
-               MENU_ACTION_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_MENU_ACTION_ADDED_SIGNAL),
-               EFFECT_MENU_ACTION_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLER_MENU_ACTION_ADDED_SIGNAL),
-               SAMPLER_MENU_ACTION_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_MENU_ACTION_ADDED_SIGNAL),
-               TARGET_MENU_ACTION_ADDED_SIGNAL) <<
-
-    SignalPair(QLatin1String(MENU_ACTION_REMOVED_SIGNAL),
-               MENU_ACTION_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_MENU_ACTION_REMOVED_SIGNAL),
-               EFFECT_MENU_ACTION_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLER_MENU_ACTION_REMOVED_SIGNAL),
-               SAMPLER_MENU_ACTION_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_MENU_ACTION_REMOVED_SIGNAL),
-               TARGET_MENU_ACTION_REMOVED_SIGNAL) <<
-
-    SignalPair(QLatin1String(MENU_SEPARATOR_ADDED_SIGNAL),
-               MENU_SEPARATOR_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_MENU_SEPARATOR_ADDED_SIGNAL),
-               EFFECT_MENU_SEPARATOR_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLER_MENU_SEPARATOR_ADDED_SIGNAL),
-               SAMPLER_MENU_SEPARATOR_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_MENU_SEPARATOR_ADDED_SIGNAL),
-               TARGET_MENU_SEPARATOR_ADDED_SIGNAL) <<
-
-    SignalPair(QLatin1String(MENU_SEPARATOR_REMOVED_SIGNAL),
-               MENU_SEPARATOR_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_MENU_SEPARATOR_REMOVED_SIGNAL),
-               EFFECT_MENU_SEPARATOR_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLER_MENU_SEPARATOR_REMOVED_SIGNAL),
-               SAMPLER_MENU_SEPARATOR_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_MENU_SEPARATOR_REMOVED_SIGNAL),
-               TARGET_MENU_SEPARATOR_REMOVED_SIGNAL) <<
-
-    SignalPair(QLatin1String(REMOVING_MENU_ACTION_SIGNAL),
-               REMOVING_MENU_ACTION_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_EFFECT_MENU_ACTION_SIGNAL),
-               REMOVING_EFFECT_MENU_ACTION_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_SAMPLER_MENU_ACTION_SIGNAL),
-               REMOVING_SAMPLER_MENU_ACTION_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_TARGET_MENU_ACTION_SIGNAL),
-               REMOVING_TARGET_MENU_ACTION_SIGNAL) <<
-
-    SignalPair(QLatin1String(REMOVING_MENU_SEPARATOR_SIGNAL),
-               REMOVING_MENU_SEPARATOR_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_EFFECT_MENU_SEPARATOR_SIGNAL),
-               REMOVING_EFFECT_MENU_SEPARATOR_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_SAMPLER_MENU_SEPARATOR_SIGNAL),
-               REMOVING_SAMPLER_MENU_SEPARATOR_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_TARGET_MENU_SEPARATOR_SIGNAL),
-               REMOVING_TARGET_MENU_SEPARATOR_SIGNAL) <<
-
     SignalPair(QLatin1String(BUILDING_TARGET_SIGNAL),
                BUILDING_TARGET_SIGNAL) <<
     SignalPair(QLatin1String(BUILDING_TARGETS_SIGNAL),
@@ -659,13 +659,15 @@ static SignalMap sessionSignalMap =
 // And now, back to our regularly scheduled class definition.
 
 Context::Context(synthclone::Participant &participant,
-                 ParticipantManager &participantManager, Session &session,
-                 MainView &mainView, QObject *parent):
+                 ParticipantManager &participantManager, Controller &controller,
+                 QObject *parent):
     synthclone::Context(parent),
-    mainView(mainView),
+    controller(controller),
+    mainView(controller.getMainView()),
+    menuManager(controller.getMenuManager()),
     participant(participant),
     participantManager(participantManager),
-    session(session)
+    session(controller.getSession())
 {
     sampler = 0;
 }
@@ -693,11 +695,11 @@ Context::~Context()
 
     for (i = menuActions.count() - 1; i >= 0; i--) {
         // XXX: Change Remove from main view.
-        session.removeMenuAction(menuActions[i]);
+        menuManager.removeMenuAction(menuActions[i]);
     }
     for (i = menuSeparators.count() - 1; i >= 0; i--) {
         // XXX: Change to remove from main view.
-        session.removeMenuSeparator(menuSeparators[i]);
+        menuManager.removeMenuSeparator(menuSeparators[i]);
     }
 
     assert(! effects.count());
@@ -743,7 +745,7 @@ Context::addMenuAction(synthclone::MenuAction *action, T rootMenuItem,
                        const QStringList &subMenus)
 {
     const synthclone::Registration &registration =
-        session.addMenuAction(action, rootMenuItem, subMenus);
+        menuManager.addMenuAction(action, rootMenuItem, subMenus);
     menuActions.append(action);
     connect(&registration, SIGNAL(unregistered(QObject *)),
             SLOT(handleMenuActionRemoval(QObject *)));
@@ -788,7 +790,7 @@ Context::addMenuSeparator(synthclone::MenuSeparator *separator, T rootMenuItem,
                           const QStringList &subMenus)
 {
     const synthclone::Registration &registration =
-        session.addMenuSeparator(separator, rootMenuItem, subMenus);
+        menuManager.addMenuSeparator(separator, rootMenuItem, subMenus);
     menuSeparators.append(separator);
     connect(&registration, SIGNAL(unregistered(QObject *)),
             SLOT(handleMenuSeparatorRemoval(QObject *)));
@@ -897,9 +899,9 @@ Context::connectNotify(const char *signal)
             if (s) {
                 connect(&participantManager, signal, s);
             } else {
-                s = mainViewSignalMap.get(strSignal);
+                s = menuManagerSignalMap.get(strSignal);
                 if (s) {
-                    connect(&mainView, signal, s);
+                    connect(&menuManager, signal, s);
                 }
             }
         }
@@ -933,9 +935,9 @@ Context::disconnectNotify(const char *signal)
             if (s) {
                 disconnect(&participantManager, signal, this, s);
             } else {
-                s = mainViewSignalMap.get(strSignal);
+                s = menuManagerSignalMap.get(strSignal);
                 if (s) {
-                    disconnect(&mainView, signal, this, s);
+                    disconnect(&menuManager, signal, this, s);
                 }
             }
         }
@@ -1369,13 +1371,13 @@ Context::removeEffectJob(int index)
 void
 Context::removeMenuAction(const synthclone::MenuAction *action)
 {
-    session.removeMenuAction(action);
+    menuManager.removeMenuAction(action);
 }
 
 void
 Context::removeMenuSeparator(const synthclone::MenuSeparator *separator)
 {
-    session.removeMenuSeparator(separator);
+    menuManager.removeMenuSeparator(separator);
 }
 
 void
