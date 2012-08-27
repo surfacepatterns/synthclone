@@ -22,7 +22,6 @@
 
 #include <limits>
 
-#include <QtCore/QCoreApplication>
 #include <QtCore/QDir>
 #include <QtCore/QSemaphore>
 #include <QtCore/QXmlStreamWriter>
@@ -55,8 +54,7 @@ public:
     static bool
     isDirectory(const QDir &directory);
 
-    Session(QCoreApplication &application,
-            ParticipantManager &participantManager, QObject *parent=0);
+    Session(ParticipantManager &participantManager, QObject *parent=0);
 
     ~Session();
 
@@ -244,9 +242,6 @@ public slots:
     moveZone(int fromIndex, int toIndex);
 
     void
-    quit();
-
-    void
     removeEffect(const synthclone::Effect *effect);
 
     void
@@ -278,9 +273,6 @@ public slots:
 
     void
     removeZone(int index);
-
-    void
-    reportError(const QString &message);
 
     void
     save();
@@ -412,9 +404,6 @@ signals:
     effectJobAdded(const synthclone::EffectJob *job, int index);
 
     void
-    effectJobCompletion();
-
-    void
     effectJobError(const QString &message);
 
     void
@@ -425,13 +414,16 @@ signals:
     effectJobRemoved(const synthclone::EffectJob *job, int index);
 
     void
+    effectJobThreadCompletion();
+
+    void
+    effectJobThreadError(const QString &message);
+
+    void
     effectMoved(const synthclone::Effect *effect, int fromIndex, int toIndex);
 
     void
     effectRemoved(const synthclone::Effect *effect, int index);
-
-    void
-    errorReported(const QString &message);
 
     void
     focusedComponentChanged(const synthclone::Component *component);
@@ -562,10 +554,10 @@ signals:
 private slots:
 
     void
-    handleEffectJobCompletion();
+    handleEffectJobThreadCompletion();
 
     void
-    handleEffectJobError(const QString &message);
+    handleEffectJobThreadError(const QString &message);
 
     void
     handleSamplerJobAbort();
@@ -683,7 +675,6 @@ private:
     writeXMLState(QXmlStreamWriter &writer, const QVariant &value);
 
     bool aftertouchPropertyVisible;
-    QCoreApplication &application;
     bool channelPressurePropertyVisible;
     bool channelPropertyVisible;
     bool controlPropertiesVisible[0x80];

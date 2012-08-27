@@ -290,7 +290,7 @@ public slots:
     moveZone(int fromIndex, int toIndex);
 
     void
-    quitSession();
+    quit();
 
     void
     removeEffect(const synthclone::Effect *effect);

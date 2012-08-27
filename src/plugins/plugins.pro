@@ -7,6 +7,9 @@ isEmpty(SKIP_JACK_PLUGIN) {
 isEmpty(SKIP_PORTMEDIA_PLUGIN) {
     SUBDIRS += portmedia
 }
+isEmpty(SKIP_SAMPLE_LOADER_PLUGIN) {
+    SUBDIRS += sampleloader
+}
 isEmpty(SKIP_SFZ_PLUGIN) {
     SUBDIRS += sfz
 }

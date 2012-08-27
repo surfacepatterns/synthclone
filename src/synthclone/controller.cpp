@@ -40,7 +40,7 @@ Controller::Controller(Application &application, QObject *parent):
     QObject(parent),
     application(application),
     participantManager(*this),
-    session(application, participantManager),
+    session(participantManager),
     settings(session),
     menuManager(mainView, session)
 {
@@ -99,7 +99,7 @@ Controller::Controller(Application &application, QObject *parent):
                  (QString, QString, synthclone::SampleRate,
                   synthclone::SampleChannelCount)));
     connect(&sessionLoadView, SIGNAL(error(QString)),
-            &session, SLOT(reportError(QString)));
+            SLOT(reportError(QString)));
     connect(&sessionLoadView, SIGNAL(openDirectoryBrowseRequest(QString)),
             SLOT(handleSessionLoadViewOpenDirectoryBrowseRequest(QString)));
     connect(&sessionLoadView, SIGNAL(openDirectoryChanged(QString)),
@@ -392,7 +392,8 @@ Controller::Controller(Application &application, QObject *parent):
                                          int)));
     connect(&session, SIGNAL(removingEffect(const synthclone::Effect *, int)),
             SLOT(handleSessionEffectRemoval(const synthclone::Effect *, int)));
-
+    connect(&session, SIGNAL(effectJobError(const QString &)),
+            SLOT(reportError(const QString &)));
 
     connect(&session,
             SIGNAL(currentSamplerJobChanged(const synthclone::SamplerJob *)),
@@ -402,6 +403,9 @@ Controller::Controller(Application &application, QObject *parent):
             SLOT(handleSessionSamplerAddition(const synthclone::Sampler *)));
     connect(&session, SIGNAL(removingSampler(const synthclone::Sampler *)),
             SLOT(handleSessionSamplerRemoval(const synthclone::Sampler *)));
+    connect(&session, SIGNAL(samplerJobError(const QString &)),
+            SLOT(reportError(const QString &)));
+
 
     connect(&session,
             SIGNAL(selectedTargetChanged(const synthclone::Target *, int)),
@@ -440,8 +444,6 @@ Controller::Controller(Application &application, QObject *parent):
     connect(&session, SIGNAL(targetsBuilt()),
             SLOT(handleSessionTargetBuildOperationCompletion()));
 
-    connect(&session, SIGNAL(errorReported(QString)),
-            SLOT(handleSessionErrorReport(QString)));
     connect(&session, SIGNAL(loadWarning(int, int, QString)),
             SLOT(handleSessionLoadWarning(int, int, QString)));
 
@@ -453,7 +455,7 @@ Controller::Controller(Application &application, QObject *parent):
                                           const QDir *)));
 
     connect(&application, SIGNAL(eventError(QString)),
-            &session, SLOT(reportError(QString)));
+            SLOT(reportError(QString)));
 
     connect(QApplication::clipboard(), SIGNAL(dataChanged()),
             SLOT(handleClipboardDataChange()));
@@ -518,7 +520,7 @@ Controller::executePostSaveChangesAction()
         session.unload();
         break;
     case POSTSAVECHANGESACTION_QUIT:
-        session.quit();
+        quit();
     }
 }
 
@@ -625,7 +627,7 @@ Controller::processQuitRequest()
 {
     switch (session.getState()) {
     case synthclone::SESSIONSTATE_CURRENT:
-        session.quit();
+        quit();
         break;
     case synthclone::SESSIONSTATE_MODIFIED:
         postSaveChangesAction = POSTSAVECHANGESACTION_QUIT;
@@ -634,6 +636,13 @@ Controller::processQuitRequest()
     default:
         assert(false);
     }
+}
+
+void
+Controller::quit()
+{
+    session.unload();
+    application.quit();
 }
 
 void
@@ -749,14 +758,20 @@ Controller::removeDirectoryContents(QDir &directory)
     }
 }
 
-
-
 void
 Controller::removeSelectedZones()
 {
     for (int i = session.getSelectedZoneCount() - 1; i >= 0; i--) {
         session.removeZone(session.getSelectedZone(i));
     }
+}
+
+void
+Controller::reportError(const QString &message)
+{
+    errorView.setMessage(message);
+    errorView.setVisible(true);
+    emit errorReported(message);
 }
 
 void
@@ -770,7 +785,7 @@ Controller::run(const QDir *sessionDirectory)
         } catch (synthclone::Error &e) {
             QString message = tr("Error loading session from '%1': %2").
                 arg(sessionDirectory->absolutePath(), e.getMessage());
-            session.reportError(message);
+            reportError(message);
         }
     }
     mainView.setVisible(true);
@@ -1407,13 +1422,6 @@ Controller::handleSessionEffectRemoval(const synthclone::Effect *effect,
     if (session.getEffectCount() == 1) {
         mainView.getZoneViewlet()->setApplyEffectsEnabled(false);
     }
-}
-
-void
-Controller::handleSessionErrorReport(const QString &message)
-{
-    errorView.setMessage(message);
-    errorView.setVisible(true);
 }
 
 void

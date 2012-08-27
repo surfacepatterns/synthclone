@@ -144,18 +144,16 @@ Session::loadXML(const QDir &directory, QDomDocument &document)
 
 // Class definition
 
-Session::Session(QCoreApplication &application,
-                 ParticipantManager &participantManager, QObject *parent):
+Session::Session(ParticipantManager &participantManager, QObject *parent):
     QObject(parent),
-    application(application),
     effectJobThread(this),
     participantManager(participantManager),
     zoneIndexComparer(zones)
 {
-    connect(this, SIGNAL(effectJobCompletion()),
-            SLOT(handleEffectJobCompletion()));
-    connect(this, SIGNAL(effectJobError(QString)),
-            SLOT(handleEffectJobError(QString)));
+    connect(this, SIGNAL(effectJobThreadCompletion()),
+            SLOT(handleEffectJobThreadCompletion()));
+    connect(this, SIGNAL(effectJobThreadError(QString)),
+            SLOT(handleEffectJobThreadError(QString)));
 
     connect(&participantManager,
             SIGNAL(participantActivated(const synthclone::Participant *,
@@ -754,7 +752,7 @@ Session::getZoneIndex(const synthclone::Zone *zone) const
 }
 
 void
-Session::handleEffectJobCompletion()
+Session::handleEffectJobThreadCompletion()
 {
     Zone *zone = qobject_cast<EffectJob *>(currentEffectJob)->getZone();
     zone->setStatus(synthclone::Zone::STATUS_NORMAL);
@@ -763,11 +761,11 @@ Session::handleEffectJobCompletion()
 }
 
 void
-Session::handleEffectJobError(const QString &message)
+Session::handleEffectJobThreadError(const QString &message)
 {
     qobject_cast<EffectJob *>(currentEffectJob)->getZone()->
         setStatus(synthclone::Zone::STATUS_NORMAL);
-    reportError(message);
+    emit effectJobError(message);
     recycleCurrentEffectJob();
 }
 
@@ -1256,13 +1254,6 @@ Session::moveZone(int fromIndex, int toIndex)
     setModified();
 }
 
-void
-Session::quit()
-{
-    unload();
-    application.quit();
-}
-
 QVariant
 Session::readXMLState(const QDomElement &element)
 {
@@ -1481,12 +1472,6 @@ Session::removeZone(int index)
 }
 
 void
-Session::reportError(const QString &message)
-{
-    emit errorReported(message);
-}
-
-void
 Session::runEffectJobs()
 {
     for (;;) {
@@ -1563,11 +1548,11 @@ Session::runEffectJobs()
                 effects[count - 1]->process(*zone, inputStream, outputStream);
             }
         } catch (synthclone::Error &e) {
-            emit effectJobError(e.getMessage());
+            emit effectJobThreadError(e.getMessage());
             continue;
         }
         wetSamplePtr.take();
-        emit effectJobCompletion();
+        emit effectJobThreadCompletion();
     }
 }
 

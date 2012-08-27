@@ -91,6 +91,7 @@ namespace synthclone {
         bool framesWritten;
         SNDFILE *handle;
         SF_INFO info;
+        QString path;
         bool writeMode;
 
     };

@@ -209,7 +209,7 @@ Participant::handleSessionEvent(jack_client_t *client,
         context->reportError(tr("failed to send session reply to JACK server"));
     } else if ((event->flags != JackSessionSaveError) &&
                (event->type == JackSessionSaveAndQuit)) {
-        context->quitSession();
+        context->quit();
     }
     event->command_line = 0;
     jack_session_event_free(event);

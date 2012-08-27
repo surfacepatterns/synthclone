@@ -110,7 +110,9 @@ Sample::initializeTemporaryPath()
 {
     QTemporaryFile file("");
     if (! file.open()) {
-        throw synthclone::Error(file.errorString());
+        QString message = tr("could not open temporary file: '%1'").
+            arg(file.errorString());
+        throw synthclone::Error(message);
     }
     file.close();
     file.setAutoRemove(false);

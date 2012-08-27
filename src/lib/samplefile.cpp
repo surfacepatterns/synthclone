@@ -38,9 +38,12 @@ SampleFile::SampleFile(const QString &path, QObject *parent):
     QByteArray pathBytes = path.toLocal8Bit();
     handle = sf_open(pathBytes.data(), SFM_READ, &info);
     if (! handle) {
-        throw Error(std::strerror(errno));
+        QString message = tr("could not open '%1' for reading: %2").arg(path).
+            arg(sf_strerror(0));
+        throw synthclone::Error(message);
     }
     closed = false;
+    this->path = path;
     writeMode = false;
 }
 
@@ -89,7 +92,9 @@ SampleFile::close()
     }
     int result = sf_close(handle);
     if (result) {
-        throw synthclone::Error(sf_error_number(result));
+        QString message = tr("could not close '%1': %2").arg(path).
+            arg(sf_error_number(result));
+        throw synthclone::Error(message);
     }
     closed = true;
 }
@@ -433,10 +438,13 @@ SampleFile::initializeWriteMode(const QString &path, SampleRate sampleRate,
     QByteArray pathBytes = path.toLocal8Bit();
     handle = sf_open(pathBytes.data(), SFM_WRITE, &info);
     if (! handle) {
-        throw Error(std::strerror(errno));
+        QString message = tr("could not open '%1' for writing: %2").arg(path).
+            arg(sf_strerror(0));
+        throw synthclone::Error(message);
     }
     closed = false;
     framesWritten = false;
+    this->path = path;
     writeMode = true;
 }
 
@@ -457,7 +465,9 @@ SampleFile::read(float *buffer, SampleFrameCount frames)
     if (readFrames <= 0) {
         int errorNumber = sf_error(handle);
         if (errorNumber != SF_ERR_NO_ERROR) {
-            throw synthclone::Error(sf_error_number(errorNumber));
+            QString message = tr("could not read bytes from '%1': %2").
+                arg(path).arg(sf_error_number(errorNumber));
+            throw synthclone::Error(message);
         }
     }
     return static_cast<SampleFrameCount>(readFrames);
@@ -481,7 +491,9 @@ SampleFile::seek(SampleFrameCount frames, SampleStream::Offset offset)
     sf_count_t newLocation =
         sf_seek(handle, static_cast<sf_count_t>(frames), whence);
     if (newLocation == -1) {
-        throw Error(sf_strerror(handle));
+        QString message = tr("could not set file position in '%1': %2").
+            arg(path).arg(sf_strerror(handle));
+        throw synthclone::Error(message);
     }
     return static_cast<SampleFrameCount>(newLocation);
 }
@@ -496,7 +508,9 @@ SampleFile::write(const float *buffer, SampleFrameCount frames)
     if (sf_writef_float(handle, buffer, n) != n) {
         int errorNumber = sf_error(handle);
         assert(errorNumber != SF_ERR_NO_ERROR);
-        throw synthclone::Error(sf_error_number(errorNumber));
+        QString message = tr("could not write bytes to '%1': %2").
+            arg(path).arg(sf_error_number(errorNumber));
+        throw synthclone::Error(message);
     }
     framesWritten = true;
 }

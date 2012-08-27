@@ -420,6 +420,9 @@ static QByteArray SAMPLE_RATE_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(sampleRateChanged(synthclone::SampleRate)));
 
+static QByteArray ERROR_REPORTED_SIGNAL =
+    QMetaObject::normalizedSignature(SIGNAL(errorReported(const QString &)));
+
 static QByteArray SESSION_STATE_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(sessionStateChanged(synthclone::SessionState, const QDir *)));
@@ -427,6 +430,10 @@ static QByteArray SESSION_STATE_CHANGED_SIGNAL =
 static QByteArray STATE_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(stateChanged(synthclone::SessionState, const QDir *)));
+
+static SignalMap controllerSignalMap =
+    SignalMap() <<
+    SignalPair(QLatin1String(ERROR_REPORTED_SIGNAL), ERROR_REPORTED_SIGNAL);
 
 static SignalMap menuManagerSignalMap =
     SignalMap() <<
@@ -902,6 +909,11 @@ Context::connectNotify(const char *signal)
                 s = menuManagerSignalMap.get(strSignal);
                 if (s) {
                     connect(&menuManager, signal, s);
+                } else {
+                    s = controllerSignalMap.get(strSignal);
+                    if (s) {
+                        connect(&controller, signal, s);
+                    }
                 }
             }
         }
@@ -938,6 +950,11 @@ Context::disconnectNotify(const char *signal)
                 s = menuManagerSignalMap.get(strSignal);
                 if (s) {
                     disconnect(&menuManager, signal, this, s);
+                } else {
+                    s = controllerSignalMap.get(strSignal);
+                    if (s) {
+                        disconnect(&controller, signal, this, s);
+                    }
                 }
             }
         }
@@ -1339,9 +1356,9 @@ Context::moveZone(int fromIndex, int toIndex)
 }
 
 void
-Context::quitSession()
+Context::quit()
 {
-    session.quit();
+    controller.quit();
 }
 
 void
@@ -1431,7 +1448,7 @@ Context::removeZone(int index)
 void
 Context::reportError(const QString &message)
 {
-    session.reportError(message);
+    controller.reportError(message);
 }
 
 void

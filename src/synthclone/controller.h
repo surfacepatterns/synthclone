@@ -60,7 +60,18 @@ public:
 public slots:
 
     void
+    quit();
+
+    void
+    reportError(const QString &message);
+
+    void
     run(const QDir *sessionDirectory);
+
+signals:
+
+    void
+    errorReported(const QString &message);
 
 private slots:
 
@@ -173,9 +184,6 @@ private slots:
 
     void
     handleSessionEffectRemoval(const synthclone::Effect *effect, int index);
-
-    void
-    handleSessionErrorReport(const QString &message);
 
     void
     handleSessionFocusedComponentChange(const synthclone::Component *component);

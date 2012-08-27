@@ -1072,7 +1072,7 @@ namespace synthclone {
          */
 
         virtual void
-        quitSession() = 0;
+        quit() = 0;
 
         /**
          * Removes an Effect.
