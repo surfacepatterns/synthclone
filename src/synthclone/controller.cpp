@@ -82,8 +82,7 @@ Controller::Controller(Application &application, QObject *parent):
     connect(&saveWarningView, SIGNAL(saveRequest()),
             SLOT(handleSaveWarningViewSaveRequest()));
 
-    connect(&sessionLoadView, SIGNAL(closeRequest()),
-            &session, SLOT(quit()));
+    connect(&sessionLoadView, SIGNAL(closeRequest()), SLOT(quit()));
     connect(&sessionLoadView,
             SIGNAL(creationDirectoryBrowseRequest(QString, QString)),
             SLOT(handleSessionLoadViewCreationDirectoryBrowseRequest

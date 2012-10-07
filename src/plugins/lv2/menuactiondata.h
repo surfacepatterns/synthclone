@@ -1,5 +1,5 @@
 /*
- * libsynthclone_portmedia - PortAudio/PortMIDI sampler plugin for `synthclone`
+ * libsynthclone_lv2 - LV2 effect plugin for `synthclone`
  * Copyright (C) 2012 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,13 +17,38 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __TYPES_H__
-#define __TYPES_H__
+#ifndef __MENUACTIONDATA_H__
+#define __MENUACTIONDATA_H__
 
-enum ChannelMapTableColumn {
-    CHANNELMAPTABLECOLUMN_INPUT_CHANNEL = 0,
-    CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL = 1,
-    CHANNELMAPTABLECOLUMN_TOTAL = 2
+#include <QtCore/QStringList>
+
+#include <synthclone/menuaction.h>
+
+class MenuActionData: public QObject {
+
+    Q_OBJECT
+
+public:
+
+    MenuActionData(synthclone::MenuAction *action, const QStringList &sections,
+                   QObject *parent=0);
+
+    ~MenuActionData();
+
+    const synthclone::MenuAction *
+    getAction() const;
+
+    synthclone::MenuAction *
+    getAction();
+
+    const QStringList &
+    getSections() const;
+
+private:
+
+    synthclone::MenuAction *action;
+    QStringList sections;
+
 };
 
 #endif

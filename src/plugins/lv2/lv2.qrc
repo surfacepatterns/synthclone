@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/synthclone/plugins/lv2">
+        <file>effectview.ui</file>
+    </qresource>
+</RCC>

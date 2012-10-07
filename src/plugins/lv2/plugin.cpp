@@ -1,5 +1,5 @@
 /*
- * libsynthclone_portmedia - PortAudio/PortMIDI sampler plugin for `synthclone`
+ * libsynthclone_lv2 - LV2 effect plugin for `synthclone`
  * Copyright (C) 2012 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,13 +17,29 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __TYPES_H__
-#define __TYPES_H__
+#include "plugin.h"
 
-enum ChannelMapTableColumn {
-    CHANNELMAPTABLECOLUMN_INPUT_CHANNEL = 0,
-    CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL = 1,
-    CHANNELMAPTABLECOLUMN_TOTAL = 2
-};
+Plugin::Plugin(QObject *parent):
+    QObject(parent)
+{
+    // Empty
+}
 
-#endif
+Plugin::~Plugin()
+{
+    // Empty
+}
+
+QByteArray
+Plugin::getId() const
+{
+    return "com.googlecode.synthclone.plugins.lv2";
+}
+
+synthclone::Participant *
+Plugin::getParticipant()
+{
+    return &participant;
+}
+
+Q_EXPORT_PLUGIN2(synthclone_lv2, Plugin);

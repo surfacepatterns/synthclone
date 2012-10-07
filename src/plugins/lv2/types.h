@@ -1,5 +1,5 @@
 /*
- * libsynthclone_portmedia - PortAudio/PortMIDI sampler plugin for `synthclone`
+ * libsynthclone_lv2 - LV2 effect plugin for `synthclone`
  * Copyright (C) 2012 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it

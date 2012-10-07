@@ -1,5 +1,5 @@
 /*
- * libsynthclone_portmedia - PortAudio/PortMIDI sampler plugin for `synthclone`
+ * libsynthclone_lv2 - LV2 effect plugin for `synthclone`
  * Copyright (C) 2012 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,13 +17,34 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __TYPES_H__
-#define __TYPES_H__
+#ifndef __MENUACTIONDATACOMPARER_H__
+#define __MENUACTIONDATACOMPARER_H__
 
-enum ChannelMapTableColumn {
-    CHANNELMAPTABLECOLUMN_INPUT_CHANNEL = 0,
-    CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL = 1,
-    CHANNELMAPTABLECOLUMN_TOTAL = 2
+#include "menuactiondata.h"
+
+class MenuActionDataComparer: public QObject {
+
+    Q_OBJECT
+
+public:
+
+    explicit
+    MenuActionDataComparer(QObject *parent=0);
+
+    MenuActionDataComparer(const MenuActionDataComparer &comparer,
+                           QObject *parent=0);
+
+    ~MenuActionDataComparer();
+
+    bool
+    operator()(const MenuActionData *data1, const MenuActionData *data2) const;
+
+private:
+
+    int
+    compareSectionLists(const QStringList &sections1,
+                        const QStringList &sections2, int length) const;
+
 };
 
 #endif

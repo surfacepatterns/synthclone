@@ -4,6 +4,9 @@ isEmpty(SKIP_HYDROGEN_PLUGIN) {
 isEmpty(SKIP_JACK_PLUGIN) {
     SUBDIRS += jack
 }
+isEmpty(SKIP_LV2_PLUGIN) {
+    SUBDIRS += lv2
+}
 isEmpty(SKIP_PORTMEDIA_PLUGIN) {
     SUBDIRS += portmedia
 }

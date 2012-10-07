@@ -1,5 +1,5 @@
 /*
- * libsynthclone_portmedia - PortAudio/PortMIDI sampler plugin for `synthclone`
+ * libsynthclone_lv2 - LV2 effect plugin for `synthclone`
  * Copyright (C) 2012 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -17,13 +17,47 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __TYPES_H__
-#define __TYPES_H__
+#ifndef __LV2UIDATA_H__
+#define __LV2UIDATA_H__
 
-enum ChannelMapTableColumn {
-    CHANNELMAPTABLECOLUMN_INPUT_CHANNEL = 0,
-    CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL = 1,
-    CHANNELMAPTABLECOLUMN_TOTAL = 2
+#include <QtCore/QObject>
+#include <QtCore/QStringList>
+
+#include <lilv/lilv.h>
+
+class LV2UIData: public QObject {
+
+    Q_OBJECT
+
+public:
+
+    explicit
+    LV2UIData(const LilvUI *ui, QObject *parent=0);
+
+    ~LV2UIData();
+
+    QString
+    getBinaryPath() const;
+
+    QString
+    getBundlePath() const;
+
+    QString
+    getTypeURI(int index) const;
+
+    int
+    getTypeURICount() const;
+
+    QString
+    getURI() const;
+
+private:
+
+    QString binaryPath;
+    QString bundlePath;
+    QStringList typeURIs;
+    QString uri;
+
 };
 
 #endif

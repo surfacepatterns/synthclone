@@ -19,6 +19,7 @@
 
 #include <cassert>
 
+#include <QtCore/QDebug>
 #include <QtCore/QScopedPointer>
 
 #include <synthclone/util.h>
@@ -302,8 +303,8 @@ MenuManager::addSubMenus(MenuViewlet *topMenu, const QStringList &subMenus)
         if (! subMenu) {
             subMenu = mainView.createMenuViewlet(text, menu);
             menu->add(subMenu);
-            menu = subMenu;
         }
+        menu = subMenu;
     }
     return menu;
 }
@@ -532,6 +533,11 @@ MenuManager::removeMenuItem(const synthclone::MenuItem *item,
     if (! topMenu->getChildCount()) {
         topMenu->setVisible(false);
     }
+
+    qDebug() << "removeMenuItem:";
+    qDebug() << "\titem: " << item;
+    qDebug() << "\tviewlet: " << viewlet;
+
     disconnect(item, SIGNAL(visibilityChanged(bool)),
                viewlet, SLOT(setVisible(bool)));
     menuItemDataMap.remove(item);

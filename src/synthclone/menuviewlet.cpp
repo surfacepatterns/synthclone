@@ -32,6 +32,7 @@ MenuViewlet::MenuViewlet(QMenu *menu, QObject *parent):
 MenuViewlet::MenuViewlet(const QString &text, QObject *parent):
     MenuItemViewlet(parent)
 {
+    customItemsBoundary = 0;
     menu = new QMenu(text);
     menu->setTitle(text);
     manageMenu = true;
