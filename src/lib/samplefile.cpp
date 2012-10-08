@@ -43,6 +43,7 @@ SampleFile::SampleFile(const QString &path, QObject *parent):
         throw synthclone::Error(message);
     }
     closed = false;
+    framesWritten = false;
     this->path = path;
     writeMode = false;
 }

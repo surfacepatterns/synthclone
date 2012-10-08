@@ -505,7 +505,12 @@ QWidget *
 synthclone::loadForm(const QString &path, QWidget *parent)
 {
     QFile file(path);
-    file.open(QFile::ReadOnly);
+    bool opened = file.open(QFile::ReadOnly);
+
+    CONFIRM(opened,
+            qApp->tr("failed to open '%1': %2").arg(path).
+            arg(file.errorString()));
+
     QWidget *widget = QUiLoader().load(&file, parent);
 
     CONFIRM(widget, qApp->tr("failed to load widget from '%1'").arg(path));

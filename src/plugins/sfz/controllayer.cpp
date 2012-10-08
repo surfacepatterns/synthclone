@@ -31,6 +31,7 @@ ControlLayer::ControlLayer(synthclone::MIDIData control, QObject *parent):
         synthclone::getMIDIControlType(control) !=
         synthclone::CONTROLTYPE_SWITCH;
     this->control = control;
+    crossfadingEnabled = false;
     defaultValue = 0;
 }
 

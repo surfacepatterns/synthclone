@@ -186,13 +186,35 @@ Sampler::Sampler(const QString &name, synthclone::SampleChannelCount channels,
             }
 
         } catch (...) {
-            Pm_Terminate();
+            pmError = Pm_Terminate();
+            if (pmError != pmNoError) {
+                qWarning() << tr("Error terminating PortMidi: %1").
+                    arg(Pm_GetErrorText(pmError));
+            }
             throw;
         }
     } catch (...) {
-        Pa_Terminate();
+        paError = Pa_Terminate();
+        if (paError != paNoError) {
+            qWarning() << tr("Error terminating PortAudio: %1").
+                arg(Pa_GetErrorText(paError));
+        }
         throw;
     }
+
+    aborted = false;
+    audioStream = 0;
+    command.job = 0;
+    command.sampleBuffer = 0;
+    command.stream = 0;
+    command.totalReleaseFrames = 0;
+    command.totalSampleFrames = 0;
+    currentFrame = 0;
+    errorMessage = 0;
+    idle = true;
+    midiStream = 0;
+    progress = 0;
+    state = STATE_IDLE;
 }
 
 Sampler::~Sampler()
@@ -296,7 +318,7 @@ void
 Sampler::copyData(const float *input, float *output, unsigned long totalFrames,
                   unsigned long startFrame)
 {
-    for (unsigned long i = startFrame; i < totalFrames; i++) {
+    for (synthclone::SampleFrameCount i = startFrame; i < totalFrames; i++) {
         synthclone::SampleFrameCount inputOffset =
             audioInputDeviceChannelCount * i;
         synthclone::SampleFrameCount outputOffset =

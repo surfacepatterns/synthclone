@@ -46,7 +46,6 @@ private:
 
     QPushButton *cancelButton;
     QPushButton *changeSampleRateButton;
-    QDialog *dialog;
 
 };
 

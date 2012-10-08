@@ -31,6 +31,7 @@ Participant::Participant(QObject *parent):
             SLOT(handleEffectAddition()));
     connect(&effectView, SIGNAL(closeRequest()),
             SLOT(handleEffectViewCloseRequest()));
+    configuredEffect = 0;
     context = 0;
 }
 

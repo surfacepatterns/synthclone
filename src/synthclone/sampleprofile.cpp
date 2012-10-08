@@ -27,6 +27,8 @@
 
 #include "sampleprofile.h"
 
+static const float DBFS_MIN = -(std::numeric_limits<float>().max());
+
 SampleProfile::SampleProfile(const synthclone::Sample &sample,
                              QObject *parent):
     QObject(parent)
@@ -76,7 +78,7 @@ SampleProfile::SampleProfile(const synthclone::Sample &sample,
             peaks[i] = getDBFS(peak);
         }
         for (; i < 1024; i++) {
-            peaks[i] = -std::numeric_limits<float>().max();
+            peaks[i] = DBFS_MIN;
         }
     }
     time = static_cast<float>(frames) / stream.getSampleRate();
@@ -90,8 +92,7 @@ SampleProfile::~SampleProfile()
 float
 SampleProfile::getDBFS(float sample) const
 {
-    return (sample == 0.0) ? -std::numeric_limits<float>().max() :
-        20.0 * std::log10(std::fabs(sample));
+    return (sample == 0.0) ? DBFS_MIN : 20.0 * std::log10(std::fabs(sample));
 }
 
 const float *

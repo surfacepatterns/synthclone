@@ -75,7 +75,6 @@ private slots:
 
 private:
 
-    QPushButton *activateButton;
     QList<ParticipantViewlet *> children;
     QPushButton *closeButton;
     QMap<QStandardItem *, ParticipantViewlet *> itemViewletMap;

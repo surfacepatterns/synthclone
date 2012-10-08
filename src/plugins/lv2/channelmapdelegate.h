@@ -84,7 +84,6 @@ private:
 
     QStringList audioInputPortNames;
     QStringList audioOutputPortNames;
-    synthclone::SampleChannelCount channels;
 
 };
 

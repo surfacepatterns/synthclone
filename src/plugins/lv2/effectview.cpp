@@ -83,6 +83,8 @@ EffectView::EffectView(QObject *parent):
     connect(instances, SIGNAL(valueChanged(int)),
             SIGNAL(instanceCountChanged(int)));
 
+    instanceUI = 0;
+
     name = synthclone::getChild<QLineEdit>(widget, "name");
     connect(name, SIGNAL(textEdited(const QString &)),
             SIGNAL(nameChanged(const QString &)));
@@ -159,6 +161,7 @@ EffectView::resetInstanceData()
         parametersTab->layout()->removeWidget(instanceUI);
         // XX: Is this right?
         delete instanceUI;
+        instanceUI = 0;
         suil_instance_free(instance);
     }
     instance = 0;

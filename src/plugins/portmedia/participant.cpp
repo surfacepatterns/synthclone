@@ -39,6 +39,7 @@ Participant::Participant(QObject *parent):
             SLOT(handleSamplerViewCloseRequest()));
 
     context = 0;
+    sampler = 0;
 }
 
 Participant::~Participant()
@@ -213,6 +214,7 @@ Participant::deactivate(synthclone::Context &context)
     }
     delete sampler;
     this->context = 0;
+    sampler = 0;
 }
 
 QVariant

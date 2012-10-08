@@ -42,6 +42,7 @@ Participant::Participant(QObject *parent):
             SLOT(handleTargetViewCloseRequest()));
     connect(&targetView, SIGNAL(pathLookupRequest()),
             SLOT(handleTargetViewPathLookupRequest()));
+    configuredTarget = 0;
     context = 0;
 }
 

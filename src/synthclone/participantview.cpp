@@ -128,7 +128,8 @@ ParticipantView::remove(ParticipantViewlet *viewlet)
     int index = children.indexOf(viewlet);
     assert(index != -1);
     unregisterViewlet(viewlet);
-    treeModel.removeRow(viewlet->items[0]->row());
+    bool removed = treeModel.removeRow(viewlet->items[0]->row());
+    assert(removed);
     children.removeAt(index);
 }
 

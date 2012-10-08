@@ -28,7 +28,8 @@
 ChannelMapDelegate::ChannelMapDelegate(QObject *parent):
     QStyledItemDelegate(parent)
 {
-    // Empty
+    inputChannelCount = 0;
+    outputChannelCount = 0;
 }
 
 ChannelMapDelegate::~ChannelMapDelegate()

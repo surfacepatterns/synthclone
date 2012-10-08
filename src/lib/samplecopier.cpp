@@ -27,7 +27,9 @@ using synthclone::SampleCopier;
 SampleCopier::SampleCopier(QObject *parent):
     QObject(parent)
 {
-    // Empty
+    for (int i = 0; i < 65536; i++) {
+        buffer[i] = 0.0;
+    }
 }
 
 SampleCopier::~SampleCopier()

@@ -193,6 +193,8 @@ Session::Session(ParticipantManager &participantManager, QObject *parent):
     notePropertyVisible = true;
     releaseTimePropertyVisible = true;
     sampler = 0;
+    samplerData.participant = 0;
+    samplerData.registration = 0;
     sampleTimePropertyVisible = true;
     selectedEffect = 0;
     selectedTarget = 0;
