@@ -27,6 +27,7 @@
 #include <QtGui/QSpinBox>
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QTableView>
+#include <QtGui/QX11EmbedContainer>
 
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 
@@ -118,6 +119,12 @@ signals:
                      uint32_t protocol, void const *buffer);
 
 private slots:
+
+    void
+    handleEmbeddedWidgetClose();
+
+    void
+    handleEmbeddedWidgetError(QX11EmbedContainer::Error error);
 
     void
     handlePortWriteRequest(uint32_t portIndex, uint32_t bufferSize,

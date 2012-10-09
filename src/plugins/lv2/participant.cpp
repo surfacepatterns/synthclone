@@ -133,6 +133,10 @@ Participant::addPluginActions()
                 QString typeURI = uiData.getTypeURI(k);
                 unsigned int uiQuality =
                     effectView.getSupportQuality(typeURI);
+
+                qDebug() << "UI URI:" << typeURI;
+                qDebug() << "Support quality:" << uiQuality;
+
                 if (! uiQuality) {
                     continue;
                 }
