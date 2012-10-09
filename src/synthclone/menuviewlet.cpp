@@ -80,6 +80,7 @@ MenuViewlet::getAction()
 MenuItemViewlet *
 MenuViewlet::getChild(int index)
 {
+    assert((index >= 0) && (index < children.count()));
     return children[index];
 }
 
