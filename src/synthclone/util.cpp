@@ -20,7 +20,6 @@
 #include <cassert>
 #include <cstdlib>
 
-#include <QtCore/QDebug>
 #include <QtCore/QLocale>
 #include <QtCore/QTemporaryFile>
 
