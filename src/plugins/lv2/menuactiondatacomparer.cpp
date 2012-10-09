@@ -19,8 +19,6 @@
 
 #include <cassert>
 
-#include <QtCore/QDebug>
-
 #include "menuactiondatacomparer.h"
 
 MenuActionDataComparer::MenuActionDataComparer(QObject *parent):

@@ -81,6 +81,7 @@ Participant::addEffect(const LV2Plugin *plugin)
     connect(&actionRegistration, SIGNAL(unregistered(QObject *)),
             SLOT(handleEffectActionUnregistration(QObject *)));
 
+    registeredEffects.append(effect);
     return effect;
 }
 
@@ -343,6 +344,9 @@ Participant::deactivate(synthclone::Context &context)
                       (synthclone::SampleChannelCount)),
                &effectView,
                SLOT(setSampleChannelCount(synthclone::SampleChannelCount)));
+    for (int i = registeredEffects.count() - 1; i >= 0; i--) {
+        context.removeEffect(registeredEffects[i]);
+    }
     removePluginActions();
     this->context = 0;
     delete world;
@@ -424,7 +428,11 @@ Participant::handleEffectConfiguration()
 void
 Participant::handleEffectUnregistration(QObject *obj)
 {
-    delete obj;
+    Effect *effect = qobject_cast<Effect *>(obj);
+    assert(effect);
+    bool removed = registeredEffects.removeOne(effect);
+    assert(removed);
+    delete effect;
 }
 
 void
@@ -528,10 +536,6 @@ Participant::removePluginActions()
 {
     QList<synthclone::MenuAction *> actions = actionPluginMap.keys();
     for (int i = actions.count() - 1; i >= 0; i--) {
-
-        qDebug() << "Removing menu action #" << i << ": "
-                 << actions[i]->getText();
-
         context->removeMenuAction(actions[i]);
     }
 }

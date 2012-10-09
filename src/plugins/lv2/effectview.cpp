@@ -17,7 +17,6 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
-#include <QtCore/QDebug>
 #include <QtGui/QHeaderView>
 #include <QtGui/QLayout>
 
@@ -213,12 +212,6 @@ void
 EffectView::setPortValue(uint32_t index, uint32_t size, uint32_t protocol,
                          void const *value)
 {
-    qDebug() << "setPortValue:";
-    qDebug() << "\tindex: " << index;
-    qDebug() << "\tsize: " << size;
-    qDebug() << "\tprotocol: " << protocol;
-    qDebug() << "\tvalue: " << *(static_cast<float const *>(value));
-
     suil_instance_port_event(instance, index, size, protocol, value);
 }
 

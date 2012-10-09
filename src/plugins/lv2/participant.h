@@ -106,6 +106,7 @@ private:
     QMap<uint32_t, int> controlOutputPortIndexMap;
     EffectView effectView;
     QMap<const LV2Plugin *, PluginUIData *> pluginUIMap;
+    QList<Effect *> registeredEffects;
     QMap<QString, const LV2Plugin *> uriPluginMap;
     LV2World *world;
 
