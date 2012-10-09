@@ -1,6 +1,6 @@
 /*
  * libsynthclone - a plugin API for `synthclone`
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2012 Devin Anderson
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the
@@ -505,16 +505,22 @@ QWidget *
 synthclone::loadForm(const QString &path, QWidget *parent)
 {
     QFile file(path);
+
+    // XX: Qt makes a jump based on uninitialized values the first time this
+    // call is made.
     bool opened = file.open(QFile::ReadOnly);
 
     CONFIRM(opened,
             qApp->tr("failed to open '%1': %2").arg(path).
             arg(file.errorString()));
 
-    QWidget *widget = QUiLoader().load(&file, parent);
+    QUiLoader uiLoader;
+
+    // XX: Qt also makes a jump based on uninitialized values the first time
+    // this call is made.
+    QWidget *widget = uiLoader.load(&file, parent);
 
     CONFIRM(widget, qApp->tr("failed to load widget from '%1'").arg(path));
-
     file.close();
     return widget;
 }
