@@ -19,7 +19,6 @@
 
 #include <cassert>
 
-#include <QtCore/QDebug>
 #include <QtCore/QScopedPointer>
 
 #include <synthclone/util.h>
@@ -55,7 +54,7 @@ MenuManager::addMenuAction(synthclone::MenuAction *action,
     assert(action);
     assert(topMenu);
     MenuViewlet *menu = addSubMenus(topMenu, subMenus);
-    MenuActionViewlet *viewlet = mainView.createMenuActionViewlet(menu);
+    MenuActionViewlet *viewlet = mainView.createMenuActionViewlet(&mainView);
     viewlet->setDescription(action->getDescription());
     viewlet->setEnabled(action->isEnabled());
     viewlet->setText(action->getText());
@@ -192,7 +191,7 @@ MenuManager::addMenuSeparator(synthclone::MenuSeparator *separator,
     assert(topMenu);
     MenuViewlet *menu = addSubMenus(topMenu, subMenus);
     return addMenuItem(separator, subMenus, menu,
-                       mainView.createMenuSeparatorViewlet(menu));
+                       mainView.createMenuSeparatorViewlet(&mainView));
 }
 
 const synthclone::Registration &
@@ -314,6 +313,7 @@ MenuManager::cleanupMenus(MenuViewlet *menu, const MenuViewlet *topMenu)
 {
     while ((menu != topMenu) && (! menu->getChildCount())) {
         MenuViewlet *parentMenu = qobject_cast<MenuViewlet *>(menu->parent());
+        assert(parentMenu);
         parentMenu->remove(menu);
         mainView.destroyMenuViewlet(menu);
         menu = parentMenu;
@@ -378,6 +378,7 @@ MenuManager::getMenuViewlet(synthclone::Menu menu)
     default:
         assert(false);
     }
+    assert(viewlet);
     return viewlet;
 }
 
@@ -533,11 +534,6 @@ MenuManager::removeMenuItem(const synthclone::MenuItem *item,
     if (! topMenu->getChildCount()) {
         topMenu->setVisible(false);
     }
-
-    qDebug() << "removeMenuItem:";
-    qDebug() << "\titem: " << item;
-    qDebug() << "\tviewlet: " << viewlet;
-
     disconnect(item, SIGNAL(visibilityChanged(bool)),
                viewlet, SLOT(setVisible(bool)));
     menuItemDataMap.remove(item);
