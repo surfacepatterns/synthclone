@@ -33,7 +33,8 @@ class LV2Plugin: public QObject {
 public:
 
     explicit
-    LV2Plugin(const LilvPlugin *plugin, LilvWorld *world, QObject *parent=0);
+    LV2Plugin(const LilvPlugin *plugin, LilvWorld *world, LV2_URID_Map *map,
+              LV2_URID_Unmap *unmap, QObject *parent=0);
 
     ~LV2Plugin();
 
@@ -104,10 +105,12 @@ private:
     QStringList classList;
     QList<LV2Port *> controlInputPorts;
     QList<LV2Port *> controlOutputPorts;
+    LV2_URID_Map *map;
     QList<LV2Port *> ports;
     const LilvPlugin *plugin;
     QStringList requiredFeatures;
     QList<LV2UIData *> uiDataList;
+    LV2_URID_Unmap *unmap;
     LilvWorld *world;
 
 };

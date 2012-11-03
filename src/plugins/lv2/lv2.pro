@@ -13,6 +13,7 @@ HEADERS += channelmapdelegate.h \
     lv2port.h \
     lv2state.h \
     lv2uidata.h \
+    lv2urimap.h \
     lv2world.h \
     menuactiondata.h \
     menuactiondatacomparer.h \
@@ -32,6 +33,7 @@ SOURCES += channelmapdelegate.cpp \
     lv2port.cpp \
     lv2state.cpp \
     lv2uidata.cpp \
+    lv2urimap.cpp \
     lv2world.cpp \
     menuactiondata.cpp \
     menuactiondatacomparer.cpp \

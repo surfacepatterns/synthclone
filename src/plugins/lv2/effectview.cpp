@@ -19,7 +19,6 @@
 
 #include <cassert>
 
-#include <QtCore/QDebug>
 #include <QtGui/QHeaderView>
 #include <QtGui/QLayout>
 
@@ -136,27 +135,6 @@ EffectView::getSupportQuality(const QString &widgetTypeURI)
 }
 
 void
-EffectView::handleEmbeddedWidgetClose()
-{
-    qDebug() << "Embedded widget has been closed.";
-}
-
-void
-EffectView::handleEmbeddedWidgetError(QX11EmbedContainer::Error error)
-{
-    switch (error) {
-    case QX11EmbedContainer::InvalidWindowID:
-        qWarning() << "Embedded widget has invalid window identifier";
-        break;
-    case QX11EmbedContainer::Unknown:
-        qWarning() << "Unknown embed error occurred";
-        break;
-    default:
-        assert(false);
-    }
-}
-
-void
 EffectView::handlePortWriteRequest(uint32_t portIndex, uint32_t bufferSize,
                                    uint32_t protocol, void const *buffer)
 {
@@ -182,7 +160,6 @@ EffectView::resetInstanceData()
 {
     if (instance) {
         parametersTab->layout()->removeWidget(instanceUI);
-        delete instanceUI;
         instanceUI = 0;
         suil_instance_free(instance);
     }
@@ -269,17 +246,12 @@ EffectView::setURIData(const QString &widgetURI, const QString &widgetTypeURI,
     instanceUI = static_cast<QWidget *>
         (suil_instance_get_widget(instance));
     assert(instanceUI);
+    //instanceUI->setWindowFlags((instanceUI->windowFlags() &
+    //                            (~Qt::WindowType_Mask)) | Qt::Widget);
 
-    qDebug() << "Instance widget: " << instanceUI;
+    getRootWidget()->setVisible(true);
 
-    //connect(instanceUI, SIGNAL(clientClosed()),
-    //        SLOT(handleEmbeddedWidgetClose()));
-    //connect(instanceUI, SIGNAL(error(QX11EmbedContainer::Error)),
-    //        SLOT(handleEmbeddedWidgetError(QX11EmbedContainer::Error)));
-
-    instanceUI->setWindowFlags((instanceUI->windowFlags() &
-                                (~Qt::WindowType_Mask)) | Qt::Widget);
-    instanceUI->setParent(parametersTab);
-    parametersTab->layout()->addWidget(instanceUI);
-    parametersTab->layout()->activate();
+    QLayout *layout = parametersTab->layout();
+    layout->addWidget(instanceUI);
+    layout->activate();
 }

@@ -22,7 +22,7 @@
 #include "lv2plugin.h"
 
 LV2Plugin::LV2Plugin(const LilvPlugin *plugin, LilvWorld *world,
-                     QObject *parent):
+                     LV2_URID_Map *map, LV2_URID_Unmap *unmap, QObject *parent):
     QObject(parent)
 {
     assert(plugin);
@@ -79,7 +79,9 @@ LV2Plugin::LV2Plugin(const LilvPlugin *plugin, LilvWorld *world,
         }
     }
 
+    this->map = map;
     this->plugin = plugin;
+    this->unmap = unmap;
     this->world = world;
 }
 
@@ -211,7 +213,7 @@ LV2Plugin::getURI() const
 LV2Instance *
 LV2Plugin::instantiate(double sampleRate) const
 {
-    return new LV2Instance(plugin, world, sampleRate);
+    return new LV2Instance(plugin, world, map, unmap, sampleRate);
 }
 
 bool

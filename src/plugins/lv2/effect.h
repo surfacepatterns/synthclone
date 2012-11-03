@@ -30,7 +30,7 @@ class Effect: public synthclone::Effect {
 
 public:
 
-    Effect(const LV2Plugin &plugin, const LV2World &world,
+    Effect(const LV2Plugin &plugin, LV2World &world,
            synthclone::SampleRate sampleRate,
            synthclone::SampleChannelCount channels, QObject *parent=0);
 
@@ -183,7 +183,7 @@ private:
     QList<LV2Instance *> instances;
     const LV2Plugin &plugin;
     synthclone::SampleRate sampleRate;
-    const LV2World &world;
+    LV2World &world;
 
 };
 

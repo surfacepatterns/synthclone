@@ -22,6 +22,7 @@
 #include "lv2instance.h"
 
 LV2Instance::LV2Instance(const LilvPlugin *plugin, LilvWorld *world,
+                         LV2_URID_Map *map, LV2_URID_Unmap *unmap,
                          double sampleRate, QObject *parent):
     QObject(parent)
 {
@@ -29,7 +30,9 @@ LV2Instance::LV2Instance(const LilvPlugin *plugin, LilvWorld *world,
     if (! instance) {
         throw synthclone::Error("failed to create plugin instance");
     }
+    this->map = map;
     this->plugin = plugin;
+    this->unmap = unmap;
     this->world = world;
 }
 
@@ -59,7 +62,7 @@ LV2Instance::deactivate()
 LV2State *
 LV2Instance::getState() const
 {
-    return new LV2State(instance, plugin, world);
+    return new LV2State(instance, plugin, world, map, unmap);
 }
 
 QString

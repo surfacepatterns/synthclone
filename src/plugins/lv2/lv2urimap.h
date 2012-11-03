@@ -17,39 +17,47 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __LV2WORLD_H__
-#define __LV2WORLD_H__
+#ifndef __LV2URIMAP_H__
+#define __LV2URIMAP_H__
 
 #include <QtCore/QObject>
 
-#include "lv2plugin.h"
-#include "lv2urimap.h"
+#include <lv2/lv2plug.in/ns/ext/urid/urid.h>
 
-class LV2World: public QObject {
+class LV2URIMap: public QObject {
 
     Q_OBJECT
 
 public:
 
     explicit
-    LV2World(QObject *parent=0);
+    LV2URIMap(QObject *parent=0);
 
-    ~LV2World();
+    ~LV2URIMap();
 
-    LV2State *
-    createState(const QString &state);
+    LV2_URID
+    getId(const char *uri);
 
-    const LV2Plugin &
-    getPlugin(int index) const;
+    LV2_URID_Map *
+    getMap();
 
-    int
-    getPluginCount() const;
+    LV2_URID_Unmap *
+    getUnmap();
+
+    const char *
+    getURI(LV2_URID id) const;
 
 private:
 
-    QList<LV2Plugin *> pluginList;
-    LV2URIMap uriMap;
-    LilvWorld *world;
+    static LV2_URID
+    getId(LV2_URID_Map_Handle handle, const char *uri);
+
+    static const char *
+    getURI(LV2_URID_Unmap_Handle handle, LV2_URID id);
+
+    LV2_URID_Map uridMap;
+    LV2_URID_Unmap uridUnmap;
+    QList<QByteArray> uris;
 
 };
 

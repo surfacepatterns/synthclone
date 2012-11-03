@@ -28,8 +28,8 @@ class LV2Instance: public QObject {
 
 public:
 
-    LV2Instance(const LilvPlugin *plugin, LilvWorld *world, double sampleRate,
-                QObject *parent=0);
+    LV2Instance(const LilvPlugin *plugin, LilvWorld *world, LV2_URID_Map *map,
+                LV2_URID_Unmap *unmap, double sampleRate, QObject *parent=0);
 
     ~LV2Instance();
 
@@ -57,7 +57,9 @@ public:
 private:
 
     LilvInstance *instance;
+    LV2_URID_Map *map;
     const LilvPlugin *plugin;
+    LV2_URID_Unmap *unmap;
     LilvWorld *world;
 
 };

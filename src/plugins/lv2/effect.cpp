@@ -21,7 +21,7 @@
 
 #include "effect.h"
 
-Effect::Effect(const LV2Plugin &plugin, const LV2World &world,
+Effect::Effect(const LV2Plugin &plugin, LV2World &world,
                synthclone::SampleRate sampleRate,
                synthclone::SampleChannelCount channels, QObject *parent):
     synthclone::Effect(plugin.getName(), parent),
@@ -489,11 +489,11 @@ Effect::setInstanceCount(int count)
     int oldCount = instances.count();
     if (count != oldCount) {
         if (count < oldCount) {
-            for (int i = oldCount - 1; i >= count; i--) {
+            for (int i = oldCount; i > count; i--) {
                 removeInstance();
             }
         } else {
-            for (int i = count; i < oldCount; i++) {
+            for (int i = oldCount; i < count; i++) {
                 addInstance();
             }
         }
@@ -503,6 +503,7 @@ Effect::setInstanceCount(int count)
 void
 Effect::setSampleRate(synthclone::SampleRate sampleRate)
 {
+    assert(sampleRate);
     if (sampleRate != this->sampleRate) {
         LV2State *state = instances[0]->getState();
         QScopedPointer<LV2State> statePtr(state);

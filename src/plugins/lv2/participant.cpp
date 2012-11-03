@@ -94,13 +94,6 @@ Participant::addPluginActions()
         const LV2Plugin &plugin = world->getPlugin(i);
         QString s;
 
-        // If the plugin has been replaced, don't bother with it.
-        if (plugin.isReplaced()) {
-            s = tr("Plugin '%1' has been replaced").arg(plugin.getName());
-            qWarning() << s;
-            continue;
-        }
-
         // Make sure the plugin doesn't require any features that we don't
         // provide.
         int requiredFeatureCount = plugin.getRequiredFeatureCount();
@@ -133,10 +126,6 @@ Participant::addPluginActions()
                 QString typeURI = uiData.getTypeURI(k);
                 unsigned int uiQuality =
                     effectView.getSupportQuality(typeURI);
-
-                qDebug() << "UI URI:" << typeURI;
-                qDebug() << "Support quality:" << uiQuality;
-
                 if (! uiQuality) {
                     continue;
                 }

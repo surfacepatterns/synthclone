@@ -65,11 +65,7 @@
       <attribute name="title">
        <string>Effect Parameters</string>
       </attribute>
-      <layout class="QVBoxLayout" stretch="1">
-       <item>
-
-       </item>
-      </layout>
+      <layout class="QVBoxLayout" stretch="1"/>
      </widget>
     </widget>
    </item>

@@ -23,6 +23,8 @@
 
 #include "lv2world.h"
 
+// Class definition
+
 LV2World::LV2World(QObject *parent):
     QObject(parent)
 {
@@ -33,9 +35,11 @@ LV2World::LV2World(QObject *parent):
     lilv_world_load_all(world);
     const LilvPlugins *plugins = lilv_world_get_all_plugins(world);
     assert(plugins);
+    LV2_URID_Map *map = uriMap.getMap();
+    LV2_URID_Unmap *unmap = uriMap.getUnmap();
     LILV_FOREACH(plugins, iter, plugins) {
         pluginList.append(new LV2Plugin(lilv_plugins_get(plugins, iter), world,
-                                        this));
+                                        map, unmap, this));
     }
 }
 
@@ -48,9 +52,9 @@ LV2World::~LV2World()
 }
 
 LV2State *
-LV2World::createState(const QString &state) const
+LV2World::createState(const QString &state)
 {
-    return new LV2State(state, world);
+    return new LV2State(state, world, uriMap.getMap(), uriMap.getUnmap());
 }
 
 const LV2Plugin &

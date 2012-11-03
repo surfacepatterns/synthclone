@@ -23,6 +23,8 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 
+#include <lv2/lv2plug.in/ns/ext/urid/urid.h>
+
 #include <lilv/lilv.h>
 
 class LV2Instance;
@@ -35,10 +37,11 @@ class LV2State: public QObject {
 
 public:
 
-    LV2State(const QString &state, LilvWorld *world, QObject *parent=0);
+    LV2State(const QString &state, LilvWorld *world, LV2_URID_Map *map,
+             LV2_URID_Unmap *unmap, QObject *parent=0);
 
     LV2State(LilvInstance *instance, const LilvPlugin *plugin, LilvWorld *world,
-             QObject *parent=0);
+             LV2_URID_Map *map, LV2_URID_Unmap *unmap, QObject *parent=0);
 
     ~LV2State();
 
@@ -47,7 +50,9 @@ public:
 
 private:
 
+    LV2_URID_Map *map;
     LilvState *state;
+    LV2_URID_Unmap *unmap;
     LilvWorld *world;
 
 };
