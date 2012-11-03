@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 
-#if platform == PLATFORM_WIN32:
-#    prefix = "C:\\Program Files\\synthclone"
-
 from optparse import OptionParser
 from os.path import abspath, dirname, join
 from subprocess import call
@@ -62,9 +59,17 @@ def main():
     parser.add_option("--skip-jack", action="store", default=0,
                       dest="skipJACK", help="Don't build the JACK plugin",
                       type="int")
+
+    # Don't build the LV2 plugin by default until it's stable.
+    parser.add_option("--skip-lv2" action="store" default=1, dest="skipLV2",
+                      help-"Don't build the LV2 plugin", type="int")
+
     parser.add_option("--skip-portmedia", action="store", default=0,
                       dest="skipPortMedia",
                       help="Don't build the PortMedia plugin", type="int")
+    parser.add_option("--skip-reverser", action="store", default=0,
+                      dest="skipReverser",
+                      help="Don't build the reverser plugin")
     parser.add_option("--skip-sample-loader", action="store", default=0,
                       dest="skipSampleLoader",
                       help="Don't build the sample loader plugin", type="int")
@@ -177,8 +182,12 @@ def main():
         qmakeArgs.append("SKIP_HYDROGEN_PLUGIN=1")
     if options.skipJACK:
         qmakeArgs.append("SKIP_JACK_PLUGIN=1")
+    if options.skipLV2:
+        qmakeArgs.append("SKIP_LV2_PLUGIN=1")
     if options.skipPortMedia:
         qmakeArgs.append("SKIP_PORTMEDIA_PLUGIN=1")
+    if options.skipReverser:
+        qmakeArgs.append("SKIP_REVERSER_PLUGIN=1")
     if options.skipSampleLoader:
         qmakeArgs.append("SKIP_SAMPLE_LOADER_PLUGIN=1")
     if options.skipSFZ:
