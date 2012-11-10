@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/synthclone/plugins/renoise">
+        <file>targetview.ui</file>
+    </qresource>
+</RCC>

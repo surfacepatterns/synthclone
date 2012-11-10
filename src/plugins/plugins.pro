@@ -10,6 +10,9 @@ isEmpty(SKIP_LV2_PLUGIN) {
 isEmpty(SKIP_PORTMEDIA_PLUGIN) {
     SUBDIRS += portmedia
 }
+isEmpty(SKIP_RENOISE_PLUGIN) {
+    SUBDIRS += renoise
+}
 isEmpty(SKIP_REVERSER_PLUGIN) {
     SUBDIRS += reverser
 }
