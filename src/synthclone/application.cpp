@@ -17,6 +17,8 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
+#include <stdexcept>
+
 #include <synthclone/error.h>
 
 #include "application.h"
@@ -39,6 +41,8 @@ Application::notify(QObject *receiver, QEvent *event)
         return QApplication::notify(receiver, event);
     } catch (synthclone::Error &e) {
         emit eventError(e.getMessage());
+    } catch (std::exception &e) {
+        emit eventError(e.what());
     }
     return false;
 }
