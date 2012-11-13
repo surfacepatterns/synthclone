@@ -1588,6 +1588,12 @@ Controller::handleSessionStateChange(synthclone::SessionState state,
         }
         break;
     case synthclone::SESSIONSTATE_MODIFIED:
+        if (lastSessionState == synthclone::SESSIONSTATE_SAVING) {
+            // This transition can happen if an error occurs while trying to
+            // save the session.
+            progressView.setCloseEnabled(true);
+            progressView.setVisible(false);
+        }
         viewlet->setSaveEnabled(true);
         enabled = true;
         break;

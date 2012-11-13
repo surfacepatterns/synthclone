@@ -1570,142 +1570,159 @@ void
 Session::save(const QDir &directory)
 {
     initializeDirectory(directory);
+    synthclone::SessionState oldState = state;
     state = synthclone::SESSIONSTATE_SAVING;
     emit stateChanged(state, &directory);
+    try {
 
-    QFile file;
-    QXmlStreamWriter writer;
-    initializeWriter(writer, file, directory);
+        QFile file;
+        QXmlStreamWriter writer;
+        initializeWriter(writer, file, directory);
 
-    QString message;
-    float progress;
-    emit progressChanged(0.0, tr("Saving session ..."));
+        QString message;
+        float progress;
+        emit progressChanged(0.0, tr("Saving session ..."));
 
-    if (this->directory) {
-        delete this->directory;
+        QScopedPointer<QDir> oldDirectoryPtr(this->directory);
+        this->directory = new QDir(directory);
+        try {
+            QDir samplesDirectory = getSamplesDirectory(directory);
+            sessionSampleData.setSampleDirectory(&samplesDirectory);
+
+            writer.writeStartDocument();
+            writer.writeStartElement("synthclone-session");
+            writer.writeAttribute("major-version",
+                                  QString::number(SYNTHCLONE_MAJOR_VERSION));
+            writer.writeAttribute("minor-version",
+                                  QString::number(SYNTHCLONE_MINOR_VERSION));
+            writer.writeAttribute("revision",
+                                  QString::number(SYNTHCLONE_REVISION));
+            writer.writeAttribute
+                ("sample-channel-count",
+                 QString::number(sessionSampleData.getSampleChannelCount()));
+            writer.writeAttribute
+                ("sample-rate",
+                 QString::number(sessionSampleData.getSampleRate()));
+
+            // Property visibility flags
+            writer.writeAttribute("aftertouch-property-visible",
+                                  aftertouchPropertyVisible ? "true" : "false");
+            writer.writeAttribute("channel-pressure-property-visible",
+                                  channelPressurePropertyVisible ? "true" :
+                                  "false");
+            writer.writeAttribute("channel-property-visible",
+                                  channelPropertyVisible ? "true" : "false");
+            writer.writeAttribute("dry-sample-property-visible",
+                                  drySamplePropertyVisible ? "true" : "false");
+            writer.writeAttribute("note-property-visible",
+                                  notePropertyVisible ? "true" : "false");
+            writer.writeAttribute("release-time-property-visible",
+                                  releaseTimePropertyVisible ? "true" :
+                                  "false");
+            writer.writeAttribute("sample-time-property-visible",
+                                  sampleTimePropertyVisible ? "true" : "false");
+            writer.writeAttribute("status-property-visible",
+                                  statusPropertyVisible ? "true" : "false");
+            writer.writeAttribute("velocity-property-visible",
+                                  velocityPropertyVisible ? "true" : "false");
+            writer.writeAttribute("wet-sample-property-visible",
+                                  wetSamplePropertyVisible ? "true" : "false");
+            QString controlPropertyTemplate = "control-property-%1-visible";
+            for (synthclone::MIDIData i = 0; i < 0x80; i++) {
+                writer.writeAttribute(controlPropertyTemplate.arg(i),
+                                      controlPropertiesVisible[i] ? "true" :
+                                      "false");
+            }
+
+            // Zones
+            emit progressChanged(0.0, tr("Saving zones ..."));
+            writer.writeStartElement("zones");
+            int count = zones.count();
+            int i;
+            for (i = 0; i < count; i++) {
+                message = tr("Saving zone %1 of %2 ...").arg(i + 1).arg(count);
+                progress = (static_cast<float>(i) / count) * 0.6;
+                emit progressChanged(progress, message);
+                
+                Zone *zone = qobject_cast<Zone *>(zones[i]);
+                writeZone(writer, zone, &samplesDirectory, this);
+            }
+            writer.writeEndElement();
+
+            // Participants
+            emit progressChanged(0.6, "Saving participants ...");
+            writer.writeStartElement("participants");
+            writeXMLParticipantList(writer, 0);
+            writer.writeEndElement();
+
+            const synthclone::Participant *participant;
+
+            // Sampler
+            writer.writeStartElement("sampler");
+            if (sampler) {
+                emit progressChanged(0.7, "Saving sampler ...");
+                participant =
+                    writeXMLParticipantId(writer, samplerData.participant);
+                writeXMLState(writer, participant->getState(sampler));
+            }
+            writer.writeEndElement();
+
+            // Effects
+            emit progressChanged(0.8, tr("Saving effects ..."));
+            writer.writeStartElement("effects");
+            count = effects.count();
+            for (i = 0; i < count; i++) {
+
+                message = tr("Saving effect %1 of %2 ...").arg(i + 1).
+                    arg(count);
+                progress = ((static_cast<float>(i) / count) * 0.1) + 0.8;
+                emit progressChanged(progress, message);
+
+                const synthclone::Effect *effect = effects[i];
+                writer.writeStartElement("effect");
+                participant = writeXMLParticipantId
+                    (writer, effectDataMap.value(effect)->participant);
+                writeXMLState(writer, participant->getState(effect));
+                writer.writeEndElement();
+            }
+            writer.writeEndElement();
+
+            // Targets
+            emit progressChanged(0.9, tr("Saving targets ..."));
+            writer.writeStartElement("targets");
+            count = targets.count();
+            for (i = 0; i < count; i++) {
+
+                message = tr("Saving target %1 of %2 ...").arg(i + 1).
+                    arg(count);
+                progress = ((static_cast<float>(i) / count) * 0.1) + 0.9;
+                emit progressChanged(progress, message);
+
+                const synthclone::Target *target = targets[i];
+                writer.writeStartElement("target");
+                participant = writeXMLParticipantId
+                    (writer, targetDataMap.value(target)->participant);
+                writeXMLState(writer, participant->getState(target));
+                writer.writeEndElement();
+            }
+            writer.writeEndElement();
+
+            // End 'synthclone-session'
+            writer.writeEndElement();
+
+            writer.writeEndDocument();
+
+            file.close();
+        } catch (...) {
+            delete this->directory;
+            this->directory = oldDirectoryPtr.take();
+            throw;
+        }
+    } catch (...) {
+        state = oldState;
+        emit stateChanged(state, this->directory);
+        throw;
     }
-    this->directory = new QDir(directory);
-    QDir samplesDirectory = getSamplesDirectory(directory);
-    sessionSampleData.setSampleDirectory(&samplesDirectory);
-
-    writer.writeStartDocument();
-    writer.writeStartElement("synthclone-session");
-    writer.writeAttribute("major-version",
-                          QString::number(SYNTHCLONE_MAJOR_VERSION));
-    writer.writeAttribute("minor-version",
-                          QString::number(SYNTHCLONE_MINOR_VERSION));
-    writer.writeAttribute("revision", QString::number(SYNTHCLONE_REVISION));
-    writer.writeAttribute
-        ("sample-channel-count",
-         QString::number(sessionSampleData.getSampleChannelCount()));
-    writer.writeAttribute
-        ("sample-rate", QString::number(sessionSampleData.getSampleRate()));
-
-    // Property visibility flags
-    writer.writeAttribute("aftertouch-property-visible",
-                          aftertouchPropertyVisible ? "true" : "false");
-    writer.writeAttribute("channel-pressure-property-visible",
-                          channelPressurePropertyVisible ? "true" : "false");
-    writer.writeAttribute("channel-property-visible",
-                          channelPropertyVisible ? "true" : "false");
-    writer.writeAttribute("dry-sample-property-visible",
-                          drySamplePropertyVisible ? "true" : "false");
-    writer.writeAttribute("note-property-visible",
-                          notePropertyVisible ? "true" : "false");
-    writer.writeAttribute("release-time-property-visible",
-                          releaseTimePropertyVisible ? "true" : "false");
-    writer.writeAttribute("sample-time-property-visible",
-                          sampleTimePropertyVisible ? "true" : "false");
-    writer.writeAttribute("status-property-visible",
-                          statusPropertyVisible ? "true" : "false");
-    writer.writeAttribute("velocity-property-visible",
-                          velocityPropertyVisible ? "true" : "false");
-    writer.writeAttribute("wet-sample-property-visible",
-                          wetSamplePropertyVisible ? "true" : "false");
-    QString controlPropertyTemplate = "control-property-%1-visible";
-    for (synthclone::MIDIData i = 0; i < 0x80; i++) {
-        writer.writeAttribute(controlPropertyTemplate.arg(i),
-                              controlPropertiesVisible[i] ? "true" : "false");
-    }
-
-    // Zones
-    emit progressChanged(0.0, tr("Saving zones ..."));
-    writer.writeStartElement("zones");
-    int count = zones.count();
-    int i;
-    for (i = 0; i < count; i++) {
-        message = tr("Saving zone %1 of %2 ...").arg(i + 1).arg(count);
-        progress = (static_cast<float>(i) / count) * 0.6;
-        emit progressChanged(progress, message);
-
-        Zone *zone = qobject_cast<Zone *>(zones[i]);
-        writeZone(writer, zone, &samplesDirectory, this);
-    }
-    writer.writeEndElement();
-
-    // Participants
-    emit progressChanged(0.6, "Saving participants ...");
-    writer.writeStartElement("participants");
-    writeXMLParticipantList(writer, 0);
-    writer.writeEndElement();
-
-    const synthclone::Participant *participant;
-
-    // Sampler
-    writer.writeStartElement("sampler");
-    if (sampler) {
-        emit progressChanged(0.7, "Saving sampler ...");
-        participant = writeXMLParticipantId(writer, samplerData.participant);
-        writeXMLState(writer, participant->getState(sampler));
-    }
-    writer.writeEndElement();
-
-    // Effects
-    emit progressChanged(0.8, tr("Saving effects ..."));
-    writer.writeStartElement("effects");
-    count = effects.count();
-    for (i = 0; i < count; i++) {
-
-        message = tr("Saving effect %1 of %2 ...").arg(i + 1).arg(count);
-        progress = ((static_cast<float>(i) / count) * 0.1) + 0.8;
-        emit progressChanged(progress, message);
-
-        const synthclone::Effect *effect = effects[i];
-        writer.writeStartElement("effect");
-        participant =
-            writeXMLParticipantId(writer,
-                                  effectDataMap.value(effect)->participant);
-        writeXMLState(writer, participant->getState(effect));
-        writer.writeEndElement();
-    }
-    writer.writeEndElement();
-
-    // Targets
-    emit progressChanged(0.9, tr("Saving targets ..."));
-    writer.writeStartElement("targets");
-    count = targets.count();
-    for (i = 0; i < count; i++) {
-
-        message = tr("Saving target %1 of %2 ...").arg(i + 1).arg(count);
-        progress = ((static_cast<float>(i) / count) * 0.1) + 0.9;
-        emit progressChanged(progress, message);
-
-        const synthclone::Target *target = targets[i];
-        writer.writeStartElement("target");
-        participant =
-            writeXMLParticipantId(writer,
-                                  targetDataMap.value(target)->participant);
-        writeXMLState(writer, participant->getState(target));
-        writer.writeEndElement();
-    }
-    writer.writeEndElement();
-
-    // End 'synthclone-session'
-    writer.writeEndElement();
-
-    writer.writeEndDocument();
-
-    file.close();
 
     emit progressChanged(1.0, tr("Session saved."));
 
