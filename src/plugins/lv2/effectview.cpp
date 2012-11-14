@@ -227,31 +227,37 @@ EffectView::setURIData(const QString &widgetURI, const QString &widgetTypeURI,
                        const QString &bundlePath)
 {
     resetInstanceData();
+
+    // Create SUIL instance.
     QByteArray binaryPathBytes = binaryPath.toAscii();
     QByteArray bundlePathBytes = bundlePath.toAscii();
     QByteArray pluginURIBytes = pluginURI.toAscii();
     QByteArray widgetTypeURIBytes = widgetTypeURI.toAscii();
     QByteArray widgetURIBytes = widgetURI.toAscii();
+
+    LV2_Feature parentFeature;
+    parentFeature.data = parametersTab;
+    parentFeature.URI = LV2_UI__parent;
+    LV2_Feature *featurePtrs[2];
+    featurePtrs[0] = &parentFeature;
+    featurePtrs[1] = 0;
     instance = suil_instance_new(host, this, LV2_UI__Qt4UI,
                                  pluginURIBytes.constData(),
                                  widgetURIBytes.constData(),
                                  widgetTypeURIBytes.constData(),
                                  bundlePathBytes.constData(),
-                                 binaryPathBytes.constData(), 0);
+                                 binaryPathBytes.constData(), featurePtrs);
     if (! instance) {
         QString message = tr("Failed to create LV2 UI for plugin '%1'").
             arg(pluginURI);
         throw synthclone::Error(message);
     }
+
+    // Get SUIL widget for instance.
     instanceUI = static_cast<QWidget *>
         (suil_instance_get_widget(instance));
     assert(instanceUI);
-    //instanceUI->setWindowFlags((instanceUI->windowFlags() &
-    //                            (~Qt::WindowType_Mask)) | Qt::Widget);
-
-    getRootWidget()->setVisible(true);
-
-    QLayout *layout = parametersTab->layout();
-    layout->addWidget(instanceUI);
-    layout->activate();
+    instanceUI->setWindowFlags((instanceUI->windowFlags() &
+                                (~Qt::WindowType_Mask)) | Qt::Widget);
+    parametersTab->layout()->addWidget(instanceUI);
 }

@@ -20,8 +20,8 @@
 #ifndef __LV2STATE_H__
 #define __LV2STATE_H__
 
+#include <QtCore/QByteArray>
 #include <QtCore/QObject>
-#include <QtCore/QString>
 
 #include <lv2/lv2plug.in/ns/ext/urid/urid.h>
 
@@ -37,16 +37,18 @@ class LV2State: public QObject {
 
 public:
 
-    LV2State(const QString &state, LilvWorld *world, LV2_URID_Map *map,
+    LV2State(const QByteArray &state, LilvWorld *world, LV2_URID_Map *map,
              LV2_URID_Unmap *unmap, QObject *parent=0);
 
     LV2State(LilvInstance *instance, const LilvPlugin *plugin, LilvWorld *world,
-             LV2_URID_Map *map, LV2_URID_Unmap *unmap, QObject *parent=0);
+             LV2_URID_Map *map, LV2_URID_Unmap *unmap,
+             LilvGetPortValueFunc getPortValue=0, void *userData=0,
+             QObject *parent=0);
 
     ~LV2State();
 
-    QString
-    getString() const;
+    QByteArray
+    getBytes() const;
 
 private:
 

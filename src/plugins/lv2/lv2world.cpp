@@ -52,7 +52,7 @@ LV2World::~LV2World()
 }
 
 LV2State *
-LV2World::createState(const QString &state)
+LV2World::createState(const QByteArray &state)
 {
     return new LV2State(state, world, uriMap.getMap(), uriMap.getUnmap());
 }

@@ -17,6 +17,8 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
+#include <lv2/lv2plug.in/ns/ext/state/state.h>
+
 #include <synthclone/error.h>
 
 #include "lv2instance.h"
@@ -60,9 +62,10 @@ LV2Instance::deactivate()
 }
 
 LV2State *
-LV2Instance::getState() const
+LV2Instance::getState(LilvGetPortValueFunc getPortValue, void *userData) const
 {
-    return new LV2State(instance, plugin, world, map, unmap);
+    return new LV2State(instance, plugin, world, map, unmap, getPortValue,
+                        userData);
 }
 
 QString
@@ -78,7 +81,9 @@ LV2Instance::run(uint32_t sampleCount)
 }
 
 void
-LV2Instance::setState(const LV2State *state)
+LV2Instance::setState(const LV2State *state, LilvSetPortValueFunc setPortValue,
+                      void *userData)
 {
-    lilv_state_restore(state->state, instance, 0, 0, 0, 0);
+    lilv_state_restore(state->state, instance, setPortValue, userData,
+                       LV2_STATE_IS_POD | LV2_STATE_IS_PORTABLE, 0);
 }

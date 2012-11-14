@@ -19,7 +19,27 @@
 
 #include <cassert>
 
+#include <QtCore/QDebug>
+
 #include "effect.h"
+
+// Static functions
+
+const void *
+Effect::getPortValue(const char *symbol, void *effect, uint32_t *size,
+                     uint32_t *type)
+{
+    return static_cast<Effect *>(effect)->getPortValue(symbol, size, type);
+}
+
+void
+Effect::setPortValue(const char *symbol, void *effect, const void *value,
+                     uint32_t size, uint32_t type)
+{
+    static_cast<Effect *>(effect)->setPortValue(symbol, value, size, type);
+}
+
+// Class definition
 
 Effect::Effect(const LV2Plugin &plugin, LV2World &world,
                synthclone::SampleRate sampleRate,
@@ -256,12 +276,47 @@ Effect::getPlugin() const
     return plugin;
 }
 
-QString
+const void *
+Effect::getPortValue(const char *symbol, uint32_t *size, uint32_t *type)
+{
+    const void *result;
+    *type = 0;
+
+    // Check input ports
+    QString portSymbol(symbol);
+    for (int i = getControlInputPortCount() - 1; i >= 0; i--) {
+        if (portSymbol == getControlInputPortSymbol(i)) {
+            result = controlInputPortValues + i;
+            goto foundValue;
+        }
+    }
+
+    // Check output ports
+    for (int i = getControlOutputPortCount() - 1; i >= 0; i--) {
+        if (portSymbol == getControlOutputPortSymbol(i)) {
+            result = controlOutputPortValues + i;
+            goto foundValue;
+        }
+    }
+
+    // Uh oh ...
+    qWarning() << tr("Effect::getPortValue - symbol '%1' is not associated "
+                     "with a control port").arg(portSymbol);
+    *size = 0;
+    return 0;
+
+ foundValue:
+    *size = sizeof(float);
+    return result;
+}
+
+QByteArray
 Effect::getState() const
 {
-    LV2State *state = instances[0]->getState();
+    LV2State *state = instances[0]->getState(Effect::getPortValue,
+                                             const_cast<Effect *>(this));
     QScopedPointer<LV2State> statePtr(state);
-    return state->getString();
+    return state->getBytes();
 }
 
 void
@@ -501,6 +556,42 @@ Effect::setInstanceCount(int count)
 }
 
 void
+Effect::setPortValue(const char *symbol, const void *value, uint32_t size,
+                     uint32_t type)
+{
+    // Make sure size and type are values we expect.
+    if (type) {
+        qWarning() << tr("Effect::setPortValue - don't know how to deal with "
+                         "type %1 - skipping port").arg(type);
+        return;
+    }
+    if (size != sizeof(float)) {
+        qWarning() << tr("Effect::setPortValue - type is float, but size is %1 "
+                         "- ignoring size").arg(size);
+    }
+
+    // Check input ports
+    QString portSymbol(symbol);
+    for (int i = getControlInputPortCount() - 1; i >= 0; i--) {
+        if (portSymbol == getControlInputPortSymbol(i)) {
+            setControlInputPortValue(i, *(static_cast<const float *>(value)));
+            return;
+        }
+    }
+
+    // Check output ports
+    for (int i = getControlOutputPortCount() - 1; i >= 0; i--) {
+        if (portSymbol == getControlOutputPortSymbol(i)) {
+            setControlOutputPortValue(i, *(static_cast<const float *>(value)));
+            return;
+        }
+    }
+
+    qWarning() << tr("Effect::setPortValue - symbol '%1' is not associated "
+                     "with a control port").arg(portSymbol);
+}
+
+void
 Effect::setSampleRate(synthclone::SampleRate sampleRate)
 {
     assert(sampleRate);
@@ -519,11 +610,14 @@ Effect::setSampleRate(synthclone::SampleRate sampleRate)
 }
 
 void
-Effect::setState(const QString &stateStr)
+Effect::setState(const QByteArray &stateBytes)
 {
-    LV2State *state = world.createState(stateStr);
+    int count = instances.count();
+    assert(count);
+    LV2State *state = world.createState(stateBytes);
     QScopedPointer<LV2State> statePtr(state);
-    for (int i = instances.count() - 1; i >= 0; i--) {
+    instances[0]->setState(state, Effect::setPortValue, this);
+    for (int i = instances.count() - 1; i > 0; i--) {
         instances[i]->setState(state);
     }
 }

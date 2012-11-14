@@ -37,7 +37,7 @@ public:
     ~LV2World();
 
     LV2State *
-    createState(const QString &state);
+    createState(const QByteArray &state);
 
     const LV2Plugin &
     getPlugin(int index) const;

@@ -43,7 +43,7 @@ public:
     deactivate();
 
     LV2State *
-    getState() const;
+    getState(LilvGetPortValueFunc getPortValue=0, void *userData=0) const;
 
     QString
     getURI() const;
@@ -52,7 +52,8 @@ public:
     run(uint32_t sampleCount);
 
     void
-    setState(const LV2State *state);
+    setState(const LV2State *state, LilvSetPortValueFunc setPortValue=0,
+             void *userData=0);
 
 private:
 

@@ -84,7 +84,7 @@ public:
     const LV2Plugin &
     getPlugin() const;
 
-    QString
+    QByteArray
     getState() const;
 
     void
@@ -118,7 +118,7 @@ public slots:
     setSampleRate(synthclone::SampleRate sampleRate);
 
     void
-    setState(const QString &stateStr);
+    setState(const QByteArray &stateBytes);
 
 signals:
 
@@ -159,11 +159,22 @@ signals:
 
 private:
 
+    static const void *
+    getPortValue(const char *symbol, void *effect, uint32_t *size,
+                 uint32_t *type);
+
+    static void
+    setPortValue(const char *symbol, void *effect, const void *value,
+                 uint32_t size, uint32_t type);
+
     void
     addInstance();
 
     float
     getDefaultControlPortValue(const LV2Port &port) const;
+
+    const void *
+    getPortValue(const char *symbol, uint32_t *size, uint32_t *type);
 
     void
     removeInstance();
@@ -172,6 +183,10 @@ private:
     runInstances(synthclone::SampleInputStream &inputStream,
                  synthclone::SampleOutputStream &outputStream,
                  float *sampleStreamData, synthclone::SampleFrameCount frames);
+
+    void
+    setPortValue(const char *symbol, const void *value, uint32_t size,
+                 uint32_t type);
 
     int *audioInputChannelIndices;
     QList<float *> audioInputPortBuffers;

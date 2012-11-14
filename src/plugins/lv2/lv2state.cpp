@@ -19,10 +19,18 @@
 
 #include <cassert>
 
+#include <lv2/lv2plug.in/ns/ext/state/state.h>
+
+#include <QtCore/QDebug>
+
 #include "lv2state.h"
+
+static const char *STATE_URI =
+    "http://synthclone.googlecode.com/plugins/lv2/state";
 
 LV2State::LV2State(LilvInstance *instance, const LilvPlugin *plugin,
                    LilvWorld *world, LV2_URID_Map *map, LV2_URID_Unmap *unmap,
+                   LilvGetPortValueFunc getPortValue, void *userData,
                    QObject *parent):
     QObject(parent)
 {
@@ -31,25 +39,27 @@ LV2State::LV2State(LilvInstance *instance, const LilvPlugin *plugin,
     assert(plugin);
     assert(unmap);
     assert(world);
-    state = lilv_state_new_from_instance(plugin, instance, map, 0, 0, 0, 0, 0,
-                                         0, 0, 0);
+
+    state = lilv_state_new_from_instance(plugin, instance, map, 0, 0, 0, 0,
+                                         getPortValue, userData,
+                                         LV2_STATE_IS_POD |
+                                         LV2_STATE_IS_PORTABLE, 0);
     assert(state);
+
     this->map = map;
     this->unmap = unmap;
     this->world = world;
 }
 
-LV2State::LV2State(const QString &state, LilvWorld *world, LV2_URID_Map *map,
+LV2State::LV2State(const QByteArray &state, LilvWorld *world, LV2_URID_Map *map,
                    LV2_URID_Unmap *unmap, QObject *parent):
     QObject(parent)
 {
     assert(map);
     assert(unmap);
     assert(world);
-    QByteArray stateBytes = state.toAscii();
     this->map = map;
-    this->state = lilv_state_new_from_string(world, map,
-                                             stateBytes.constData());
+    this->state = lilv_state_new_from_string(world, map, state.constData());
     this->unmap = unmap;
     this->world = world;
 }
@@ -59,8 +69,15 @@ LV2State::~LV2State()
     lilv_state_free(state);
 }
 
-QString
-LV2State::getString() const
+QByteArray
+LV2State::getBytes() const
 {
-    return QString(lilv_state_to_string(world, map, unmap, state, 0, 0));
+    qDebug() << "lilv_state_to_string";
+
+    QByteArray bytes(lilv_state_to_string(world, map, unmap, state, STATE_URI,
+                                          0));
+
+    qDebug() << "/lilv_state_to_string";
+
+    return bytes;
 }

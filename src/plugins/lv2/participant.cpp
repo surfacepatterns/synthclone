@@ -536,6 +536,7 @@ Participant::removePluginActions()
 void
 Participant::restoreEffect(const QVariant &state)
 {
+    // Make sure we have valid plugin data
     const QVariantMap map = state.toMap();
     QVariant uriData = map.value("uri");
     if (! uriData.isValid()) {
@@ -549,10 +550,13 @@ Participant::restoreEffect(const QVariant &state)
                              arg(uri));
         return;
     }
+
+    // Create effect
     Effect *effect = addEffect(plugin);
     effect->setName(map.value("name", plugin->getName()).toString());
-    effect->setState(map.value("state", "").toString());
+    effect->setState(map.value("state", "").toByteArray());
 
+    // Set instance count
     bool success;
     QVariant value = map.value("instances", 0);
     int instanceCount = value.toInt(&success);
@@ -566,6 +570,7 @@ Participant::restoreEffect(const QVariant &state)
     }
     effect->setInstanceCount(instanceCount);
 
+    // Input channel map
     QVariantList channelMap = map.value("inputChannels", "").toList();
     synthclone::SampleChannelCount channels = context->getSampleChannelCount();
     int count = channelMap.count();
@@ -604,6 +609,7 @@ Participant::restoreEffect(const QVariant &state)
     }
 
  loadOutputChannelMap:
+    // Output channel map
     channelMap = map.value("outputChannels", "").toList();
     count = channelMap.count();
     if (! count) {
