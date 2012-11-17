@@ -45,6 +45,9 @@ public:
     int
     getPluginCount() const;
 
+    LV2URIMap &
+    getURIMap();
+
 private:
 
     QList<LV2Plugin *> pluginList;

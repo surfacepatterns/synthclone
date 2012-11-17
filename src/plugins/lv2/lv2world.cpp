@@ -69,3 +69,9 @@ LV2World::getPluginCount() const
 {
     return pluginList.count();
 }
+
+LV2URIMap &
+LV2World::getURIMap()
+{
+    return uriMap;
+}

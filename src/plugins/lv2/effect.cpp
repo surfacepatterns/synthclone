@@ -19,6 +19,8 @@
 
 #include <cassert>
 
+#include <lv2/lv2plug.in/ns/ext/atom/atom.h>
+
 #include <QtCore/QDebug>
 
 #include "effect.h"
@@ -280,7 +282,6 @@ const void *
 Effect::getPortValue(const char *symbol, uint32_t *size, uint32_t *type)
 {
     const void *result;
-    *type = 0;
 
     // Check input ports
     QString portSymbol(symbol);
@@ -307,6 +308,7 @@ Effect::getPortValue(const char *symbol, uint32_t *size, uint32_t *type)
 
  foundValue:
     *size = sizeof(float);
+    *type = world.getURIMap().getId(LV2_ATOM__Float);
     return result;
 }
 
@@ -559,15 +561,22 @@ void
 Effect::setPortValue(const char *symbol, const void *value, uint32_t size,
                      uint32_t type)
 {
-    // Make sure size and type are values we expect.
-    if (type) {
-        qWarning() << tr("Effect::setPortValue - don't know how to deal with "
-                         "type %1 - skipping port").arg(type);
+    // Make sure we can handle the request.
+    const char *typeURI = world.getURIMap().getURI(type);
+    if (! typeURI) {
+        qWarning() << tr("Effect::setPortValue - unmapped type '%1' requested "
+                         "for port '%2'").arg(type).arg(symbol);
+        return;
+    }
+    if (strcmp(typeURI, LV2_ATOM__Float)) {
+        qWarning() << tr("Effect::setPortValue - can't handle type '%1'").
+            arg(typeURI);
         return;
     }
     if (size != sizeof(float)) {
-        qWarning() << tr("Effect::setPortValue - type is float, but size is %1 "
-                         "- ignoring size").arg(size);
+        qWarning() << tr("Effect::setPortValue - type is float, size is %1").
+            arg(size);
+        return;
     }
 
     // Check input ports
