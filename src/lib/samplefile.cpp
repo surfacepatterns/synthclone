@@ -45,6 +45,7 @@ SampleFile::SampleFile(const QString &path, QObject *parent):
     closed = false;
     framesWritten = false;
     this->path = path;
+    totalFramesValid = false;
     writeMode = false;
 }
 
@@ -123,9 +124,22 @@ SampleFile::getEndianType() const
 }
 
 synthclone::SampleFrameCount
-SampleFile::getFrames() const
+SampleFile::getFrames()
 {
-    return static_cast<SampleFrameCount>(info.frames);
+    // Erik de Castro Lopo reported on LAD that "The value in sf_info.frames can
+    // be incorrect (some validation and correction is done, but it is not
+    // foolproof)."  So, we can't directly use info.frames.
+    //
+    // This implementation is inefficient.  We should really try to minimize the
+    // amount of times we call this function.
+    if (! totalFramesValid) {
+        synthclone::SampleFrameCount currentFrame =
+            seek(0, SampleStream::OFFSET_CURRENT);
+        totalFrames = seek(0, SampleStream::OFFSET_END);
+        seek(currentFrame, SampleStream::OFFSET_START);
+        totalFramesValid = true;
+    }
+    return totalFrames;
 }
 
 synthclone::SampleRate
@@ -446,6 +460,7 @@ SampleFile::initializeWriteMode(const QString &path, SampleRate sampleRate,
     closed = false;
     framesWritten = false;
     this->path = path;
+    totalFramesValid = false;
     writeMode = true;
 }
 
@@ -514,4 +529,5 @@ SampleFile::write(const float *buffer, SampleFrameCount frames)
         throw synthclone::Error(message);
     }
     framesWritten = true;
+    totalFramesValid = false;
 }

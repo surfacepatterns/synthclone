@@ -55,7 +55,7 @@ namespace synthclone {
         getEndianType() const;
 
         SampleFrameCount
-        getFrames() const;
+        getFrames();
 
         SampleRate
         getSampleRate() const;
@@ -92,6 +92,8 @@ namespace synthclone {
         SNDFILE *handle;
         SF_INFO info;
         QString path;
+        synthclone::SampleFrameCount totalFrames;
+        bool totalFramesValid;
         bool writeMode;
 
     };

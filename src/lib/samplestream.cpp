@@ -57,7 +57,7 @@ SampleStream::getEndianType() const
 }
 
 synthclone::SampleFrameCount
-SampleStream::getFrames() const
+SampleStream::getFrames()
 {
     CONFIRM(file, tr("file is set to NULL"));
     return file->getFrames();

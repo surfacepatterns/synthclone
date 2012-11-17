@@ -170,7 +170,7 @@ namespace synthclone {
          */
 
         SampleFrameCount
-        getFrames() const;
+        getFrames();
 
         /**
          * Gets the sample rate for this sample.
