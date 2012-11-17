@@ -459,6 +459,8 @@ Controller::Controller(Application &application, QObject *parent):
     connect(QApplication::clipboard(), SIGNAL(dataChanged()),
             SLOT(handleClipboardDataChange()));
 
+    lastSessionState = synthclone::SESSIONSTATE_CURRENT;
+
     // Load plugins
     QStringList scannedPaths;
     loadPlugins(getCorePluginDirectory(), scannedPaths);
@@ -466,8 +468,6 @@ Controller::Controller(Application &application, QObject *parent):
     for (int i = paths.count() - 1; i >= 0; i--) {
         loadPlugins(QDir(paths[i]), scannedPaths);
     }
-
-    lastSessionState = synthclone::SESSIONSTATE_CURRENT;
 }
 
 Controller::~Controller()
