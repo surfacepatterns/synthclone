@@ -357,7 +357,7 @@ Effect::process(const synthclone::Zone &/*zone*/,
         runInstances(inputStream, outputStream, sampleStreamData,
                      totalFrames - framesProcessed);
     }
-    emit progressChanged(100.0);
+    emit progressChanged(1.0);
 
     emit statusChanged(tr("Deactivating LV2 instances ..."));
     for (int i = 0; i < instanceCount; i++) {
