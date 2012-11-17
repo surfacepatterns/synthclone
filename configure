@@ -67,6 +67,9 @@ def main():
     parser.add_option("--skip-portmedia", action="store", default=0,
                       dest="skipPortMedia",
                       help="Don't build the PortMedia plugin", type="int")
+    parser.add_option("--skip-renoise", action="store", default=0,
+                      dest="skipRenoise", help="Don't build the Renoise plugin",
+                      type="int")
     parser.add_option("--skip-reverser", action="store", default=0,
                       dest="skipReverser",
                       help="Don't build the reverser plugin")
@@ -186,6 +189,8 @@ def main():
         qmakeArgs.append("SKIP_LV2_PLUGIN=1")
     if options.skipPortMedia:
         qmakeArgs.append("SKIP_PORTMEDIA_PLUGIN=1")
+    if options.skipRenoise:
+        qmakeArgs.append("SKIP_RENOISE=1")
     if options.skipReverser:
         qmakeArgs.append("SKIP_REVERSER_PLUGIN=1")
     if options.skipSampleLoader:
