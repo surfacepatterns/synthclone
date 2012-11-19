@@ -17,20 +17,35 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __TYPES_H__
-#define __TYPES_H__
+#ifndef __LV2SCALEPOINT_H__
+#define __LV2SCALEPOINT_H__
 
-enum ChannelMapTableColumn {
-    CHANNELMAPTABLECOLUMN_INPUT_CHANNEL = 0,
-    CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL = 1,
-    CHANNELMAPTABLECOLUMN_TOTAL = 2
-};
+#include <QtCore/QObject>
 
-enum ControlInputPortType {
-    CONTROLINPUTPORTTYPE_BOOLEAN = 0,
-    CONTROLINPUTPORTTYPE_ENUMERATION = 1,
-    CONTROLINPUTPORTTYPE_FLOAT = 2,
-    CONTROLINPUTPORTTYPE_INTEGER = 3
+#include <lilv/lilv.h>
+
+class LV2ScalePoint: public QObject {
+
+    Q_OBJECT
+
+public:
+
+    explicit
+    LV2ScalePoint(const LilvScalePoint *point, QObject *parent=0);
+
+    ~LV2ScalePoint();
+
+    QString
+    getLabel() const;
+
+    float
+    getValue() const;
+
+private:
+
+    QString label;
+    float value;
+
 };
 
 #endif

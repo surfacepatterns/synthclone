@@ -65,7 +65,15 @@
       <attribute name="title">
        <string>Effect Parameters</string>
       </attribute>
-      <layout class="QVBoxLayout" stretch="1"/>
+      <layout class="QVBoxLayout" stretch="1">
+       <item>
+        <widget class="QScrollArea" name="parameterScrollArea">
+         <widget class="QWidget">
+          <layout class="QGridLayout" name="parameterFormLayout" stretch="0,1,1"/>
+         </widget>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </widget>
    </item>

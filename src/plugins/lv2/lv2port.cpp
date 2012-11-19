@@ -19,12 +19,15 @@
 
 #include <cassert>
 
+#include <lv2/lv2plug.in/ns/lv2core/lv2.h>
+
 #include "lv2port.h"
 
 LV2Port::LV2Port(const LilvPort *port, const LilvPlugin *plugin,
                  LilvWorld *world, QObject *parent):
     QObject(parent)
 {
+    // Port value parameters.
     LilvNode *defaultNode;
     LilvNode *maximumNode;
     LilvNode *minimumNode;
@@ -41,6 +44,19 @@ LV2Port::LV2Port(const LilvPort *port, const LilvPlugin *plugin,
     if (minimumNode) {
         lilv_node_free(minimumNode);
     }
+
+    // Get the port's scale points.  Note that a NULL return value does *not*
+    // indicate an error.
+    LilvScalePoints *scalePoints = lilv_port_get_scale_points(plugin, port);
+    if (scalePoints) {
+        LILV_FOREACH(scale_points, iter, scalePoints) {
+            scalePointsList.append
+                (new LV2ScalePoint(lilv_scale_points_get(scalePoints, iter),
+                                   this));
+        }
+        lilv_scale_points_free(scalePoints);
+    }
+
     this->plugin = plugin;
     this->port = port;
     this->world = world;
@@ -48,7 +64,9 @@ LV2Port::LV2Port(const LilvPort *port, const LilvPlugin *plugin,
 
 LV2Port::~LV2Port()
 {
-    // Empty
+    for (int i = scalePointsList.count() - 1; i >= 0; i--) {
+        delete scalePointsList[i];
+    }
 }
 
 QVariant
@@ -109,6 +127,19 @@ LV2Port::getNodeValue(const LilvNode *node) const
     return value;
 }
 
+const LV2ScalePoint &
+LV2Port::getScalePoint(int index) const
+{
+    assert((index >= 0) && (index < scalePointsList.count()));
+    return *(scalePointsList[index]);
+}
+
+int
+LV2Port::getScalePointCount() const
+{
+    return scalePointsList.count();
+}
+
 QString
 LV2Port::getSymbol() const
 {
@@ -118,16 +149,32 @@ LV2Port::getSymbol() const
 }
 
 bool
+LV2Port::hasProperty(const QString &property) const
+{
+    QByteArray propertyBytes = property.toAscii();
+    LilvNode *node = lilv_new_uri(world, propertyBytes.constData());
+    assert(node);
+    bool result = lilv_port_has_property(plugin, port, node);
+    lilv_node_free(node);
+    return result;
+}
+
+bool
 LV2Port::isAudioPort() const
 {
     return isType(LILV_URI_AUDIO_PORT);
 }
 
 bool
+LV2Port::isBooleanPort() const
+{
+    return hasProperty(LV2_CORE__toggled);
+}
+
+bool
 LV2Port::isConnectionOptional() const
 {
-    LilvNode *uriNode =
-        lilv_new_uri(world, "http://lv2plug.in/ns/lv2core#connectionOptional");
+    LilvNode *uriNode = lilv_new_uri(world, LV2_CORE__connectionOptional);
     assert(uriNode);
     bool result = lilv_port_has_property(plugin, port, uriNode);
     lilv_node_free(uriNode);
@@ -141,15 +188,33 @@ LV2Port::isControlPort() const
 }
 
 bool
+LV2Port::isEnumerationPort() const
+{
+    return hasProperty(LV2_CORE__enumeration);
+}
+
+bool
 LV2Port::isInputPort() const
 {
     return isType(LILV_URI_INPUT_PORT);
 }
 
 bool
+LV2Port::isIntegerPort() const
+{
+    return hasProperty(LV2_CORE__integer);
+}
+
+bool
 LV2Port::isOutputPort() const
 {
     return isType(LILV_URI_OUTPUT_PORT);
+}
+
+bool
+LV2Port::isSampleRatePort() const
+{
+    return hasProperty(LV2_CORE__sampleRate);
 }
 
 bool

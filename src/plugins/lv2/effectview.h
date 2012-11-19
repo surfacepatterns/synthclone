@@ -20,14 +20,14 @@
 #ifndef __EFFECTVIEW_H__
 #define __EFFECTVIEW_H__
 
-#include <cassert>
-
+#include <QtGui/QGridLayout>
+#include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
 #include <QtGui/QPushButton>
+#include <QtGui/QScrollArea>
 #include <QtGui/QSpinBox>
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QTableView>
-#include <QtGui/QX11EmbedContainer>
 
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 
@@ -37,6 +37,8 @@
 #include <synthclone/types.h>
 
 #include "channelmapdelegate.h"
+#include "effectviewdata.h"
+#include "types.h"
 
 class EffectView: public synthclone::DesignerView {
 
@@ -61,10 +63,19 @@ public slots:
     addAudioOutputPort(const QString &name);
 
     void
+    addControlInputPort(const QString &name, ControlInputPortType type,
+                        uint32_t index, float value, float minimumValue,
+                        float maximumValue,
+                        const QMap<float, QString> &scalePoints);
+
+    void
     clearAudioInputPorts();
 
     void
     clearAudioOutputPorts();
+
+    void
+    clearControlInputPorts();
 
     void
     removeAudioInputPort();
@@ -94,9 +105,7 @@ public slots:
     setSampleChannelCount(synthclone::SampleChannelCount channels);
 
     void
-    setURIData(const QString &widgetURI, const QString &widgetTypeURI,
-               const QString &pluginURI, const QString &binaryPath,
-               const QString &bundlePath);
+    setViewData(const EffectViewData &data);
 
 signals:
 
@@ -121,16 +130,38 @@ signals:
 private slots:
 
     void
-    handleEmbeddedWidgetClose();
+    handleCheckBoxClick(bool checked);
 
     void
-    handleEmbeddedWidgetError(QX11EmbedContainer::Error error);
+    handleComboBoxCurrentIndexChange(int index);
+
+    void
+    handleDoubleSpinBoxValueChange(double value);
+
+    void
+    handleFloatSliderMove(int position);
+
+    void
+    handleIntSliderMove(int position);
 
     void
     handlePortWriteRequest(uint32_t portIndex, uint32_t bufferSize,
                            uint32_t protocol, void const *buffer);
 
+    void
+    handleSpinBoxValueChange(int value);
+
 private:
+
+    struct WidgetData {
+        uint32_t index;
+        QLabel *label;
+        float maximumValue;
+        float minimumValue;
+        ControlInputPortType type;
+        QWidget *widget1;
+        QWidget *widget2;
+    };
 
     static void
     handlePortWriteRequest(SuilController controller, uint32_t portIndex,
@@ -150,12 +181,17 @@ private:
     QStandardItemModel channelMapTableModel;
     QTableView *channelMapTableView;
     QPushButton *closeButton;
+    QScrollArea *genericUI;
     SuilHost *host;
+    QMap<uint32_t, WidgetData *> indexDataMap;
     SuilInstance *instance;
     QSpinBox *instances;
     QWidget *instanceUI;
     QLineEdit *name;
     QWidget *parametersTab;
+    QGridLayout *parameterFormLayout;
+    QScrollArea *parameterScrollArea;
+    QMap<QWidget *, WidgetData *> widgetDataMap;
 
 };
 

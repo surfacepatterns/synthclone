@@ -18,6 +18,7 @@
  */
 
 #include <cassert>
+#include <cfloat>
 
 #include <QtCore/QtAlgorithms>
 #include <QtCore/QDebug>
@@ -107,25 +108,15 @@ Participant::addPluginActions()
             continue;
         }
 
-        // Make sure the plugin has a UI that can be rendered by our view.
-        // Eventually, we should create an ad-hoc UI for the plugin if there is
-        // no compatible UI.
-        int uiCount = plugin.getUIDataCount();
-        if (! uiCount) {
-            s = tr("Plugin '%1' doesn't have any UI modules.").
-                arg(plugin.getName());
-            qWarning() << s;
-            continue;
-        }
-        unsigned int quality = 0;
+        // Check if the plugin has a UI that can be rendered by our view.
         QString bestTypeURI;
         const LV2UIData *bestUIData;
-        for (int j = uiCount - 1; j >= 0; j--) {
+        unsigned int quality = 0;
+        for (int j = plugin.getUIDataCount() - 1; j >= 0; j--) {
             const LV2UIData &uiData = plugin.getUIData(j);
             for (int k = uiData.getTypeURICount() - 1; k >= 0; k--) {
                 QString typeURI = uiData.getTypeURI(k);
-                unsigned int uiQuality =
-                    effectView.getSupportQuality(typeURI);
+                unsigned int uiQuality = effectView.getSupportQuality(typeURI);
                 if (! uiQuality) {
                     continue;
                 }
@@ -136,17 +127,11 @@ Participant::addPluginActions()
                 }
             }
         }
-        if (! quality) {
-            s = tr("Plugin '%1' doesn't have a UI that's compatible with the "
-                   "LV2 plugin effect view").arg(plugin.getName());
-            qWarning() << s;
-            continue;
-        }
 
         // Sigh.  Declarations need to be here because of the goto inside the
         // upcoming for loop.
         synthclone::MenuAction *action;
-        PluginUIData *pluginUIData;
+        EffectViewData *pluginUIData;
         QStringList subMenus;
         int subMenuCount;
 
@@ -198,10 +183,19 @@ Participant::addPluginActions()
         action = new synthclone::MenuAction(plugin.getName(), this);
         menuActionDataList.append(new MenuActionData(action, subMenus, this));
 
+        // If we have a non-zero quality setting from above, then the plugin has
+        // a UI that can be rendered with out view.  Otherwise, we'll be doing
+        // the rendering ourselves.
+        if (quality) {
+            pluginUIData = new EffectViewData(bestUIData->getURI(), bestTypeURI,
+                                              bestUIData->getBinaryPath(),
+                                              bestUIData->getBundlePath(),
+                                              plugin.getURI());
+        } else {
+            pluginUIData = new EffectViewData(plugin.getURI());
+        }
+
         // Add plugin to lookup tables.
-        pluginUIData = new PluginUIData();
-        pluginUIData->typeURI = bestTypeURI;
-        pluginUIData->uiData = bestUIData;
         actionPluginMap.insert(action, &plugin);
         pluginUIMap.insert(&plugin, pluginUIData);
         uriPluginMap.insert(plugin.getURI(), &plugin);
@@ -233,11 +227,9 @@ Participant::configureEffect(Effect *effect)
 {
     // Set URIs for LV2 UI widget.
     const LV2Plugin &plugin = effect->getPlugin();
-    PluginUIData *data = pluginUIMap.value(&plugin, 0);
+    EffectViewData *data = pluginUIMap.value(&plugin, 0);
     assert(data);
-    const LV2UIData *uiData = data->uiData;
-    effectView.setURIData(uiData->getURI(), data->typeURI, plugin.getURI(),
-                          uiData->getBinaryPath(), uiData->getBundlePath());
+    effectView.setViewData(*data);
 
     // Setup effect state.
     int count = effect->getAudioInputPortCount();
@@ -253,9 +245,47 @@ Participant::configureEffect(Effect *effect)
     float value;
     count = effect->getControlInputPortCount();
     for (i = 0; i < count; i++) {
+        const LV2Port &port = plugin.getControlInputPort(i);
+        bool success;
+        float maximumValue = port.getMaximumValue().toFloat(&success);
+        if (! success) {
+            maximumValue = FLT_MAX;
+        }
+        float minimumValue = port.getMinimumValue().toFloat(&success);
+        if (! success) {
+            minimumValue = -FLT_MAX;
+        }
+
+        // This code is based on Dave Robilla's Jalv host:
+        //
+        //     http://drobilla.net/software/jalv/
+        if (port.isSampleRatePort()) {
+            synthclone::SampleRate sampleRate = context->getSampleRate();
+            maximumValue *= sampleRate;
+            minimumValue *= sampleRate;
+        }
+        QMap<float, QString> scalePointsMap;
+        for (int j = port.getScalePointCount() - 1; j >= 0; j--) {
+            const LV2ScalePoint &point = port.getScalePoint(j);
+            scalePointsMap.insert(point.getValue(), point.getLabel());
+        }
+        bool integerPort = port.isIntegerPort();
+        ControlInputPortType type;
+        if (port.isBooleanPort()) {
+            type = CONTROLINPUTPORTTYPE_BOOLEAN;
+        } else if (port.isEnumerationPort() ||
+                   (integerPort && scalePointsMap.count())) {
+            type = CONTROLINPUTPORTTYPE_ENUMERATION;
+        } else if (integerPort) {
+            type = CONTROLINPUTPORTTYPE_INTEGER;
+        } else {
+            type = CONTROLINPUTPORTTYPE_FLOAT;
+        }
         index = effect->getControlInputPortIndex(i);
         value = effect->getControlInputPortValue(i);
-        effectView.setPortValue(index, sizeof(float), 0, &value);
+        effectView.addControlInputPort(port.getName(), type, index, value,
+                                       minimumValue, maximumValue,
+                                       scalePointsMap);
         assert(! controlInputPortIndexMap.contains(index));
         controlInputPortIndexMap[index] = i;
     }
@@ -489,6 +519,7 @@ Participant::handleEffectViewCloseRequest()
     // Clear ports.
     effectView.clearAudioInputPorts();
     effectView.clearAudioOutputPorts();
+    effectView.clearControlInputPorts();
     controlInputPortIndexMap.clear();
     controlOutputPortIndexMap.clear();
 

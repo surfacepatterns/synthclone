@@ -25,6 +25,8 @@
 
 #include <lilv/lilv.h>
 
+#include "lv2scalepoint.h"
+
 class LV2Port: public QObject {
 
     Q_OBJECT
@@ -51,11 +53,20 @@ public:
     QString
     getName() const;
 
+    const LV2ScalePoint &
+    getScalePoint(int index) const;
+
+    int
+    getScalePointCount() const;
+
     QString
     getSymbol() const;
 
     bool
     isAudioPort() const;
+
+    bool
+    isBooleanPort() const;
 
     bool
     isConnectionOptional() const;
@@ -64,15 +75,27 @@ public:
     isControlPort() const;
 
     bool
+    isEnumerationPort() const;
+
+    bool
     isInputPort() const;
 
     bool
+    isIntegerPort() const;
+
+    bool
     isOutputPort() const;
+
+    bool
+    isSampleRatePort() const;
 
 private:
 
     QVariant
     getNodeValue(const LilvNode *node) const;
+
+    bool
+    hasProperty(const QString &property) const;
 
     bool
     isType(const QString &typeURI) const;
@@ -82,6 +105,7 @@ private:
     QVariant minimumValue;
     const LilvPort *port;
     const LilvPlugin *plugin;
+    QList<LV2ScalePoint *> scalePointsList;
     LilvWorld *world;
 
 };

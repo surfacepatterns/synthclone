@@ -8,9 +8,11 @@ CONFIG += link_pkgconfig
 HEADERS += channelmapdelegate.h \
     effect.h \
     effectview.h \
+    effectviewdata.h \
     lv2instance.h \
     lv2plugin.h \
     lv2port.h \
+    lv2scalepoint.h \
     lv2state.h \
     lv2uidata.h \
     lv2urimap.h \
@@ -28,9 +30,11 @@ RESOURCES += lv2.qrc
 SOURCES += channelmapdelegate.cpp \
     effect.cpp \
     effectview.cpp \
+    effectviewdata.cpp \
     lv2instance.cpp \
     lv2plugin.cpp \
     lv2port.cpp \
+    lv2scalepoint.cpp \
     lv2state.cpp \
     lv2uidata.cpp \
     lv2urimap.cpp \

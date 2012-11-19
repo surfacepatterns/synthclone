@@ -82,11 +82,6 @@ private slots:
 
 private:
 
-    struct PluginUIData {
-        QString typeURI;
-        const LV2UIData *uiData;
-    };
-
     Effect *
     addEffect(const LV2Plugin *plugin);
 
@@ -105,7 +100,7 @@ private:
     QMap<uint32_t, int> controlInputPortIndexMap;
     QMap<uint32_t, int> controlOutputPortIndexMap;
     EffectView effectView;
-    QMap<const LV2Plugin *, PluginUIData *> pluginUIMap;
+    QMap<const LV2Plugin *, EffectViewData *> pluginUIMap;
     QList<Effect *> registeredEffects;
     QMap<QString, const LV2Plugin *> uriPluginMap;
     LV2World *world;
