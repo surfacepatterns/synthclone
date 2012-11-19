@@ -80,6 +80,9 @@ private slots:
     handlePortValueChange(uint32_t portIndex, uint32_t bufferSize,
                           uint32_t protocol, void const *buffer);
 
+    void
+    handleSeparatorUnregistration(QObject *obj);
+
 private:
 
     Effect *

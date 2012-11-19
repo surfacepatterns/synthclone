@@ -91,8 +91,10 @@ Participant::addPluginActions()
 {
     QList<MenuActionData *> menuActionDataList;
     int pluginCount = world->getPluginCount();
+    QList<MenuActionData *> uncategorizedActionDataList;
     for (int i = 0; i < pluginCount; i++) {
         const LV2Plugin &plugin = world->getPlugin(i);
+        QString name = plugin.getName();
         QString s;
 
         // Make sure the plugin doesn't require any features that we don't
@@ -100,7 +102,7 @@ Participant::addPluginActions()
         int requiredFeatureCount = plugin.getRequiredFeatureCount();
         if (requiredFeatureCount) {
             s = tr("Plugin '%1' doesn't support required features:").
-                arg(plugin.getName());
+                arg(name);
             qWarning() << s;
             for (int j = 0; j < requiredFeatureCount; j++) {
                 qWarning() << "\t" << plugin.getRequiredFeature(j);
@@ -131,9 +133,10 @@ Participant::addPluginActions()
         // Sigh.  Declarations need to be here because of the goto inside the
         // upcoming for loop.
         synthclone::MenuAction *action;
+        MenuActionData *actionData;
+        int pluginClassCount;
         EffectViewData *pluginUIData;
         QStringList subMenus;
-        int subMenuCount;
 
         // Make sure audio can be passed to the plugin and retrieved from the
         // plugin in a way that we can process.
@@ -148,27 +151,27 @@ Participant::addPluginActions()
                     audioOutputPorts++;
                 } else {
                     s = tr("Plugin '%1' has an audio port that isn't an input "
-                           "port or an output port").arg(plugin.getName());
+                           "port or an output port").arg(name);
                     qWarning() << s;
                     goto nextPlugin;
                 }
             } else if (! (port.isControlPort() ||
                           port.isConnectionOptional())) {
                 s = tr("Plugin '%1' has a port that isn't an audio port or a "
-                       "control port").arg(plugin.getName());
+                       "control port").arg(name);
                 qWarning() << s;
                 goto nextPlugin;
             }
         }
         if (! audioInputPorts) {
             s = tr("Plugin '%1' has no audio input ports").
-                arg(plugin.getName());
+                arg(name);
             qWarning() << s;
             continue;
         }
         if (! audioOutputPorts) {
             s = tr("Plugin '%1' has no audio output ports").
-                arg(plugin.getName());
+                arg(name);
             qWarning() << s;
             continue;
         }
@@ -176,12 +179,21 @@ Participant::addPluginActions()
         // Looks and smells like a plugin we can use.  Let's create the sections
         // and actions and add them to a list for sorting.
         subMenus.append("LV2");
-        subMenuCount = plugin.getClassCount();
-        for (int j = 0; j < subMenuCount; j++) {
+        pluginClassCount = plugin.getClassCount();
+        // We skip the first entry, which is the root 'Plugin' class.
+        for (int j = 1; j < pluginClassCount; j++) {
             subMenus.append(plugin.getClass(j));
         }
-        action = new synthclone::MenuAction(plugin.getName(), this);
-        menuActionDataList.append(new MenuActionData(action, subMenus, this));
+        action = new synthclone::MenuAction(name, this);
+        if (pluginClassCount > 1) {
+            actionData = new MenuActionData(action, subMenus, this);
+            menuActionDataList.append(actionData);
+        } else {
+            subMenus.append(tr("Uncategorized"));
+            subMenus.append(name.left(1));
+            actionData = new MenuActionData(action, subMenus, this);
+            uncategorizedActionDataList.append(actionData);
+        }
 
         // If we have a non-zero quality setting from above, then the plugin has
         // a UI that can be rendered with out view.  Otherwise, we'll be doing
@@ -204,21 +216,50 @@ Participant::addPluginActions()
         ;
     }
 
-    // We have all of the actions for the plugins we can handle.  Sort the list,
-    // and register the menu actions.
-    qStableSort(menuActionDataList.begin(), menuActionDataList.end(),
-                MenuActionDataComparer());
+    // Sort and register the categorized actions.
+    int categorizedActionCount = menuActionDataList.count();
+    if (categorizedActionCount) {
+        qStableSort(menuActionDataList.begin(), menuActionDataList.end(),
+                    MenuActionDataComparer());
+        while (menuActionDataList.count()) {
+            MenuActionData *data = menuActionDataList.takeFirst();
+            QScopedPointer<MenuActionData> dataPtr(data);
+            synthclone::MenuAction *action = data->getAction();
+            connect(action, SIGNAL(triggered()), SLOT(handleEffectAddition()));
+            const synthclone::Registration &registration =
+                context->addMenuAction(action, synthclone::MENU_ADD_EFFECT,
+                                       data->getSections());
+            connect(&registration, SIGNAL(unregistered(QObject *)),
+                    SLOT(handleActionUnregistration(QObject *)));
+        }
+    }
 
-    while (menuActionDataList.count()) {
-        MenuActionData *data = menuActionDataList.takeFirst();
-        QScopedPointer<MenuActionData> dataPtr(data);
-        synthclone::MenuAction *action = data->getAction();
-        connect(action, SIGNAL(triggered()), SLOT(handleEffectAddition()));
-        const synthclone::Registration &registration =
-            context->addMenuAction(action, synthclone::MENU_ADD_EFFECT,
-                                   data->getSections());
-        connect(&registration, SIGNAL(unregistered(QObject *)),
-                SLOT(handleActionUnregistration(QObject *)));
+    // Sort and register the uncategorized actions.
+    if (uncategorizedActionDataList.count()) {
+        qStableSort(uncategorizedActionDataList.begin(),
+                    uncategorizedActionDataList.end(),
+                    MenuActionDataComparer());
+        if (categorizedActionCount) {
+            synthclone::MenuSeparator *separator =
+                new synthclone::MenuSeparator(this);
+            const synthclone::Registration &separatorRegistration =
+                context->addMenuSeparator(separator,
+                                          synthclone::MENU_ADD_EFFECT,
+                                          QStringList("LV2"));
+            connect(&separatorRegistration, SIGNAL(unregistered(QObject *)),
+                    SLOT(handleSeparatorUnregistration(QObject *)));
+        }
+        while (uncategorizedActionDataList.count()) {
+            MenuActionData *data = uncategorizedActionDataList.takeFirst();
+            QScopedPointer<MenuActionData> dataPtr(data);
+            synthclone::MenuAction *action = data->getAction();
+            connect(action, SIGNAL(triggered()), SLOT(handleEffectAddition()));
+            const synthclone::Registration &registration =
+                context->addMenuAction(action, synthclone::MENU_ADD_EFFECT,
+                                       data->getSections());
+            connect(&registration, SIGNAL(unregistered(QObject *)),
+                    SLOT(handleActionUnregistration(QObject *)));
+        }
     }
 }
 
@@ -553,6 +594,12 @@ Participant::handlePortValueChange(uint32_t portIndex, uint32_t bufferSize,
     }
     qWarning() << tr("port index '%1' is not a control input or output port").
         arg(portIndex);
+}
+
+void
+Participant::handleSeparatorUnregistration(QObject *obj)
+{
+    delete obj;
 }
 
 void
