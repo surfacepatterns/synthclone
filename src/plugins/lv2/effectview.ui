@@ -2,21 +2,32 @@
 <ui version="4.0">
  <class>dialog</class>
  <widget class="QDialog" name="dialog">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>318</width>
+    <height>393</height>
+   </rect>
+  </property>
   <property name="windowTitle">
    <string>LV2 Effect Configuration</string>
   </property>
   <layout class="QVBoxLayout" stretch="1,0">
    <item>
-    <widget class="QTabWidget">
-     <widget class="QWidget">
+    <widget class="QTabWidget" name="tabWidget">
+     <widget class="QWidget" name="widget">
       <attribute name="title">
        <string>Properties</string>
       </attribute>
       <layout class="QVBoxLayout" stretch="0,1">
        <item>
-        <layout class="QFormLayout" stretch="0,1">
+        <layout class="QFormLayout">
          <item row="0" column="0">
-          <widget class="QLabel">
+          <widget class="QLabel" name="label">
            <property name="text">
             <string>Effect Name:</string>
            </property>
@@ -26,7 +37,7 @@
           <widget class="QLineEdit" name="name"/>
          </item>
          <item row="1" column="0">
-          <widget class="QLabel">
+          <widget class="QLabel" name="label">
            <property name="text">
             <string>Instance Count:</string>
            </property>
@@ -68,8 +79,16 @@
       <layout class="QVBoxLayout" stretch="1">
        <item>
         <widget class="QScrollArea" name="parameterScrollArea">
-         <widget class="QWidget">
-          <layout class="QGridLayout" name="parameterFormLayout" stretch="0,1,1"/>
+         <widget class="QWidget" name="widget">
+          <property name="geometry">
+           <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>18</width>
+            <height>18</height>
+           </rect>
+          </property>
+          <layout class="QGridLayout" name="parameterFormLayout"/>
          </widget>
         </widget>
        </item>
