@@ -26,7 +26,9 @@
 #include <QtGui/QComboBox>
 #include <QtGui/QDoubleSpinBox>
 #include <QtGui/QHeaderView>
+#include <QtGui/QScrollBar>
 #include <QtGui/QSlider>
+#include <QtGui/QX11EmbedContainer>
 
 #include <synthclone/error.h>
 #include <synthclone/util.h>
@@ -101,14 +103,23 @@ EffectView::EffectView(QObject *parent):
     parameterFormLayout =
         synthclone::getChild<QGridLayout>(widget, "parameterFormLayout");
 
+    parameterFormWidget =
+        synthclone::getChild<QWidget>(widget, "parameterFormWidget");
+
     parameterScrollArea =
         synthclone::getChild<QScrollArea>(widget, "parameterScrollArea");
     parameterScrollArea->setWidgetResizable(true);
+
+    resizeEventFilter = new ResizeEventFilter(parameterScrollArea,
+                                              parameterFormWidget);
+    parameterFormWidget->installEventFilter(resizeEventFilter);
 }
 
 EffectView::~EffectView()
 {
     resetInstanceData();
+    parameterFormWidget->removeEventFilter(resizeEventFilter);
+    delete resizeEventFilter;
     suil_host_free(host);
 }
 
@@ -195,6 +206,7 @@ EffectView::addControlInputPort(const QString &name, ControlInputPortType type,
                 SLOT(handleDoubleSpinBoxValueChange(double)));
 
         slider = new QSlider(Qt::Horizontal);
+        slider->setMinimumWidth(200);
         slider->setRange(0, 100);
         value = ((value - minimumValue) / (maximumValue - minimumValue)) *
             100.0;
@@ -220,6 +232,7 @@ EffectView::addControlInputPort(const QString &name, ControlInputPortType type,
                 SLOT(handleSpinBoxValueChange(int)));
 
         slider = new QSlider(Qt::Horizontal);
+        slider->setMinimumWidth(200);
         slider->setRange(static_cast<int>(minimumValue),
                          static_cast<int>(maximumValue));
         slider->setValue(static_cast<int>(value));
@@ -537,9 +550,24 @@ EffectView::setViewData(const EffectViewData &data)
         instanceUI = static_cast<QWidget *>
             (suil_instance_get_widget(instance));
         assert(instanceUI);
+
+        // Add SUIL widget to UI.
         instanceUI->setWindowFlags((instanceUI->windowFlags() &
                                     (~Qt::WindowType_Mask)) | Qt::Widget);
         parametersTab->layout()->addWidget(instanceUI);
+
+        // SUIL versions before 0.6.6 will create QX11EmbedContainer objects
+        // that are unparented.  If the containers are reparented, they don't
+        // work.  Later versions will reparent the widget.  So, if we find a
+        // QX11EmbedContainer without a parent, we just use the generic UI.
+        QX11EmbedContainer *container =
+            qobject_cast<QX11EmbedContainer *>(instanceUI);
+        if (container) {
+            if (! container->parent()) {
+                resetInstanceData();
+                provided = false;
+            }
+        }
     }
     parameterScrollArea->setVisible(! provided);
 }

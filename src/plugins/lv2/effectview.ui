@@ -5,20 +5,15 @@
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>318</width>
-    <height>393</height>
-   </rect>
-  </property>
   <property name="windowTitle">
    <string>LV2 Effect Configuration</string>
   </property>
   <layout class="QVBoxLayout" stretch="1,0">
    <item>
     <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
      <widget class="QWidget" name="widget">
       <attribute name="title">
        <string>Properties</string>
@@ -79,15 +74,13 @@
       <layout class="QVBoxLayout" stretch="1">
        <item>
         <widget class="QScrollArea" name="parameterScrollArea">
-         <widget class="QWidget" name="widget">
-          <property name="geometry">
-           <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>18</width>
-            <height>18</height>
-           </rect>
-          </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="widgetResizable">
+          <bool>true</bool>
+         </property>
+         <widget class="QWidget" name="parameterFormWidget">
           <layout class="QGridLayout" name="parameterFormLayout"/>
          </widget>
         </widget>

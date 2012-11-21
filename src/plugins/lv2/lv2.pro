@@ -21,6 +21,7 @@ HEADERS += channelmapdelegate.h \
     menuactiondatacomparer.h \
     participant.h \
     plugin.h \
+    resizeeventfilter.h \
     types.h
 MOC_DIR = $${MAKEDIR}/plugins/lv2
 OBJECTS_DIR = $${MAKEDIR}/plugins/lv2
@@ -42,5 +43,6 @@ SOURCES += channelmapdelegate.cpp \
     menuactiondata.cpp \
     menuactiondatacomparer.cpp \
     participant.cpp \
+    resizeeventfilter.cpp \
     plugin.cpp
 TARGET = $$qtLibraryTarget(synthclone_lv2)

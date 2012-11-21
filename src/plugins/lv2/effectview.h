@@ -38,6 +38,7 @@
 
 #include "channelmapdelegate.h"
 #include "effectviewdata.h"
+#include "resizeeventfilter.h"
 #include "types.h"
 
 class EffectView: public synthclone::DesignerView {
@@ -190,7 +191,9 @@ private:
     QLineEdit *name;
     QWidget *parametersTab;
     QGridLayout *parameterFormLayout;
+    QWidget *parameterFormWidget;
     QScrollArea *parameterScrollArea;
+    ResizeEventFilter *resizeEventFilter;
     QMap<QWidget *, WidgetData *> widgetDataMap;
 
 };
