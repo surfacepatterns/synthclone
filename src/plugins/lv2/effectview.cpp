@@ -147,9 +147,12 @@ EffectView::addControlInputPort(const QString &name, ControlInputPortType type,
     QComboBox *comboBox;
     WidgetData *data = new WidgetData();
     QDoubleSpinBox *doubleSpinBox;
+    int decimalPlaces;
     QLabel *label = new QLabel(name);
+    double roughStep;
     int rowCount = parameterFormLayout->rowCount();
     QSlider *slider;
+    double smoothStep;
     QSpinBox *spinBox;
 
     data->index = index;
@@ -199,12 +202,6 @@ EffectView::addControlInputPort(const QString &name, ControlInputPortType type,
 
         break;
     case CONTROLINPUTPORTTYPE_FLOAT:
-        doubleSpinBox = new QDoubleSpinBox();
-        doubleSpinBox->setRange(minimumValue, maximumValue);
-        doubleSpinBox->setValue(value);
-        connect(doubleSpinBox, SIGNAL(valueChanged(double)),
-                SLOT(handleDoubleSpinBoxValueChange(double)));
-
         slider = new QSlider(Qt::Horizontal);
         slider->setMinimumWidth(200);
         slider->setRange(0, 100);
@@ -213,6 +210,17 @@ EffectView::addControlInputPort(const QString &name, ControlInputPortType type,
         slider->setValue(floor(value + 0.5));
         connect(slider, SIGNAL(sliderMoved(int)),
                 SLOT(handleFloatSliderMove(int)));
+
+        roughStep = static_cast<double>(maximumValue - minimumValue) / 1000.0;
+        decimalPlaces = -static_cast<int>(log10(roughStep));
+        smoothStep = pow(10, -decimalPlaces);
+        doubleSpinBox = new QDoubleSpinBox();
+        doubleSpinBox->setDecimals((decimalPlaces < 2) ? 2 : decimalPlaces);
+        doubleSpinBox->setRange(minimumValue, maximumValue);
+        doubleSpinBox->setSingleStep((smoothStep > 1.0) ? 1.0 : smoothStep);
+        doubleSpinBox->setValue(value);
+        connect(doubleSpinBox, SIGNAL(valueChanged(double)),
+                SLOT(handleDoubleSpinBoxValueChange(double)));
 
         parameterFormLayout->addWidget(slider, rowCount, 1);
         parameterFormLayout->addWidget(doubleSpinBox, rowCount, 2);
