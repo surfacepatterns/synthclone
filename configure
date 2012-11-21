@@ -59,11 +59,8 @@ def main():
     parser.add_option("--skip-jack", action="store", default=0,
                       dest="skipJACK", help="Don't build the JACK plugin",
                       type="int")
-
-    # Don't build the LV2 plugin by default until it's stable.
-    parser.add_option("--skip-lv2" action="store" default=1, dest="skipLV2",
-                      help-"Don't build the LV2 plugin", type="int")
-
+    parser.add_option("--skip-lv2", action="store", default=0, dest="skipLV2",
+                      help="Don't build the LV2 plugin", type="int")
     parser.add_option("--skip-portmedia", action="store", default=0,
                       dest="skipPortMedia",
                       help="Don't build the PortMedia plugin", type="int")
