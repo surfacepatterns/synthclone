@@ -52,9 +52,11 @@ Effect::Effect(const LV2Plugin &plugin, LV2World &world,
 {
     audioInputChannelIndices = new int[channels];
     audioOutputChannelIndices = new int[channels];
+    int audioInputPortCount = plugin.getAudioInputPortCount();
+    int audioOutputPortCount = plugin.getAudioOutputPortCount();
     for (synthclone::SampleChannelCount i = 0; i < channels; i++) {
-        audioInputChannelIndices[i] = 0;
-        audioOutputChannelIndices[i] = 0;
+        audioInputChannelIndices[i] = i % audioInputPortCount;
+        audioOutputChannelIndices[i] = i % audioOutputPortCount;
     }
     this->channels = channels;
     int count = plugin.getControlInputPortCount();
@@ -499,10 +501,12 @@ Effect::setChannelCount(synthclone::SampleChannelCount channels)
             copySize = oldChannels * sizeof(synthclone::SampleChannelCount);
             memcpy(audioInputChannels, audioInputChannelIndices, copySize);
             memcpy(audioOutputChannels, audioOutputChannelIndices, copySize);
+            int audioInputPortCount = getAudioInputPortCount();
+            int audioOutputPortCount = getAudioOutputPortCount();
             for (synthclone::SampleChannelCount i = oldChannels; i < channels;
                  i++) {
-                audioInputChannels[i] = 0;
-                audioOutputChannels[i] = 0;
+                audioInputChannels[i] = i % audioInputPortCount;
+                audioOutputChannels[i] = i % audioOutputPortCount;
             }
         }
         delete[] audioInputChannelIndices;
@@ -513,8 +517,8 @@ Effect::setChannelCount(synthclone::SampleChannelCount channels)
         emit channelsChanged(channels);
         for (synthclone::SampleChannelCount i = oldChannels; i < channels;
              i++) {
-            emit audioInputChannelChanged(i, 0);
-            emit audioOutputChannelChanged(i, 0);
+            emit audioInputChannelChanged(i, audioInputChannels[i]);
+            emit audioOutputChannelChanged(i, audioOutputChannels[i]);
         }
     }
 }

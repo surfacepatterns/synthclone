@@ -17,6 +17,7 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
+#include <QtGui/QLayout>
 #include <QtGui/QScrollBar>
 
 #include "resizeeventfilter.h"
@@ -37,9 +38,17 @@ ResizeEventFilter::~ResizeEventFilter()
 bool
 ResizeEventFilter::eventFilter(QObject *obj, QEvent *event)
 {
-    if ((obj == widget) && (event->type() == QEvent::Resize)) {
-        scrollArea->setMinimumWidth(widget->minimumSizeHint().width() +
-                                    scrollArea->verticalScrollBar()->width());
+    if (obj == widget) {
+        switch (event->type()) {
+        case QEvent::Show:
+            widget->adjustSize();
+            // Fallthrough on purpose ...
+        case QEvent::Resize:
+            scrollArea->setMinimumWidth
+                (widget->minimumSizeHint().width() +
+                 scrollArea->verticalScrollBar()->width());
+            widget->layout()->activate();
+        }
     }
     return QObject::eventFilter(obj, event);
 }

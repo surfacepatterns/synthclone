@@ -152,6 +152,7 @@ EffectView::addControlInputPort(const QString &name, ControlInputPortType type,
     double roughStep;
     int rowCount = parameterFormLayout->rowCount();
     QSlider *slider;
+    float sliderValue;
     double smoothStep;
     QSpinBox *spinBox;
 
@@ -205,9 +206,9 @@ EffectView::addControlInputPort(const QString &name, ControlInputPortType type,
         slider = new QSlider(Qt::Horizontal);
         slider->setMinimumWidth(200);
         slider->setRange(0, 100);
-        value = ((value - minimumValue) / (maximumValue - minimumValue)) *
+        sliderValue = ((value - minimumValue) / (maximumValue - minimumValue)) *
             100.0;
-        slider->setValue(floor(value + 0.5));
+        slider->setValue(floor(sliderValue + 0.5));
         connect(slider, SIGNAL(sliderMoved(int)),
                 SLOT(handleFloatSliderMove(int)));
 
@@ -419,6 +420,8 @@ EffectView::setAudioInputChannel(synthclone::SampleChannelCount inputChannel,
     setModelData(channel, CHANNELMAPTABLECOLUMN_INPUT_CHANNEL, effectChannel);
     setModelData(channel, CHANNELMAPTABLECOLUMN_INPUT_CHANNEL, name,
                  Qt::DisplayRole);
+    channelMapTableView->resizeColumnToContents
+        (CHANNELMAPTABLECOLUMN_INPUT_CHANNEL);
 }
 
 void
@@ -430,6 +433,8 @@ EffectView::setAudioOutputChannel(synthclone::SampleChannelCount outputChannel,
     setModelData(channel, CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL, effectChannel);
     setModelData(channel, CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL, name,
                  Qt::DisplayRole);
+    channelMapTableView->resizeColumnToContents
+        (CHANNELMAPTABLECOLUMN_OUTPUT_CHANNEL);
 }
 
 void
