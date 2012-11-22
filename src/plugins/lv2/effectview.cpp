@@ -113,6 +113,8 @@ EffectView::EffectView(QObject *parent):
     resizeEventFilter = new ResizeEventFilter(parameterScrollArea,
                                               parameterFormWidget);
     parameterFormWidget->installEventFilter(resizeEventFilter);
+
+    tabWidget = synthclone::getChild<QTabWidget>(widget, "tabWidget");
 }
 
 EffectView::~EffectView()
@@ -583,4 +585,23 @@ EffectView::setViewData(const EffectViewData &data)
         }
     }
     parameterScrollArea->setVisible(! provided);
+}
+
+void
+EffectView::setVisible(bool visible)
+{
+    DesignerView::setVisible(visible);
+    if (visible) {
+
+        // Shameful hack: Make sure the view is initially large enough to
+        // for the effect editor instead of waiting for the editor tab to be
+        // clicked by the user before showing the expanded view.  I haven't
+        // found a better way to do this.  If you know of a more elegant way to
+        // do this, then please let me know.
+        int currentIndex = tabWidget->currentIndex();
+        if (currentIndex != 1) {
+            tabWidget->setCurrentIndex(1);
+            tabWidget->setCurrentIndex(currentIndex);
+        }
+    }
 }

@@ -48,6 +48,9 @@ ResizeEventFilter::eventFilter(QObject *obj, QEvent *event)
                 (widget->minimumSizeHint().width() +
                  scrollArea->verticalScrollBar()->width());
             widget->layout()->activate();
+            // Fallthrough on purpose ...
+        default:
+            ;
         }
     }
     return QObject::eventFilter(obj, event);

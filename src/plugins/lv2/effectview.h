@@ -28,6 +28,7 @@
 #include <QtGui/QSpinBox>
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QTableView>
+#include <QtGui/QTabWidget>
 
 #include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
 
@@ -107,6 +108,9 @@ public slots:
 
     void
     setViewData(const EffectViewData &data);
+
+    void
+    setVisible(bool visible);
 
 signals:
 
@@ -194,6 +198,7 @@ private:
     QWidget *parameterFormWidget;
     QScrollArea *parameterScrollArea;
     ResizeEventFilter *resizeEventFilter;
+    QTabWidget *tabWidget;
     QMap<QWidget *, WidgetData *> widgetDataMap;
 
 };

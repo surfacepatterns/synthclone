@@ -29,7 +29,6 @@ class ResizeEventFilter: public QObject {
 
 public:
 
-    explicit
     ResizeEventFilter(QScrollArea *scrollArea, QWidget *widget,
                       QObject *parent=0);
 
