@@ -18,7 +18,11 @@ A `synthclone` install can be made up of several common parts:
   3. Plugins distributed with `synthclone`, including:
     * libsynthclone_hydrogen
     * libsynthclone_jack
+    * libsynthclone_lv2
     * libsynthclone_portmedia
+    * libsynthclone_renoise
+    * libsynthclone_reverser
+    * libsynthclone_sampleloader
     * libsynthclone_sfz
     * libsynthclone_trimmer
     * libsynthclone_zonegenerator
@@ -61,8 +65,15 @@ will be installed:
     --skip-hydrogen=SKIPHYDROGEN
                           Don't build the Hydrogen plugin
     --skip-jack=SKIPJACK  Don't build the JACK plugin
+    --skip-lv2=SKIPLV2    Don't build the LV2 plugin
     --skip-portmedia=SKIPPORTMEDIA
                           Don't build the PortMedia plugin
+    --skip-renoise=SKIPRENOISE
+                          Don't build the Renoise plugin
+    --skip-reverser=SKIPREVERSER
+                          Don't build the reverser plugin
+    --skip-sample-loader=SKIPSAMPLELOADER
+                          Don't build the sample loader plugin
     --skip-sfz=SKIPSFZ    Don't build the SFZ plugin
     --skip-trimmer=SKIPTRIMMER
                           Don't build the trimmer plugin

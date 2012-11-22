@@ -17,9 +17,12 @@ development packages) installed:
   * libarchive
   * libsamplerate
   * libsndfile
+  * libzip
+  * lilv
   * PortAudio
   * PortMidi
   * qt4
+  * suil
 
 In addition, you'll need the following tools:
 

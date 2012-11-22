@@ -10,8 +10,11 @@ Build-Depends: doc-base,
  libsndfile1-dev,
  libarchive-dev,
  libjack-dev,
+ liblilv-dev,
+ libsuil-dev,
  portaudio19-dev,
- libportmidi-dev
+ libportmidi-dev,
+ libzip-dev
 Standards-Version: 3.9.3
 Homepage: http://synthclone.googlecode.com/
 Vcs-Git: https://code.google.com/p/synthclone/

@@ -1,6 +1,2 @@
--Write a plugin for LADSPA effects.
--Write a plugin for LV2 effects.
--Write a plugin for Renoise targets.
--Write a plugin to add samples directly from the filesystem.
--Consider capturing release in sampler components.
--Get someone to design an icon that isn't ugly.
+* Consider capturing release in sampler components.
+* Get someone to design an icon that isn't ugly.
