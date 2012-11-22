@@ -175,11 +175,13 @@ ZoneTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                 QRect textRectangle =
                     pixmapPainter.boundingRect(pixmapRectangle, flags,
                                                timeString);
+                QRect borderRectangle = textRectangle.adjusted(-1, -1, 1, 1);
                 QColor baseColor = palette.color(QPalette::Base);
-                baseColor.setAlpha(0xd0);
-                pixmapPainter.fillRect(textRectangle, baseColor);
+                baseColor.setAlpha(0xb8);
+
+                pixmapPainter.fillRect(borderRectangle, baseColor);
                 pixmapPainter.drawText(pixmapRectangle, flags, timeString);
-                pixmapPainter.drawRect(textRectangle);
+                pixmapPainter.drawRect(borderRectangle);
 
                 pixmapPainter.end();
 
