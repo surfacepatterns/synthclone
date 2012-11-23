@@ -22,6 +22,9 @@ development packages) installed:
   * PortAudio
   * PortMidi
   * qt4
+  * serd
+  * sord
+  * sratom
   * suil
 
 In addition, you'll need the following tools:
