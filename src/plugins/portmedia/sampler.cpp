@@ -770,6 +770,7 @@ Sampler::monitorEvents()
             idle = true;
             emit statusChanged(tr("Idle."));
             emit jobAborted();
+            emit progressChanged(0.0);
             command = &(event.data.command);
             break;
         case Event::TYPE_COMPLETE:
