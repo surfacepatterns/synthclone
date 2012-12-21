@@ -16,7 +16,7 @@ isEmpty(MAJOR_VERSION) {
     MAJOR_VERSION = 0
 }
 isEmpty(MINOR_VERSION) {
-    MINOR_VERSION = 2
+    MINOR_VERSION = 3
 }
 isEmpty(REVISION) {
     REVISION = 0

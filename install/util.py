@@ -6,7 +6,7 @@ from string import Template
 from subprocess import PIPE, Popen
 
 MAJOR_VERSION = 0
-MINOR_VERSION = 2
+MINOR_VERSION = 3
 REVISION = 0
 VERSION = "%d.%d.%d" % (MAJOR_VERSION, MINOR_VERSION, REVISION)
 
