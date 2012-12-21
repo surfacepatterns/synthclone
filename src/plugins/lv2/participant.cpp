@@ -112,7 +112,7 @@ Participant::addPluginActions()
 
         // Check if the plugin has a UI that can be rendered by our view.
         QString bestTypeURI;
-        const LV2UIData *bestUIData;
+        const LV2UIData *bestUIData = 0;
         unsigned int quality = 0;
         for (int j = plugin.getUIDataCount() - 1; j >= 0; j--) {
             const LV2UIData &uiData = plugin.getUIData(j);

@@ -318,7 +318,9 @@ void
 Sampler::copyData(const float *input, float *output, unsigned long totalFrames,
                   unsigned long startFrame)
 {
-    for (synthclone::SampleFrameCount i = startFrame; i < totalFrames; i++) {
+    synthclone::SampleFrameCount total =
+        static_cast<synthclone::SampleFrameCount>(totalFrames);
+    for (synthclone::SampleFrameCount i = startFrame; i < total; i++) {
         synthclone::SampleFrameCount inputOffset =
             audioInputDeviceChannelCount * i;
         synthclone::SampleFrameCount outputOffset =
