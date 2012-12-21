@@ -46,7 +46,9 @@ createUniqueFile(const QDir *directory, const QString &prefix,
     }
     tempFile.close();
     tempFile.setAutoRemove(false);
-    return QFileInfo(tempFile).absoluteFilePath();
+    QFileInfo fileInfo(tempFile);
+    assert(fileInfo.exists());
+    return fileInfo.absoluteFilePath();
 }
 
 bool

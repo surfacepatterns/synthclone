@@ -1303,9 +1303,6 @@ Session::recycleCurrentSamplerJob()
         currentSamplerJobSample->setTemporary(true);
         delete currentSamplerJobSample;
         currentSamplerJobSample = 0;
-        if (! QFile(path).remove()) {
-            emit samplerJobError("failed to remove sample at '%1'");
-        }
     }
     bool removed = zoneSamplerJobMap.remove(currentSamplerJob->getZone());
     assert(removed);
@@ -2180,10 +2177,9 @@ Session::updateSamplerJobs()
                 case synthclone::SamplerJob::TYPE_SAMPLE:
                     {
                         QString path = createUniqueSampleFile(*directory);
-                        sample = new synthclone::Sample(path, this);
+                        sample = new synthclone::Sample(path, false, this);
                         QScopedPointer<synthclone::Sample> samplePtr(sample);
-                        status =
-                            synthclone::Zone::STATUS_SAMPLER_SAMPLING;
+                        status = synthclone::Zone::STATUS_SAMPLER_SAMPLING;
                         stream = new synthclone::SampleOutputStream
                             (*sample, sessionSampleData.getSampleRate(),
                              sessionSampleData.getSampleChannelCount());
