@@ -199,7 +199,7 @@ Target::build(const QList<synthclone::Zone *> &zones)
         if (drumKit) {
             highNote = lowNote;
         } else if (i != (keyCount - 1)) {
-            highNote = (keys[i + 1].getNote() - zoneKey.getNote()) / 2;
+            highNote = (keys[i + 1].getNote() + zoneKey.getNote()) / 2;
         } else {
             highNote = 127;
         }
@@ -262,7 +262,7 @@ Target::build(const QList<synthclone::Zone *> &zones)
         if (drumKit) {
             lowNote++;
         } else {
-            lowNote = highNote;
+            lowNote = highNote + 1;
         }
     }
     confWriter.writeEndElement();
@@ -271,9 +271,10 @@ Target::build(const QList<synthclone::Zone *> &zones)
     // Write sample envelopes
     confWriter.writeStartElement("SampleEnvelopes");
     confWriter.writeStartElement("Volume");
+    writeElement(confWriter, "Decay", "0");
     writeElement(confWriter, "IsActive", "true");
     writeElement(confWriter, "SustainIsActive", drumKit ? "false" : "true");
-    writeElement(confWriter, "Sustain", "0");
+    writeElement(confWriter, "SustainPos", "0");
     confWriter.writeEndElement();
     confWriter.writeEndElement();
 
