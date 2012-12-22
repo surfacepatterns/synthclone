@@ -187,7 +187,7 @@ def main():
     if options.skipPortMedia:
         qmakeArgs.append("SKIP_PORTMEDIA_PLUGIN=1")
     if options.skipRenoise:
-        qmakeArgs.append("SKIP_RENOISE=1")
+        qmakeArgs.append("SKIP_RENOISE_PLUGIN=1")
     if options.skipReverser:
         qmakeArgs.append("SKIP_REVERSER_PLUGIN=1")
     if options.skipSampleLoader:
