@@ -36,6 +36,8 @@
 #define STRINGIFY(s) #s
 #define XSTRINGIFY(s) STRINGIFY(s)
 
+static const char *PLUGIN_PATH = XSTRINGIFY(SYNTHCLONE_PLUGIN_PATH);
+
 Controller::Controller(Application &application, QObject *parent):
     QObject(parent),
     application(application),
@@ -541,11 +543,12 @@ Controller::getCorePluginDirectory()
     }
 #endif
 
-    pluginDirectory.setPath(XSTRINGIFY(SYNTHCLONE_PLUGIN_PATH));
+    pluginDirectory.setPath(PLUGIN_PATH);
     if (pluginDirectory.exists()) {
         return pluginDirectory;
     }
-    throw synthclone::Error("core plugin directory is not accessible");
+    throw synthclone::Error(tr("core plugin directory '%1' is not accessible").
+                            arg(PLUGIN_PATH));
 }
 
 MainView &
