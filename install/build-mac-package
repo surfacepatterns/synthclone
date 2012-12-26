@@ -1,46 +1,7 @@
 #!/usr/bin/env python
 
-# prefix = "/Applications/synthclone.app/Contents"
-# dataDir = join(prefix, "Resources")
-
-# The application is handled using a Mac application bundle.
-# SYNTHCLONE_APP_SUFFIX = Applications
-#
-# Headers and libraries are handled using a Mac framework.
-# SYNTHCLONE_HEADER_SUFFIX = Library/Frameworks
-# SYNTHCLONE_LIBRARY_SUFFIX = Library/Frameworks
-#
-# SYNTHCLONE_LIBRARY_DOC_SUFFIX = \
-#     Library/Frameworks/synthclone.framework/Documentation
-#
-# SYNTHCLONE_DATA_SUFFIX = Applications/synthclone.app/Contents/Resources
-# SYNTHCLONE_PLUGIN_SUFFIX = Applications/synthclone.app/Contents/PlugIns
-
-# Install library and headers as a framework on Mac OSX.
-# CONFIG += lib_bundle x86 x86_64
-# QMAKE_FRAMEWORK_BUNDLE_NAME = synthclone
-# QMAKE_FRAMEWORK_VERSION = $${SYNTHCLONE_VERSION}
-# headers.path = Headers
-# headers.version = Versions
-# isEmpty(SKIP_HEADERS) {
-#     QMAKE_BUNDLE_DATA += headers
-# }
-# 
-# We can't guarantee that the shared libraries we use are going to be
-# available on all platforms.  So, we package them with the framework
-# bundle.  The libraries are installed via build.py.
-# libraries.files = $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}/synthclone.framework/Libraries/*
-# libraries.path = $${SYNTHCLONE_LIBRARY_INSTALL_PATH}/synthclone.framework/Libraries
-# INSTALLS += libraries
-
-# Plugin shared data:
-# LIBS += -F$${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX} -framework synthclone
-
-# Application:
-# LIBS += -F$${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX} -framework synthclone -lsamplerate
-
 from optparse import OptionParser
-from os import listdir, makedirs
+from os import chdir, listdir, makedirs, sep
 from os.path import abspath, basename, dirname, isdir, isfile, join
 from shutil import copytree, rmtree
 from subprocess import PIPE, Popen, call
@@ -135,61 +96,60 @@ def setLibraryLocation(libraryFile, location):
                         (location, libraryFile))
 
 def main():
-    if platform != PLATFORM_MACX:
+    if getPlatform() != PLATFORM_MACX:
         exit("This build script is only meant to be run on Mac OSX")
 
-    parser = OptionParser("usage: %prog [options] package")
-    parser.add_option("-b", "--build-dir", action="store", default=None,
-                      dest="buildDir", help="Build directory")
-    parser.add_option("-p", "--packagemaker-app", action="store",
-                      default=None, dest="packageMakerApp",
-                      help="Location of the packagemaker application")
+    parser = OptionParser("usage: %prog package")
     options, args = parser.parse_args()
 
     # Validate arguments
     if len(args) != 1:
         parser.error("incorrect number of required arguments")
-    rootDir = abspath(join(dirname(__file__), pardir))
-    buildDir = options.buildDir
-    if buildDir is None:
-        buildDir = join(rootDir, "build")
-    if not isdir(buildDir):
-        parser.error("'%s': build directory does not exist" % buildDir)
-    packageMakerApp = options.packageMakerApp
-    if packageMakerApp is None:
-        packageMakerApp = "/Developer/usr/bin/packagemaker"
-    if not isfile(packageMakerApp):
-        parser.error("'%s': packagemaker utility not found" % packageMakerApp)
     package = args[0]
 
     tempDir = mkdtemp()
     try:
-        copytree(buildDir, tempDir)
-        appDir = join(tempDir, "Applications", "synthclone.app")
-        contentsDir = join(appDir, "Contents")
-        executablePath = join(contentsDir, "MacOS", "synthclone")
-        frameworksDir = join(contentsDir, "Frameworks")
-        ignoreDirectories = ["/lib", "/usr/lib", "/Library/Frameworks",
-                             "/System/Library/Frameworks"]
-        relativeFrameworksPath = "@executable_path/../Frameworks/"
-        version = "%d.%d.%d" % (MAJOR_VERSION, MINOR_VERSION, REVISION)
 
-        # Copy libraries linked to application.
-        stdout.write("Copying dependencies for '%s' ...\n" %
-                     executablePath)
+        stdout.write("Configuring synthclone for build ...\n")
+        appDir = join(tempDir, "synthclone.app")
+        contentsDir = join(appDir, "Contents")
+        execDir = join(contentsDir, "MacOS")
+        frameworksDir = join(contentsDir, "Frameworks")
+        pluginsDir = join(contentsDir, "PlugIns")
+        args = ["./configure", "--bin-dir=%s" % execDir,
+                "--data-dir=%s" % join(contentsDir, "Resources"),
+                "--lib-dir=%s" % frameworksDir, "--plugin-dir=%s" % pluginsDir,
+                "--skip-api-docs=1", "--skip-headers=1", "--skip-lv2=1",
+                "--skip-renoise=1"]
+        if call(args):
+            raise Exception("configure returned an error")
+
+        stdout.write("Building synthclone ...\n")
+        args = ["make"]
+        if call(args):
+            raise Exception("make returned an error")
+
+        stdout.write("Creating package skeleton in '%s' ...\n" % tempDir)
+        args = ["make", "install"]
+        if call(args):
+            raise Exception("make install returned an error")
+
+        stdout.write("Copying dependencies to package skeleton ...\n")
         if call(["macdeployqt", appDir]):
             parser.error("macdeployqt returned an error")
 
-        # The libraries are now linked correctly in the executable.  Make a map
-        # of correctly linked Qt libraries.
+        stdout.write("Generating Qt dependency map ...\n")
+        executablePath = join(contentsDir, "MacOS", "synthclone")
         qtDependencyMap = {}
         for dependency in getDependencies(executablePath):
             baseLibName = basename(dependency)
             if baseLibName.startswith("Qt"):
                 qtDependencyMap[baseLibName] = dependency
 
-        # Copy libraries linked to plugins.
-        pluginsDir = join(contentsDir, "PlugIns")
+        stdout.write("Copying plugin dependencies to package skeleton ...\n")
+        ignoreDirectories = ["/lib", "/usr/lib", "/Library/Frameworks",
+                             "/System/Library/Frameworks"]
+        relativeFrameworksPath = "@executable_path/../Frameworks/"
         for f in listdir(pluginsDir):
             plugin = join(pluginsDir, f)
             if not isfile(plugin):
@@ -199,37 +159,25 @@ def main():
             copyLibraries(plugin, relativeFrameworksPath, frameworksDir,
                           ignoreDirectories, executablePath, qtDependencyMap)
 
-        # Copy libraries linked to synthclone library.
-        libPath = join(tempDir, "Library", "Frameworks",
-                       "synthclone.framework","Versions", version,
-                       "synthclone")
-        stdout.write("Copying dependencies for '%s' ...\n" % libPath)
+        stdout.write("Copying library dependencies to package skeleton ...\n")
+        libPath = join(frameworksDir, "libsynthclone.dylib")
         copyLibraries(libPath, relativeFrameworksPath, frameworksDir,
                       ignoreDirectories, executablePath, qtDependencyMap)
 
-        packageMakerConfigDir = mkdtemp(suffix=".pmdoc")
-        try:
+        stdout.write("Generating Info.plist ...\n")
+        # XXX: Write me.
 
-            # Populate packagemaker config templates.
-            data = {
-                "package": package,
-                "version": "%d.%d.%d" % (MAJOR_VERSION, MINOR_VERSION,
-                                         REVISION)
-            }
-            docDir = join(rootDir, "templates", "synthclone.pmdoc")
-            for name in listdir(docDir):
-                writeTemplate(join(packageMakerConfigDir, name),
-                              join(docDir, name), data)
+        stdout.write("Generating package from skeleton ...\n")
+        args = ["hdiutil", "create", "-format", "UDBZ", "-srcfolder", appDir,
+                package]
+        if call(args):
+            parser.error("hdiutil returned an error")
 
-            # Create package
-            if call([packageMakerApp, "--id", "com.googlecode.synthclone",
-                     "--doc", packageMakerConfigDir]):
-                parser.error("packagemaker returned an error")
-
-        finally:
-            rmtree(packageMakerConfigDir)
     finally:
-        rmtree(tempDir)
+
+        stdout.write("Check %s ...\n" % tempDir)
+
+        # rmtree(tempDir)
 
     stdout.write("Package '%s' built successfully.\n" % package)
 
