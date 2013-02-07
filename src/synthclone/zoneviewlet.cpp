@@ -1,6 +1,6 @@
 /*
  * synthclone - Synthesizer-cloning software
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -41,6 +41,21 @@ ZoneViewlet::ZoneViewlet(QMainWindow *mainWindow, QObject *parent):
         (mainWindow, "buildTargetsAction");
     connect(buildTargetsAction, SIGNAL(triggered()),
             SIGNAL(buildTargetsRequest()));
+
+    clearEffectJobsAction = synthclone::getChild<QAction>
+        (mainWindow, "clearEffectJobsAction");
+    connect(clearEffectJobsAction, SIGNAL(triggered()),
+            SIGNAL(clearEffectJobsRequest()));
+
+    clearSamplerJobsAction = synthclone::getChild<QAction>
+        (mainWindow, "clearSamplerJobsAction");
+    connect(clearSamplerJobsAction, SIGNAL(triggered()),
+            SIGNAL(clearSamplerJobsRequest()));
+
+    clearSamplerJobsButton = synthclone::getChild<QPushButton>
+        (mainWindow, "clearSamplerJobsButton");
+    connect(clearSamplerJobsButton, SIGNAL(clicked()),
+            SIGNAL(clearSamplerJobsRequest()));
 
     clearSelectionAction = synthclone::getChild<QAction>
         (mainWindow, "clearZonesSelectionAction");
@@ -549,6 +564,19 @@ void
 ZoneViewlet::setChannelPropertyVisible(bool visible)
 {
     setColumnVisible(ZONETABLECOLUMN_CHANNEL, visible);
+}
+
+void
+ZoneViewlet::setClearEffectJobsEnabled(bool enabled)
+{
+    clearEffectJobsAction->setEnabled(enabled);
+}
+
+void
+ZoneViewlet::setClearSamplerJobsEnabled(bool enabled)
+{
+    clearSamplerJobsAction->setEnabled(enabled);
+    clearSamplerJobsButton->setEnabled(enabled);
 }
 
 void

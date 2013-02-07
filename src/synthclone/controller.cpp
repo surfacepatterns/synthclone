@@ -1,6 +1,6 @@
 /*
  * synthclone - Synthesizer-cloning software
- * Copyright (C) 2011-2012 Devin Anderson
+ * Copyright (C) 2011-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -249,6 +249,10 @@ Controller::Controller(Application &application, QObject *parent):
 
     connect(zoneViewlet, SIGNAL(applyEffectsRequest()),
             SLOT(handleZoneViewletApplyEffectsRequest()));
+    connect(zoneViewlet, SIGNAL(clearEffectJobsRequest()),
+            SLOT(handleZoneViewletClearEffectJobsRequest()));
+    connect(zoneViewlet, SIGNAL(clearSamplerJobsRequest()),
+            SLOT(handleZoneViewletClearSamplerJobsRequest()));
     connect(zoneViewlet, SIGNAL(clearSelectionRequest()),
             SLOT(handleZoneViewletClearSelectionRequest()));
     connect(zoneViewlet, SIGNAL(copyRequest()),
@@ -283,6 +287,8 @@ Controller::Controller(Application &application, QObject *parent):
 
     zoneViewlet->setApplyEffectsEnabled(false);
     zoneViewlet->setBuildTargetsEnabled(false);
+    zoneViewlet->setClearEffectJobsEnabled(false);
+    zoneViewlet->setClearSamplerJobsEnabled(false);
     zoneViewlet->setClearSelectionEnabled(false);
     zoneViewlet->setCopyEnabled(false);
     zoneViewlet->setCutEnabled(false);
@@ -670,6 +676,8 @@ Controller::refreshZoneViewletActions()
     ZoneViewlet *zoneViewlet = mainView.getZoneViewlet();
     if (! selectCount) {
         zoneViewlet->setApplyEffectsEnabled(false);
+        zoneViewlet->setClearEffectJobsEnabled(false);
+        zoneViewlet->setClearSamplerJobsEnabled(false);
         zoneViewlet->setClearSelectionEnabled(false);
         zoneViewlet->setCopyEnabled(false);
         zoneViewlet->setCutEnabled(false);
@@ -724,6 +732,8 @@ Controller::refreshZoneViewletActions()
     applyFlags:
         zoneViewlet->
             setApplyEffectsEnabled(dryEnabled && session.getEffectCount());
+        zoneViewlet->setClearEffectJobsEnabled(session.getEffectJobCount());
+        zoneViewlet->setClearSamplerJobsEnabled(session.getSamplerJobCount());
         zoneViewlet->setCutEnabled(modifyEnabled);
         zoneViewlet->setDeleteEnabled(modifyEnabled);
         bool samplerSet = static_cast<bool>(session.getSampler());
@@ -2186,6 +2196,22 @@ Controller::handleZoneViewletChannelPropertySortRequest(bool ascending)
 {
     ZoneComparer comparer(ZoneComparer::PROPERTY_CHANNEL);
     session.sortZones(comparer, ascending);
+}
+
+void
+Controller::handleZoneViewletClearEffectJobsRequest()
+{
+    for (int i = session.getEffectJobCount() - 1; i >= 0; i--) {
+        session.removeEffectJob(i);
+    }
+}
+
+void
+Controller::handleZoneViewletClearSamplerJobsRequest()
+{
+    for (int i = session.getSamplerJobCount() - 1; i >= 0; i--) {
+        session.removeSamplerJob(i);
+    }
 }
 
 void

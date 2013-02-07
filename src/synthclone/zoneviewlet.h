@@ -1,6 +1,6 @@
 /*
  * synthclone - Synthesizer-cloning software
- * Copyright (C) 2011-2012 Devin Anderson
+ * Copyright (C) 2011-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -21,6 +21,7 @@
 #define __ZONEVIEWLET_H__
 
 #include <QtGui/QMainWindow>
+#include <QtGui/QPushButton>
 #include <QtGui/QStandardItemModel>
 #include <QtGui/QTableView>
 
@@ -83,6 +84,12 @@ public slots:
 
     void
     setChannelPropertyVisible(bool visible);
+
+    void
+    setClearEffectJobsEnabled(bool enabled);
+
+    void
+    setClearSamplerJobsEnabled(bool enabled);
 
     void
     setClearSelectionEnabled(bool enabled);
@@ -215,6 +222,12 @@ signals:
 
     void
     channelPropertySortRequest(bool ascending);
+
+    void
+    clearEffectJobsRequest();
+
+    void
+    clearSamplerJobsRequest();
 
     void
     clearSelectionRequest();
@@ -373,6 +386,9 @@ private:
 
     QAction *applyEffectsAction;
     QAction *buildTargetsAction;
+    QAction *clearEffectJobsAction;
+    QAction *clearSamplerJobsAction;
+    QPushButton *clearSamplerJobsButton;
     QAction *clearSelectionAction;
     ContextMenuEventFilter contextMenuEventFilter;
     QAction *coreColumnShowActions[ZONETABLECOLUMN_BASE_TOTAL];

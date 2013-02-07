@@ -90,11 +90,29 @@
          </layout>
         </item>
         <item>
-         <widget class="QLabel" name="samplerStatus">
-          <property name="text">
-           <string>Idle.</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" stretch="1,0">
+          <item>
+           <widget class="QLabel" name="samplerStatus">
+            <property name="text">
+             <string>Idle.</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="clearSamplerJobsButton">
+            <property name="statusTip">
+             <string>Clear the sampler job queue.</string>
+            </property>
+            <property name="text">
+             <string>Clear Queue</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../lib/lib.qrc">
+              <normaloff>:/synthclone/images/16x16/clear.png</normaloff>:/synthclone/images/16x16/clear.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <spacer>
@@ -344,7 +362,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="sessionMenu">
@@ -438,6 +456,8 @@
     <addaction name="separator"/>
     <addaction name="applyEffectsZonesAction"/>
     <addaction name="separator"/>
+    <addaction name="clearEffectJobsAction"/>
+    <addaction name="clearSamplerJobsAction"/>
     <addaction name="removeEffectJobZonesAction"/>
     <addaction name="removeSamplerJobZonesAction"/>
     <addaction name="separator"/>
@@ -836,6 +856,30 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="clearSamplerJobsAction">
+   <property name="icon">
+    <iconset resource="../lib/lib.qrc">
+     <normaloff>:/synthclone/images/16x16/clear.png</normaloff>:/synthclone/images/16x16/clear.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear Sampler Jobs</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear the sampler job queue.</string>
+   </property>
+  </action>
+  <action name="clearEffectJobsAction">
+   <property name="icon">
+    <iconset resource="../lib/lib.qrc">
+     <normaloff>:/synthclone/images/16x16/clear.png</normaloff>:/synthclone/images/16x16/clear.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear Effect Jobs</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear the effect job queue.</string>
    </property>
   </action>
  </widget>
