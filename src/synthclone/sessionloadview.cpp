@@ -1,6 +1,6 @@
 /*
  * synthclone - Synthesizer-cloning software
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -48,6 +48,7 @@ SessionLoadView::SessionLoadView(QObject *parent):
     sampleRateValidator->setRange
         (1.0, static_cast<double>(synthclone::SAMPLE_RATE_MAXIMUM), 0);
     sampleRate->setValidator(sampleRateValidator);
+    autoDetectSampleRateText = sampleRate->itemText(0);
 
     sessionCreationDirectory =
         synthclone::getChild<QLineEdit>(dialog, "sessionCreationDirectory");
@@ -139,11 +140,16 @@ SessionLoadView::handleOpenButtonClick()
     bool success;
     switch (tabWidget->currentIndex()) {
     case 0:
-        sampleRate = static_cast<synthclone::SampleRate>
-            (this->sampleRate->currentText().toULong(&success));
-        if (! (success && sampleRate)) {
-            emit error(tr("The supplied sample rate is not valid."));
-            return;
+        if ((! this->sampleRate->currentIndex()) &&
+            (this->sampleRate->currentText() == autoDetectSampleRateText)) {
+            sampleRate = synthclone::SAMPLE_RATE_NOT_SET;
+        } else {
+            sampleRate = static_cast<synthclone::SampleRate>
+                (this->sampleRate->currentText().toULong(&success));
+            if (! (success && sampleRate)) {
+                emit error(tr("The supplied sample rate is not valid."));
+                return;
+            }
         }
         sampleChannelCount = static_cast<synthclone::SampleChannelCount>
             (this->sampleChannelCount->value());

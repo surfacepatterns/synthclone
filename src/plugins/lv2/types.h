@@ -1,6 +1,6 @@
 /*
  * libsynthclone_lv2 - LV2 effect plugin for `synthclone`
- * Copyright (C) 2012 Devin Anderson
+ * Copyright (C) 2012-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -19,6 +19,13 @@
 
 #ifndef __TYPES_H__
 #define __TYPES_H__
+
+#include <synthclone/types.h>
+
+// There are times when the sample rate will not be set for synthclone, but we
+// will need a sample rate to instantiate and configure LV2 effects.  As a hack,
+// we use this value.
+const synthclone::SampleRate FALLBACK_SAMPLE_RATE = 48000;
 
 enum ChannelMapTableColumn {
     CHANNELMAPTABLECOLUMN_INPUT_CHANNEL = 0,

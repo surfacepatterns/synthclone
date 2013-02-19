@@ -1,6 +1,6 @@
 /*
  * synthclone - Synthesizer-cloning software
- * Copyright (C) 2011-2012 Devin Anderson
+ * Copyright (C) 2011-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -42,7 +42,10 @@ Session::create(const QDir &directory, synthclone::SampleRate sampleRate,
                 synthclone::SampleChannelCount count)
 {
     CONFIRM(count > 0, tr("'%1': invalid sample channel count").arg(count));
-    CONFIRM(sampleRate > 0, tr("'%1': invalid sample rate").arg(sampleRate));
+    CONFIRM((sampleRate == synthclone::SAMPLE_RATE_NOT_SET) ||
+            ((sampleRate >= synthclone::SAMPLE_RATE_MINIMUM) &&
+             (sampleRate <= synthclone::SAMPLE_RATE_MAXIMUM)),
+            tr("'%1': invalid sample rate").arg(sampleRate));
 
     initializeDirectory(directory);
     QFile file;
@@ -175,6 +178,13 @@ Session::Session(ParticipantManager &participantManager, QObject *parent):
                                       const synthclone::Participant *,
                                       const QByteArray &)),
             SLOT(setModified()));
+
+    connect(&sessionSampleData,
+            SIGNAL(sampleChannelCountChanged(synthclone::SampleChannelCount)),
+            SIGNAL(sampleChannelCountChanged(synthclone::SampleChannelCount)));
+    connect(&sessionSampleData,
+            SIGNAL(sampleRateChanged(synthclone::SampleRate)),
+            SIGNAL(sampleRateChanged(synthclone::SampleRate)));
 
     for (int i = 0; i < 0x80; i++) {
         controlPropertiesVisible[i] = false;
@@ -989,9 +999,12 @@ Session::load(const QDir &directory)
         static_cast<synthclone::SampleChannelCount>(uValue) : 2;
     sessionSampleData.setSampleChannelCount(sampleChannelCount);
 
+    // This code assumes knowledge of the value of the constant
+    // 'SAMPLE_RATE_NOT_SET'.
     synthclone::SampleRate sampleRate =
-        verifyWholeNumberAttribute(documentElement, "sample-rate", uValue, 1) ?
-        static_cast<synthclone::SampleRate>(uValue) : 44100;
+        verifyWholeNumberAttribute(documentElement, "sample-rate", uValue, 0) ?
+        static_cast<synthclone::SampleRate>(uValue) :
+        synthclone::SAMPLE_RATE_NOT_SET;
     sessionSampleData.setSampleRate(sampleRate);
 
     // Property visibility flags

@@ -1,6 +1,6 @@
 /*
  * libsynthclone - a plugin API for `synthclone`
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2013 Devin Anderson
  *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the
@@ -94,6 +94,14 @@ namespace synthclone {
      */
 
     typedef quint32 SampleRate;
+
+    /**
+     * A value indicating the sample rate is not set.  This is generally only
+     * valid for a session that doesn't have any samples, and doesn't have a
+     * sampler component.
+     */
+
+    const SampleRate SAMPLE_RATE_NOT_SET = 0;
 
     /**
      * The minimum valid sample rate.  I don't see 1 as being a practical

@@ -1,6 +1,6 @@
 /*
  * synthclone - Synthesizer-cloning software
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -254,6 +254,7 @@ Zone::setDrySample(synthclone::Sample *sample, bool copy)
         }
         this->drySample = sample;
         if (sample) {
+            updateSampleRate(*sample);
             sample->setTemporary(false);
         }
         emit drySampleChanged(sample);
@@ -352,6 +353,7 @@ Zone::setWetSample(synthclone::Sample *sample, bool copy)
         }
         this->wetSample = sample;
         if (sample) {
+            updateSampleRate(*sample);
             sample->setTemporary(false);
         }
         emit wetSampleChanged(sample);
@@ -381,5 +383,14 @@ Zone::setWetSampleStale(bool stale)
         }
         wetSampleStale = stale;
         emit wetSampleStaleChanged(stale);
+    }
+}
+
+void
+Zone::updateSampleRate(const synthclone::Sample &sample)
+{
+    if (sessionSampleData.getSampleRate() == synthclone::SAMPLE_RATE_NOT_SET) {
+        synthclone::SampleInputStream inputStream(sample);
+        sessionSampleData.setSampleRate(inputStream.getSampleRate());
     }
 }

@@ -1,6 +1,6 @@
 /*
  * libsynthclone_lv2 - LV2 effect plugin for `synthclone`
- * Copyright (C) 2012 Devin Anderson
+ * Copyright (C) 2012-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -24,6 +24,7 @@
 #include <QtCore/QDebug>
 
 #include "effect.h"
+#include "types.h"
 
 // Static functions
 
@@ -101,7 +102,12 @@ Effect::~Effect()
 void
 Effect::addInstance()
 {
-    LV2Instance *instance = plugin.instantiate(static_cast<double>(sampleRate));
+    synthclone::SampleRate instanceSampleRate = sampleRate;
+    if (instanceSampleRate == synthclone::SAMPLE_RATE_NOT_SET) {
+        instanceSampleRate = FALLBACK_SAMPLE_RATE;
+    }
+    LV2Instance *instance =
+        plugin.instantiate(static_cast<double>(instanceSampleRate));
     int instanceCount = instances.count();
     if (instanceCount) {
         LV2State *state = instances[0]->getState();
@@ -607,19 +613,99 @@ Effect::setPortValue(const char *symbol, const void *value, uint32_t size,
 void
 Effect::setSampleRate(synthclone::SampleRate sampleRate)
 {
-    assert(sampleRate);
+
+    qDebug() << "Effect::setSampleRate";
+
+    assert((sampleRate == synthclone::SAMPLE_RATE_NOT_SET) ||
+           ((sampleRate >= synthclone::SAMPLE_RATE_MINIMUM) &&
+            (sampleRate <= synthclone::SAMPLE_RATE_MAXIMUM)));
     if (sampleRate != this->sampleRate) {
+        synthclone::SampleRate instanceSampleRate = sampleRate;
+        if (instanceSampleRate == synthclone::SAMPLE_RATE_NOT_SET) {
+
+            qDebug() << "fallback sample rate";
+
+            instanceSampleRate = FALLBACK_SAMPLE_RATE;
+        }
+        int audioInputPortCount = plugin.getAudioInputPortCount();
+        int audioOutputPortCount = plugin.getAudioOutputPortCount();
         LV2State *state = instances[0]->getState();
         QScopedPointer<LV2State> statePtr(state);
         for (int i = instances.count() - 1; i >= 0; i--) {
-            delete instances[i];
-            LV2Instance *instance =
-                plugin.instantiate(static_cast<double>(sampleRate));
+
+            qDebug() << "Disconnecting ports for " << i << "...";
+
+            // Disconnect ports from old instance
+            LV2Instance *instance = instances[i];
+
+            instance->activate();
+            instance->deactivate();
+
+            int j;
+            int portIndex;
+            for (j = audioInputPortCount - 1; j >= 0; j--) {
+                portIndex = (i * audioInputPortCount) + j;
+                instance->connectPort(plugin.getAudioInputPort(j).getIndex(),
+                                      0);
+            }
+            for (j = audioOutputPortCount - 1; j >= 0; j--) {
+                portIndex = (i * audioOutputPortCount) + j;
+                instance->connectPort(plugin.getAudioOutputPort(j).getIndex(),
+                                      0);
+            }
+            for (j = plugin.getControlInputPortCount() - 1; j >= 0; j--) {
+                instance->connectPort(plugin.getControlInputPort(j).getIndex(),
+                                      0);
+            }
+            for (j = plugin.getControlOutputPortCount() - 1; j >= 0; j--) {
+                instance->connectPort(plugin.getControlOutputPort(j).getIndex(),
+                                      0);
+            }
+
+            qDebug() << "Deleting old instance ...";
+
+            // Delete the old instance
+            delete instance;
+
+            qDebug() << "Creating new instance ...";
+
+            // Create the new instance
+            instance =
+                plugin.instantiate(static_cast<double>(instanceSampleRate));
             instance->setState(state);
+
+            qDebug() << "Connecting ports ...";
+
+            // Connect ports to new instance
+            for (j = audioInputPortCount - 1; j >= 0; j--) {
+                portIndex = (i * audioInputPortCount) + j;
+                instance->connectPort(plugin.getAudioInputPort(j).getIndex(),
+                                      audioInputPortBuffers[portIndex]);
+            }
+            for (j = audioOutputPortCount - 1; j >= 0; j--) {
+                portIndex = (i * audioOutputPortCount) + j;
+                instance->connectPort(plugin.getAudioOutputPort(j).getIndex(),
+                                      audioOutputPortBuffers[portIndex]);
+            }
+            for (j = plugin.getControlInputPortCount() - 1; j >= 0; j--) {
+                instance->connectPort(plugin.getControlInputPort(j).getIndex(),
+                                      controlInputPortValues + j);
+            }
+            for (j = plugin.getControlOutputPortCount() - 1; j >= 0; j--) {
+                instance->connectPort(plugin.getControlOutputPort(j).getIndex(),
+                                      controlOutputPortValues + j);
+            }
+
+            qDebug() << "Assigning instance to " << i << "...";
+
             instances[i] = instance;
         }
+        this->sampleRate = sampleRate;
         emit sampleRateChanged(sampleRate);
     }
+
+    qDebug() << "/Effect::setSampleRate";
+
 }
 
 void

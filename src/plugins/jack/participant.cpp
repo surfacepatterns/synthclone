@@ -1,7 +1,7 @@
 /*
  * libsynthclone_jack - JACK Audio Connection Kit sampler plugin for
  * `synthclone`
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -88,14 +88,11 @@ Participant::addSampler(bool convertSampleRate)
         QScopedPointer<Sampler> samplerPtr(sampler);
         synthclone::SampleRate serverSampleRate = sampler->getSampleRate();
         synthclone::SampleRate sessionSampleRate = context->getSampleRate();
-        if (serverSampleRate != sessionSampleRate) {
-            if (convertSampleRate) {
-                context->setSampleRate(serverSampleRate);
-                goto activateSampler;
-            }
+        if (! ((serverSampleRate == sessionSampleRate) ||
+               (sessionSampleRate == synthclone::SAMPLE_RATE_NOT_SET) ||
+               convertSampleRate)) {
             sampleRateChangeView.setVisible(true);
         } else {
-        activateSampler:
             connect(sampler, SIGNAL(fatalError(QString)),
                     SLOT(handleFatalError(QString)));
             connect(sampler, SIGNAL(sampleRateChanged()),
@@ -106,6 +103,7 @@ Participant::addSampler(bool convertSampleRate)
                     SLOT(handleSessionEvent(jack_client_t *,
                                             jack_session_event_t *)));
             sampler->activate(context->getSampleChannelCount());
+            context->setSampleRate(serverSampleRate);
             const synthclone::Registration &registration =
                 context->addSampler(sampler);
             connect(&registration, SIGNAL(unregistered(QObject *)),

@@ -1,6 +1,6 @@
 /*
  * libsynthclone_lv2 - LV2 effect plugin for `synthclone`
- * Copyright (C) 2012 Devin Anderson
+ * Copyright (C) 2012-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -302,6 +302,9 @@ Participant::configureEffect(Effect *effect)
         //     http://drobilla.net/software/jalv/
         if (port.isSampleRatePort()) {
             synthclone::SampleRate sampleRate = context->getSampleRate();
+            if (sampleRate == synthclone::SAMPLE_RATE_NOT_SET) {
+                sampleRate = FALLBACK_SAMPLE_RATE;
+            }
             maximumValue *= sampleRate;
             minimumValue *= sampleRate;
         }

@@ -1,6 +1,6 @@
 /*
  * libsynthclone_portmedia - PortAudio/PortMIDI sampler plugin for `synthclone`
- * Copyright (C) 2012 Devin Anderson
+ * Copyright (C) 2012-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -169,12 +169,14 @@ Participant::activate(synthclone::Context &context, const QVariant &/*state*/)
 
     connect(sampler, SIGNAL(midiError(const QString &)),
             SLOT(handleMIDIError(const QString &)));
+    connect(sampler, SIGNAL(sampleRateChanged(synthclone::SampleRate)),
+            &context, SLOT(setSampleRate(synthclone::SampleRate)));
 
     connect(&context,
             SIGNAL(sampleChannelCountChanged(synthclone::SampleChannelCount)),
             SLOT(handleChannelCountChange(synthclone::SampleChannelCount)));
     connect(&context, SIGNAL(sampleRateChanged(synthclone::SampleRate)),
-            SLOT(handleSampleRateChange(synthclone::SampleRate)));
+            SLOT(handleSessionSampleRateChange(synthclone::SampleRate)));
 
     this->context = &context;
 }
@@ -205,7 +207,8 @@ Participant::deactivate(synthclone::Context &context)
                this,
                SLOT(handleChannelCountChange(synthclone::SampleChannelCount)));
     disconnect(&context, SIGNAL(sampleRateChanged(synthclone::SampleRate)),
-               this, SLOT(handleSampleRateChange(synthclone::SampleRate)));
+               this,
+               SLOT(handleSessionSampleRateChange(synthclone::SampleRate)));
 
     context.removeMenuAction(&addSamplerAction);
 
@@ -296,18 +299,6 @@ Participant::handleMIDIError(const QString &message)
 }
 
 void
-Participant::handleSampleRateChange(synthclone::SampleRate sampleRate)
-{
-    if (sampler->isActive()) {
-        context->removeSampler();
-        context->reportError(tr("The PortMedia sampler was removed because "
-                                "the session's sample rate has been "
-                                "changed."));
-    }
-    sampler->setSampleRate(sampleRate);
-}
-
-void
 Participant::handleSamplerUnregistration(QObject *obj)
 {
     qobject_cast<Sampler *>(obj)->deactivate();
@@ -318,6 +309,18 @@ void
 Participant::handleSamplerViewCloseRequest()
 {
     samplerView.setVisible(false);
+}
+
+void
+Participant::handleSessionSampleRateChange(synthclone::SampleRate sampleRate)
+{
+    if (sampler->isActive()) {
+        context->removeSampler();
+        context->reportError(tr("The PortMedia sampler was removed because "
+                                "the session's sample rate has been "
+                                "changed."));
+    }
+    sampler->setSampleRate(sampleRate);
 }
 
 void

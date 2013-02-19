@@ -1,6 +1,6 @@
 /*
  * synthclone - Synthesizer-cloning software
- * Copyright (C) 2011-2012 Devin Anderson
+ * Copyright (C) 2011-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -30,7 +30,7 @@ SessionSampleData::SessionSampleData(QObject *parent):
 {
     sampleChannelCount = 2;
     sampleDirectory = 0;
-    sampleRate = 44100;
+    sampleRate = synthclone::SAMPLE_RATE_NOT_SET;
 }
 
 SessionSampleData::~SessionSampleData()
@@ -89,6 +89,11 @@ SessionSampleData::setSampleDirectory(const QDir *directory)
 void
 SessionSampleData::setSampleRate(synthclone::SampleRate sampleRate)
 {
+    CONFIRM((sampleRate == synthclone::SAMPLE_RATE_NOT_SET) ||
+            ((sampleRate >= synthclone::SAMPLE_RATE_MINIMUM) &&
+             (sampleRate <= synthclone::SAMPLE_RATE_MAXIMUM)),
+            tr("'%1': invalid sample rate").arg(sampleRate));
+
     if (this->sampleRate != sampleRate) {
         this->sampleRate = sampleRate;
         emit sampleRateChanged(sampleRate);

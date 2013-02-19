@@ -1,6 +1,6 @@
 /*
  * libsynthclone_lv2 - LV2 effect plugin for `synthclone`
- * Copyright (C) 2012 Devin Anderson
+ * Copyright (C) 2012-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -35,7 +35,6 @@
 #include <suil/suil.h>
 
 #include <synthclone/designerview.h>
-#include <synthclone/types.h>
 
 #include "channelmapdelegate.h"
 #include "effectviewdata.h"

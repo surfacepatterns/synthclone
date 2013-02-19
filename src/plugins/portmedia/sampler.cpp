@@ -1,6 +1,6 @@
 /*
  * libsynthclone_portmedia - PortAudio/PortMIDI sampler plugin for `synthclone`
- * Copyright (C) 2012 Devin Anderson
+ * Copyright (C) 2012-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -58,8 +58,9 @@ Sampler::Sampler(const QString &name, synthclone::SampleChannelCount channels,
     midiThread(this)
 {
     assert(channels >= synthclone::SAMPLE_CHANNEL_COUNT_MINIMUM);
-    assert((sampleRate >= synthclone::SAMPLE_RATE_MINIMUM) &&
-           (sampleRate <= synthclone::SAMPLE_RATE_MAXIMUM));
+    assert((sampleRate == synthclone::SAMPLE_RATE_NOT_SET) ||
+           ((sampleRate >= synthclone::SAMPLE_RATE_MINIMUM) &&
+            (sampleRate <= synthclone::SAMPLE_RATE_MAXIMUM)));
     PaError paError = Pa_Initialize();
     if (paError != paNoError) {
         throw synthclone::Error(Pa_GetErrorText(paError));
@@ -273,6 +274,14 @@ Sampler::activate()
         inputParameters.sampleFormat = paFloat32;
         inputParameters.suggestedLatency = info->defaultHighInputLatency;
 
+        // If the sample rate isn't set, then take the sample rate from the
+        // given default sample rate for the input device.
+        synthclone::SampleRate streamSampleRate = sampleRate;
+        if (sampleRate == synthclone::SAMPLE_RATE_NOT_SET) {
+            streamSampleRate = static_cast<synthclone::SampleRate>
+                (info->defaultSampleRate);
+        }
+
         PaStreamParameters outputParameters;
         const AudioDeviceData &outputData = getAudioOutputDeviceData();
         info = outputData.info;
@@ -284,7 +293,7 @@ Sampler::activate()
         outputParameters.suggestedLatency = info->defaultHighOutputLatency;
 
         PaError paError = Pa_OpenStream(&audioStream, &inputParameters,
-                                        &outputParameters, sampleRate,
+                                        &outputParameters, streamSampleRate,
                                         paFramesPerBufferUnspecified, paNoFlag,
                                         handleProcessEvent, this);
         if (paError != paNoError) {
@@ -298,6 +307,11 @@ Sampler::activate()
             if (paError != paNoError) {
                 throw synthclone::Error(tr("failed to start audio stream: %1").
                                         arg(Pa_GetErrorText(paError)));
+            }
+
+            if (streamSampleRate != sampleRate) {
+                sampleRate = streamSampleRate;
+                emit sampleRateChanged(sampleRate);
             }
 
             eventThread.start();
