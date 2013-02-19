@@ -265,7 +265,7 @@ Target::build(const QList<synthclone::Zone *> &zones)
 
         for (int noteIndex = 0; noteIndex < noteCount; noteIndex++) {
 
-            QString muteGroup = QString::number(noteIndex);
+            QString muteGroup = QString::number(noteIndex + 1);
             synthclone::MIDIData note = notes[noteIndex];
             QString noteStr = QString::number(note);
             VelocityZoneMap *velocityZoneMap = noteZoneMap->value(note);
