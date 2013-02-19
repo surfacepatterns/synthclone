@@ -265,6 +265,7 @@ Target::build(const QList<synthclone::Zone *> &zones)
 
         for (int noteIndex = 0; noteIndex < noteCount; noteIndex++) {
 
+            QString muteGroup = QString::number(noteIndex);
             synthclone::MIDIData note = notes[noteIndex];
             QString noteStr = QString::number(note);
             VelocityZoneMap *velocityZoneMap = noteZoneMap->value(note);
@@ -290,6 +291,9 @@ Target::build(const QList<synthclone::Zone *> &zones)
                 if (drumKit) {
                     writeOpcode(commonRegionData, "key", noteStr);
                     writeOpcode(commonRegionData, "pitch_keytrack", "0");
+                    writeOpcode(commonRegionData, "loop_mode", "one_shot");
+                    writeOpcode(commonRegionData, "group", muteGroup);
+                    writeOpcode(commonRegionData, "off_by", muteGroup);
                     hiKey = note;
                     loKey = note;
                 } else {
