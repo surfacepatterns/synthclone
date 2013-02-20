@@ -50,6 +50,9 @@ def main():
     parser.add_option("--skip-api-docs", action="store", default=0,
                       dest="skipAPIDocs", help="Don't build API documentation",
                       type="int")
+    parser.add_option("--skip-fader", action="store", default=0,
+                      dest="skipFader", help="Don't build the fader plugin",
+                      type="int")
     parser.add_option("--skip-headers", action="store", default=0,
                       dest="skipHeaders", help="Don't build API headers",
                       type="int")
@@ -176,6 +179,8 @@ def main():
         qmakeArgs.append("DEBUG=1")
     if options.skipAPIDocs:
         qmakeArgs.append("SKIP_API_DOCS=1")
+    if options.skipFader:
+        qmakeArgs.append("SKIP_FADER_PLUGIN=1")
     if options.skipHeaders:
         qmakeArgs.append("SKIP_HEADERS=1")
     if options.skipHydrogen:

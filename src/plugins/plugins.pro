@@ -1,3 +1,6 @@
+isEmpty(SKIP_FADER_PLUGIN) {
+    SUBDIRS += fader
+}
 isEmpty(SKIP_HYDROGEN_PLUGIN) {
     SUBDIRS += hydrogen
 }
