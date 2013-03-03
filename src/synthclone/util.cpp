@@ -161,9 +161,8 @@ writeZone(QXmlStreamWriter &writer, Zone *zone, QDir *samplesDirectory,
             QString name = sampleInfo.fileName();
             if (sampleInfo.absolutePath() != samplesDirectory->absolutePath()) {
                 QString path = samplesDirectory->absoluteFilePath(name);
-                synthclone::Sample *newDrySample =
-                    new synthclone::Sample(*drySample, path, parent);
-                zone->setDrySample(newDrySample);
+                synthclone::Sample newDrySample(*drySample, path, parent);
+                zone->setDrySample(&newDrySample);
             }
             writer.writeAttribute("dry-sample", name);
         } else {
@@ -180,9 +179,8 @@ writeZone(QXmlStreamWriter &writer, Zone *zone, QDir *samplesDirectory,
             QString name = sampleInfo.fileName();
             if (sampleInfo.absolutePath() != samplesDirectory->absolutePath()) {
                 QString path = samplesDirectory->absoluteFilePath(name);
-                synthclone::Sample *newWetSample =
-                    new synthclone::Sample(*wetSample, path, parent);
-                zone->setWetSample(newWetSample);
+                synthclone::Sample newWetSample(*wetSample, path, parent);
+                zone->setWetSample(&newWetSample);
             }
             writer.writeAttribute("wet-sample", name);
         } else {

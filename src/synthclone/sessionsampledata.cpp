@@ -101,7 +101,8 @@ SessionSampleData::setSampleRate(synthclone::SampleRate sampleRate)
 }
 
 synthclone::Sample *
-SessionSampleData::updateSample(synthclone::Sample &sample, QObject *parent)
+SessionSampleData::updateSample(synthclone::Sample &sample, bool forceCopy,
+                                QObject *parent)
 {
     if (! sampleDirectory) {
         // The session is being unloaded.
@@ -124,11 +125,17 @@ SessionSampleData::updateSample(synthclone::Sample &sample, QObject *parent)
         return 0;
     }
 
+    // If the sample rate isn't set, then set it to the sample rate of the new
+    // sample.
     synthclone::SampleRate inputSampleRate = inputStream.getSampleRate();
+    if (sampleRate == synthclone::SAMPLE_RATE_NOT_SET) {
+        setSampleRate(inputSampleRate);
+    }
+
     bool sampleConversionRequired = inputSampleRate != sampleRate;
     QString newPath = createUniqueFile(sampleDirectory);
     if ((channelConvertAlgorithm == CHANNELCONVERTALGORITHM_NONE) &&
-        (! sampleConversionRequired)) {
+        (! sampleConversionRequired) && (! forceCopy)) {
         if (sampleDirectory) {
             if (QFileInfo(sample.getPath()).absolutePath() ==
                 sampleDirectory->absolutePath()) {
@@ -136,11 +143,11 @@ SessionSampleData::updateSample(synthclone::Sample &sample, QObject *parent)
                 return &sample;
             }
         }
-        // We just need to move the sample to the new sample directory.
-        return new synthclone::Sample(sample, newPath, parent);
     }
 
-    // At this point, some sort of conversion is required.
+    // At this point, either some sort of conversion is required, the sample is
+    // being moved from outside the sample directory into the sample directory,
+    // or a forced copy was requested.
 
     float *channelBuffer;
 

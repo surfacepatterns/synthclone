@@ -97,7 +97,7 @@ public slots:
     setDrySample(synthclone::Sample *sample);
 
     void
-    setDrySample(synthclone::Sample *sample, bool copy);
+    setDrySample(synthclone::Sample *sample, bool forceCopy);
 
     void
     setDrySampleStale(bool stale);
@@ -118,7 +118,7 @@ public slots:
     setVelocity(synthclone::MIDIData velocity);
 
     void
-    setWetSample(synthclone::Sample *sample, bool copy=true);
+    setWetSample(synthclone::Sample *sample, bool forceCopy=true);
 
     void
     setWetSampleStale();

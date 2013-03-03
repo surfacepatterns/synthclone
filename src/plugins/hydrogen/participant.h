@@ -1,6 +1,6 @@
 /*
  * libsynthclone_hydrogen - Hydrogen target plugin for `synthclone`
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -25,6 +25,7 @@
 #include <synthclone/fileselectionview.h>
 #include <synthclone/participant.h>
 
+#include "importer.h"
 #include "target.h"
 #include "targetview.h"
 
@@ -60,6 +61,22 @@ private slots:
     handleDirectoryViewPathSelection(const QStringList &paths);
 
     void
+    handleImportArchiveRequest();
+
+    void
+    handleImportKitRequest();
+
+    void
+    handleImportViewCloseRequest();
+
+    void
+    handleImportViewPathSelection(const QStringList &paths);
+
+    void
+    handleLayerImport(synthclone::MIDIData note, synthclone::MIDIData velocity,
+                      synthclone::SampleTime time, synthclone::Sample &sample);
+
+    void
     handleTargetAddition();
 
     void
@@ -86,6 +103,10 @@ private:
     Target *configuredTarget;
     synthclone::Context *context;
     synthclone::FileSelectionView directoryView;
+    synthclone::MenuAction importArchiveAction;
+    synthclone::MenuAction importKitAction;
+    Importer importer;
+    synthclone::FileSelectionView importView;
     TargetView targetView;
 
 };

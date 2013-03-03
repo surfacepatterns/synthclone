@@ -1,6 +1,6 @@
 /*
  * libsynthclone_hydrogen - Hydrogen target plugin for `synthclone`
- * Copyright (C) 2011-2013 Devin Anderson
+ * Copyright (C) 2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -17,36 +17,55 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __ARCHIVEWRITER_H__
-#define __ARCHIVEWRITER_H__
+#ifndef __IMPORTER_H__
+#define __IMPORTER_H__
 
-#include <archive.h>
+#include <QtCore/QDir>
+#include <QtCore/QObject>
+#include <QtCore/QString>
+#include <QtXml/QDomDocument>
 
-#include "archiveheader.h"
+#include <synthclone/sample.h>
+#include <synthclone/types.h>
 
-class ArchiveWriter: public QObject {
+class Importer: public QObject {
 
     Q_OBJECT
 
 public:
 
-    ArchiveWriter(const QString &path, QObject *parent=0);
+    explicit
+    Importer(QObject *parent=0);
 
-    ~ArchiveWriter();
+    ~Importer();
+
+    QString
+    getPath() const;
+
+public slots:
 
     void
-    close();
+    import();
 
     void
-    writeData(const QByteArray &data);
+    setPath(const QString &path);
+
+signals:
 
     void
-    writeHeader(const ArchiveHeader &header);
+    layerImported(synthclone::MIDIData note, synthclone::MIDIData velocity,
+                  synthclone::SampleTime time, synthclone::Sample &sample);
+
+    void
+    pathChanged(const QString &path);
 
 private:
 
-    archive *arch;
-    bool closed;
+    void
+    importSample(const QDir &kitDir, const QDomElement &element,
+                 synthclone::MIDIData note, synthclone::MIDIData velocity);
+
+    QString path;
 
 };
 

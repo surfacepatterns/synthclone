@@ -769,6 +769,7 @@ Session::handleEffectJobThreadCompletion()
     Zone *zone = qobject_cast<EffectJob *>(currentEffectJob)->getZone();
     zone->setStatus(synthclone::Zone::STATUS_NORMAL);
     zone->setWetSample(currentEffectJobWetSample, false);
+    assert(currentEffectJobWetSample == zone->getWetSample());
     recycleCurrentEffectJob();
 }
 
@@ -806,6 +807,7 @@ Session::handleSamplerJobCompletion()
             if (zones.contains(zone)) {
                 zone->setStatus(synthclone::Zone::STATUS_NORMAL);
                 zone->setDrySample(currentSamplerJobSample, false);
+                assert(currentSamplerJobSample == zone->getDrySample());
                 currentSamplerJobSample = 0;
             }
             recycleCurrentSamplerJob();
@@ -951,7 +953,6 @@ Session::isZoneSelected(int index) const
 void
 Session::load(const QDir &directory)
 {
-
     QDomDocument document;
     if (! loadXML(directory, document)) {
         throw synthclone::Error(tr("'%1' is not a valid session directory").

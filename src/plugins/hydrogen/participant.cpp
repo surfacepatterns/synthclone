@@ -1,6 +1,6 @@
 /*
- * libsynthclone_hydrogen - Hydrogen target plugin for `synthclone`
- * Copyright (C) 2011 Devin Anderson
+ * libsynthclone_hydrogen - Hydrogen target and import plugin for `synthclone`
+ * Copyright (C) 2011-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -22,23 +22,52 @@
 #include "participant.h"
 
 Participant::Participant(QObject *parent):
-    synthclone::Participant(tr("Hydrogen"), 0, 0, 1, "Devin Anderson",
-                            tr("Creates Hydrogen drum kits."), parent),
-    addTargetAction(tr("Hydrogen"))
+    synthclone::Participant(tr("Hydrogen"), 0, 1, 1, "Devin Anderson",
+                            tr("Creates and imports samples from Hydrogen drum "
+                               "kits"), parent),
+    addTargetAction(tr("Hydrogen")),
+    importArchiveAction(tr("Hydrogen Archive")),
+    importKitAction(tr("Hydrogen Kit"))
 {
     directoryView.setFilesVisible(false);
     directoryView.setOperation(synthclone::FileSelectionView::OPERATION_SAVE);
     directoryView.setTitle(tr("Save Hydrogen Kit"));
+
+    importView.setFilesVisible(true);
+    importView.setOperation(synthclone::FileSelectionView::OPERATION_OPEN);
+    importView.setTitle(tr("Import Layers from Hydrogen Kit"));
+
     connect(&addTargetAction, SIGNAL(triggered()),
             SLOT(handleTargetAddition()));
+
     connect(&directoryView, SIGNAL(closeRequest()),
             SLOT(handleDirectoryViewCloseRequest()));
     connect(&directoryView, SIGNAL(pathsSelected(const QStringList &)),
             SLOT(handleDirectoryViewPathSelection(const QStringList &)));
+
+    connect(&importArchiveAction, SIGNAL(triggered()),
+            SLOT(handleImportArchiveRequest()));
+
+    connect(&importKitAction, SIGNAL(triggered()),
+            SLOT(handleImportKitRequest()));
+
+    connect(&importer,
+            SIGNAL(layerImported(synthclone::MIDIData, synthclone::MIDIData,
+                                 synthclone::SampleTime, synthclone::Sample &)),
+            SLOT(handleLayerImport(synthclone::MIDIData, synthclone::MIDIData,
+                                   synthclone::SampleTime,
+                                   synthclone::Sample &)));
+
+    connect(&importView, SIGNAL(closeRequest()),
+            SLOT(handleImportViewCloseRequest()));
+    connect(&importView, SIGNAL(pathsSelected(const QStringList &)),
+            SLOT(handleImportViewPathSelection(const QStringList &)));
+
     connect(&targetView, SIGNAL(closeRequest()),
             SLOT(handleTargetViewCloseRequest()));
     connect(&targetView, SIGNAL(pathLookupRequest()),
             SLOT(handleTargetViewPathLookupRequest()));
+
     configuredTarget = 0;
     context = 0;
 }
@@ -52,6 +81,12 @@ void
 Participant::activate(synthclone::Context &context, const QVariant &/*state*/)
 {
     context.addMenuAction(&addTargetAction, synthclone::MENU_ADD_TARGET);
+    QStringList importSubMenus;
+    importSubMenus << tr("Import From ...");
+    context.addMenuAction(&importArchiveAction, synthclone::MENU_ZONES,
+                          importSubMenus);
+    context.addMenuAction(&importKitAction, synthclone::MENU_ZONES,
+                          importSubMenus);
     this->context = &context;
     configuredTarget = 0;
 }
@@ -149,6 +184,8 @@ void
 Participant::deactivate(synthclone::Context &context)
 {
     context.removeMenuAction(&addTargetAction);
+    context.removeMenuAction(&importArchiveAction);
+    context.removeMenuAction(&importKitAction);
     this->context = 0;
 }
 
@@ -257,6 +294,56 @@ Participant::handleDirectoryViewPathSelection(const QStringList &paths)
     assert(paths.count() == 1);
     configuredTarget->setPath(paths[0]);
     directoryView.setVisible(false);
+}
+
+void
+Participant::handleImportArchiveRequest()
+{
+    importView.setFilesVisible(true);
+    importView.setSelectionFilter
+        (synthclone::FileSelectionView::SELECTIONFILTER_EXISTING_FILE);
+    importView.setVisible(true);
+}
+
+void
+Participant::handleImportKitRequest()
+{
+    importView.setFilesVisible(false);
+    importView.setSelectionFilter
+        (synthclone::FileSelectionView::SELECTIONFILTER_DIRECTORY);
+    importView.setVisible(true);
+}
+
+void
+Participant::handleImportViewCloseRequest()
+{
+    importView.setVisible(false);
+}
+
+void
+Participant::handleImportViewPathSelection(const QStringList &paths)
+{
+    assert(paths.count() == 1);
+    QString path = paths[0];
+    importer.setPath(path);
+    importView.setVisible(false);
+    if (path.count()) {
+        importer.import();
+    }
+}
+
+void
+Participant::handleLayerImport(synthclone::MIDIData note,
+                               synthclone::MIDIData velocity,
+                               synthclone::SampleTime time,
+                               synthclone::Sample &sample)
+{
+    synthclone::Zone *zone = context->addZone();
+    zone->setDrySample(&sample);
+    zone->setNote(note);
+    zone->setReleaseTime(synthclone::SAMPLE_TIME_MINIMUM);
+    zone->setSampleTime(time);
+    zone->setVelocity(velocity);
 }
 
 void

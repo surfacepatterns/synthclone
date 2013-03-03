@@ -141,18 +141,11 @@ Zone::getWetSample() const
 void
 Zone::handleSessionSampleDataChange()
 {
-    synthclone::Sample *sample;
     if (drySample) {
-        sample = sessionSampleData.updateSample(*drySample, this);
-        if (sample != drySample) {
-            setDrySample(sample, false);
-        }
+        setDrySample(drySample, false);
     }
     if (wetSample) {
-        sample = sessionSampleData.updateSample(*wetSample, this);
-        if (sample != wetSample) {
-            setWetSample(sample, false);
-        }
+        setWetSample(wetSample, false);
     }
 }
 
@@ -242,21 +235,17 @@ Zone::setDrySample(synthclone::Sample *sample)
 }
 
 void
-Zone::setDrySample(synthclone::Sample *sample, bool copy)
+Zone::setDrySample(synthclone::Sample *sample, bool forceCopy)
 {
-    if (sample && copy) {
-        QString path = createUniqueFile(sessionSampleData.getSampleDirectory());
-        sample = new synthclone::Sample(*sample, path, false, this);
+    if (sample) {
+        sample = sessionSampleData.updateSample(*sample, forceCopy, this);
+        sample->setTemporary(false);
     }
     if (this->drySample != sample) {
         if (this->drySample) {
             delete this->drySample;
         }
         this->drySample = sample;
-        if (sample) {
-            updateSampleRate(*sample);
-            sample->setTemporary(false);
-        }
         emit drySampleChanged(sample);
         setDrySampleStale(! static_cast<bool>(sample));
     }
@@ -341,23 +330,19 @@ Zone::setVelocity(synthclone::MIDIData velocity)
 }
 
 void
-Zone::setWetSample(synthclone::Sample *sample, bool copy)
+Zone::setWetSample(synthclone::Sample *sample, bool forceCopy)
 {
-    if (sample && copy) {
-        QString path = createUniqueFile(sessionSampleData.getSampleDirectory());
-        sample = new synthclone::Sample(*sample, path, false, this);
+    if (sample) {
+        sample = sessionSampleData.updateSample(*sample, forceCopy, this);
+        sample->setTemporary(false);
     }
     if (this->wetSample != sample) {
         if (this->wetSample) {
             delete this->wetSample;
         }
         this->wetSample = sample;
+        emit drySampleChanged(sample);
         if (sample) {
-            updateSampleRate(*sample);
-            sample->setTemporary(false);
-        }
-        emit wetSampleChanged(sample);
-        if (wetSample) {
             if (! drySampleStale) {
                 setWetSampleStale(false);
             }

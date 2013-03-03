@@ -1,6 +1,6 @@
 /*
  * libsynthclone_hydrogen - Hydrogen target plugin for `synthclone`
- * Copyright (C) 2011 Devin Anderson
+ * Copyright (C) 2011-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -19,6 +19,7 @@
 
 #include <cassert>
 
+#include <QtCore/QFileInfo>
 #include <QtCore/QLocale>
 
 #include <synthclone/error.h>
@@ -64,8 +65,7 @@ Target::build(const QList<synthclone::Zone *> &zones)
         throw synthclone::Error(message);
     }
     ArchiveWriter archiveWriter
-        (directory.absoluteFilePath(QString("%1.h2drumkit").arg(kitName)),
-         kitName);
+        (directory.absoluteFilePath(QString("%1.h2drumkit").arg(kitName)));
 
     // This plugin builds different instruments for every different combination
     // of channel, note, channel pressure, aftertouch, and control values.  If
@@ -225,7 +225,12 @@ Target::build(const QList<synthclone::Zone *> &zones)
     confWriter.writeEndElement();
     confWriter.writeEndDocument();
 
-    archiveWriter.addConfiguration(configuration);
+    // Add the configuration to the archive writer.
+    QByteArray configurationBytes = configuration.toLocal8Bit();
+    ArchiveHeader header(QString("%1/drumkit.xml").arg(kitName),
+                         configurationBytes.count());
+    archiveWriter.writeHeader(header);
+    archiveWriter.writeData(configurationBytes);
 
     if (layerOverflows) {
         message = tr("%1 instruments contained more than %2 layers.  Hydrogen "
@@ -456,7 +461,27 @@ Target::writeLayer(ArchiveWriter &archiveWriter, QXmlStreamWriter &confWriter,
     copier.copy(inputStream, outputStream, inputStream.getFrames());
     outputStream.close();
 
-    archiveWriter.addSample(sampleName, outSample);
+    // Write sample to archive.
+    QString path = outSample.getPath();
+    QFileInfo info(path);
+    assert(info.exists());
+    assert(info.isFile());
+    ArchiveHeader header(QString("%1/%2").arg(kitName, sampleName),
+                         info.size());
+    archiveWriter.writeHeader(header);
+    QFile file(path);
+    if (! file.open(QFile::ReadOnly)) {
+        QString message = tr("could not open '%1': %2").
+            arg(path, file.errorString());
+        throw synthclone::Error(message);
+    }
+    for (;;) {
+        QByteArray data = file.read(8192);
+        if (data.isEmpty()) {
+            break;
+        }
+        archiveWriter.writeData(data);
+    }
 
     confWriter.writeStartElement("layer");
     writeElement(confWriter, "filename", sampleName);

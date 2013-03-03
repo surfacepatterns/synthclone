@@ -57,7 +57,8 @@ public slots:
     setSampleRate(synthclone::SampleRate sampleRate);
 
     synthclone::Sample *
-    updateSample(synthclone::Sample &sample, QObject *parent=0);
+    updateSample(synthclone::Sample &sample, bool forceCopy=false,
+                 QObject *parent=0);
 
 signals:
 

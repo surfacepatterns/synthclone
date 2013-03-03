@@ -1,6 +1,6 @@
 /*
  * libsynthclone_hydrogen - Hydrogen target plugin for `synthclone`
- * Copyright (C) 2011-2013 Devin Anderson
+ * Copyright (C) 2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -17,36 +17,35 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
-#ifndef __ARCHIVEWRITER_H__
-#define __ARCHIVEWRITER_H__
+#ifndef __ARCHIVEHEADER_H__
+#define __ARCHIVEHEADER_H__
 
-#include <archive.h>
+#include <QtCore/QObject>
+#include <QtCore/QString>
 
-#include "archiveheader.h"
-
-class ArchiveWriter: public QObject {
+class ArchiveHeader: public QObject {
 
     Q_OBJECT
 
 public:
 
-    ArchiveWriter(const QString &path, QObject *parent=0);
+    ArchiveHeader(const QString &path, qint64 size=0, QObject *parent=0);
 
-    ~ArchiveWriter();
+    ~ArchiveHeader();
 
-    void
-    close();
+    QString
+    getPath() const;
 
-    void
-    writeData(const QByteArray &data);
+    qint64
+    getSize() const;
 
-    void
-    writeHeader(const ArchiveHeader &header);
+    bool
+    isFile() const;
 
 private:
 
-    archive *arch;
-    bool closed;
+    QString path;
+    qint64 size;
 
 };
 
