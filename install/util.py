@@ -1,4 +1,4 @@
-from gzip import open
+from gzip import open as openGzip
 from os import chdir, getcwd, makedirs, pardir, sep
 from os.path import abspath, dirname, isdir, join
 from platform import mac_ver, win32_ver
@@ -18,7 +18,7 @@ _PLATFORM = (mac_ver()[0] and PLATFORM_MACX) or \
     (win32_ver()[0] and PLATFORM_WIN32) or PLATFORM_UNIX
 
 def createSourcePackage(path):
-    gzipStream = open(filename=path, mode="wb")
+    gzipStream = openGzip(filename=path, mode="wb")
     try:
         gitArgs = ["git", "archive", "--format=tar",
                    "--prefix=synthclone-%s%s" % (VERSION, sep), "HEAD"]
@@ -63,13 +63,13 @@ def writeTemplate(destination, source, data):
     sourceDir = dirname(source)
     if not isdir(sourceDir):
         makedirs(sourceDir)
-    fp = file(source)
+    fp = open(source)
     try:
         s = fp.read()
     finally:
         fp.close()
     s = Template(s).substitute(data)
-    fp = file(destination, 'w')
+    fp = open(destination, 'w')
     try:
         fp.write(s)
     finally:

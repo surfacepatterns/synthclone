@@ -64,7 +64,7 @@ def main():
         # Copy .deb files to destination directory.
         if not isdir(destinationDir):
             makedirs(destinationDir)
-        fp = file(join(debianDir, "files"))
+        fp = open(join(debianDir, "files"))
         try:
             while True:
                 line = fp.readline()
