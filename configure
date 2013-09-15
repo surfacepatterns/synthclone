@@ -47,6 +47,8 @@ def main():
                       help="Install directory for synthclone plugins")
     parser.add_option("--prefix", action="store", default=None, dest="prefix",
                       help="Install prefix")
+    parser.add_option("--qmake", action="store", default="qmake", dest="qmake",
+                      help="location of Qt4 qmake executable")
     parser.add_option("--skip-api-docs", action="store", default=0,
                       dest="skipAPIDocs", help="Don't build API documentation",
                       type="int")
@@ -156,6 +158,8 @@ def main():
         pluginDir = join("lib", "synthclone", "plugins")
     pluginDir = abspath(join(execPrefix, pluginDir))
 
+    qmakeExecutable = options.qmake
+
     # Write config.h
     data = {
         "majorVersion": MAJOR_VERSION,
@@ -167,7 +171,7 @@ def main():
                   join(getTemplatesDirectory(), "config.h"), data)
 
     # Run `qmake`
-    qmakeArgs = ["qmake", "-recursive"] + platformArgs + args + \
+    qmakeArgs = [qmakeExecutable, "-recursive"] + platformArgs + args + \
         ["MAJOR_VERSION=%d" % MAJOR_VERSION, "MINOR_VERSION=%d" % MINOR_VERSION,
          "REVISION=%d" % REVISION, "BUILDDIR=%s" % buildDir,
          "MAKEDIR=%s" % makeDir, "PREFIX=%s" % prefix,
@@ -203,8 +207,14 @@ def main():
         qmakeArgs.append("SKIP_TRIMMER_PLUGIN=1")
     if options.skipZoneGenerator:
         qmakeArgs.append("SKIP_ZONE_GENERATOR_PLUGIN=1")
-    if call(qmakeArgs):
-        parser.error("qmake returned an error")
+
+    try:
+        result = call(qmakeArgs)
+    except Exception, e:
+        parser.error("%s call failed: %s" % (qmakeExecutable, str(e)))
+    else:
+        if result:
+            parser.error("%s returned an error" % qmakeExecutable)
 
     stdout.write("Configure successful.  Run `make` to build, and "
                  "`make install` to install.\n")
