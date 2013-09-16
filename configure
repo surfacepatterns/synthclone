@@ -210,11 +210,10 @@ def main():
 
     try:
         result = call(qmakeArgs)
-    except Exception, e:
+    except Exception as e:
         parser.error("%s call failed: %s" % (qmakeExecutable, str(e)))
-    else:
-        if result:
-            parser.error("%s returned an error" % qmakeExecutable)
+    if result:
+        parser.error("%s returned an error" % qmakeExecutable)
 
     stdout.write("Configure successful.  Run `make` to build, and "
                  "`make install` to install.\n")
