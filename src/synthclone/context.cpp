@@ -892,6 +892,7 @@ Context::buildTargets()
     session.buildTargets();
 }
 
+#if 0
 void
 Context::connectNotify(const char *signal)
 {
@@ -919,6 +920,7 @@ Context::connectNotify(const char *signal)
         }
     }
 }
+#endif
 
 void
 Context::createSession(const QDir &directory, synthclone::SampleRate sampleRate,
@@ -933,6 +935,7 @@ Context::deactivateParticipant(const synthclone::Participant *participant)
     participantManager.deactivateParticipant(participant);
 }
 
+#if 0
 void
 Context::disconnectNotify(const char *signal)
 {
@@ -960,6 +963,7 @@ Context::disconnectNotify(const char *signal)
         }
     }
 }
+#endif
 
 const synthclone::EffectJob *
 Context::getCurrentEffectJob() const

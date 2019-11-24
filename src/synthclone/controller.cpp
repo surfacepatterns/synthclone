@@ -21,9 +21,9 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QDirIterator>
-#include <QtCore/QFSFileEngine>
+//#include <QtCore/QFSFileEngine>
 #include <QtCore/QMimeData>
-#include <QtGui/QClipboard>
+#include <QClipboard>
 
 #include <synthclone/error.h>
 
@@ -749,7 +749,6 @@ Controller::refreshZoneViewletActions()
 void
 Controller::removeDirectoryContents(QDir &directory)
 {
-    QFSFileEngine fileEngine;
     QList<QFileInfo> fileInfoList =
         directory.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
     for (int i = fileInfoList.count() - 1; i >= 0; i--) {
@@ -758,9 +757,9 @@ Controller::removeDirectoryContents(QDir &directory)
         if (fileInfo.isDir()) {
             QDir subDirectory(path);
             removeDirectoryContents(subDirectory);
-            if (! fileEngine.rmdir(path, false)) {
-                throw synthclone::Error(fileEngine.errorString());
-            }
+//            if (! QDir.rmdir(path, false)) {
+//                throw synthclone::Error(subDirectory.errorString());
+//            }
         } else {
             QFile file(path);
             if (! file.remove()) {

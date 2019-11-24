@@ -20,8 +20,8 @@
 #ifndef __ERRORVIEW_H__
 #define __ERRORVIEW_H__
 
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
+#include <QLabel>
+#include <QPushButton>
 
 #include "dialogview.h"
 

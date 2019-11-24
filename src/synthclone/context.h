@@ -414,11 +414,13 @@ public slots:
 
 protected:
 
+#if 0
     void
     connectNotify(const char *signal);
 
     void
     disconnectNotify(const char *signal);
+#endif
 
 private slots:
 

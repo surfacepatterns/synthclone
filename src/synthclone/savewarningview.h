@@ -20,7 +20,7 @@
 #ifndef __SAVEWARNINGVIEW_H__
 #define __SAVEWARNINGVIEW_H__
 
-#include <QtGui/QPushButton>
+#include <QPushButton>
 
 #include "dialogview.h"
 

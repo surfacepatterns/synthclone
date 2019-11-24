@@ -20,7 +20,7 @@
 #ifndef __MENUITEMVIEWLET_H__
 #define __MENUITEMVIEWLET_H__
 
-#include <QtGui/QAction>
+#include <QAction>
 
 class MenuViewlet;
 

@@ -20,10 +20,10 @@
 #ifndef __PARTICIPANTVIEW_H__
 #define __PARTICIPANTVIEW_H__
 
-#include <QtGui/QDialog>
-#include <QtGui/QPushButton>
-#include <QtGui/QStandardItemModel>
-#include <QtGui/QTreeView>
+#include <QDialog>
+#include <QPushButton>
+#include <QStandardItemModel>
+#include <QTreeView>
 
 #include "dialogview.h"
 #include "participantviewlet.h"

@@ -42,4 +42,6 @@ Plugin::getParticipant()
     return &participant;
 }
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
 Q_EXPORT_PLUGIN2(synthclone_sampleloader, Plugin);
+#endif

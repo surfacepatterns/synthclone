@@ -20,8 +20,8 @@
 #include <cassert>
 
 #include <QtCore/QLocale>
-#include <QtGui/QApplication>
-#include <QtGui/QStyleOptionProgressBar>
+#include <QApplication>
+#include <QStyleOptionProgressBar>
 
 #include "progressbardelegate.h"
 

@@ -27,6 +27,7 @@
 class Plugin: public QObject, public synthclone::IPlugin {
 
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.synthclone.modules.loadable.hydrogen");
     Q_INTERFACES(synthclone::IPlugin)
 
 public:

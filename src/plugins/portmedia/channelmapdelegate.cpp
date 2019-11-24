@@ -20,7 +20,7 @@
 #include <cassert>
 
 #include <QtCore/QLocale>
-#include <QtGui/QComboBox>
+#include <QComboBox>
 
 #include "channelmapdelegate.h"
 #include "types.h"

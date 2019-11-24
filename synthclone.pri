@@ -4,8 +4,8 @@ SYNTHCLONE_APP_SUFFIX = bin
 SYNTHCLONE_DATA_SUFFIX = share
 SYNTHCLONE_DOC_SUFFIX = doc
 SYNTHCLONE_HEADER_SUFFIX = include/synthclone
-SYNTHCLONE_LIBRARY_SUFFIX = lib
-SYNTHCLONE_PLUGIN_SUFFIX = lib/synthclone/plugins
+SYNTHCLONE_LIBRARY_SUFFIX = lib64
+SYNTHCLONE_PLUGIN_SUFFIX = lib64/synthclone/plugins
 
 !isEmpty(DEBUG) {
     CONFIG += debug
@@ -29,6 +29,7 @@ macx {
     DEFINES += SYNTHCLONE_PLATFORM_MACX
 } else:unix {
     DEFINES += SYNTHCLONE_PLATFORM_UNIX
+    QT += core widgets sql xml
 } else:win32 {
     DEFINES += SYNTHCLONE_PLATFORM_WIN32
 } else {

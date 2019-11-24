@@ -25,7 +25,8 @@ unix:!macx {
         -lsynthclone
 }
 
-CONFIG += console uitools
+CONFIG += console
+QT += uitools
 DEFINES += SYNTHCLONE_MAJOR_VERSION=$${MAJOR_VERSION} \
     SYNTHCLONE_MINOR_VERSION=$${MINOR_VERSION} \
     SYNTHCLONE_PLUGIN_PATH=$${SYNTHCLONE_PLUGIN_INSTALL_PATH} \

@@ -20,7 +20,7 @@
 #ifndef __VIEWVIEWLET_H__
 #define __VIEWVIEWLET_H__
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 
 #include "menuviewlet.h"
 

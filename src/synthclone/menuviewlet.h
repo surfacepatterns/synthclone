@@ -22,7 +22,7 @@
 
 #include <QtCore/QList>
 #include <QtCore/QMap>
-#include <QtGui/QMenu>
+#include <QMenu>
 
 #include "menuleafviewlet.h"
 

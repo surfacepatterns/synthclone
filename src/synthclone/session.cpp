@@ -20,10 +20,10 @@
 #include <cassert>
 #include <cctype>
 
-#include <QtCore/QFSFileEngine>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QtAlgorithms>
+#include <QDir>
 
 #include <synthclone/error.h>
 #include <synthclone/util.h>
@@ -90,7 +90,7 @@ Session::initializeDirectory(const QDir &directory)
 {
     if (! directory.exists()) {
         QString path = directory.absolutePath();
-        if (! QFSFileEngine().mkdir(path, true)) {
+        if (! QDir().mkdir(path)) {
             throw synthclone::Error(tr("failed to create session directory at "
                                        "'%1'").arg(path));
         }
@@ -483,7 +483,7 @@ Session::getActivatedParticipant(const QDomElement &element)
         emitLoadWarning(element, message);
         return 0;
     }
-    QByteArray idBytes = id.toAscii();
+    QByteArray idBytes = id.toLatin1();
     synthclone::Participant *participant;
     try {
         participant = participantManager.getParticipant(idBytes);
@@ -1099,7 +1099,7 @@ Session::load(const QDir &directory)
                 continue;
             }
             try {
-                participant = participantManager.getParticipant(id.toAscii());
+                participant = participantManager.getParticipant(id.toLatin1());
             } catch (synthclone::Error &e) {
                 emitLoadWarning(element, e.getMessage());
                 continue;

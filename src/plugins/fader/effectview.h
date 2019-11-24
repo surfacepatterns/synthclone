@@ -20,10 +20,10 @@
 #ifndef __EFFECTVIEW_H__
 #define __EFFECTVIEW_H__
 
-#include <QtGui/QDoubleSpinBox>
-#include <QtGui/QGroupBox>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
+#include <QDoubleSpinBox>
+#include <QGroupBox>
+#include <QLineEdit>
+#include <QPushButton>
 
 #include <synthclone/designerview.h>
 

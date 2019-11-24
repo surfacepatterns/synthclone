@@ -28,6 +28,7 @@
 class Plugin: public QObject, public synthclone::IPlugin {
 
     Q_OBJECT
+    Q_PLUGIN_METADATA(IID "org.synthclone.modules.loadable.reverser");
     Q_INTERFACES(synthclone::IPlugin)
 
 public:

@@ -20,7 +20,7 @@
 #ifndef __CONTROLLAYERDELEGATE_H__
 #define __CONTROLLAYERDELEGATE_H__
 
-#include <QtGui/QStyledItemDelegate>
+#include <QStyledItemDelegate>
 
 #include <synthclone/types.h>
 

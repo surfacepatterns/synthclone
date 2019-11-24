@@ -20,12 +20,12 @@
 #ifndef __VIEW_H__
 #define __VIEW_H__
 
-#include <QtGui/QComboBox>
-#include <QtGui/QDialog>
-#include <QtGui/QDoubleSpinBox>
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
-#include <QtGui/QSpinBox>
+#include <QComboBox>
+#include <QDialog>
+#include <QDoubleSpinBox>
+#include <QLabel>
+#include <QPushButton>
+#include <QSpinBox>
 
 #include <synthclone/designerview.h>
 #include <synthclone/types.h>

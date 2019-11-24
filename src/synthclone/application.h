@@ -20,7 +20,7 @@
 #ifndef __APPLICATION_H__
 #define __APPLICATION_H__
 
-#include <QtGui/QApplication>
+#include <QApplication>
 
 class Application: public QApplication {
 

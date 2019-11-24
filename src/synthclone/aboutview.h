@@ -20,8 +20,8 @@
 #ifndef __ABOUTVIEW_H__
 #define __ABOUTVIEW_H__
 
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
+#include <QLabel>
+#include <QPushButton>
 
 #include "dialogview.h"
 

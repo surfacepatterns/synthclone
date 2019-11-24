@@ -20,10 +20,10 @@
 #ifndef __ZONEVIEWLET_H__
 #define __ZONEVIEWLET_H__
 
-#include <QtGui/QMainWindow>
-#include <QtGui/QPushButton>
-#include <QtGui/QStandardItemModel>
-#include <QtGui/QTableView>
+#include <QMainWindow>
+#include <QPushButton>
+#include <QStandardItemModel>
+#include <QTableView>
 
 #include <synthclone/types.h>
 #include <synthclone/zone.h>

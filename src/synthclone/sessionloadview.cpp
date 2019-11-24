@@ -19,7 +19,7 @@
 
 #include <cassert>
 
-#include <QtGui/QFileDialog>
+#include <QFileDialog>
 
 #include <synthclone/util.h>
 

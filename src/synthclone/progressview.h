@@ -20,10 +20,10 @@
 #ifndef __PROGRESSVIEW_H__
 #define __PROGRESSVIEW_H__
 
-#include <QtGui/QLabel>
-#include <QtGui/QPlainTextEdit>
-#include <QtGui/QProgressBar>
-#include <QtGui/QPushButton>
+#include <QLabel>
+#include <QPlainTextEdit>
+#include <QProgressBar>
+#include <QPushButton>
 
 #include "dialogview.h"
 

@@ -20,10 +20,10 @@
 #ifndef __TARGETVIEW_H__
 #define __TARGETVIEW_H__
 
-#include <QtGui/QComboBox>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPlainTextEdit>
-#include <QtGui/QPushButton>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QPlainTextEdit>
+#include <QPushButton>
 
 #include <synthclone/designerview.h>
 

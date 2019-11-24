@@ -19,8 +19,8 @@
 
 #include <cassert>
 
-#include <QtGui/QComboBox>
-#include <QtGui/QSpinBox>
+#include <QComboBox>
+#include <QSpinBox>
 
 #include "controllayerdelegate.h"
 #include "types.h"

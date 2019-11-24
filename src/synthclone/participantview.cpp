@@ -19,7 +19,7 @@
 
 #include <cassert>
 
-#include <QtGui/QHeaderView>
+#include <QHeaderView>
 
 #include <synthclone/util.h>
 

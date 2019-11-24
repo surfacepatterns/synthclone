@@ -20,7 +20,7 @@
 #include <cassert>
 
 #include <QtCore/QLocale>
-#include <QtGui/QMenu>
+#include <QMenu>
 
 #include <synthclone/util.h>
 

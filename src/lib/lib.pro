@@ -12,7 +12,7 @@ isEmpty(MAKEDIR) {
     MAKEDIR = ../../make
 }
 
-CONFIG += uitools
+QT += uitools
 DESTDIR = $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}
 HEADERS += closeeventfilter.h \
     samplefile.h \

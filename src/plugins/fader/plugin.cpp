@@ -42,4 +42,7 @@ Plugin::getParticipant()
     return &participant;
 }
 
-Q_EXPORT_PLUGIN2(synthclone_fader, Plugin);
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+    Q_EXPORT_PLUGIN2(synthclone_fader, Plugin);
+#endif
+

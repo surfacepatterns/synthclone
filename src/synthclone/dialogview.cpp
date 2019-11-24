@@ -19,7 +19,7 @@
 
 #include <cassert>
 
-#include <QtGui/QLayout>
+#include <QLayout>
 
 #include "dialogview.h"
 

@@ -20,7 +20,7 @@
 #ifndef __PROGRESSBARDELEGATE_H__
 #define __PROGRESSBARDELEGATE_H__
 
-#include <QtGui/QStyledItemDelegate>
+#include <QStyledItemDelegate>
 
 class ProgressBarDelegate: public QStyledItemDelegate {
 

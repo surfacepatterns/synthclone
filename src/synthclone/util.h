@@ -27,7 +27,7 @@
 #include <QtCore/QString>
 #include <QtCore/QVariant>
 #include <QtCore/QXmlStreamWriter>
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <QtXml/QDomElement>
 
 #include <synthclone/sample.h>
