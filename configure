@@ -47,8 +47,8 @@ def main():
                       help="Install directory for synthclone plugins")
     parser.add_option("--prefix", action="store", default=None, dest="prefix",
                       help="Install prefix")
-    parser.add_option("--qmake", action="store", default="qmake", dest="qmake",
-                      help="location of Qt4 qmake executable")
+    parser.add_option("--qmake", action="store", default="qmake-qt5", dest="qmake",
+                      help="location of Qt5 qmake executable")
     parser.add_option("--skip-api-docs", action="store", default=0,
                       dest="skipAPIDocs", help="Don't build API documentation",
                       type="int")

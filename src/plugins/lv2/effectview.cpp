@@ -22,13 +22,16 @@
 #include <cmath>
 
 #include <QtCore/QDebug>
-#include <QtGui/QCheckBox>
-#include <QtGui/QComboBox>
-#include <QtGui/QDoubleSpinBox>
-#include <QtGui/QHeaderView>
-#include <QtGui/QScrollBar>
-#include <QtGui/QSlider>
-#include <QtGui/QX11EmbedContainer>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDoubleSpinBox>
+#include <QHeaderView>
+#include <QScrollBar>
+#include <QSlider>
+
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+#include <QX11EmbedContainer>
+#endif
 
 #include <synthclone/error.h>
 #include <synthclone/util.h>
@@ -76,7 +79,7 @@ EffectView::EffectView(QObject *parent):
 
     channelMapTableView =
         synthclone::getChild<QTableView>(widget, "channelMap");
-    channelMapTableView->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+    channelMapTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     channelMapTableView->setHorizontalScrollMode
         (QAbstractItemView::ScrollPerPixel);
     channelMapTableView->setVerticalScrollMode
@@ -308,7 +311,7 @@ EffectView::clearControlInputPorts()
 unsigned int
 EffectView::getSupportQuality(const QString &widgetTypeURI)
 {
-    QByteArray bytes = widgetTypeURI.toAscii();
+    QByteArray bytes = widgetTypeURI.toLatin1();
     return suil_ui_supported(LV2_UI__Qt4UI, bytes.constData());
 }
 
@@ -537,11 +540,11 @@ EffectView::setViewData(const EffectViewData &data)
     if (provided) {
 
         // Create SUIL instance.
-        QByteArray binaryPathBytes = data.getBinaryPath().toAscii();
-        QByteArray bundlePathBytes = data.getBundlePath().toAscii();
-        QByteArray pluginURIBytes = data.getPluginURI().toAscii();
-        QByteArray widgetTypeURIBytes = data.getTypeURI().toAscii();
-        QByteArray widgetURIBytes = data.getURI().toAscii();
+        QByteArray binaryPathBytes = data.getBinaryPath().toLatin1();
+        QByteArray bundlePathBytes = data.getBundlePath().toLatin1();
+        QByteArray pluginURIBytes = data.getPluginURI().toLatin1();
+        QByteArray widgetTypeURIBytes = data.getTypeURI().toLatin1();
+        QByteArray widgetURIBytes = data.getURI().toLatin1();
         LV2_Feature parentFeature;
         parentFeature.data = parametersTab;
         parentFeature.URI = LV2_UI__parent;
@@ -574,6 +577,8 @@ EffectView::setViewData(const EffectViewData &data)
         // that are unparented.  If the containers are reparented, they don't
         // work.  Later versions will reparent the widget.  So, if we find a
         // QX11EmbedContainer without a parent, we just use the generic UI.
+//FIXME: Qt5 is handled differently in suil 
+#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
         QX11EmbedContainer *container =
             qobject_cast<QX11EmbedContainer *>(instanceUI);
         if (container) {
@@ -582,6 +587,7 @@ EffectView::setViewData(const EffectViewData &data)
                 provided = false;
             }
         }
+#endif
     }
     parameterScrollArea->setVisible(! provided);
 }

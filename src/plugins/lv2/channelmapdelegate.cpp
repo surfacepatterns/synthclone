@@ -22,8 +22,6 @@
 #include <QtCore/QLocale>
 #include <QComboBox>
 
-#include <cassert>
-
 #include "channelmapdelegate.h"
 #include "types.h"
 

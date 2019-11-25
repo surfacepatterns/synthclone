@@ -151,7 +151,7 @@ LV2Port::getSymbol() const
 bool
 LV2Port::hasProperty(const QString &property) const
 {
-    QByteArray propertyBytes = property.toAscii();
+    QByteArray propertyBytes = property.toLatin1();
     LilvNode *node = lilv_new_uri(world, propertyBytes.constData());
     assert(node);
     bool result = lilv_port_has_property(plugin, port, node);
@@ -220,7 +220,7 @@ LV2Port::isSampleRatePort() const
 bool
 LV2Port::isType(const QString &typeURI) const
 {
-    QByteArray typeURIBytes = typeURI.toAscii();
+    QByteArray typeURIBytes = typeURI.toLatin1();
     LilvNode *node = lilv_new_uri(world, typeURIBytes.constData());
     assert(node);
     bool result = lilv_port_is_a(plugin, port, node);
