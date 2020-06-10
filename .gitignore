@@ -7,4 +7,5 @@ resources/
 src/include/synthclone/config.h
 *.pro.user
 *.pyc
+.qmake.stash
 !templates/debian/
