@@ -23,6 +23,7 @@ HEADERS += channelmapdelegate.h \
     plugin.h \
     resizeeventfilter.h \
     types.h
+INCLUDEPATH -= /usr/include
 MOC_DIR = $${MAKEDIR}/plugins/lv2
 OBJECTS_DIR = $${MAKEDIR}/plugins/lv2
 PKGCONFIG += lilv-0 suil-0
