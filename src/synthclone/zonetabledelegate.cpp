@@ -24,6 +24,7 @@
 #include <QDoubleSpinBox>
 #include <QLinearGradient>
 #include <QPainter>
+#include <QPainterPath>
 #include <QSpinBox>
 
 #include <synthclone/util.h>
