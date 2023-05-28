@@ -757,9 +757,9 @@ Controller::removeDirectoryContents(QDir &directory)
         if (fileInfo.isDir()) {
             QDir subDirectory(path);
             removeDirectoryContents(subDirectory);
-//            if (! QDir.rmdir(path, false)) {
-//                throw synthclone::Error(subDirectory.errorString());
-//            }
+            if (! subDirectory.rmdir(path)) {
+                throw synthclone::Error("failed to remove directory");
+            }
         } else {
             QFile file(path);
             if (! file.remove()) {
