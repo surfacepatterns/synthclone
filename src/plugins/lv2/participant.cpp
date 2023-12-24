@@ -1,6 +1,6 @@
 /*
- * libsynthclone_lv2 - LV2 effect plugin for `synthclone`
- * Copyright (C) 2012-2013 Devin Anderson
+ * libsynthclone_lv2 - LV2 effect plugin for `synthclone` Copyright
+ * (C) 2012-2013 Devin Anderson
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -219,8 +219,8 @@ Participant::addPluginActions()
     // Sort and register the categorized actions.
     int categorizedActionCount = menuActionDataList.count();
     if (categorizedActionCount) {
-        qStableSort(menuActionDataList.begin(), menuActionDataList.end(),
-                    MenuActionDataComparer());
+        std::stable_sort(menuActionDataList.begin(), menuActionDataList.end(),
+			 MenuActionDataComparer());
         while (menuActionDataList.count()) {
             MenuActionData *data = menuActionDataList.takeFirst();
             QScopedPointer<MenuActionData> dataPtr(data);
@@ -236,9 +236,9 @@ Participant::addPluginActions()
 
     // Sort and register the uncategorized actions.
     if (uncategorizedActionDataList.count()) {
-        qStableSort(uncategorizedActionDataList.begin(),
-                    uncategorizedActionDataList.end(),
-                    MenuActionDataComparer());
+        std::stable_sort(uncategorizedActionDataList.begin(),
+			 uncategorizedActionDataList.end(),
+			 MenuActionDataComparer());
         if (categorizedActionCount) {
             synthclone::MenuSeparator *separator =
                 new synthclone::MenuSeparator(this);

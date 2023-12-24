@@ -17,8 +17,8 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
-#include <QtGui/QLayout>
-#include <QtGui/QScrollBar>
+#include <QtWidgets/QLayout>
+#include <QtWidgets/QScrollBar>
 
 #include "resizeeventfilter.h"
 

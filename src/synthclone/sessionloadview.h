@@ -20,15 +20,16 @@
 #ifndef __SESSIONLOADVIEW_H__
 #define __SESSIONLOADVIEW_H__
 
-#include <QtGui/QComboBox>
-#include <QtGui/QDialog>
 #include <QtGui/QDoubleValidator>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QListWidget>
-#include <QtGui/QPushButton>
-#include <QtGui/QSpinBox>
-#include <QtGui/QTabWidget>
+
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QListWidget>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QTabWidget>
 
 #include <synthclone/types.h>
 

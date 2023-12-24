@@ -20,14 +20,15 @@
 #ifndef __COMPONENTVIEWLET_H__
 #define __COMPONENTVIEWLET_H__
 
-#include <QtGui/QLabel>
-#include <QtGui/QMainWindow>
-#include <QtGui/QMenu>
-#include <QtGui/QProgressBar>
-#include <QtGui/QPushButton>
 #include <QtGui/QStandardItemModel>
-#include <QtGui/QTableView>
-#include <QtGui/QTabWidget>
+
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QProgressBar>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTableView>
+#include <QtWidgets/QTabWidget>
 
 #include "contextmenueventfilter.h"
 #include "menuviewlet.h"

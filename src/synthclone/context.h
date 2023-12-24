@@ -412,14 +412,6 @@ public slots:
     void
     unloadSession();
 
-protected:
-
-    void
-    connectNotify(const char *signal);
-
-    void
-    disconnectNotify(const char *signal);
-
 private slots:
 
     void
@@ -457,6 +449,9 @@ private:
     const synthclone::Registration &
     addMenuSeparator(synthclone::MenuSeparator *separator, T rootMenuItem,
                      const QStringList &subMenus);
+
+    QMetaObject::Connection
+    connect_(const QObject *sender, const char *signal);
 
     Controller &controller;
     EffectList effects;

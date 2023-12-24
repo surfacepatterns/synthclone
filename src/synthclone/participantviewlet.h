@@ -21,8 +21,10 @@
 #define __PARTICIPANTVIEWLET_H__
 
 #include <QtCore/QList>
+
 #include <QtGui/QStandardItem>
-#include <QtGui/QTreeView>
+
+#include <QtWidgets/QTreeView>
 
 class ParticipantView;
 

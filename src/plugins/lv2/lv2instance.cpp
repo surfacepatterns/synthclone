@@ -17,7 +17,7 @@
  * Ave, Cambridge, MA 02139, USA.
  */
 
-#include <lv2/lv2plug.in/ns/ext/state/state.h>
+#include <lv2/state/state.h>
 
 #include <synthclone/error.h>
 

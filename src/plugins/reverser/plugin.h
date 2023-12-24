@@ -29,6 +29,7 @@ class Plugin: public QObject, public synthclone::IPlugin {
 
     Q_OBJECT
     Q_INTERFACES(synthclone::IPlugin)
+    Q_PLUGIN_METADATA(IID "com.googlecode.synthclone.plugins.reverser")
 
 public:
 

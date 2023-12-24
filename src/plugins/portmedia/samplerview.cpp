@@ -20,7 +20,7 @@
 #include <cassert>
 
 #include <QtCore/QLocale>
-#include <QtGui/QHeaderView>
+#include <QtWidgets/QHeaderView>
 
 #include <synthclone/util.h>
 
@@ -75,7 +75,8 @@ SamplerView::SamplerView(QObject *parent):
 
     channelMapTableView = synthclone::getChild<QTableView>
         (rootWidget, "channelMap");
-    channelMapTableView->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+    channelMapTableView->horizontalHeader()->setSectionResizeMode(
+	QHeaderView::Fixed);
     channelMapTableView->setHorizontalScrollMode
         (QAbstractItemView::ScrollPerPixel);
     channelMapTableView->setVerticalScrollMode

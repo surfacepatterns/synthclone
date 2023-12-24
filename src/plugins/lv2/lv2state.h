@@ -23,7 +23,7 @@
 #include <QtCore/QByteArray>
 #include <QtCore/QObject>
 
-#include <lv2/lv2plug.in/ns/ext/urid/urid.h>
+#include <lv2/urid/urid.h>
 
 #include <lilv/lilv.h>
 

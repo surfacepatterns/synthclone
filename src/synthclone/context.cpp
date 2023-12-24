@@ -22,7 +22,6 @@
 #include "context.h"
 #include "controller.h"
 #include "participantmanager.h"
-#include "signalmap.h"
 
 // Session signals
 
@@ -133,198 +132,198 @@ static QByteArray FOCUSED_COMPONENT_CHANGED_SIGNAL =
 
 static QByteArray ADDING_ZONE_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(addingZone(const synthclone::Zone *, int)));
+    (SIGNAL(addingZone(synthclone::Zone *, int)));
 static QByteArray MOVING_ZONE_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(movingZone(const synthclone::Zone *, int, int)));
+    (SIGNAL(movingZone(synthclone::Zone *, int, int)));
 static QByteArray REMOVING_ZONE_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(removingZone(const synthclone::Zone *, int)));
+    (SIGNAL(removingZone(synthclone::Zone *, int)));
 static QByteArray ZONE_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(zoneAdded(const synthclone::Zone *, int)));
+    (SIGNAL(zoneAdded(synthclone::Zone *, int)));
 static QByteArray ZONE_MOVED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(zoneMoved(const synthclone::Zone *, int, int)));
+    (SIGNAL(zoneMoved(synthclone::Zone *, int, int)));
 static QByteArray ZONE_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(zoneRemoved(const synthclone::Zone *, int)));
+    (SIGNAL(zoneRemoved(synthclone::Zone *, int)));
 
 static QByteArray ZONE_SELECTION_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(zoneSelectionChanged(const synthclone::Zone *, bool)));
+    (SIGNAL(zoneSelectionChanged(synthclone::Zone *, int, bool)));
 
 static QByteArray ADDING_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(addingMenuAction(synthclone::Menu,
-                             const synthclone::MenuAction *,
+    (SIGNAL(addingMenuAction(const synthclone::MenuAction *,
+                             synthclone::Menu,
                              const QStringList &)));
 static QByteArray ADDING_EFFECT_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(addingMenuAction(const synthclone::Effect *,
-                             const synthclone::MenuAction *,
+    (SIGNAL(addingMenuAction(const synthclone::MenuAction *,
+                             const synthclone::Effect *,
                              const QStringList &)));
 static QByteArray ADDING_SAMPLER_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(addingMenuAction(const synthclone::Sampler *,
-                             const synthclone::MenuAction *,
+    (SIGNAL(addingMenuAction(const synthclone::MenuAction *,
+                             const synthclone::Sampler *,
                              const QStringList &)));
 static QByteArray ADDING_TARGET_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(addingMenuAction(const synthclone::Target *,
-                             const synthclone::MenuAction *,
+    (SIGNAL(addingMenuAction(const synthclone::MenuAction *,
+                             const synthclone::Target *,
                              const QStringList &)));
 
 static QByteArray ADDING_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(addingMenuSeparator(synthclone::Menu,
-                                const synthclone::MenuSeparator *,
+    (SIGNAL(addingMenuSeparator(const synthclone::MenuSeparator *,
+                                synthclone::Menu,
                                 const QStringList &)));
 static QByteArray ADDING_EFFECT_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(addingMenuSeparator(const synthclone::Effect *,
-                                const synthclone::MenuSeparator *,
+    (SIGNAL(addingMenuSeparator(const synthclone::MenuSeparator *,
+                                const synthclone::Effect *,
                                 const QStringList &)));
 static QByteArray ADDING_SAMPLER_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(addingMenuSeparator(const synthclone::Sampler *,
-                                const synthclone::MenuSeparator *,
+    (SIGNAL(addingMenuSeparator(const synthclone::MenuSeparator *,
+                                const synthclone::Sampler *,
                                 const QStringList &)));
 static QByteArray ADDING_TARGET_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(addingMenuSeparator(const synthclone::Target *,
-                                const synthclone::MenuSeparator *,
+    (SIGNAL(addingMenuSeparator(const synthclone::MenuSeparator *,
+                                const synthclone::Target *,
                                 const QStringList &)));
 
 static QByteArray MENU_ACTION_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuActionAdded(synthclone::Menu,
-                            const synthclone::MenuAction *,
+    (SIGNAL(menuActionAdded(const synthclone::MenuAction *,
+                            synthclone::Menu,
                             const QStringList &)));
 static QByteArray EFFECT_MENU_ACTION_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuActionAdded(const synthclone::Effect *,
-                            const synthclone::MenuAction *,
+    (SIGNAL(menuActionAdded(const synthclone::MenuAction *,
+                            const synthclone::Effect *,
                             const QStringList &)));
 static QByteArray SAMPLER_MENU_ACTION_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuActionAdded(const synthclone::Sampler *,
-                            const synthclone::MenuAction *,
+    (SIGNAL(menuActionAdded(const synthclone::MenuAction *,
+                            const synthclone::Sampler *,
                             const QStringList &)));
 static QByteArray TARGET_MENU_ACTION_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuActionAdded(const synthclone::Target *,
-                            const synthclone::MenuAction *,
+    (SIGNAL(menuActionAdded(const synthclone::MenuAction *,
+                            const synthclone::Target *,
                             const QStringList &)));
 
 static QByteArray MENU_ACTION_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuActionRemoved(synthclone::Menu,
-                              const synthclone::MenuAction *,
+    (SIGNAL(menuActionRemoved(const synthclone::MenuAction *,
+                              synthclone::Menu,
                               const QStringList &)));
 static QByteArray EFFECT_MENU_ACTION_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuActionRemoved(const synthclone::Effect *,
-                              const synthclone::MenuAction *,
+    (SIGNAL(menuActionRemoved(const synthclone::MenuAction *,
+                              const synthclone::Effect *,
                               const QStringList &)));
 static QByteArray SAMPLER_MENU_ACTION_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuActionRemoved(const synthclone::Sampler *,
-                              const synthclone::MenuAction *,
+    (SIGNAL(menuActionRemoved(const synthclone::MenuAction *,
+                              const synthclone::Sampler *,
                               const QStringList &)));
 static QByteArray TARGET_MENU_ACTION_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuActionRemoved(const synthclone::Target *,
-                              const synthclone::MenuAction *,
+    (SIGNAL(menuActionRemoved(const synthclone::MenuAction *,
+                              const synthclone::Target *,
                               const QStringList &)));
 
 static QByteArray MENU_SEPARATOR_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuSeparatorAdded(synthclone::Menu,
-                               const synthclone::MenuSeparator *,
+    (SIGNAL(menuSeparatorAdded(const synthclone::MenuSeparator *,
+                               synthclone::Menu,
                                const QStringList &)));
 static QByteArray EFFECT_MENU_SEPARATOR_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuSeparatorAdded(const synthclone::Effect *,
-                               const synthclone::MenuSeparator *,
+    (SIGNAL(menuSeparatorAdded(const synthclone::MenuSeparator *,
+                               const synthclone::Effect *,
                                const QStringList &)));
 static QByteArray SAMPLER_MENU_SEPARATOR_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuSeparatorAdded(const synthclone::Sampler *,
-                               const synthclone::MenuSeparator *,
+    (SIGNAL(menuSeparatorAdded(const synthclone::MenuSeparator *,
+                               const synthclone::Sampler *,
                                const QStringList &)));
 static QByteArray TARGET_MENU_SEPARATOR_ADDED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuSeparatorAdded(const synthclone::Target *,
-                               const synthclone::MenuSeparator *,
+    (SIGNAL(menuSeparatorAdded(const synthclone::MenuSeparator *,
+                               const synthclone::Target *,
                                const QStringList &)));
 
 static QByteArray MENU_SEPARATOR_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuSeparatorRemoved(synthclone::Menu,
-                                 const synthclone::MenuSeparator *,
+    (SIGNAL(menuSeparatorRemoved(const synthclone::MenuSeparator *,
+                                 synthclone::Menu,
                                  const QStringList &)));
 static QByteArray EFFECT_MENU_SEPARATOR_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuSeparatorRemoved(const synthclone::Effect *,
-                                 const synthclone::MenuSeparator *,
+    (SIGNAL(menuSeparatorRemoved(const synthclone::MenuSeparator *,
+                                 const synthclone::Effect *,
                                  const QStringList &)));
 static QByteArray SAMPLER_MENU_SEPARATOR_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuSeparatorRemoved(const synthclone::Sampler *,
-                                 const synthclone::MenuSeparator *,
+    (SIGNAL(menuSeparatorRemoved(const synthclone::MenuSeparator *,
+                                 const synthclone::Sampler *,
                                  const QStringList &)));
 static QByteArray TARGET_MENU_SEPARATOR_REMOVED_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(menuSeparatorRemoved(const synthclone::Target *,
-                                 const synthclone::MenuSeparator *,
+    (SIGNAL(menuSeparatorRemoved(const synthclone::MenuSeparator *,
+                                 const synthclone::Target *,
                                  const QStringList &)));
 
 static QByteArray REMOVING_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(removingMenuAction(synthclone::Menu,
-                               const synthclone::MenuAction *,
+    (SIGNAL(removingMenuAction(const synthclone::MenuAction *,
+                               synthclone::Menu,
                                const QStringList &)));
 static QByteArray REMOVING_EFFECT_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(removingMenuAction(const synthclone::Effect *,
-                               const synthclone::MenuAction *,
+    (SIGNAL(removingMenuAction(const synthclone::MenuAction *,
+                               const synthclone::Effect *,
                                const QStringList &)));
 static QByteArray REMOVING_SAMPLER_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(removingMenuAction(const synthclone::Sampler *,
-                               const synthclone::MenuAction *,
+    (SIGNAL(removingMenuAction(const synthclone::MenuAction *,
+                               const synthclone::Sampler *,
                                const QStringList &)));
 static QByteArray REMOVING_TARGET_MENU_ACTION_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(removingMenuAction(const synthclone::Target *,
-                               const synthclone::MenuAction *,
+    (SIGNAL(removingMenuAction(const synthclone::MenuAction *,
+                               const synthclone::Target *,
                                const QStringList &)));
 
 static QByteArray REMOVING_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(removingMenuSeparator(synthclone::Menu,
-                                  const synthclone::MenuSeparator *,
+    (SIGNAL(removingMenuSeparator(const synthclone::MenuSeparator *,
+                                  synthclone::Menu,
                                   const QStringList &)));
 static QByteArray REMOVING_EFFECT_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(removingMenuSeparator(const synthclone::Effect *,
-                                  const synthclone::MenuSeparator *,
+    (SIGNAL(removingMenuSeparator(const synthclone::MenuSeparator *,
+                                  const synthclone::Effect *,
                                   const QStringList &)));
 static QByteArray REMOVING_SAMPLER_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(removingMenuSeparator(const synthclone::Sampler *,
-                                  const synthclone::MenuSeparator *,
+    (SIGNAL(removingMenuSeparator(const synthclone::MenuSeparator *,
+                                  const synthclone::Sampler *,
                                   const QStringList &)));
 static QByteArray REMOVING_TARGET_MENU_SEPARATOR_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(removingMenuSeparator(const synthclone::Target *,
-                                  const synthclone::MenuSeparator *,
+    (SIGNAL(removingMenuSeparator(const synthclone::MenuSeparator *,
+                                  const synthclone::Target *,
                                   const QStringList &)));
 
 static QByteArray BUILDING_TARGET_SIGNAL =
     QMetaObject::normalizedSignature
-    (SIGNAL(buildingTarget()));
+    (SIGNAL(buildingTarget(const synthclone::Target *)));
 static QByteArray BUILDING_TARGETS_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(buildingTargets()));
@@ -431,238 +430,6 @@ static QByteArray STATE_CHANGED_SIGNAL =
     QMetaObject::normalizedSignature
     (SIGNAL(stateChanged(synthclone::SessionState, const QDir *)));
 
-static SignalMap controllerSignalMap =
-    SignalMap() <<
-    SignalPair(QLatin1String(ERROR_REPORTED_SIGNAL), ERROR_REPORTED_SIGNAL);
-
-static SignalMap menuManagerSignalMap =
-    SignalMap() <<
-
-    SignalPair(QLatin1String(ADDING_MENU_ACTION_SIGNAL),
-               ADDING_MENU_ACTION_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_EFFECT_MENU_ACTION_SIGNAL),
-               ADDING_EFFECT_MENU_ACTION_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_SAMPLER_MENU_ACTION_SIGNAL),
-               ADDING_SAMPLER_MENU_ACTION_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_TARGET_MENU_ACTION_SIGNAL),
-               ADDING_TARGET_MENU_ACTION_SIGNAL) <<
-
-    SignalPair(QLatin1String(ADDING_MENU_SEPARATOR_SIGNAL),
-               ADDING_MENU_SEPARATOR_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_EFFECT_MENU_SEPARATOR_SIGNAL),
-               ADDING_EFFECT_MENU_SEPARATOR_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_SAMPLER_MENU_SEPARATOR_SIGNAL),
-               ADDING_SAMPLER_MENU_SEPARATOR_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_TARGET_MENU_SEPARATOR_SIGNAL),
-               ADDING_TARGET_MENU_SEPARATOR_SIGNAL) <<
-
-    SignalPair(QLatin1String(MENU_ACTION_ADDED_SIGNAL),
-               MENU_ACTION_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_MENU_ACTION_ADDED_SIGNAL),
-               EFFECT_MENU_ACTION_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLER_MENU_ACTION_ADDED_SIGNAL),
-               SAMPLER_MENU_ACTION_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_MENU_ACTION_ADDED_SIGNAL),
-               TARGET_MENU_ACTION_ADDED_SIGNAL) <<
-
-    SignalPair(QLatin1String(MENU_ACTION_REMOVED_SIGNAL),
-               MENU_ACTION_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_MENU_ACTION_REMOVED_SIGNAL),
-               EFFECT_MENU_ACTION_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLER_MENU_ACTION_REMOVED_SIGNAL),
-               SAMPLER_MENU_ACTION_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_MENU_ACTION_REMOVED_SIGNAL),
-               TARGET_MENU_ACTION_REMOVED_SIGNAL) <<
-
-    SignalPair(QLatin1String(MENU_SEPARATOR_ADDED_SIGNAL),
-               MENU_SEPARATOR_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_MENU_SEPARATOR_ADDED_SIGNAL),
-               EFFECT_MENU_SEPARATOR_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLER_MENU_SEPARATOR_ADDED_SIGNAL),
-               SAMPLER_MENU_SEPARATOR_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_MENU_SEPARATOR_ADDED_SIGNAL),
-               TARGET_MENU_SEPARATOR_ADDED_SIGNAL) <<
-
-    SignalPair(QLatin1String(MENU_SEPARATOR_REMOVED_SIGNAL),
-               MENU_SEPARATOR_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_MENU_SEPARATOR_REMOVED_SIGNAL),
-               EFFECT_MENU_SEPARATOR_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLER_MENU_SEPARATOR_REMOVED_SIGNAL),
-               SAMPLER_MENU_SEPARATOR_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_MENU_SEPARATOR_REMOVED_SIGNAL),
-               TARGET_MENU_SEPARATOR_REMOVED_SIGNAL) <<
-
-    SignalPair(QLatin1String(REMOVING_MENU_ACTION_SIGNAL),
-               REMOVING_MENU_ACTION_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_EFFECT_MENU_ACTION_SIGNAL),
-               REMOVING_EFFECT_MENU_ACTION_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_SAMPLER_MENU_ACTION_SIGNAL),
-               REMOVING_SAMPLER_MENU_ACTION_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_TARGET_MENU_ACTION_SIGNAL),
-               REMOVING_TARGET_MENU_ACTION_SIGNAL) <<
-
-    SignalPair(QLatin1String(REMOVING_MENU_SEPARATOR_SIGNAL),
-               REMOVING_MENU_SEPARATOR_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_EFFECT_MENU_SEPARATOR_SIGNAL),
-               REMOVING_EFFECT_MENU_SEPARATOR_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_SAMPLER_MENU_SEPARATOR_SIGNAL),
-               REMOVING_SAMPLER_MENU_SEPARATOR_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_TARGET_MENU_SEPARATOR_SIGNAL),
-               REMOVING_TARGET_MENU_SEPARATOR_SIGNAL);
-
-static SignalMap participantManagerSignalMap =
-    SignalMap() <<
-    SignalPair(QLatin1String(ACTIVATING_PARTICIPANT_SIGNAL),
-               ACTIVATING_PARTICIPANT_SIGNAL) <<
-    SignalPair(QLatin1String(ADDING_PARTICIPANT_SIGNAL),
-               ADDING_PARTICIPANT_SIGNAL) <<
-    SignalPair(QLatin1String(DEACTIVATING_PARTICIPANT_SIGNAL),
-               DEACTIVATING_PARTICIPANT_SIGNAL) <<
-    SignalPair(QLatin1String(PARTICIPANT_ACTIVATED_SIGNAL),
-               PARTICIPANT_ACTIVATED_SIGNAL) <<
-    SignalPair(QLatin1String(PARTICIPANT_ADDED_SIGNAL),
-               PARTICIPANT_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(PARTICIPANT_DEACTIVATED_SIGNAL),
-               PARTICIPANT_DEACTIVATED_SIGNAL) <<
-    SignalPair(QLatin1String(PARTICIPANT_REMOVED_SIGNAL),
-               PARTICIPANT_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_PARTICIPANT_SIGNAL),
-               REMOVING_PARTICIPANT_SIGNAL);
-
-static SignalMap sessionSignalMap =
-    SignalMap() <<
-
-    SignalPair(QLatin1String(ADDING_EFFECT_SIGNAL),
-               ADDING_EFFECT_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_ADDED_SIGNAL),
-               EFFECT_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_MOVED_SIGNAL),
-               EFFECT_MOVED_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_REMOVED_SIGNAL),
-               EFFECT_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(MOVING_EFFECT_SIGNAL),
-               MOVING_EFFECT_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_EFFECT_SIGNAL),
-               REMOVING_EFFECT_SIGNAL) <<
-
-    SignalPair(QLatin1String(ADDING_SAMPLER_SIGNAL),
-               ADDING_SAMPLER_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLER_ADDED_SIGNAL),
-               SAMPLER_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLER_REMOVED_SIGNAL),
-               SAMPLER_REMOVED_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_SAMPLER_SIGNAL),
-               REMOVING_SAMPLER_SIGNAL) <<
-
-    SignalPair(QLatin1String(ADDING_TARGET_SIGNAL),
-               ADDING_TARGET_SIGNAL) <<
-    SignalPair(QLatin1String(MOVING_TARGET_SIGNAL),
-               MOVING_TARGET_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_TARGET_SIGNAL),
-               REMOVING_TARGET_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_ADDED_SIGNAL),
-               TARGET_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_MOVED_SIGNAL),
-               TARGET_MOVED_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_REMOVED_SIGNAL),
-               TARGET_REMOVED_SIGNAL) <<
-
-    SignalPair(QLatin1String(ADDING_EFFECT_JOB_SIGNAL),
-               ADDING_EFFECT_JOB_SIGNAL) <<
-    SignalPair(QLatin1String(MOVING_EFFECT_JOB_SIGNAL),
-               MOVING_EFFECT_JOB_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_EFFECT_JOB_SIGNAL),
-               REMOVING_EFFECT_JOB_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_JOB_ADDED_SIGNAL),
-               EFFECT_JOB_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_JOB_MOVED_SIGNAL),
-               EFFECT_JOB_MOVED_SIGNAL) <<
-    SignalPair(QLatin1String(EFFECT_JOB_REMOVED_SIGNAL),
-               EFFECT_JOB_REMOVED_SIGNAL) <<
-
-    SignalPair(QLatin1String(ADDING_SAMPLER_JOB_SIGNAL),
-               ADDING_SAMPLER_JOB_SIGNAL) <<
-    SignalPair(QLatin1String(MOVING_SAMPLER_JOB_SIGNAL),
-               MOVING_SAMPLER_JOB_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_SAMPLER_JOB_SIGNAL),
-               REMOVING_SAMPLER_JOB_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLER_JOB_ADDED_SIGNAL),
-               SAMPLER_JOB_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLER_JOB_MOVED_SIGNAL),
-               SAMPLER_JOB_MOVED_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLER_JOB_REMOVED_SIGNAL),
-               SAMPLER_JOB_REMOVED_SIGNAL) <<
-
-    SignalPair(QLatin1String(SELECTED_EFFECT_CHANGED_SIGNAL),
-               SELECTED_EFFECT_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(SELECTED_TARGET_CHANGED_SIGNAL),
-               SELECTED_TARGET_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(CURRENT_EFFECT_JOB_CHANGED_SIGNAL),
-               CURRENT_EFFECT_JOB_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(CURRENT_SAMPLER_JOB_CHANGED_SIGNAL),
-               CURRENT_SAMPLER_JOB_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(FOCUSED_COMPONENT_CHANGED_SIGNAL),
-               FOCUSED_COMPONENT_CHANGED_SIGNAL) <<
-
-    SignalPair(QLatin1String(ADDING_ZONE_SIGNAL),
-               ADDING_ZONE_SIGNAL) <<
-    SignalPair(QLatin1String(MOVING_ZONE_SIGNAL),
-               MOVING_ZONE_SIGNAL) <<
-    SignalPair(QLatin1String(REMOVING_ZONE_SIGNAL),
-               REMOVING_ZONE_SIGNAL) <<
-    SignalPair(QLatin1String(ZONE_ADDED_SIGNAL),
-               ZONE_ADDED_SIGNAL) <<
-    SignalPair(QLatin1String(ZONE_MOVED_SIGNAL),
-               ZONE_MOVED_SIGNAL) <<
-    SignalPair(QLatin1String(ZONE_REMOVED_SIGNAL),
-               ZONE_REMOVED_SIGNAL) <<
-
-    SignalPair(QLatin1String(ZONE_SELECTION_CHANGED_SIGNAL),
-               ZONE_SELECTION_CHANGED_SIGNAL) <<
-
-    SignalPair(QLatin1String(BUILDING_TARGET_SIGNAL),
-               BUILDING_TARGET_SIGNAL) <<
-    SignalPair(QLatin1String(BUILDING_TARGETS_SIGNAL),
-               BUILDING_TARGETS_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_BUILD_ERROR_SIGNAL),
-               TARGET_BUILD_ERROR_SIGNAL) <<
-    SignalPair(QLatin1String(TARGET_BUILT_SIGNAL),
-               TARGET_BUILT_SIGNAL) <<
-    SignalPair(QLatin1String(TARGETS_BUILT_SIGNAL),
-               TARGETS_BUILT_SIGNAL) <<
-
-    SignalPair(QLatin1String(AFTERTOUCH_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
-               AFTERTOUCH_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String
-               (CHANNEL_PRESSURE_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
-               CHANNEL_PRESSURE_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(CHANNEL_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
-               CHANNEL_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(CONTROL_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
-               CONTROL_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(DRY_SAMPLE_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
-               DRY_SAMPLE_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(NOTE_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
-               NOTE_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(RELEASE_TIME_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
-               RELEASE_TIME_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLE_TIME_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
-               SAMPLE_TIME_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(STATUS_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
-               STATUS_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(VELOCITY_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
-               VELOCITY_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(WET_SAMPLE_PROPERTY_VISIBILITY_CHANGED_SIGNAL),
-               WET_SAMPLE_PROPERTY_VISIBILITY_CHANGED_SIGNAL) <<
-
-    SignalPair(QLatin1String(SAMPLE_CHANNEL_COUNT_CHANGED_SIGNAL),
-               SAMPLE_CHANNEL_COUNT_CHANGED_SIGNAL) <<
-    SignalPair(QLatin1String(SAMPLE_RATE_CHANGED_SIGNAL),
-               SAMPLE_RATE_CHANGED_SIGNAL) <<
-
-    SignalPair(QLatin1String(STATE_CHANGED_SIGNAL),
-               SESSION_STATE_CHANGED_SIGNAL);
-
 // And now, back to our regularly scheduled class definition.
 
 Context::Context(synthclone::Participant &participant,
@@ -677,6 +444,134 @@ Context::Context(synthclone::Participant &participant,
     session(controller.getSession())
 {
     sampler = 0;
+
+    // Controller signals
+    connect_(&controller, ERROR_REPORTED_SIGNAL);
+
+    // Menu manager signals
+    connect_(&menuManager, ADDING_MENU_ACTION_SIGNAL);
+    connect_(&menuManager, ADDING_EFFECT_MENU_ACTION_SIGNAL);
+    connect_(&menuManager, ADDING_SAMPLER_MENU_ACTION_SIGNAL);
+    connect_(&menuManager, ADDING_TARGET_MENU_ACTION_SIGNAL);
+
+    connect_(&menuManager, ADDING_MENU_SEPARATOR_SIGNAL);
+    connect_(&menuManager, ADDING_EFFECT_MENU_SEPARATOR_SIGNAL);
+    connect_(&menuManager, ADDING_SAMPLER_MENU_SEPARATOR_SIGNAL);
+    connect_(&menuManager, ADDING_TARGET_MENU_SEPARATOR_SIGNAL);
+
+    connect_(&menuManager, MENU_ACTION_ADDED_SIGNAL);
+    connect_(&menuManager, EFFECT_MENU_ACTION_ADDED_SIGNAL);
+    connect_(&menuManager, SAMPLER_MENU_ACTION_ADDED_SIGNAL);
+    connect_(&menuManager, TARGET_MENU_ACTION_ADDED_SIGNAL);
+
+    connect_(&menuManager, MENU_ACTION_REMOVED_SIGNAL);
+    connect_(&menuManager, EFFECT_MENU_ACTION_REMOVED_SIGNAL);
+    connect_(&menuManager, SAMPLER_MENU_ACTION_REMOVED_SIGNAL);
+    connect_(&menuManager, TARGET_MENU_ACTION_REMOVED_SIGNAL);
+
+    connect_(&menuManager, MENU_SEPARATOR_ADDED_SIGNAL);
+    connect_(&menuManager, EFFECT_MENU_SEPARATOR_ADDED_SIGNAL);
+    connect_(&menuManager, SAMPLER_MENU_SEPARATOR_ADDED_SIGNAL);
+    connect_(&menuManager, TARGET_MENU_SEPARATOR_ADDED_SIGNAL);
+
+    connect_(&menuManager, MENU_SEPARATOR_REMOVED_SIGNAL);
+    connect_(&menuManager, EFFECT_MENU_SEPARATOR_REMOVED_SIGNAL);
+    connect_(&menuManager, SAMPLER_MENU_SEPARATOR_REMOVED_SIGNAL);
+    connect_(&menuManager, TARGET_MENU_SEPARATOR_REMOVED_SIGNAL);
+
+    connect_(&menuManager, REMOVING_MENU_ACTION_SIGNAL);
+    connect_(&menuManager, REMOVING_EFFECT_MENU_ACTION_SIGNAL);
+    connect_(&menuManager, REMOVING_SAMPLER_MENU_ACTION_SIGNAL);
+    connect_(&menuManager, REMOVING_TARGET_MENU_ACTION_SIGNAL);
+
+    connect_(&menuManager, REMOVING_MENU_SEPARATOR_SIGNAL);
+    connect_(&menuManager, REMOVING_EFFECT_MENU_SEPARATOR_SIGNAL);
+    connect_(&menuManager, REMOVING_SAMPLER_MENU_SEPARATOR_SIGNAL);
+    connect_(&menuManager, REMOVING_TARGET_MENU_SEPARATOR_SIGNAL);
+
+    // Participant manager signals
+    connect_(&participantManager, ACTIVATING_PARTICIPANT_SIGNAL);
+    connect_(&participantManager, ADDING_PARTICIPANT_SIGNAL);
+    connect_(&participantManager, DEACTIVATING_PARTICIPANT_SIGNAL);
+    connect_(&participantManager, PARTICIPANT_ACTIVATED_SIGNAL);
+    connect_(&participantManager, PARTICIPANT_ADDED_SIGNAL);
+    connect_(&participantManager, PARTICIPANT_DEACTIVATED_SIGNAL);
+    connect_(&participantManager, PARTICIPANT_REMOVED_SIGNAL);
+    connect_(&participantManager, REMOVING_PARTICIPANT_SIGNAL);
+
+    // Session signals
+    connect_(&session, ADDING_EFFECT_SIGNAL);
+    connect_(&session, EFFECT_ADDED_SIGNAL);
+    connect_(&session, EFFECT_MOVED_SIGNAL);
+    connect_(&session, EFFECT_REMOVED_SIGNAL);
+    connect_(&session, MOVING_EFFECT_SIGNAL);
+    connect_(&session, REMOVING_EFFECT_SIGNAL);
+
+    connect_(&session, ADDING_SAMPLER_SIGNAL);
+    connect_(&session, SAMPLER_ADDED_SIGNAL);
+    connect_(&session, SAMPLER_REMOVED_SIGNAL);
+    connect_(&session, REMOVING_SAMPLER_SIGNAL);
+
+    connect_(&session, ADDING_TARGET_SIGNAL);
+    connect_(&session, TARGET_ADDED_SIGNAL);
+    connect_(&session, TARGET_MOVED_SIGNAL);
+    connect_(&session, TARGET_REMOVED_SIGNAL);
+    connect_(&session, MOVING_TARGET_SIGNAL);
+    connect_(&session, REMOVING_TARGET_SIGNAL);
+
+    connect_(&session, ADDING_EFFECT_JOB_SIGNAL);
+    connect_(&session, EFFECT_JOB_ADDED_SIGNAL);
+    connect_(&session, EFFECT_JOB_MOVED_SIGNAL);
+    connect_(&session, EFFECT_JOB_REMOVED_SIGNAL);
+    connect_(&session, MOVING_EFFECT_JOB_SIGNAL);
+    connect_(&session, REMOVING_EFFECT_JOB_SIGNAL);
+
+    connect_(&session, ADDING_SAMPLER_JOB_SIGNAL);
+    connect_(&session, SAMPLER_JOB_ADDED_SIGNAL);
+    connect_(&session, SAMPLER_JOB_MOVED_SIGNAL);
+    connect_(&session, SAMPLER_JOB_REMOVED_SIGNAL);
+    connect_(&session, MOVING_SAMPLER_JOB_SIGNAL);
+    connect_(&session, REMOVING_SAMPLER_JOB_SIGNAL);
+
+    connect_(&session, SELECTED_EFFECT_CHANGED_SIGNAL);
+    connect_(&session, SELECTED_TARGET_CHANGED_SIGNAL);
+
+    connect_(&session, CURRENT_EFFECT_JOB_CHANGED_SIGNAL);
+    connect_(&session, CURRENT_SAMPLER_JOB_CHANGED_SIGNAL);
+
+    connect_(&session, FOCUSED_COMPONENT_CHANGED_SIGNAL);
+
+    connect_(&session, ADDING_ZONE_SIGNAL);
+    connect_(&session, ZONE_ADDED_SIGNAL);
+    connect_(&session, ZONE_MOVED_SIGNAL);
+    connect_(&session, ZONE_REMOVED_SIGNAL);
+    connect_(&session, MOVING_ZONE_SIGNAL);
+    connect_(&session, REMOVING_ZONE_SIGNAL);
+
+    connect_(&session, ZONE_SELECTION_CHANGED_SIGNAL);
+
+    connect_(&session, BUILDING_TARGET_SIGNAL);
+    connect_(&session, BUILDING_TARGETS_SIGNAL);
+    connect_(&session, TARGET_BUILD_ERROR_SIGNAL);
+    connect_(&session, TARGET_BUILT_SIGNAL);
+    connect_(&session, TARGETS_BUILT_SIGNAL);
+
+    connect_(&session, AFTERTOUCH_PROPERTY_VISIBILITY_CHANGED_SIGNAL);
+    connect_(&session, CHANNEL_PRESSURE_PROPERTY_VISIBILITY_CHANGED_SIGNAL);
+    connect_(&session, CHANNEL_PROPERTY_VISIBILITY_CHANGED_SIGNAL);
+    connect_(&session, CONTROL_PROPERTY_VISIBILITY_CHANGED_SIGNAL);
+    connect_(&session, DRY_SAMPLE_PROPERTY_VISIBILITY_CHANGED_SIGNAL);
+    connect_(&session, NOTE_PROPERTY_VISIBILITY_CHANGED_SIGNAL);
+    connect_(&session, RELEASE_TIME_PROPERTY_VISIBILITY_CHANGED_SIGNAL);
+    connect_(&session, SAMPLE_TIME_PROPERTY_VISIBILITY_CHANGED_SIGNAL);
+    connect_(&session, STATUS_PROPERTY_VISIBILITY_CHANGED_SIGNAL);
+    connect_(&session, VELOCITY_PROPERTY_VISIBILITY_CHANGED_SIGNAL);
+    connect_(&session, WET_SAMPLE_PROPERTY_VISIBILITY_CHANGED_SIGNAL);
+
+    connect_(&session, SAMPLE_CHANNEL_COUNT_CHANGED_SIGNAL);
+    connect_(&session, SAMPLE_RATE_CHANGED_SIGNAL);
+
+    connect(&session, STATE_CHANGED_SIGNAL, SESSION_STATE_CHANGED_SIGNAL);
 }
 
 Context::~Context()
@@ -892,32 +787,10 @@ Context::buildTargets()
     session.buildTargets();
 }
 
-void
-Context::connectNotify(const char *signal)
+QMetaObject::Connection
+Context::connect_(const QObject *sender, const char *signal)
 {
-    QObject::connectNotify(signal);
-    if (receivers(signal) == 1) {
-        QLatin1String strSignal(signal);
-        const char *s = sessionSignalMap.get(strSignal);
-        if (s) {
-            connect(&session, signal, s);
-        } else {
-            s = participantManagerSignalMap.get(strSignal);
-            if (s) {
-                connect(&participantManager, signal, s);
-            } else {
-                s = menuManagerSignalMap.get(strSignal);
-                if (s) {
-                    connect(&menuManager, signal, s);
-                } else {
-                    s = controllerSignalMap.get(strSignal);
-                    if (s) {
-                        connect(&controller, signal, s);
-                    }
-                }
-            }
-        }
-    }
+    return connect(sender, signal, signal);
 }
 
 void
@@ -931,34 +804,6 @@ void
 Context::deactivateParticipant(const synthclone::Participant *participant)
 {
     participantManager.deactivateParticipant(participant);
-}
-
-void
-Context::disconnectNotify(const char *signal)
-{
-    QObject::disconnectNotify(signal);
-    if (! receivers(signal)) {
-        QLatin1String strSignal(signal);
-        const char *s = sessionSignalMap.get(strSignal);
-        if (s) {
-            disconnect(&session, signal, this, s);
-        } else {
-            s = participantManagerSignalMap.get(strSignal);
-            if (s) {
-                disconnect(&participantManager, signal, this, s);
-            } else {
-                s = menuManagerSignalMap.get(strSignal);
-                if (s) {
-                    disconnect(&menuManager, signal, this, s);
-                } else {
-                    s = controllerSignalMap.get(strSignal);
-                    if (s) {
-                        disconnect(&controller, signal, this, s);
-                    }
-                }
-            }
-        }
-    }
 }
 
 const synthclone::EffectJob *

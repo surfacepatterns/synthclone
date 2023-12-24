@@ -41,5 +41,3 @@ Plugin::getParticipant()
 {
     return &participant;
 }
-
-Q_EXPORT_PLUGIN2(synthclone_sampleloader, Plugin);

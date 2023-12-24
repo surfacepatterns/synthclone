@@ -158,7 +158,7 @@ Target::build(const QList<synthclone::Zone *> &zones)
             layerCount = 16;
             layerOverflows++;
         }
-        qStableSort(zones.begin(), zones.end(), VelocityComparer());
+	std::stable_sort(zones.begin(), zones.end(), VelocityComparer());
         float lowVelocity = 0.0;
 
         // Write instrument layer data.

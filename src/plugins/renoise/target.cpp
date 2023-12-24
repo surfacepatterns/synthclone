@@ -61,7 +61,6 @@ Target::build(const QList<synthclone::Zone *> &zones)
     QXmlStreamWriter confWriter(&configuration);
     confWriter.setAutoFormatting(true);
     confWriter.setAutoFormattingIndent(2);
-    confWriter.setCodec("UTF-8");
     confWriter.writeStartDocument();
     confWriter.writeStartElement("RenoiseInstrument");
     confWriter.writeAttribute("doc_version", "13");
@@ -208,7 +207,7 @@ Target::build(const QList<synthclone::Zone *> &zones)
         QList<synthclone::Zone *> zones = zoneMap.values(zoneKey);
         int layerCount = zones.count();
         assert(layerCount);
-        qStableSort(zones.begin(), zones.end(), VelocityComparer());
+	std::stable_sort(zones.begin(), zones.end(), VelocityComparer());
         synthclone::Zone *currentZone;
         synthclone::MIDIData lowVelocity = 0;
         for (int j = 0; j < layerCount - 1; j++) {

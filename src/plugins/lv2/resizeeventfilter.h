@@ -21,7 +21,7 @@
 #define __RESIZEEVENTFILTER_H__
 
 #include <QtCore/QEvent>
-#include <QtGui/QScrollArea>
+#include <QtWidgets/QScrollArea>
 
 class ResizeEventFilter: public QObject {
 

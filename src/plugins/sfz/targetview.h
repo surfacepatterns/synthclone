@@ -21,14 +21,16 @@
 #define __TARGETVIEW_H__
 
 #include <QtCore/QMap>
+
 #include <QtGui/QAction>
-#include <QtGui/QCheckBox>
-#include <QtGui/QComboBox>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
 #include <QtGui/QStandardItemModel>
-#include <QtGui/QTableView>
+
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTableView>
 
 #include <synthclone/designerview.h>
 

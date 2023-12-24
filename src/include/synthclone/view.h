@@ -20,7 +20,7 @@
 #ifndef __SYNTHCLONE_VIEW_H__
 #define __SYNTHCLONE_VIEW_H__
 
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 namespace synthclone {
 

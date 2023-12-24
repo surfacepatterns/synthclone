@@ -20,7 +20,7 @@
 #ifndef __DIALOGVIEW_H__
 #define __DIALOGVIEW_H__
 
-#include <QtGui/QDialog>
+#include <QtWidgets/QDialog>
 
 #include <synthclone/designerview.h>
 

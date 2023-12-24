@@ -1775,7 +1775,7 @@ namespace synthclone {
          */
 
         void
-        addingZone(const synthclone::Zone *zone, int index);
+        addingZone(synthclone::Zone *zone, int index);
 
         /**
          * Emitted when the visibility of the aftertouch property is changed.
@@ -2382,7 +2382,7 @@ namespace synthclone {
          */
 
         void
-        movingZone(const synthclone::Zone *zone, int fromIndex, int toIndex);
+        movingZone(synthclone::Zone *zone, int fromIndex, int toIndex);
 
         /**
          * Emitted when the visibility of the note property is changed.
@@ -2731,7 +2731,7 @@ namespace synthclone {
          */
 
         void
-        removingZone(const synthclone::Zone *zone, int index);
+        removingZone(synthclone::Zone *zone, int index);
 
         /**
          * Emitted when the session's synthclone::SampleChannelCount is
@@ -2984,7 +2984,7 @@ namespace synthclone {
          */
 
         void
-        zoneAdded(const synthclone::Zone *zone, int index);
+        zoneAdded(synthclone::Zone *zone, int index);
 
         /**
          * Emitted when a Zone has been moved in the Zone list.
@@ -3000,7 +3000,7 @@ namespace synthclone {
          */
 
         void
-        zoneMoved(const synthclone::Zone *zone, int fromIndex, int toIndex);
+        zoneMoved(synthclone::Zone *zone, int fromIndex, int toIndex);
 
         /**
          * Emitted when a Zone has been removed from the Zone list.
@@ -3013,7 +3013,7 @@ namespace synthclone {
          */
 
         void
-        zoneRemoved(const synthclone::Zone *zone, int index);
+        zoneRemoved(synthclone::Zone *zone, int index);
 
         /**
          * Emitted when the selection of a Zone changes.
@@ -3021,12 +3021,16 @@ namespace synthclone {
          * @param zone
          *   The Zone being (de)selected.
          *
+         * @param index
+         *   The index of the Zone.
+         *
          * @param selected
          *   Whether or not the Zone is now selected.
          */
 
         void
-        zoneSelectionChanged(const synthclone::Zone *zone, bool selected);
+        zoneSelectionChanged(synthclone::Zone *zone, int index,
+                             bool selected);
 
     protected:
 

@@ -12,7 +12,6 @@ isEmpty(MAKEDIR) {
     MAKEDIR = ../../make
 }
 
-CONFIG += uitools
 DESTDIR = $${BUILDDIR}/$${SYNTHCLONE_LIBRARY_SUFFIX}
 HEADERS += closeeventfilter.h \
     samplefile.h \
@@ -47,6 +46,7 @@ INCLUDEPATH += ../include
 LIBS += -lsndfile
 MOC_DIR = $${MAKEDIR}/lib
 OBJECTS_DIR = $${MAKEDIR}/lib
+QT += uitools
 RCC_DIR = $${MAKEDIR}/lib
 RESOURCES += lib.qrc
 SOURCES += closeeventfilter.cpp \

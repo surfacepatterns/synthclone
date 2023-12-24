@@ -20,10 +20,10 @@
 #ifndef __EFFECTVIEW_H__
 #define __EFFECTVIEW_H__
 
-#include <QtGui/QCheckBox>
-#include <QtGui/QDoubleSpinBox>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QDoubleSpinBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QPushButton>
 
 #include <synthclone/designerview.h>
 

@@ -20,7 +20,7 @@
 #ifndef __CHANNELMAPDELEGATE_H__
 #define __CHANNELMAPDELEGATE_H__
 
-#include <QtGui/QStyledItemDelegate>
+#include <QtWidgets/QStyledItemDelegate>
 
 #include <synthclone/types.h>
 

@@ -39,6 +39,9 @@ public:
     bool
     operator<(const ZoneKey &key) const;
 
+    bool
+    operator==(const ZoneKey &key) const;
+
     synthclone::MIDIData
     getNote() const;
 

@@ -20,7 +20,7 @@
 #ifndef __SESSIONVIEWLET_H__
 #define __SESSIONVIEWLET_H__
 
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 
 #include <synthclone/types.h>
 

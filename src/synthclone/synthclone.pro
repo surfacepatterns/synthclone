@@ -25,7 +25,7 @@ unix:!macx {
         -lsynthclone
 }
 
-CONFIG += console uitools
+CONFIG += console
 DEFINES += SYNTHCLONE_MAJOR_VERSION=$${MAJOR_VERSION} \
     SYNTHCLONE_MINOR_VERSION=$${MINOR_VERSION} \
     SYNTHCLONE_PLUGIN_PATH=$${SYNTHCLONE_PLUGIN_INSTALL_PATH} \
@@ -66,8 +66,6 @@ HEADERS += aboutview.h \
     sessionsampledata.h \
     sessionviewlet.h \
     settings.h \
-    signalmap.h \
-    signalpair.h \
     standarditem.h \
     toolviewlet.h \
     types.h \
@@ -84,6 +82,7 @@ HEADERS += aboutview.h \
 INCLUDEPATH += ../include
 MOC_DIR = $${MAKEDIR}/synthclone
 OBJECTS_DIR = $${MAKEDIR}/synthclone
+QT += uitools xml
 RCC_DIR = $${MAKEDIR}/synthclone
 RESOURCES += synthclone.qrc
 SOURCES += aboutview.cpp \
@@ -122,7 +121,6 @@ SOURCES += aboutview.cpp \
     sessionsampledata.cpp \
     sessionviewlet.cpp \
     settings.cpp \
-    signalmap.cpp \
     standarditem.cpp \
     toolviewlet.cpp \
     util.cpp \

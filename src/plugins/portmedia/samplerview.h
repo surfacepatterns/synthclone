@@ -20,11 +20,12 @@
 #ifndef __SAMPLERVIEW_H__
 #define __SAMPLERVIEW_H__
 
-#include <QtGui/QComboBox>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
 #include <QtGui/QStandardItemModel>
-#include <QtGui/QTableView>
+
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QTableView>
 
 #include <synthclone/designerview.h>
 #include <synthclone/types.h>

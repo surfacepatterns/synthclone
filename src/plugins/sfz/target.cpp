@@ -100,7 +100,7 @@ Target::Target(const QString &name, QObject *parent):
     }
     availableControls.append(CONTROL_AFTERTOUCH);
     availableControls.append(CONTROL_CHANNEL_PRESSURE);
-    qStableSort(availableControls.begin(), availableControls.end());
+    std::stable_sort(availableControls.begin(), availableControls.end());
 }
 
 Target::~Target()
@@ -698,7 +698,7 @@ Target::removeControlLayer(int index)
     controlLayerMap.remove(control);
     emit controlLayerRemoved(layer, index);
     availableControls.append(control);
-    qStableSort(availableControls.begin(), availableControls.end());
+    std::stable_sort(availableControls.begin(), availableControls.end());
     delete layer;
 }
 

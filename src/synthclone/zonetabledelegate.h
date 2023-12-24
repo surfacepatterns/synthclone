@@ -20,7 +20,7 @@
 #ifndef __ZONETABLEDELEGATE_H__
 #define __ZONETABLEDELEGATE_H__
 
-#include <QtGui/QStyledItemDelegate>
+#include <QtWidgets/QStyledItemDelegate>
 
 #include <synthclone/types.h>
 

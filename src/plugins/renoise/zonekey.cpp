@@ -107,6 +107,25 @@ ZoneKey::operator<(const ZoneKey &key) const
     return false;
 }
 
+bool
+ZoneKey::operator==(const ZoneKey &key) const
+{
+    bool result = (channel == key.channel) && (note == key.note) &&
+        (channelPressure == key.channelPressure) &&
+        (aftertouch == key.aftertouch) && (controlBits1 == key.controlBits1) &&
+        (controlBits2 == key.controlBits2);
+    if (result) {
+        for (synthclone::MIDIData i = 0; i < 0x80; i++) {
+            synthclone::MIDIData value1 = controlValues[i];
+            synthclone::MIDIData value2 = key.controlValues[i];
+            if (value1 != value2) {
+                return false;
+            }
+        }
+    }
+    return result;
+}
+
 synthclone::MIDIData
 ZoneKey::getNote() const
 {

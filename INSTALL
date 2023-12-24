@@ -21,7 +21,7 @@ development packages) installed:
   * lilv
   * PortAudio
   * PortMidi
-  * qt4
+  * qt6
   * serd
   * sord
   * sratom

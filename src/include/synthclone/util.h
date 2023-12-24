@@ -21,7 +21,7 @@
 #define __SYNTHCLONE_UTIL_H__
 
 #include <QtCore/QCoreApplication>
-#include <QtGui/QWidget>
+#include <QtWidgets/QWidget>
 
 #include <synthclone/sampleinputstream.h>
 #include <synthclone/sampleoutputstream.h>
@@ -72,7 +72,7 @@ namespace synthclone {
     inline T *
     getChild(const QObject *object, const QString &name=QString())
     {
-        T *child = qFindChild<T *>(object, name);
+        T *child = object->findChild<T *>(name);
         CONFIRM(child,
                 qApp->tr("object has no child with name '%1' and base type "
                          "'%2'").arg(name, T::staticMetaObject.className()));

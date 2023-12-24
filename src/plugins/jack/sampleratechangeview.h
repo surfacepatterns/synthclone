@@ -21,8 +21,8 @@
 #ifndef __SAMPLERATECHANGEVIEW_H__
 #define __SAMPLERATECHANGEVIEW_H__
 
-#include <QtGui/QDialog>
-#include <QtGui/QPushButton>
+#include <QtWidgets/QDialog>
+#include <QtWidgets/QPushButton>
 
 #include <synthclone/designerview.h>
 

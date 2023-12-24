@@ -20,7 +20,7 @@
 #ifndef __MAINVIEW_H__
 #define __MAINVIEW_H__
 
-#include <QtGui/QMainWindow>
+#include <QtWidgets/QMainWindow>
 
 #include <synthclone/designerview.h>
 

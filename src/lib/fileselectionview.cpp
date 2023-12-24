@@ -20,7 +20,7 @@
 #include <cassert>
 
 #include <QtCore/QUrl>
-#include <QtGui/QFileDialog>
+#include <QtWidgets/QFileDialog>
 
 #include <synthclone/fileselectionview.h>
 

@@ -20,7 +20,7 @@
 #ifndef __SAVECHANGESVIEW_H__
 #define __SAVECHANGESVIEW_H__
 
-#include <QtGui/QPushButton>
+#include <QtWidgets/QPushButton>
 
 #include "dialogview.h"
 

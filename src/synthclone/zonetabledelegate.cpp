@@ -20,11 +20,14 @@
 #include <cassert>
 
 #include <QtCore/QLocale>
-#include <QtGui/QComboBox>
-#include <QtGui/QDoubleSpinBox>
+
 #include <QtGui/QLinearGradient>
 #include <QtGui/QPainter>
-#include <QtGui/QSpinBox>
+#include <QtGui/QPainterPath>
+
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QDoubleSpinBox>
+#include <QtWidgets/QSpinBox>
 
 #include <synthclone/util.h>
 

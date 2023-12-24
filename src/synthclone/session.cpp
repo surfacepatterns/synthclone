@@ -20,7 +20,6 @@
 #include <cassert>
 #include <cctype>
 
-#include <QtCore/QFSFileEngine>
 #include <QtCore/QScopedPointer>
 #include <QtCore/QTemporaryFile>
 #include <QtCore/QtAlgorithms>
@@ -88,12 +87,10 @@ Session::create(const QDir &directory, synthclone::SampleRate sampleRate,
 void
 Session::initializeDirectory(const QDir &directory)
 {
-    if (! directory.exists()) {
-        QString path = directory.absolutePath();
-        if (! QFSFileEngine().mkdir(path, true)) {
-            throw synthclone::Error(tr("failed to create session directory at "
-                                       "'%1'").arg(path));
-        }
+    if (! (directory.exists() || directory.mkpath("."))) {
+        throw synthclone::Error(
+            tr("failed to create session directory at '%1'").
+            arg(directory.path()));
     }
 }
 
@@ -483,7 +480,7 @@ Session::getActivatedParticipant(const QDomElement &element)
         emitLoadWarning(element, message);
         return 0;
     }
-    QByteArray idBytes = id.toAscii();
+    QByteArray idBytes = id.toLatin1();
     synthclone::Participant *participant;
     try {
         participant = participantManager.getParticipant(idBytes);
@@ -1099,7 +1096,7 @@ Session::load(const QDir &directory)
                 continue;
             }
             try {
-                participant = participantManager.getParticipant(id.toAscii());
+                participant = participantManager.getParticipant(id.toLatin1());
             } catch (synthclone::Error &e) {
                 emitLoadWarning(element, e.getMessage());
                 continue;
@@ -1971,8 +1968,8 @@ Session::sortZones(const synthclone::ZoneComparer &comparer, bool ascending,
 
     // The algorithm here is based on the in-place quick sort algorithm found
     // at http://en.wikipedia.org/wiki/Quicksort.  We implement the algorithm
-    // instead of using qStableSort because we want to keep track of each zone
-    // move so that any objects listening for move signals can be updated.
+    // instead of using std::stable_sort because we want to keep track of each
+    // zone move so that any objects listening for move signals can be updated.
     // This makes any sort operation a bit slower than it could be, but allows
     // objects observing zone order to be notified when zones are moved.
 
@@ -2018,8 +2015,8 @@ void
 Session::sortZones(const synthclone::ZoneComparer &comparer, bool ascending)
 {
     sortZones(comparer, ascending, 0, zones.count() - 1);
-    qStableSort(selectedZones.begin(), selectedZones.end(),
-                ZoneComparerProxy(zoneIndexComparer));
+    std::stable_sort(selectedZones.begin(), selectedZones.end(),
+                     ZoneComparerProxy(zoneIndexComparer));
 }
 
 void

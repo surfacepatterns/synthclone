@@ -20,17 +20,18 @@
 #ifndef __EFFECTVIEW_H__
 #define __EFFECTVIEW_H__
 
-#include <QtGui/QGridLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/QPushButton>
-#include <QtGui/QScrollArea>
-#include <QtGui/QSpinBox>
 #include <QtGui/QStandardItemModel>
-#include <QtGui/QTableView>
-#include <QtGui/QTabWidget>
 
-#include <lv2/lv2plug.in/ns/extensions/ui/ui.h>
+#include <QtWidgets/QGridLayout>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QScrollArea>
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QTableView>
+#include <QtWidgets/QTabWidget>
+
+#include <lv2/ui/ui.h>
 
 #include <suil/suil.h>
 

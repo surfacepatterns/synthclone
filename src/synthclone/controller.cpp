@@ -21,8 +21,8 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QDirIterator>
-#include <QtCore/QFSFileEngine>
 #include <QtCore/QMimeData>
+
 #include <QtGui/QClipboard>
 
 #include <synthclone/error.h>
@@ -749,7 +749,6 @@ Controller::refreshZoneViewletActions()
 void
 Controller::removeDirectoryContents(QDir &directory)
 {
-    QFSFileEngine fileEngine;
     QList<QFileInfo> fileInfoList =
         directory.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot);
     for (int i = fileInfoList.count() - 1; i >= 0; i--) {
@@ -757,10 +756,10 @@ Controller::removeDirectoryContents(QDir &directory)
         QString path = fileInfo.absoluteFilePath();
         if (fileInfo.isDir()) {
             QDir subDirectory(path);
-            removeDirectoryContents(subDirectory);
-            if (! fileEngine.rmdir(path, false)) {
-                throw synthclone::Error(fileEngine.errorString());
-            }
+	    if (! subDirectory.removeRecursively()) {
+	        throw synthclone::Error(
+		    tr("failed to remove directory '%1'").arg(path));
+	    }
         } else {
             QFile file(path);
             if (! file.remove()) {
