@@ -138,6 +138,9 @@ ParticipantView::setVisible(bool visible)
 {
     if (visible) {
         treeView->header()->resizeSections(QHeaderView::ResizeToContents);
+        for (int i = 0; i < PARTICIPANTTREECOLUMN_TOTAL; ++i) {
+            treeView->resizeColumnToContents(i);
+        }
     }
     View::setVisible(visible);
 }
