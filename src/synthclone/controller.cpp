@@ -21,6 +21,7 @@
 
 #include <QtCore/QDebug>
 #include <QtCore/QDirIterator>
+#include <QtCore/QMetaObject>
 #include <QtCore/QMimeData>
 
 #include <QtGui/QClipboard>
@@ -84,7 +85,8 @@ Controller::Controller(Application &application, QObject *parent):
     connect(&saveWarningView, SIGNAL(saveRequest()),
             SLOT(handleSaveWarningViewSaveRequest()));
 
-    connect(&sessionLoadView, SIGNAL(closeRequest()), SLOT(quit()));
+    connect(&sessionLoadView, SIGNAL(closeRequest()),
+            SLOT(handleSessionLoadViewCloseRequest()));
     connect(&sessionLoadView,
             SIGNAL(creationDirectoryBrowseRequest(QString, QString)),
             SLOT(handleSessionLoadViewCreationDirectoryBrowseRequest
@@ -650,7 +652,9 @@ void
 Controller::quit()
 {
     session.unload();
-    application.quit();
+    mainView.setVisible(false);
+    QMetaObject::invokeMethod(
+        &application, Application::quit, Qt::QueuedConnection);
 }
 
 void
@@ -756,10 +760,10 @@ Controller::removeDirectoryContents(QDir &directory)
         QString path = fileInfo.absoluteFilePath();
         if (fileInfo.isDir()) {
             QDir subDirectory(path);
-	    if (! subDirectory.removeRecursively()) {
-	        throw synthclone::Error(
-		    tr("failed to remove directory '%1'").arg(path));
-	    }
+            if (! subDirectory.removeRecursively()) {
+                throw synthclone::Error(
+                    tr("failed to remove directory '%1'").arg(path));
+            }
         } else {
             QFile file(path);
             if (! file.remove()) {
@@ -1814,6 +1818,13 @@ Controller::handleSessionZoneSelectionChange(synthclone::Zone */*zone*/,
 ////////////////////////////////////////////////////////////////////////////////
 // SessionLoadView signal handlers
 ////////////////////////////////////////////////////////////////////////////////
+
+void
+Controller::handleSessionLoadViewCloseRequest()
+{
+    sessionLoadView.setVisible(false);
+    quit();
+}
 
 void
 Controller::

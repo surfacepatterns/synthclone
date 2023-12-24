@@ -252,6 +252,9 @@ private slots:
                                      bool selected);
 
     void
+    handleSessionLoadViewCloseRequest();
+
+    void
     handleSessionLoadViewCreationDirectoryBrowseRequest(const QString &path,
                                                         const QString &name);
 

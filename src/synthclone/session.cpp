@@ -161,19 +161,9 @@ Session::Session(ParticipantManager &participantManager, QObject *parent):
                                         const QByteArray &)),
             SLOT(setModified()));
     connect(&participantManager,
-            SIGNAL(participantAdded(const synthclone::Participant *,
-                                    const synthclone::Participant *,
-                                    const QByteArray &)),
-            SLOT(setModified()));
-    connect(&participantManager,
             SIGNAL(participantDeactivated(const synthclone::Participant *,
                                           const synthclone::Participant *,
                                           const QByteArray &)),
-            SLOT(setModified()));
-    connect(&participantManager,
-            SIGNAL(participantRemoved(const synthclone::Participant *,
-                                      const synthclone::Participant *,
-                                      const QByteArray &)),
             SLOT(setModified()));
 
     connect(&sessionSampleData,
