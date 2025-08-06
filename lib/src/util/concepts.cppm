@@ -63,7 +63,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 namespace SYNTHCLONE_LIB_NAMESPACE {
 
     /**
-     * Checks if a type if an arithmetic type.
+     * Checks if a type is an arithmetic type.
      *
      * @tparam T
      *   The type to check.

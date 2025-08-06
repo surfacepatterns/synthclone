@@ -100,7 +100,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         using const_pointer = string_type::const_pointer;
 
         /**
-         * Characer reference type.
+         * Character reference type.
          */
 
         using const_reference = string_type::const_reference;

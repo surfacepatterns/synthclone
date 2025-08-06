@@ -52,7 +52,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     concept scalar_proxy_type = is_scalar_proxy_type<T>::value;
 
     /**
-     * Read-only wrapper around an scalar value that's meant to be extended by
+     * Read-only wrapper around a scalar value that's meant to be extended by
      * classes that want to provide a minimal scalar API for their class, but
      * have stricter requirements than those specified by the proxied scalar
      * type.

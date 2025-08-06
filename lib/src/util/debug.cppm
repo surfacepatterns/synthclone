@@ -227,7 +227,6 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 #endif
 
             std::unreachable();
-            std::terminate();
         }
     }
 
