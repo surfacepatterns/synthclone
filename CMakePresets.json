@@ -1,0 +1,51 @@
+{
+    "version": 10,
+    "cmakeMinimumRequired": {
+        "major": 4,
+        "minor": 0,
+        "patch": 0
+    },
+
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Ninja",
+
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebugInfo"
+            },
+
+            "warnings": {
+                "dev": true,
+                "deprecated": true,
+                "uninitialized": true,
+                "unusedCli": true,
+                "systemVars": false
+            },
+
+            "errors": {
+                "dev": false,
+                "deprecated": true
+            }
+
+        },
+        {
+            "name": "default",
+            "inherits": "base",
+            "displayName": "default configuration",
+            "description": "Default build configuration"
+        },
+        {
+            "name": "coverage",
+            "inherits": "base",
+            "displayName": "code coverage configuration",
+            "description": "Build with code coverage enabled",
+
+            "cacheVariables": {
+                "SYNTHCLONE_COVERAGE_ENABLED": true,
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        }
+    ]
+}
