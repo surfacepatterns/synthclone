@@ -1,0 +1,129 @@
+Decimal,Binary,Hex,Control Function,Value,Used As
+0,0,0,Bank Select,0-127,MSB
+1,1,1,Modulation Wheel or Lever,0-127,MSB
+2,10,2,Breath Controller,0-127,MSB
+3,11,3,Undefined,0-127,MSB
+4,100,4,Foot Controller,0-127,MSB
+5,101,5,Portamento Time,0-127,MSB
+6,110,6,Data Entry MSB,0-127,MSB
+7,111,7,Channel Volume,0-127,MSB
+8,1000,8,Balance,0-127,MSB
+9,1001,9,Undefined,0-127,MSB
+10,1010,0A,Pan,0-127,MSB
+11,1011,0B,Expression Controller,0-127,MSB
+12,1100,0C,Effect Control 1,0-127,MSB
+13,1101,0D,Effect Control 2,0-127,MSB
+14,1110,0E,Undefined,0-127,MSB
+15,1111,0F,Undefined,0-127,MSB
+16,10000,10,General Purpose Controller 1,0-127,MSB
+17,10001,11,General Purpose Controller 2,0-127,MSB
+18,10010,12,General Purpose Controller 3,0-127,MSB
+19,10011,13,General Purpose Controller 4,0-127,MSB
+20,10100,14,Undefined,0-127,MSB
+21,10101,15,Undefined,0-127,MSB
+22,10110,16,Undefined,0-127,MSB
+23,10111,17,Undefined,0-127,MSB
+24,11000,18,Undefined,0-127,MSB
+25,11001,19,Undefined,0-127,MSB
+26,11010,1A,Undefined,0-127,MSB
+27,11011,1B,Undefined,0-127,MSB
+28,11100,1C,Undefined,0-127,MSB
+29,11101,1D,Undefined,0-127,MSB
+30,11110,1E,Undefined,0-127,MSB
+31,11111,1F,Undefined,0-127,MSB
+32,100000,20,LSB for Control 0 (Bank Select),0-127,LSB
+33,100001,21,LSB for Control 1 (Modulation Wheel or Lever),0-127,LSB
+34,100010,22,LSB for Control 2 (Breath Controller),0-127,LSB
+35,100011,23,LSB for Control 3 (Undefined),0-127,LSB
+36,100100,24,LSB for Control 4 (Foot Controller),0-127,LSB
+37,100101,25,LSB for Control 5 (Portamento Time),0-127,LSB
+38,100110,26,LSB for Control 6 (Data Entry),0-127,LSB
+39,100111,27,"LSB for Control 7 (Channel Volume)",0-127,LSB
+40,101000,28,LSB for Control 8 (Balance),0-127,LSB
+41,101001,29,LSB for Control 9 (Undefined),0-127,LSB
+42,101010,2A,LSB for Control 10 (Pan),0-127,LSB
+43,101011,2B,LSB for Control 11 (Expression Controller),0-127,LSB
+44,101100,2C,LSB for Control 12 (Effect control 1),0-127,LSB
+45,101101,2D,LSB for Control 13 (Effect control 2),0-127,LSB
+46,101110,2E,LSB for Control 14 (Undefined),0-127,LSB
+47,101111,2F,LSB for Control 15 (Undefined),0-127,LSB
+48,110000,30,LSB for Control 16 (General Purpose Controller 1),0-127,LSB
+49,110001,31,LSB for Control 17 (General Purpose Controller 2),0-127,LSB
+50,110010,32,LSB for Control 18 (General Purpose Controller 3),0-127,LSB
+51,110011,33,LSB for Control 19 (General Purpose Controller 4),0-127,LSB
+52,110100,34,LSB for Control 20 (Undefined),0-127,LSB
+53,110101,35,LSB for Control 21 (Undefined),0-127,LSB
+54,110110,36,LSB for Control 22 (Undefined),0-127,LSB
+55,110111,37,LSB for Control 23 (Undefined),0-127,LSB
+56,111000,38,LSB for Control 24 (Undefined),0-127,LSB
+57,111001,39,LSB for Control 25 (Undefined),0-127,LSB
+58,111010,3A,LSB for Control 26 (Undefined),0-127,LSB
+59,111011,3B,LSB for Control 27 (Undefined),0-127,LSB
+60,111100,3C,LSB for Control 28 (Undefined),0-127,LSB
+61,111101,3D,LSB for Control 29 (Undefined),0-127,LSB
+62,111110,3E,LSB for Control 30 (Undefined),0-127,LSB
+63,111111,3F,LSB for Control 31 (Undefined),0-127,LSB
+64,1000000,40,Damper Pedal on/off (Sustain),"≤63 off, ≥64 on",—
+65,1000001,41,Portamento On/Off,"≤63 off, ≥64 on",—
+66,1000010,42,Sostenuto On/Off,"≤63 off, ≥64 on",—
+67,1000011,43,Soft Pedal On/Off,"≤63 off, ≥64 on",—
+68,1000100,44,Legato Footswitch,"≤63 Normal, ≥64 Legato",—
+69,1000101,45,Hold 2,"≤63 off, ≥64 on",—
+70,1000110,46,Sound Controller 1 (default: Sound Variation),0-127,LSB
+71,1000111,47,Sound Controller 2 (default: Timbre/Harmonic Intens.),0-127,LSB
+72,1001000,48,Sound Controller 3 (default: Release Time),0-127,LSB
+73,1001001,49,Sound Controller 4 (default: Attack Time),0-127,LSB
+74,1001010,4A,Sound Controller 5 (default: Brightness),0-127,LSB
+75,1001011,4B,Sound Controller 6 (default: Decay Time),0-127,LSB
+76,1001100,4C,Sound Controller 7 (default: Vibrato Rate),0-127,LSB
+77,1001101,4D,Sound Controller 8 (default: Vibrato Depth),0-127,LSB
+78,1001110,4E,Sound Controller 9 (default: Vibrato Delay),0-127,LSB
+79,1001111,4F,Sound Controller 10 (default undefined),0-127,LSB
+80,1010000,50,General Purpose Controller 5,0-127,LSB
+81,1010001,51,General Purpose Controller 6,0-127,LSB
+82,1010010,52,General Purpose Controller 7,0-127,LSB
+83,1010011,53,General Purpose Controller 8,0-127,LSB
+84,1010100,54,Portamento Control,0-127,LSB
+85,1010101,55,Undefined,—,—
+86,1010110,56,Undefined,—,—
+87,1010111,57,Undefined,—,—
+88,1011000,58,High Resolution Velocity Prefix,0-127,LSB
+89,1011001,59,Undefined,—,—
+90,1011010,5A,Undefined,—,—
+91,1011011,5B,"Effects 1 Depth (default: Reverb Send Level)",0-127,—
+92,1011100,5C,Effects 2 Depth,0-127,—
+93,1011101,5D,"Effects 3 Depth (default: Chorus Send Level)",0-127,—
+94,1011110,5E,Effects 4 Depth,0-127,—
+95,1011111,5F,Effects 5 Depth,0-127,—
+96,1100000,60,Data Increment (Data Entry +1),N/A,—
+97,1100001,61,Data Decrement (Data Entry -1),N/A,—
+98,1100010,62,Non-Registered Parameter Number (NRPN) – LSB,0-127,LSB
+99,1100011,63,Non-Registered Parameter Number (NRPN) – MSB,0-127,MSB
+100,1100100,64,Registered Parameter Number (RPN) – LSB,0-127,LSB
+101,1100101,65,Registered Parameter Number (RPN) – MSB,0-127,MSB
+102,1100110,66,Undefined,—,—
+103,1100111,67,Undefined,—,—
+104,1101000,68,Undefined,—,—
+105,1101001,69,Undefined,—,—
+106,1101010,6A,Undefined,—,—
+107,1101011,6B,Undefined,—,—
+108,1101100,6C,Undefined,—,—
+109,1101101,6D,Undefined,—,—
+110,1101110,6E,Undefined,—,—
+111,1101111,6F,Undefined,—,—
+112,1110000,70,Undefined,—,—
+113,1110001,71,Undefined,—,—
+114,1110010,72,Undefined,—,—
+115,1110011,73,Undefined,—,—
+116,1110100,74,Undefined,—,—
+117,1110101,75,Undefined,—,—
+118,1110110,76,Undefined,—,—
+119,1110111,77,Undefined,—,—
+120,1111000,78,[Channel Mode Message] All Sound Off,0,—
+121,1111001,79,"[Channel Mode Message] Reset All Controllers",0,—
+122,1111010,7A,[Channel Mode Message] Local Control On/Off,"0 off, 127 on",—
+123,1111011,7B,[Channel Mode Message] All Notes Off,0,—
+124,1111100,7C,[Channel Mode Message] Omni Mode Off (+ all notes off),0,—
+125,1111101,7D,[Channel Mode Message] Omni Mode On (+ all notes off),0,—
+126,1111110,7E,"[Channel Mode Message] Mono Mode On (+ poly off, + all notes off)","Note: This equals the number of channels, or zero if the number of channels equals the number of voices in the receiver.",—
+127,1111111,7F,"[Channel Mode Message] Poly Mode On (+ mono off, +all notes off)",0,—

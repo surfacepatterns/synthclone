@@ -1,0 +1,34 @@
+#!/usr/bin/env -S /bin/sh -c 'PYTHONPATH="$(dirname "$0")/../../../common/python:$PYTHONPATH" python3 "$0" "$@"'
+
+from collections.abc import Generator
+from math import pi, sin
+from itertools import count, repeat
+from struct import pack
+
+from synthclone_repo.modules.core import (
+    AUDIO_REFERENCE_WAVES,
+    REFERENCE_AUDIO_PATH,
+    get_audio_reference_wave_path
+)
+
+AMPLITUDE_SCALE = 0.75
+FREQUENCY = 440
+TWO_PI = pi * 2.0
+
+def generate_sine(sample_rate: int) -> Generator[float]:
+    return (sin((TWO_PI * (i * FREQUENCY)) / sample_rate) for i in count())
+
+def main():
+    REFERENCE_AUDIO_PATH.mkdir(exist_ok=True, mode=0o755, parents=True)
+    for wave in AUDIO_REFERENCE_WAVES:
+        with open(get_audio_reference_wave_path(wave), "wb") as fp:
+            channel_count = wave.channel_count
+            sample_rate = wave.sample_rate
+            gen = generate_sine(sample_rate)
+            pack_format = f"<{'d' * channel_count}"
+            for i in range(sample_rate):
+                sample = next(gen) * AMPLITUDE_SCALE
+                fp.write(pack(pack_format, *repeat(sample, channel_count)))
+
+if __name__ == "__main__":
+    main()
