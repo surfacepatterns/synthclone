@@ -41,11 +41,11 @@ project(
 include(CTest)
 include(GNUInstallDirs)
 
-include(cmake/config.cmake)
+include(common/cmake/config.cmake)
 
 enable_testing()
 
 synthclone_initialize_config()
 
 #add_subdirectory(app)
-add_subdirectory(lib)
+add_subdirectory(modules)

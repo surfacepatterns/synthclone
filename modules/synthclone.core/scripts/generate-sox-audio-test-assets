@@ -1,0 +1,924 @@
+#!/usr/bin/env -S /bin/sh -c 'PYTHONPATH="$(dirname "$0")/../../../common/python:$PYTHONPATH" python3 "$0" "$@"'
+
+from collections.abc import Callable, Generator
+from functools import partial
+from itertools import chain
+from pathlib import Path
+from shutil import copyfile
+from subprocess import run
+from sys import stderr
+from tempfile import NamedTemporaryFile
+
+from synthclone_repo import (
+    CodeComposer,
+    get_scoped_enum_element_identifier,
+    make_timestamp
+)
+from synthclone_repo.modules.core import (
+    AudioCodec,
+    AudioEndianness,
+    AudioFormat,
+    AudioReferenceWave,
+    get_audio_reference_wave_path,
+    write_decoder_test_assets
+)
+
+class SoxArgs:
+
+    __slots__ = ("__bit_depth", "__encoding_id", "__format_id")
+
+    __bit_depth: int | None
+    __encoding_id: str | None
+    __format_id: str
+
+    def __init__(
+        self,
+        format_id: str,
+        /,
+        *,
+        encoding_id: str | None = None,
+        bit_depth: int | None = None
+    ):
+        self.__bit_depth = bit_depth
+        self.__encoding_id = encoding_id
+        self.__format_id = format_id
+
+    @property
+    def bit_depth(self, /) -> int | None:
+        return self.__bit_depth
+
+    @property
+    def encoding_id(self, /) -> str | None:
+        return self.__encoding_id
+
+    @property
+    def format_id(self, /) -> str:
+        return self.__format_id
+
+type SoxFilterCallable = \
+    Callable[[AudioCodec, AudioEndianness, int, int], SoxArgs | None]
+
+SOX_ENCODING_MAP = {
+    AudioCodec.ALAW: "a-law",
+    AudioCodec.GSM610: "gsm-full-rate",
+    AudioCodec.IMA_ADPCM: "ima-adpcm",
+    AudioCodec.MS_ADPCM: "ms-adpcm",
+    AudioCodec.PCM_F32: "floating-point",
+    AudioCodec.PCM_F64: "floating-point",
+    AudioCodec.PCM_S8: "signed-integer",
+    AudioCodec.PCM_S16: "signed-integer",
+    AudioCodec.PCM_S24: "signed-integer",
+    AudioCodec.PCM_S32: "signed-integer",
+    AudioCodec.PCM_U8: "unsigned-integer",
+    AudioCodec.ULAW: "mu-law"
+}
+
+def _filter_simple(
+    format_id: str,
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> SoxArgs | None:
+    encoding_id = SOX_ENCODING_MAP.get(codec)
+    return None if encoding_id is None else \
+        SoxArgs(
+            format_id, encoding_id=encoding_id,
+            bit_depth=codec.value.bit_depth)
+
+def _make_simple_sox_filter(
+    format_id: str,
+    /
+) -> SoxFilterCallable:
+    return partial(_filter_simple, format_id)
+
+def _filter_aiff(
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> SoxArgs | None:
+
+    # XXX: Open upstream bug.
+    #
+    # `sox` generates files that can't be opened by `audacity`,
+    # `libsndfile`, and `ffmpeg`.
+    if endianness == AudioEndianness.LITTLE:
+        return None
+
+    return _filter_simple(
+        "aiff", codec, endianness, sample_rate, channel_count)
+
+def _filter_au(
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> SoxArgs | None:
+
+    # XXX: Open upstream bug.
+    #
+    # `sox` generates files that can't be opened by `audacity`,
+    # `libsndfile`, and `ffmpeg`.
+    if endianness == AudioEndianness.LITTLE:
+        return None
+
+    return _filter_simple("au", codec, endianness, sample_rate, channel_count)
+
+def _filter_caf(
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> SoxArgs | None:
+
+    # XXX: Open upstream bug.
+    #
+    # `sox` generates 64-bit floating point with wildly out-of-range audio
+    # samples.
+    if codec == AudioCodec.PCM_F64:
+        return None
+
+    return _filter_simple("caf", codec, endianness, sample_rate, channel_count)
+
+def _filter_mat4(
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> SoxArgs | None:
+
+    # XXX: Open upstream bug.
+    #
+    # `sox` generates little endian for these formats even when prompted
+    # for big endian, and generates 64-bit floating point with wildly
+    # out-of-range audio samples.
+    if (endianness == AudioEndianness.BIG) or (codec == AudioCodec.PCM_F64):
+        return None
+
+    return _filter_simple(
+        "mat4", codec, endianness, sample_rate, channel_count)
+
+def _filter_mat5(
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> SoxArgs | None:
+
+    # XXX: Open upstream bug.
+    #
+    # `sox` generates little endian for these formats even when prompted
+    # for big endian, and generates 64-bit floating point with wildly
+    # out-of-range audio samples.
+    if (endianness == AudioEndianness.BIG) or (codec == AudioCodec.PCM_F64):
+        return None
+
+    return _filter_simple(
+        "mat5", codec, endianness, sample_rate, channel_count)
+
+def _filter_ogg(
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> SoxArgs | None:
+    return None if codec != AudioCodec.VORBIS else SoxArgs("vorbis")
+
+def _filter_nist(
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> SoxArgs | None:
+
+    # `sox` generates a NIST header with "sample_byte_format -s2" instead
+    # of the actual sample width (like `libsamplerate`), but it's not clear
+    # that `sox` is wrong.  It's also not clear that `libsndfile` is wrong
+    # in rejecting these files.
+    if codec in (AudioCodec.PCM_S24, AudioCodec.PCM_S32):
+        return None
+
+    return _filter_simple("sph", codec, endianness, sample_rate, channel_count)
+
+def _filter_paf(
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> SoxArgs | None:
+
+    # XXX: Open upstream bug.
+    #
+    # `sox` generates big endian for `PAF` even when prompted for little
+    # endian, and writes an incorrect sample count with signed 24-bit PCM
+    # that seems to be:
+    #
+    # correct_sample_count + ((correct_sample_count + 9) % 10)
+    if (endianness == AudioEndianness.LITTLE) or (codec == AudioCodec.PCM_S24):
+        return None
+
+    return _filter_simple("paf", codec, endianness, sample_rate, channel_count)
+
+def _filter_raw(
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> SoxArgs | None:
+    match codec:
+        case AudioCodec.GSM610:
+            return SoxArgs("gsm")
+        case AudioCodec.IMA_ADPCM:
+            return SoxArgs("ima")
+        case AudioCodec.VOX_ADPCM:
+            return SoxArgs("vox")
+        case _:
+            return _filter_simple(
+                "raw", codec, endianness, sample_rate, channel_count)
+
+# def _filter_sd2(
+#     codec: AudioCodec,
+#     endianness: AudioEndianness,
+#     sample_rate: int,
+#     channel_count: int,
+#     /
+# ) -> SoxArgs | None:
+#
+#     # XXX: Open upstream bug.
+#     #
+#     # `sox` generates bad data offsets for SD2 files.  `sox` can't even
+#     # open the SD2 files it creates.
+#     return None
+
+def _filter_svx(
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> SoxArgs | None:
+    return None if codec != AudioCodec.PCM_S8 else \
+        _filter_simple("8svx", codec, endianness, sample_rate, channel_count)
+
+def _filter_wav(
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> SoxArgs | None:
+    match codec:
+        case AudioCodec.PCM_S24 | AudioCodec.PCM_S32:
+            return None
+        case _:
+            return None if channel_count > 2 else \
+                _filter_simple(
+                    "wav", codec, endianness, sample_rate, channel_count)
+
+def _filter_wavex(
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> bool:
+    match codec:
+        case AudioCodec.PCM_S24 | AudioCodec.PCM_S32:
+            return _filter_simple(
+                "wav", codec, endianness, sample_rate, channel_count)
+        case _:
+            return None if channel_count <= 2 else \
+                _filter_simple(
+                    "wav", codec, endianness, sample_rate, channel_count)
+
+def _filter_w64(
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    sample_rate: int,
+    channel_count: int,
+    /
+) -> SoxArgs | None:
+
+    # XXX: Open upstream bug.
+    #
+    # `sox` generates 64-bit floating point with wildly out-of-range audio
+    # samples.
+    if codec == AudioCodec.PCM_F64:
+        return None
+
+    return _filter_simple("w64", codec, endianness, sample_rate, channel_count)
+
+SOX_FORMAT_FILTER_MAP = {
+
+    # Format: aiff
+    # Description: AIFF files used on Apple IIc/IIgs and SGI
+    # Also handles: aif
+    # Reads: yes
+    # Writes:
+    #   32-bit Signed Integer PCM (32-bit precision)
+    #   24-bit Signed Integer PCM (24-bit precision)
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #    8-bit Signed Integer PCM (8-bit precision)
+    AudioFormat.AIFF: _filter_aiff,
+
+    # Format: au
+    # Description: PCM file format used widely on Sun systems
+    # Also handles: snd
+    # Reads: yes
+    # Writes:
+    #    8-bit u-law (14-bit precision)
+    #    8-bit A-law (13-bit precision)
+    #    8-bit Signed Integer PCM (8-bit precision)
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #   24-bit Signed Integer PCM (24-bit precision)
+    #   32-bit Signed Integer PCM (32-bit precision)
+    #   32-bit Floating Point PCM (25-bit precision)
+    #   64-bit Floating Point PCM (54-bit precision)
+    AudioFormat.AU: _filter_au,
+
+    # Format: avr
+    # Description: Audio Visual Research format; used on the Mac
+    # Channels restricted to: mono stereo
+    # Reads: yes
+    # Writes:
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #    8-bit Signed Integer PCM (8-bit precision)
+    #   16-bit Unsigned Integer PCM (16-bit precision)
+    #    8-bit Unsigned Integer PCM (8-bit precision)
+    AudioFormat.AVR: _make_simple_sox_filter("avr"),
+
+    # Format: caf
+    # Description: Apples's Core Audio Format
+    # Reads: yes
+    # Writes:
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #   24-bit Signed Integer PCM (24-bit precision)
+    #   32-bit Signed Integer PCM (32-bit precision)
+    #    8-bit Signed Integer PCM (8-bit precision)
+    #   32-bit Floating Point PCM (25-bit precision)
+    #   64-bit Floating Point PCM (54-bit precision)
+    #    8-bit A-law (13-bit precision)
+    #    8-bit u-law (14-bit precision)
+    AudioFormat.CAF: _filter_caf,
+
+    # Format: htk
+    # Description: PCM format used for Hidden Markov Model speech processing
+    # Channels restricted to: mono
+    # Reads: yes
+    # Writes:
+    #   16-bit Signed Integer PCM (16-bit precision)
+    AudioFormat.HTK: _make_simple_sox_filter("htk"),
+
+    # Format: sf
+    # Description: Institut de Recherche et Coordination Acoustique/Musique
+    # Also handles: ircam
+    # Reads: yes
+    # Writes:
+    #    8-bit u-law (14-bit precision)
+    #    8-bit A-law (13-bit precision)
+    #    8-bit Signed Integer PCM (8-bit precision)
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #   24-bit Signed Integer PCM (24-bit precision)
+    #   32-bit Signed Integer PCM (32-bit precision)
+    #   32-bit Floating Point PCM (25-bit precision)
+    #   64-bit Floating Point PCM (54-bit precision)
+    AudioFormat.IRCAM: _make_simple_sox_filter("sf"),
+
+    # Format: mat4
+    # Description: Gnu Octave 2.0 format
+    # Also handles: mat
+    # Reads: yes
+    # Writes:
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #   32-bit Signed Integer PCM (32-bit precision)
+    #   32-bit Floating Point PCM (25-bit precision)
+    #   64-bit Floating Point PCM (54-bit precision)
+    AudioFormat.MAT4: _filter_mat4,
+
+    # Format: mat5
+    # Description: Gnu Octave 2.1 format
+    # Reads: yes
+    # Writes:
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #   32-bit Signed Integer PCM (32-bit precision)
+    #   32-bit Floating Point PCM (25-bit precision)
+    #   64-bit Floating Point PCM (54-bit precision)
+    AudioFormat.MAT5: _filter_mat5,
+
+    # Format: sph
+    # Description: SPeech HEader Resources; defined by NIST
+    # Also handles: nist
+    # Reads: yes
+    # Writes:
+    #    8-bit Signed Integer PCM (8-bit precision)
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #   24-bit Signed Integer PCM (24-bit precision)
+    #   32-bit Signed Integer PCM (32-bit precision)
+    #    8-bit u-law (14-bit precision)
+    AudioFormat.NIST: _filter_nist,
+
+    # Format: vorbis
+    # Description: Xiph.org's ogg-vorbis lossy compression
+    # Also handles: ogg
+    # Reads: yes
+    # Writes:
+    #   Vorbis (16-bit precision)
+    AudioFormat.OGG: _filter_ogg,
+
+    # Format: paf
+    # Description: Ensoniq PARIS digital audio editing system (big endian)
+    # Reads: yes
+    # Writes:
+    #   24-bit Signed Integer PCM (24-bit precision)
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #    8-bit Signed Integer PCM (8-bit precision)
+    AudioFormat.PAF: _filter_paf,
+
+    # Format: pvf
+    # Description: Portable Voice Format
+    # Reads: yes
+    # Writes:
+    #   32-bit Signed Integer PCM (32-bit precision)
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #    8-bit Signed Integer PCM (8-bit precision)
+    AudioFormat.PVF: _make_simple_sox_filter("pvf"),
+
+    # Format: gsm
+    # Description: GSM 06.10 (full-rate) lossy speech compression
+    # Sample-rate restricted to: 8000
+    # Reads: yes
+    # Writes:
+    #   GSM (16-bit precision)
+    #
+    # Format: ima
+    # Description: Raw IMA ADPCM
+    # Channels restricted to: mono
+    # Reads: yes
+    # Writes:
+    #    4-bit IMA ADPCM (13-bit precision)
+    #
+    # Format: raw
+    # Description: Raw PCM, mu-law, or A-law
+    # Reads: yes
+    # Writes:
+    #   32-bit Signed Integer PCM (32-bit precision)
+    #   24-bit Signed Integer PCM (24-bit precision)
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #    8-bit Signed Integer PCM (8-bit precision)
+    #   32-bit Unsigned Integer PCM (32-bit precision)
+    #   24-bit Unsigned Integer PCM (24-bit precision)
+    #   16-bit Unsigned Integer PCM (16-bit precision)
+    #    8-bit Unsigned Integer PCM (8-bit precision)
+    #    8-bit u-law (14-bit precision)
+    #    8-bit A-law (13-bit precision)
+    #   64-bit Floating Point PCM (54-bit precision)
+    #   32-bit Floating Point PCM (25-bit precision)
+    #
+    # The following `sox` formats are handled by RAW:
+    #   * al
+    #   * f4
+    #   * f8
+    #   * s1
+    #   * s2
+    #   * s3
+    #   * s4
+    #   * u1
+    #   * u2
+    #   * u3
+    #   * u4
+    #   * ul
+    #
+    # Format: vox
+    # Description: Raw OKI/Dialogic ADPCM
+    # Channels restricted to: mono
+    # Reads: yes
+    # Writes:
+    #    4-bit OKI ADPCM (12-bit precision)
+    AudioFormat.RAW: _filter_raw,
+
+    # Format: 8svx
+    # Description: Amiga audio format (a subformat of the Interchange File
+    # Format)
+    # Channels restricted to: mono stereo quad
+    # Reads: yes
+    # Writes:
+    #    8-bit Signed Integer PCM (8-bit precision)
+    AudioFormat.SVX: _filter_svx,
+
+    # Format: voc
+    # Description: Creative Technology Sound Blaster format
+    # Channels restricted to: mono stereo
+    # Reads: yes
+    # Writes:
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #    8-bit Unsigned Integer PCM (8-bit precision)
+    AudioFormat.VOC: _make_simple_sox_filter("voc"), #_filter_voc,
+
+    # Format: w64
+    # Description: Sound Forge Audio Format
+    # Reads: yes
+    # Writes:
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #   24-bit Signed Integer PCM (24-bit precision)
+    #   32-bit Signed Integer PCM (32-bit precision)
+    #    8-bit Unsigned Integer PCM (8-bit precision)
+    #   32-bit Floating Point PCM (25-bit precision)
+    #   64-bit Floating Point PCM (54-bit precision)
+    #    8-bit A-law (13-bit precision)
+    #    8-bit u-law (14-bit precision)
+    #    4-bit IMA ADPCM (13-bit precision)
+    #    4-bit MS ADPCM (14-bit precision)
+    #   GSM (16-bit precision)
+    AudioFormat.W64: _filter_w64,
+
+    # Format: wav
+    # Description: Microsoft audio format
+    # Also handles: wavpcm amb
+    # Reads: yes
+    # Writes:
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #   24-bit Signed Integer PCM (24-bit precision)
+    #   32-bit Signed Integer PCM (32-bit precision)
+    #    8-bit Unsigned Integer PCM (8-bit precision)
+    #    8-bit u-law (14-bit precision)
+    #    8-bit A-law (13-bit precision)
+    #   GSM (16-bit precision)
+    #    4-bit MS ADPCM (14-bit precision)
+    #    4-bit IMA ADPCM (13-bit precision)
+    #   32-bit Floating Point PCM (25-bit precision)
+    #   64-bit Floating Point PCM (54-bit precision)
+    AudioFormat.WAV: _filter_wav,
+    AudioFormat.WAVEX: _filter_wavex,
+
+    # Format: wve
+    # Description: Psion 3 audio format
+    # Channels restricted to: mono
+    # Sample-rate restricted to: 8000
+    # Reads: yes
+    # Writes:
+    #    8-bit A-law (13-bit precision)
+    AudioFormat.WVE: _make_simple_sox_filter("wve")
+
+    # There are quite a few `sox` formats that we ignore:
+
+    # Format: aifc
+    # Description: AIFF-C (not compressed), defined in DAVIC 1.4 Part 9 Annex B
+    # Also handles: aiffc
+    # Reads: yes
+    # Writes:
+    #   32-bit Signed Integer PCM (32-bit precision)
+    #   24-bit Signed Integer PCM (24-bit precision)
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #    8-bit Signed Integer PCM (8-bit precision)
+    #   32-bit Floating Point PCM (25-bit precision)
+    #   64-bit Floating Point PCM (54-bit precision)
+
+    # Format: amr-nb
+    # Description: 3GPP Adaptive Multi Rate Narrow-Band (AMR-NB) lossy speech
+    # compressor
+    # Also handles: anb
+    # Channels restricted to: mono
+    # Sample-rate restricted to: 8000
+    # Reads: yes
+    # Writes:
+    #   AMR-NB (16-bit precision)
+
+    # Format: amr-wb
+    # Description: 3GPP Adaptive Multi Rate Wide-Band (AMR-WB) lossy speech
+    # compressor
+    # Also handles: awb
+    # Channels restricted to: mono
+    # Sample-rate restricted to: 16000
+    # Reads: yes
+    # Writes:
+    #   AMR-WB (16-bit precision)
+
+    # Format: cdda
+    # Description: Red Book Compact Disc Digital Audio
+    # Also handles: cdr
+    # Channels restricted to: stereo
+    # Sample-rate restricted to: 44100
+    # Reads: yes
+    # Writes:
+    #   16-bit Signed Integer PCM (16-bit precision)
+
+    # Format: cvsd
+    # Description: Headerless MIL Std 188 113 Continuously Variable Slope Delta
+    # modulation
+    # Also handles: cvs
+    # Channels restricted to: mono
+    # Reads: yes
+    # Writes:
+    #    1-bit CVSD (16-bit precision)
+
+    # Format: cvu
+    # Description: Headerless Continuously Variable Slope Delta modulation
+    # (unfiltered)
+    # Channels restricted to: mono
+    # Reads: yes
+    # Writes:
+    #    1-bit CVSD (16-bit precision)
+
+    # Format: dat
+    # Description: Textual representation of the sampled audio
+    # Reads: yes
+    # Writes:
+    #   Floating Point (text) PCM (54-bit precision)
+
+    # Format: dvms
+    # Description: MIL Std 188 113 Continuously Variable Slope Delta modulation
+    # with header
+    # Also handles: vms
+    # Channels restricted to: mono
+    # Reads: yes
+    # Writes:
+    #    1-bit CVSD (16-bit precision)
+
+    # We specificially don't define `fap` because `paf` with little endianness
+    # seems to work.
+    #
+    # Format: fap
+    # Description: Ensoniq PARIS digital audio editing system (little endian)
+    # Reads: yes
+    # Writes:
+    #   24-bit Signed Integer PCM (24-bit precision)
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #    8-bit Signed Integer PCM (8-bit precision)
+
+    # Format: flac
+    # Description: Free Lossless Audio CODEC compressed audio
+    # Reads: yes
+    # Writes:
+    #    8-bit FLAC (8-bit precision)
+    #   16-bit FLAC (16-bit precision)
+    #   24-bit FLAC (24-bit precision)
+
+    # Format: gsrt
+    # Description: Grandstream ring tone
+    # Channels restricted to: mono
+    # Sample-rate restricted to: 8000
+    # Reads: yes
+    # Writes:
+    #    8-bit A-law (13-bit precision)
+    #    8-bit u-law (14-bit precision)
+
+    # Format: hcom
+    # Description: Mac FSSD files with Huffman compression
+    # Channels restricted to: mono
+    # Sample-rate restricted to: 22050 11025 7350 5512.5
+    # Reads: yes
+    # Writes:
+    #    8-bit HCOM (8-bit precision)
+
+    # Format: la
+    # Description: Raw audio
+    # Reads: yes
+    # Writes:
+    #    8-bit A-law (13-bit precision)
+    #
+    # Note: Apparently, this is inverse bit-order a-law content.
+
+    # Format: lpc10
+    # Description: Low bandwidth, robotic sounding speech compression
+    # Also handles: lpc
+    # Channels restricted to: mono
+    # Sample-rate restricted to: 8000
+    # Reads: yes
+    # Writes:
+    #   LPC10 (16-bit precision)
+
+    # Format: lu
+    # Description: Raw audio
+    # Reads: yes
+    # Writes:
+    #    8-bit u-law (14-bit precision)
+    #
+    # Note: Apparently, this is inverse bit-order mu-law content.
+
+    # Format: maud
+    # Description: Used with the ‘Toccata’ sound-card on the Amiga
+    # Channels restricted to: mono stereo
+    # Reads: yes
+    # Writes:
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #    8-bit Unsigned Integer PCM (8-bit precision)
+    #    8-bit u-law (14-bit precision)
+    #    8-bit A-law (13-bit precision)
+
+    # Format: prc
+    # Description: Psion Record; used in EPOC devices (Series 5, Revo and
+    # similar)
+    # Channels restricted to: mono
+    # Sample-rate restricted to: 8000
+    # Reads: yes
+    # Writes:
+    #    8-bit A-law (13-bit precision)
+    #    4-bit IMA ADPCM (13-bit precision)
+
+    # Format: sd2
+    # Description: Sound Designer II
+    # Reads: yes
+    # Writes:
+    #   24-bit Signed Integer PCM (24-bit precision)
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #    8-bit Signed Integer PCM (8-bit precision)
+
+    # Format: sndfile
+    # Description: Pseudo format to use libsndfile
+    # Also handles: sds
+    # Reads: yes
+    # Writes:
+    #   16-bit Signed Integer PCM (16-bit precision)
+    #   24-bit Signed Integer PCM (24-bit precision)
+    #   32-bit Signed Integer PCM (32-bit precision)
+    #    8-bit Signed Integer PCM (8-bit precision)
+    #    8-bit Unsigned Integer PCM (8-bit precision)
+    #   32-bit Floating Point PCM (25-bit precision)
+    #   64-bit Floating Point PCM (54-bit precision)
+    #    8-bit A-law (13-bit precision)
+    #    8-bit u-law (14-bit precision)
+    #    4-bit IMA ADPCM (13-bit precision)
+    #    4-bit MS ADPCM (14-bit precision)
+    #    4-bit OKI ADPCM (12-bit precision)
+    #   GSM (16-bit precision)
+
+    # Format: sln
+    # Description: Asterisk PBX headerless format
+    # Channels restricted to: mono
+    # Sample-rate restricted to: 8000
+    # Reads: yes
+    # Writes:
+    #   16-bit Signed Integer PCM (16-bit precision)
+
+    # Format: smp
+    # Description: Turtle Beach SampleVision
+    # Channels restricted to: mono
+    # Reads: yes
+    # Writes:
+    #   16-bit Signed Integer PCM (16-bit precision)
+
+    # Format: sndr
+    # Description: 8-bit linear audio as used by Aaron Wallace's `Sounder' of
+    # 1991
+    # Channels restricted to: mono
+    # Reads: yes
+    # Writes:
+    #    8-bit Unsigned Integer PCM (8-bit precision)
+
+    # Format: sndt
+    # Description: 8-bit linear audio as used by Martin Hepperle's `SoundTool'
+    # of 1991/2
+    # Channels restricted to: mono
+    # Reads: yes
+    # Writes:
+    #    8-bit Unsigned Integer PCM (8-bit precision)
+
+    # Format: sox
+    # Description: SoX native intermediate format
+    # Reads: yes
+    # Writes:
+    #   32-bit Signed Integer PCM (32-bit precision)
+
+    # Format: txw
+    # Description: Yamaha TX-16W sampler
+    # Channels restricted to: mono
+    # Sample-rate restricted to: 16666.7 33333.3 50000
+    # Reads: yes
+    # Writes:
+    #   12-bit Signed Integer PCM (12-bit precision)
+
+    # Format: wv
+    # Description: Lossless, lossy, and hybrid audio compression
+    # Reads: yes
+    # Writes:
+    #    8-bit WavPack (8-bit precision)
+    #   16-bit WavPack (16-bit precision)
+    #   24-bit WavPack (24-bit precision)
+    #   32-bit WavPack (32-bit precision)
+    #   32-bit Floating Point WavPack (25-bit precision)
+
+    # Format: xa
+    # Description: 16-bit ADPCM audio files used by Maxis games
+    # Reads: yes
+    # Writes: no
+
+    # Format: xi
+    # Description: Fasttracker 2
+    # Reads: yes
+    # Writes:
+    #   16-bit DPCM (16-bit precision)
+    #    8-bit DPCM (8-bit precision)
+
+}
+
+def generate_dynamic_sox_test_params(
+    encoding_id: str | None,
+    bit_count: int | None,
+    endianness: AudioEndianness,
+    /
+) -> Generator[str]:
+    if encoding_id is not None:
+        yield "--encoding"
+        yield encoding_id
+    if bit_count is not None:
+        yield "--bits"
+        yield str(bit_count)
+    if endianness is not AudioEndianness.FILE:
+        yield "--endian"
+        yield get_scoped_enum_element_identifier(endianness)
+
+def encode_sox_wave(
+    format: AudioFormat,
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    wave: AudioReferenceWave,
+    encode_path: Path,
+    /
+) -> bool:
+    format_filter = SOX_FORMAT_FILTER_MAP.get(format)
+    if format_filter is None:
+        return False
+
+    args = format_filter(
+        codec, endianness, wave.sample_rate, wave.channel_count)
+    if args is None:
+        return False
+
+    with NamedTemporaryFile(delete_on_close=False, mode="w") as temp_obj:
+        temp_path = Path(temp_obj.name)
+        temp_obj.close()
+
+        channel_count = wave.channel_count
+        sample_rate = wave.sample_rate
+
+        process_result = run(
+            tuple(
+                chain(
+                    (
+                        "sox",
+
+                        "--no-dither",
+                        "--no-show-progress",
+                        "-V2",
+
+                        "--type", "raw",
+                        "--encoding", "floating-point",
+                        "--bits", "64",
+                        "--endian", "little",
+                        "--channels", str(channel_count),
+                        "--rate", str(sample_rate),
+                        str(get_audio_reference_wave_path(wave)),
+
+                        "--type", args.format_id
+                    ),
+                    generate_dynamic_sox_test_params(
+                        args.encoding_id, args.bit_depth, endianness),
+                    (
+                        "--channels", str(channel_count),
+                        "--rate", str(sample_rate),
+                        str(temp_path)
+                    ))),
+            capture_output=True, check=False)
+
+        # Sometimes, when `sox` can't encode audio with the given parameters,
+        # it will exit with a non-zero exit code; other times, `sox` will
+        # change the parameters to supported parameters, leaving warnings in
+        # `stderr` about the unsupported parameters.  In either case, we
+        # want to reject the file.
+        if process_result.returncode != 0:
+            return False
+
+        process_stderr_bytes = process_result.stderr
+        if process_stderr_bytes:
+            process_stderr = process_stderr_bytes.decode()
+            for line in process_stderr.splitlines():
+                if line.startswith("sox WARN formats:"):
+                    break
+            else:
+                # Output unexpected `sox` output.
+                stderr.write(
+                    f"> {' '.join(repr(a) for a in process_result.args)}\n\n"
+                    f"{process_stderr}\n")
+            return False
+
+        encode_path.parent.mkdir(exist_ok=True, mode=0o755, parents=True)
+        copyfile(temp_path, encode_path)
+
+        return True
+
+def main():
+    write_decoder_test_assets("sox", encode_sox_wave)
+
+if __name__ == "__main__":
+    main()

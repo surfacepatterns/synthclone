@@ -1,0 +1,278 @@
+#!/usr/bin/env -S /bin/sh -c 'PYTHONPATH="$(dirname "$0")/../../../common/python:$PYTHONPATH" python3 "$0" "$@"'
+
+from collections.abc import Callable
+from enum import Enum
+from itertools import pairwise
+
+from synthclone_repo import (
+    CodeComposer,
+    apply_template,
+    get_scoped_enum_element_identifier,
+    indented,
+    make_timestamp,
+    write_mapped_lookup_table,
+    write_simple_lookup_table
+)
+from synthclone_repo.modules.core import (
+    SRC_PATH,
+    TEMPLATES_PATH,
+    AudioCodec,
+    AudioEndianness,
+    AudioFormat,
+    AudioSeekOrigin
+)
+
+class SndfileCodec(Enum):
+
+    PCM_S8 = AudioCodec.PCM_S8
+
+    PCM_U8 = AudioCodec.PCM_U8
+
+    PCM_16 = AudioCodec.PCM_S16
+
+    PCM_24 = AudioCodec.PCM_S24
+
+    PCM_32 = AudioCodec.PCM_S32
+
+    FLOAT = AudioCodec.PCM_F32
+
+    DOUBLE = AudioCodec.PCM_F64
+
+    ULAW = AudioCodec.ULAW
+
+    ALAW = AudioCodec.ALAW
+
+    IMA_ADPCM = AudioCodec.IMA_ADPCM
+
+    MS_ADPCM = AudioCodec.MS_ADPCM
+
+    GSM610 = AudioCodec.GSM610
+
+    VOX_ADPCM = AudioCodec.VOX_ADPCM
+
+    VORBIS = AudioCodec.VORBIS
+
+    #NMS_ADPCM_16 = AudioCodec.NMS_ADPCM_16
+
+    #NMS_ADPCM_24 = AudioCodec.NMS_ADPCM_24
+
+    #NMS_ADPCM_32 = AudioCodec.NMS_ADPCM_32
+
+    #G721_32 = AudioCodec.G721_32
+
+    #G723_24 = AudioCodec.G723_24
+
+    #G723_40 = AudioCodec.G723_40
+
+    #DWVW_12 = AudioCodec.DWVW_12
+
+    #DWVW_16 = AudioCodec.DWVW_16
+
+    #DWVW_24 = AudioCodec.DWVW_24
+
+    #DWVW_N = AudioCodec.DWVW_N
+
+    #DPCM_8 = AudioCodec.DPCM_8
+
+    #DPCM_16 = AudioCodec.DPCM_16
+
+    #OPUS = AudioCodec.OPUS
+
+    #ALAC_16 = AudioCodec.ALAC_16
+
+    #ALAC_20 = AudioCodec.ALAC_20
+
+    #ALAC_24 = AudioCodec.ALAC_24
+
+    #ALAC_32 = AudioCodec.ALAC_32
+
+    #MPEG_LAYER_I = AudioCodec.MPEG_LAYER_1
+
+    #MPEG_LAYER_II = AudioCodec.MPEG_LAYER_2
+
+    #MPEG_LAYER_III = AudioCodec.MPEG_LAYER_3
+
+class SndfileEndianness(Enum):
+
+    FILE = AudioEndianness.FILE
+
+    BIG = AudioEndianness.BIG
+
+    LITTLE = AudioEndianness.LITTLE
+
+class SndfileFormat(Enum):
+
+    AIFF = AudioFormat.AIFF
+
+    AU = AudioFormat.AU
+
+    AVR = AudioFormat.AVR
+
+    CAF = AudioFormat.CAF
+
+    #FLAC = AudioFormat.FLAC
+
+    HTK = AudioFormat.HTK
+
+    IRCAM = AudioFormat.IRCAM
+
+    MAT4 = AudioFormat.MAT4
+
+    MAT5 = AudioFormat.MAT5
+
+    #MPC2K = AudioFormat.MPC2K
+
+    #MPEG = AudioFormat.MPEG
+
+    NIST = AudioFormat.NIST
+
+    OGG = AudioFormat.OGG
+
+    PAF = AudioFormat.PAF
+
+    PVF = AudioFormat.PVF
+
+    RAW = AudioFormat.RAW
+
+    #RF64 = AudioFormat.RF64
+
+    #SD2 = AudioFormat.SD2
+
+    #SDS = AudioFormat.SDS
+
+    SVX = AudioFormat.SVX
+
+    VOC = AudioFormat.VOC
+
+    W64 = AudioFormat.W64
+
+    WAV = AudioFormat.WAV
+
+    WAVEX = AudioFormat.WAVEX
+
+    WVE = AudioFormat.WVE
+
+    #XI = AudioFormat.XI
+
+class SndfileSeekOrigin(Enum):
+
+    CUR = AudioSeekOrigin.CURRENT
+
+    END = AudioSeekOrigin.END
+
+    SET = AudioSeekOrigin.START
+
+SNDFILE_GEN_SRC_PATH = SRC_PATH / "sndfile_gen.cppm"
+SNDFILE_GEN_SRC_TEMPLATE_PATH = \
+    TEMPLATES_PATH / "src" / "sndfile_gen.cppm.tmpl"
+
+def resolve_sndfile_value[T: Enum, U: Enum](
+    enum_type: type[T],
+    audio_element: U,
+    prefix: str,
+    /,
+    *,
+    default: str | None = None,
+) -> str:
+    try:
+        sndfile_element = enum_type(audio_element)
+    except ValueError:
+        if default is None:
+            raise
+        return default
+    return f"{prefix}{sndfile_element.name}"
+
+def main():
+    composer = CodeComposer(base_indentation_level=1)
+    write_simple_lookup_table(
+        composer, "int", "audio_to_sndfile_codec_table",
+        tuple(
+            resolve_sndfile_value(
+                SndfileCodec, c, "::SF_FORMAT_", default="-1")
+            for c in AudioCodec
+        ))
+    audio_to_sndfile_codec_table = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_simple_lookup_table(
+        composer, "int", "audio_to_sndfile_endianness_table",
+        tuple(
+            resolve_sndfile_value(SndfileEndianness, e, "::SF_ENDIAN_")
+            for e in AudioEndianness
+        ))
+    audio_to_sndfile_endianness_table = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_simple_lookup_table(
+        composer, "int", "audio_to_sndfile_format_table",
+        tuple(
+            resolve_sndfile_value(
+                SndfileFormat, f, "::SF_FORMAT_", default="-1")
+            for f in AudioFormat
+        ))
+    audio_to_sndfile_format_table = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_simple_lookup_table(
+        composer, "int", "audio_to_sndfile_seek_origin_table",
+        tuple(
+            resolve_sndfile_value(SndfileSeekOrigin, o, "SEEK_")
+            for o in AudioSeekOrigin
+        ))
+    audio_to_sndfile_seek_origin_table = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_mapped_lookup_table(
+        composer, "int", "sndfile_to_audio_codec_table",
+        dict(
+            (
+                f"::SF_FORMAT_{element.name}",
+                "static_cast<int>(audio_codec::"
+                f"{get_scoped_enum_element_identifier(element.value)})"
+            )
+            for element in SndfileCodec),
+        default_value="-1", element_count="sndfile_codec_count",
+        switch_expression="n << sndfile_codec_shift")
+    sndfile_to_audio_codec_table = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_mapped_lookup_table(
+        composer, "int", "sndfile_to_audio_endianness_table",
+        dict(
+            (
+                f"::SF_ENDIAN_{element.name}",
+                "static_cast<int>(audio_endianness::"
+                f"{get_scoped_enum_element_identifier(element.value)})"
+            )
+            for element in SndfileEndianness),
+        default_value="-1", element_count="sndfile_endianness_count",
+        switch_expression="n << sndfile_endianness_shift")
+    sndfile_to_audio_endianness_table = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_mapped_lookup_table(
+        composer, "int", "sndfile_to_audio_format_table",
+        dict(
+            (
+                f"::SF_FORMAT_{element.name}",
+                "static_cast<int>(audio_format::"
+                f"{get_scoped_enum_element_identifier(element.value)})"
+            )
+            for element in SndfileFormat),
+        default_value="-1", element_count="sndfile_format_count",
+        switch_expression="n << sndfile_format_shift")
+    sndfile_to_audio_format_table = str(composer).strip()
+
+    apply_template(
+        SNDFILE_GEN_SRC_TEMPLATE_PATH, SNDFILE_GEN_SRC_PATH,
+        audio_to_sndfile_codec_table=audio_to_sndfile_codec_table,
+        audio_to_sndfile_endianness_table=audio_to_sndfile_endianness_table,
+        audio_to_sndfile_format_table=audio_to_sndfile_format_table,
+        audio_to_sndfile_seek_origin_table=audio_to_sndfile_seek_origin_table,
+        sndfile_to_audio_codec_table=sndfile_to_audio_codec_table,
+        sndfile_to_audio_endianness_table=sndfile_to_audio_endianness_table,
+        sndfile_to_audio_format_table=sndfile_to_audio_format_table,
+        timestamp=make_timestamp())
+
+if __name__ == "__main__":
+    main()

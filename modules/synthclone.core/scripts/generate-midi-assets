@@ -1,0 +1,219 @@
+#!/usr/bin/env -S /bin/sh -c 'PYTHONPATH="$(dirname "$0")/../../../common/python:$PYTHONPATH" python3 "$0" "$@"'
+
+from collections.abc import Generator, Iterable
+from csv import DictReader
+from enum import Enum
+from itertools import pairwise
+from pathlib import Path
+from typing import assert_never
+
+from synthclone_repo import (
+    CodeComposer,
+    ScopedEnumElementTraits,
+    apply_template,
+    make_bool_literal,
+    make_string_view,
+    make_timestamp,
+    write_pure_function_equality_test_case,
+    write_scoped_enum,
+    write_simple_lookup_table
+)
+from synthclone_repo.modules.core import (
+    SRC_PATH,
+    TABLES_PATH,
+    TEMPLATES_PATH,
+    TESTS_PATH
+)
+
+###############################################################################
+# MidiControlTypeTraits
+###############################################################################
+
+class MidiControlTypeTraits(ScopedEnumElementTraits):
+
+    __slots__ = ()
+
+###############################################################################
+# MidiControlType
+###############################################################################
+
+class MidiControlType(Enum):
+
+    UNDEFINED = MidiControlTypeTraits(
+        "Indicates that there is not a defined type for the control.")
+
+    COMMAND = MidiControlTypeTraits(
+        "Indicates a command that can be initiated by sending a 0 control "
+        "value.")
+
+    CONTINUOUS = MidiControlTypeTraits(
+        "Indicates a continuous controller.")
+
+    LOCAL = MidiControlTypeTraits("Turns local control on (127) or off (0).")
+
+    MONO_MODE = MidiControlTypeTraits(
+        "Turns on mono mode, where the control value is set to the number of "
+        "channels, or to 0 if the number of channels equals the number of "
+        "voices on the receiver.")
+
+    STEP = MidiControlTypeTraits(
+        "Changes data by one step (increment/decrement).")
+
+    TOGGLE = MidiControlTypeTraits(
+        "Indicates a controller that switches between two different states, "
+        "where one of the states can be set with values 0 - 63, and the other "
+        "state can be set with values 64 - 127.")
+
+###############################################################################
+# Script
+###############################################################################
+
+MIDI_GEN_SRC_PATH = SRC_PATH / "midi_gen.cppm"
+MIDI_GEN_SRC_TEMPLATE_PATH = TEMPLATES_PATH / "src" / "midi_gen.cppm.tmpl"
+
+MIDI_GEN_TESTS_PATH = TESTS_PATH / "midi_gen.cpp"
+MIDI_GEN_TESTS_TEMPLATE_PATH = TEMPLATES_PATH / "tests" / "midi_gen.cpp.tmpl"
+
+MIDI_CONTROLS_TABLE_PATH = \
+    TABLES_PATH / "midi-control-changes-and-mode-changes.csv"
+MIDI_NOTES_TABLE_PATH = TABLES_PATH / "midi-notes.csv"
+
+def generate_column_data(path: Path, column_name: str, /) -> Generator[str]:
+    with open(path, newline='') as fp:
+        reader = DictReader(fp)
+        for row in reader:
+            yield row[column_name]
+
+def generate_control_channel_modes() -> Generator[str]:
+    return (
+        make_bool_literal(s.startswith("[Channel Mode Message]"))
+        for s in generate_raw_control_names()
+    )
+
+def generate_control_names() -> Generator[str]:
+    return (make_string_view(s) for s in generate_raw_control_names())
+
+def generate_control_types() -> Generator[str]:
+    for s in generate_column_data(MIDI_CONTROLS_TABLE_PATH, "Value"):
+        match s:
+            case "0-127":
+                yield "midi_control_type::continuous"
+            case "≤63 off, ≥64 on" | "≤63 Normal, ≥64 Legato":
+                yield "midi_control_type::toggle"
+            case "—":
+                yield "midi_control_type::undefined"
+            case "N/A":
+                yield "midi_control_type::step"
+            case "0":
+                yield "midi_control_type::command"
+            case "0 off, 127 on":
+                yield "midi_control_type::local"
+            case (
+                "Note: This equals the number of channels, or zero if the "
+                "number of channels equals the number of voices in the "
+                "receiver."
+            ):
+                yield "midi_control_type::mono_mode"
+            case _:
+                assert_never(s)
+
+def generate_note_names() -> Generator[str]:
+    return (
+        make_string_view(s)
+        for s in generate_column_data(MIDI_NOTES_TABLE_PATH, "Note Name")
+    )
+
+def generate_raw_control_names() -> Generator[str]:
+    return generate_column_data(MIDI_CONTROLS_TABLE_PATH, "Control Function")
+
+def write_midi_test_case(
+    composer: CodeComposer,
+    cls_name: str,
+    lookup_func: str,
+    elements: Iterable[str],
+    /
+):
+    write_pure_function_equality_test_case(
+        composer, f"{cls_name}_{lookup_func}", lookup_func,
+        ((f"synthclone::{cls_name}({i})", s) for i, s in enumerate(elements)))
+
+def generate_midi_source():
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_simple_lookup_table(
+        composer, "std::string_view", "midi_control_name_table",
+        tuple(generate_control_names()), export=True)
+    midi_control_name_table = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_scoped_enum(
+        composer, MidiControlType, "std::uint_least8_t",
+        "Contains the default control types as interpreted from the MIDI "
+        "standard.")
+    midi_control_type_enum = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_simple_lookup_table(
+        composer, "midi_control_type", "midi_control_type_table",
+        tuple(generate_control_types()), export=True)
+    midi_control_type_table = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_simple_lookup_table(
+        composer, "std::string_view", "midi_note_name_table",
+        tuple(generate_note_names()), export=True)
+    midi_note_name_table = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_simple_lookup_table(
+        composer, "bool", "midi_control_channel_mode_table",
+        tuple(generate_control_channel_modes()), export=True)
+    midi_control_channel_mode_table = str(composer).strip()
+
+    apply_template(
+        MIDI_GEN_SRC_TEMPLATE_PATH, MIDI_GEN_SRC_PATH,
+        midi_control_channel_mode_table=midi_control_channel_mode_table,
+        midi_control_name_table=midi_control_name_table,
+        midi_control_type_enum=midi_control_type_enum,
+        midi_control_type_table=midi_control_type_table,
+        midi_note_name_table=midi_note_name_table, timestamp=make_timestamp())
+
+def generate_midi_tests():
+
+    composer = CodeComposer()
+    write_midi_test_case(
+        composer, "midi_control_index", "get_name", generate_control_names())
+    midi_control_names_test_case = str(composer).strip()
+
+    composer = CodeComposer()
+    write_midi_test_case(
+        composer, "midi_control_index", "get_type",
+        (f"synthclone::{s}" for s in generate_control_types()))
+    midi_control_types_test_case = str(composer).strip()
+
+    composer = CodeComposer()
+    write_midi_test_case(
+        composer, "midi_note", "get_name", generate_note_names())
+    midi_note_names_test_case = str(composer).strip()
+
+    composer = CodeComposer()
+    write_midi_test_case(
+        composer, "midi_control_index", "is_channel_mode",
+        generate_control_channel_modes())
+    midi_control_channel_modes_test_case = str(composer).strip()
+
+    apply_template(
+        MIDI_GEN_TESTS_TEMPLATE_PATH, MIDI_GEN_TESTS_PATH,
+        midi_control_channel_modes_test_case=
+            midi_control_channel_modes_test_case,
+        midi_control_names_test_case=midi_control_names_test_case,
+        midi_control_types_test_case=midi_control_types_test_case,
+        midi_note_names_test_case=midi_note_names_test_case,
+        timestamp=make_timestamp())
+
+def main():
+    generate_midi_source()
+    generate_midi_tests()
+
+if __name__ == "__main__":
+    main()

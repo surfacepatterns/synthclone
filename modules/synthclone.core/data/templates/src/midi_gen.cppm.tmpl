@@ -1,0 +1,80 @@
+/**
+ * @file
+ *
+ * Contains generated MIDI enums and tables.
+ *
+ * @note
+ *   This code was auto-generated at:
+ *
+ *       ${timestamp}
+ *
+ *   Do *not* edit this code.  Any changes made to this code will be lost.
+ *
+ *   Channel mode lookup data is a slightly modified version of the data here:
+ *
+ *       https://midi.org/midi-1-0-control-change-messages
+ *
+ *   MIDI note lookup data is a slightly modified version of the data here:
+ *
+ *       https://soundprogramming.net/file-formats/midi-note-frequencies/
+ */
+
+module;
+
+#include <synthclone/config.h>
+
+export module synthclone.core:midi_gen;
+
+import std;
+
+import synthclone.util;
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::midi_control_type
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    ${midi_control_type_enum}
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::midi_control_channel_mode_table
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    ${midi_control_channel_mode_table}
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::midi_control_name_table
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    ${midi_control_name_table}
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::midi_control_type_table
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    ${midi_control_type_table}
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::midi_note_name_table
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    ${midi_note_name_table}
+
+}

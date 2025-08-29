@@ -1,0 +1,60 @@
+#!/usr/bin/env -S /bin/sh -c 'PYTHONPATH="$(dirname "$0")/../../../common/python:$PYTHONPATH" python3 "$0" "$@"'
+
+from synthclone_repo import (
+    CodeComposer,
+    apply_template,
+    make_timestamp,
+    write_compact_test_case,
+    writing_test_suite
+)
+from synthclone_repo.modules.core import (
+    COMMON_CHANNEL_COUNTS,
+    COMMON_SAMPLE_RATES,
+    TEMPLATES_PATH,
+    TESTS_PATH
+)
+
+BUFFER_SIZES = (256, 4096, 7919)
+
+AUDIO_RESAMPLER_TEST_TEMPLATE_PATH = \
+    TEMPLATES_PATH / "tests" / "audio_core_resampler_gen.cpp.tmpl"
+AUDIO_RESAMPLER_TEST_PATH = TESTS_PATH / "audio_core_resampler_gen.cpp"
+
+# XXX: When downsampling from 176400 Hz to 8000 Hz, we see this peak noise in
+# the 15 Hz bucket (-83.18324584659577 dBFS).  The highest quality sinc
+# resampler in `libsamplerate` (the one we use) has a documented SNR of 97 dB,
+# which is significantly lower than the peak we see here, but we're not
+# measuring SNR (yet).  We probably should measure SNR, and calculate cohesion
+# too.
+PEAK_THRESHOLD = 6.931667268210247e-05
+
+def main():
+    composer = CodeComposer()
+    with writing_test_suite(composer, "audio_core_resampler_gen"):
+        for input_sample_rate in COMMON_SAMPLE_RATES:
+            for output_sample_rate in COMMON_SAMPLE_RATES:
+                for channel_count in COMMON_CHANNEL_COUNTS:
+                    for input_buffer_size in BUFFER_SIZES:
+                        for output_buffer_size in BUFFER_SIZES:
+
+                            write_compact_test_case(
+                                composer,
+
+                                f"test_resampler_{input_sample_rate}Hz_to_"
+                                f"{output_sample_rate}Hz_{channel_count}ch_"
+                                f"{input_buffer_size}_{output_buffer_size}",
+
+                                "synthclone::verify_resampled_audio<"
+                                f"{input_sample_rate},{output_sample_rate},"
+                                f"{channel_count},{input_buffer_size},"
+                                f"{output_buffer_size},{PEAK_THRESHOLD}"
+                                ">();")
+
+    test_suite = str(composer).strip()
+
+    apply_template(
+        AUDIO_RESAMPLER_TEST_TEMPLATE_PATH, AUDIO_RESAMPLER_TEST_PATH,
+        test_suite=test_suite, timestamp=make_timestamp())
+
+if __name__ == "__main__":
+    main()

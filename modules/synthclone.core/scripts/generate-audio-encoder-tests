@@ -1,0 +1,88 @@
+#!/usr/bin/env -S /bin/sh -c 'PYTHONPATH="$(dirname "$0")/../../../common/python:$PYTHONPATH" python3 "$0" "$@"'
+
+from synthclone_repo import (
+    CodeComposer,
+    apply_template,
+    get_scoped_enum_element_identifier,
+    make_bool_literal,
+    make_timestamp,
+    write_compact_test_case,
+    writing_test_suite
+)
+from synthclone_repo.modules.core import (
+    AUDIO_REFERENCE_WAVES,
+    TEMPLATES_PATH,
+    TESTS_PATH,
+    AudioCodec,
+    AudioEndianness,
+    AudioFormat,
+    AudioReferenceWave,
+    get_audio_verification_traits,
+    is_audio_supported
+)
+
+AUDIO_ENCODER_TEST_TEMPLATE_PATH = \
+    TEMPLATES_PATH / "tests" / "audio_io_encoder_gen.cpp.tmpl"
+AUDIO_ENCODER_TEST_PATH = TESTS_PATH / "audio_io_encoder_gen.cpp"
+
+def write_encoder_test_case(
+    composer: CodeComposer,
+    format: AudioFormat,
+    codec: AudioCodec,
+    endianness: AudioEndianness,
+    wave: AudioReferenceWave,
+    /
+) -> bool:
+    channel_count = wave.channel_count
+    sample_rate = wave.sample_rate
+    if not is_audio_supported(
+        format, codec, endianness, sample_rate, channel_count
+    ):
+        return False
+
+    codec_id = get_scoped_enum_element_identifier(codec)
+    endianness_id = get_scoped_enum_element_identifier(endianness)
+    format_id = get_scoped_enum_element_identifier(format)
+    verification = get_audio_verification_traits(codec, sample_rate)
+
+    write_compact_test_case(
+        composer,
+
+        f"test_{format_id}_{codec_id}_{endianness_id}_{sample_rate}Hz_"
+        f"{channel_count}ch",
+
+        "synthclone::verify_audio_encoder<"
+        f"synthclone::audio_format::{format_id},"
+        f"synthclone::audio_codec::{codec_id},"
+        f"synthclone::audio_endianness::{endianness_id},"
+        f"{sample_rate},"
+        f"{channel_count},"
+        f"{verification.read_offset},"
+        f"{make_bool_literal(not verification.truncate)},"
+        f"{verification.peak_power_threshold}"
+        ">();")
+
+    return True
+
+def main():
+    composer = CodeComposer()
+    with writing_test_suite(composer, f"audio_io_encoder_gen"):
+        for format in AudioFormat:
+            for codec in AudioCodec:
+                for wave in AUDIO_REFERENCE_WAVES:
+                    endian_specific = write_encoder_test_case(
+                        composer, format, codec, AudioEndianness.BIG, wave)
+                    endian_specific |= write_encoder_test_case(
+                        composer, format, codec, AudioEndianness.LITTLE, wave)
+                    if not endian_specific:
+                        write_encoder_test_case(
+                            composer, format, codec, AudioEndianness.FILE,
+                            wave)
+    test_suite = str(composer).strip()
+
+    apply_template(
+        AUDIO_ENCODER_TEST_TEMPLATE_PATH, AUDIO_ENCODER_TEST_PATH,
+        test_suite=test_suite, timestamp=make_timestamp())
+
+if __name__ == "__main__":
+    main()

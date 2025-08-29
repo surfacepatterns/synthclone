@@ -1,0 +1,125 @@
+#!/usr/bin/env -S /bin/sh -c 'PYTHONPATH="$(dirname "$0")/../../../common/python:$PYTHONPATH" python3 "$0" "$@"'
+
+from synthclone_repo import (
+    CodeComposer,
+    apply_template,
+    get_scoped_enum_element_identifier,
+    make_string_view,
+    make_timestamp,
+    write_pure_function_equality_test_case,
+    write_scoped_enum,
+    write_scoped_enum_identifier_test_case,
+    write_simple_lookup_table
+)
+from synthclone_repo.modules.core import (
+    SRC_PATH,
+    TEMPLATES_PATH,
+    TESTS_PATH,
+    AudioCodec,
+    AudioEndianness,
+    AudioFormat,
+    AudioSeekOrigin,
+    get_audio_format_extension
+)
+
+AUDIO_GEN_SRC_PATH = SRC_PATH / "audio_gen.cppm"
+AUDIO_GEN_SRC_TEMPLATE_PATH = TEMPLATES_PATH / "src" / "audio_gen.cppm.tmpl"
+
+AUDIO_GEN_TESTS_PATH = TESTS_PATH / "audio_gen.cpp"
+AUDIO_GEN_TESTS_TEMPLATE_PATH = TEMPLATES_PATH / "tests" / "audio_gen.cpp.tmpl"
+
+def generate_audio_source():
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_scoped_enum(
+        composer, AudioCodec, "std::uint_least16_t",
+        "Contains audio codecs supported by audio streams")
+    audio_codec_enum = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_scoped_enum(
+        composer, AudioEndianness, "std::uint_least8_t",
+        "Contains audio endianness types supported by audio streams")
+    audio_endianness_enum = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_scoped_enum(
+        composer, AudioFormat, "std::uint_least16_t",
+        "Contains audio formats supported by audio streams")
+    audio_format_enum = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_simple_lookup_table(
+        composer, "std::string_view", "audio_format_extension_table",
+        tuple(
+            make_string_view(get_audio_format_extension(element))
+            for element in AudioFormat))
+    audio_format_extension_table = str(composer).strip()
+
+    composer = CodeComposer(base_indentation_level=1)
+    write_scoped_enum(
+        composer, AudioSeekOrigin, "std::uint_least8_t",
+        "Represents the seek origin for audio seek operations.")
+    audio_seek_origin_enum = str(composer).strip()
+
+    apply_template(
+        AUDIO_GEN_SRC_TEMPLATE_PATH, AUDIO_GEN_SRC_PATH,
+        audio_codec_enum=audio_codec_enum,
+        audio_endianness_enum=audio_endianness_enum,
+        audio_format_enum=audio_format_enum,
+        audio_format_extension_table=audio_format_extension_table,
+        audio_seek_origin_enum=audio_seek_origin_enum,
+        timestamp=make_timestamp())
+
+def generate_audio_tests():
+
+    composer = CodeComposer()
+    write_scoped_enum_identifier_test_case(composer, AudioCodec, "audio_codec")
+    audio_codec_identifier_test_case = str(composer).strip()
+
+    composer = CodeComposer()
+    write_scoped_enum_identifier_test_case(
+        composer, AudioEndianness, "audio_endianness")
+    audio_endianness_identifier_test_case = str(composer).strip()
+
+    composer = CodeComposer()
+    write_pure_function_equality_test_case(
+        composer, "audio_format_extensions", "synthclone::get_extension",
+        (
+            (
+                "synthclone::audio_format::"
+                f"{get_scoped_enum_element_identifier(element)}",
+
+                make_string_view(get_audio_format_extension(element))
+            )
+            for element in AudioFormat
+        ))
+    audio_format_extension_test_case = str(composer).strip()
+
+    composer = CodeComposer()
+    write_scoped_enum_identifier_test_case(
+        composer, AudioFormat, "audio_format")
+    audio_format_identifier_test_case = str(composer).strip()
+
+    composer = CodeComposer()
+    write_scoped_enum_identifier_test_case(
+        composer, AudioSeekOrigin, "audio_seek_origin")
+    audio_seek_origin_identifier_test_case = str(composer).strip()
+
+    apply_template(
+        AUDIO_GEN_TESTS_TEMPLATE_PATH, AUDIO_GEN_TESTS_PATH,
+        audio_codec_identifier_test_case=audio_codec_identifier_test_case,
+        audio_endianness_identifier_test_case=
+            audio_endianness_identifier_test_case,
+        audio_format_extension_test_case=audio_format_extension_test_case,
+        audio_format_identifier_test_case=audio_format_identifier_test_case,
+        audio_seek_origin_identifier_test_case=
+            audio_seek_origin_identifier_test_case,
+        timestamp=make_timestamp())
+
+def main():
+    generate_audio_source()
+    generate_audio_tests()
+
+if __name__ == "__main__":
+    main()
