@@ -9,13 +9,14 @@ from typing import assert_never
 
 from synthclone_repo import (
     CodeComposer,
-    ScopedEnumElementTraits,
+    EnumElementTraits,
     apply_template,
     make_bool_literal,
     make_string_view,
     make_timestamp,
     write_pure_function_equality_test_case,
-    write_scoped_enum,
+    write_enum,
+    write_enum_identifier_test_case,
     write_simple_lookup_table
 )
 from synthclone_repo.modules.core import (
@@ -29,7 +30,7 @@ from synthclone_repo.modules.core import (
 # MidiControlTypeTraits
 ###############################################################################
 
-class MidiControlTypeTraits(ScopedEnumElementTraits):
+class MidiControlTypeTraits(EnumElementTraits):
 
     __slots__ = ()
 
@@ -146,7 +147,7 @@ def generate_midi_source():
     midi_control_name_table = str(composer).strip()
 
     composer = CodeComposer(base_indentation_level=1)
-    write_scoped_enum(
+    write_enum(
         composer, MidiControlType, "std::uint_least8_t",
         "Contains the default control types as interpreted from the MIDI "
         "standard.")
@@ -181,6 +182,10 @@ def generate_midi_source():
 def generate_midi_tests():
 
     composer = CodeComposer()
+    write_enum_identifier_test_case(composer, MidiControlType)
+    midi_control_type_identifiers_test_case = str(composer).strip()
+
+    composer = CodeComposer()
     write_midi_test_case(
         composer, "midi_control_index", "get_name", generate_control_names())
     midi_control_names_test_case = str(composer).strip()
@@ -207,6 +212,8 @@ def generate_midi_tests():
         midi_control_channel_modes_test_case=
             midi_control_channel_modes_test_case,
         midi_control_names_test_case=midi_control_names_test_case,
+        midi_control_type_identifiers_test_case=
+            midi_control_type_identifiers_test_case,
         midi_control_types_test_case=midi_control_types_test_case,
         midi_note_names_test_case=midi_note_names_test_case,
         timestamp=make_timestamp())

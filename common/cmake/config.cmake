@@ -2,28 +2,56 @@ include_guard()
 
 option(SYNTHCLONE_COVERAGE_ENABLED, "enable code coverage")
 
-function(synthclone_configure_target_coverage target_name)
+function(_synthclone_configure_profiling_options target_name)
+    target_compile_options(
+        ${target_name}
+        PRIVATE
+        #-fprofile-instr-generate
+        #-fcoverage-mapping
+        #-fcoverage-mcdc
+        --coverage
+        -fno-inline-functions
+        -fkeep-static-consts
+        #--coverage
+        #-fkeep-static-functions
+        #-fkeep-inline-functions
+        -g
+        -O0
+    )
+    # target_link_options(
+    #     ${target_name}
+    #     PRIVATE
+    #     -fprofile-instr-generate
+    #     -fcoverage-mapping
+    #     -fcoverage-mcdc
+    # )
+    target_link_options(${target_name} PRIVATE --coverage)
+endfunction()
 
+function(_synthclone_verify_target target_name)
     if(NOT TARGET ${target_name})
         message(FATAL_ERROR, "${target_name}: invalid target name")
     endif()
+endfunction()
 
+function(synthclone_configure_library_target target_name)
+    _synthclone_verify_target(${target_name})
     if(SYNTHCLONE_COVERAGE_ENABLED)
-        target_compile_options(
-            ${target_name}
-            PRIVATE
-            --coverage
-            -fno-inline-functions
-            -fkeep-static-consts
-            #--coverage
-            #-fkeep-static-functions
-            #-fkeep-inline-functions
-            -g
-            -O0
-        )
-        target_link_options(${target_name} PRIVATE --coverage)
+        _synthclone_configure_profiling_options(${target_name})
     endif()
+endfunction()
 
+function(synthclone_configure_test_target target_name)
+    _synthclone_verify_target(${target_name})
+    if(SYNTHCLONE_COVERAGE_ENABLED)
+        _synthclone_configure_profiling_options(${target_name})
+        # set_tests_properties(
+        #     "${target_name}"
+        #     PROPERTIES
+        #     ENVIRONMENT
+        #     "LLVM_PROFILE_FILE=${CMAKE_BINARY_DIR}/${target_name}.profraw"
+        # )
+    endif()
 endfunction()
 
 function(synthclone_initialize_config)
@@ -37,6 +65,7 @@ function(synthclone_initialize_config)
             coverage
 
             ${LCOV}
+            --all
             --branch-coverage
             --function-coverage
             --demangle-cpp
@@ -53,8 +82,8 @@ function(synthclone_initialize_config)
             --branch-coverage
             --function-coverage
             --mcdc-coverage
-            #--demangle-cpp
-            --filter function,branch
+            # XXX: exception? mcdc? orphan?
+            --filter function,branch,brace
             --ignore-errors inconsistent,corrupt,category
             --show-proportion
             -o coverage-report

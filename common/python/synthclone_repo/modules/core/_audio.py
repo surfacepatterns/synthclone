@@ -5,9 +5,9 @@ from math import log10 as _log10
 from pathlib import Path as _Path
 from typing import assert_never as _assert_never
 
-from ..._scoped import (
-    ScopedEnumElementTraits as _ScopedEnumElementTraits,
-    get_scoped_enum_element_identifier as _get_scoped_enum_element_identifier
+from ..._enum import (
+    EnumElementTraits as _EnumElementTraits,
+    get_enum_element_identifier as _get_enum_element_identifier
 )
 
 from ._layout import REFERENCE_AUDIO_PATH as _REFERENCE_AUDIO_PATH
@@ -1325,9 +1325,8 @@ class AudioReferenceWave:
 # get_audio_reference_wave_path()
 ###############################################################################
 
-_AUDIO_REFERENCE_CODEC_ID = _get_scoped_enum_element_identifier(
-    AudioCodec.PCM_F64)
-_AUDIO_REFERENCE_ENDIANNESS_PREFIX = _get_scoped_enum_element_identifier(
+_AUDIO_REFERENCE_CODEC_ID = _get_enum_element_identifier(AudioCodec.PCM_F64)
+_AUDIO_REFERENCE_ENDIANNESS_PREFIX = _get_enum_element_identifier(
     AudioEndianness.LITTLE)[0]
 _AUDIO_REFERENCE_FORMAT_EXTENSION = get_audio_format_extension(AudioFormat.RAW)
 

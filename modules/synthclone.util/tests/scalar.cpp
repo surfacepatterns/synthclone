@@ -31,7 +31,8 @@ namespace {
     void
     test_arithmetic_comparisons()
     {
-        BOOST_TEST_INFO_SCOPE("test_arithmetic_comparisons()");
+        BOOST_TEST_INFO_SCOPE(
+            synthclone::make_test_info("test_arithmetic_comparisons"));
 
         S value = std::numeric_limits<S>::max() - 1;
         S value_dec = value - 1;
@@ -61,7 +62,8 @@ namespace {
     void
     test_explicit_conversion()
     {
-        BOOST_TEST_INFO_SCOPE("test_explicit_conversion()");
+        BOOST_TEST_INFO_SCOPE(
+            synthclone::make_test_info("test_explicit_conversion"));
 
         S value = Value;
         scalar_proxy<S> proxy(value);
@@ -74,7 +76,7 @@ namespace {
     void
     test_formatting()
     {
-        BOOST_TEST_INFO_SCOPE("test_formatting()");
+        BOOST_TEST_INFO_SCOPE(synthclone::make_test_info("test_formatting"));
 
         S value = Value;
         auto value_string = std::format("abc{0}", value);
@@ -89,7 +91,7 @@ namespace {
     void
     test_hashing()
     {
-        BOOST_TEST_INFO_SCOPE("test_hashing()");
+        BOOST_TEST_INFO_SCOPE(synthclone::make_test_info("test_hashing"));
 
         S value = Value;
         auto value_hash = std::hash<S>{}(value);
@@ -104,7 +106,8 @@ namespace {
     void
     test_implicit_conversion()
     {
-        BOOST_TEST_INFO_SCOPE("test_implicit_conversion()");
+        BOOST_TEST_INFO_SCOPE(
+            synthclone::make_test_info("test_implicit_conversion"));
 
         S value = Value;
         scalar_proxy<S> proxy(value);
@@ -118,7 +121,8 @@ namespace {
     void
     test_ostream_output()
     {
-        BOOST_TEST_INFO_SCOPE("test_ostream_output()");
+        BOOST_TEST_INFO_SCOPE(
+            synthclone::make_test_info("test_ostream_output"));
 
         S value = Value;
         std::ostringstream value_stream;

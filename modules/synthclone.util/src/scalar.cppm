@@ -86,29 +86,8 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
          */
 
         template<class N>
-        requires (implicitly_convertible_to<S, N>)
-        constexpr
-        operator N() const noexcept
-        {
-            return value_;
-        }
-
-        /**
-         * Converts the proxied value to the given type.
-         *
-         * @tparam N
-         *   The type to convert to.
-         *
-         * @return
-         *   The value.
-         */
-
-        template<class N>
-        requires (
-            (! implicitly_convertible_to<S, N>) &&
-            explicitly_convertible_to<S, N>
-        )
-        constexpr explicit
+        requires (explicitly_convertible_to<S, N>)
+        constexpr explicit (! implicitly_convertible_to<S, N>)
         operator N() const noexcept
         {
             return static_cast<N>(value_);
@@ -586,6 +565,7 @@ namespace std {
      * scalar types that are themselves formattable.
      */
 
+    export
     template<synthclone::scalar_proxy_type T, class Char>
     requires (formattable<typename T::scalar_type, Char>)
     class formatter<T, Char> {
@@ -641,6 +621,7 @@ namespace std {
      * scalar types that are themselves hashable.
      */
 
+    export
     template<synthclone::scalar_proxy_type T>
     requires (synthclone::hashable<typename T::scalar_type>)
     class hash<T> {

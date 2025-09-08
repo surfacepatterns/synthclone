@@ -3,12 +3,12 @@
 from synthclone_repo import (
     CodeComposer,
     apply_template,
-    get_scoped_enum_element_identifier,
+    get_enum_element_identifier,
     make_string_view,
     make_timestamp,
     write_pure_function_equality_test_case,
-    write_scoped_enum,
-    write_scoped_enum_identifier_test_case,
+    write_enum,
+    write_enum_identifier_test_case,
     write_simple_lookup_table
 )
 from synthclone_repo.modules.core import (
@@ -31,19 +31,19 @@ AUDIO_GEN_TESTS_TEMPLATE_PATH = TEMPLATES_PATH / "tests" / "audio_gen.cpp.tmpl"
 def generate_audio_source():
 
     composer = CodeComposer(base_indentation_level=1)
-    write_scoped_enum(
+    write_enum(
         composer, AudioCodec, "std::uint_least16_t",
         "Contains audio codecs supported by audio streams")
     audio_codec_enum = str(composer).strip()
 
     composer = CodeComposer(base_indentation_level=1)
-    write_scoped_enum(
+    write_enum(
         composer, AudioEndianness, "std::uint_least8_t",
         "Contains audio endianness types supported by audio streams")
     audio_endianness_enum = str(composer).strip()
 
     composer = CodeComposer(base_indentation_level=1)
-    write_scoped_enum(
+    write_enum(
         composer, AudioFormat, "std::uint_least16_t",
         "Contains audio formats supported by audio streams")
     audio_format_enum = str(composer).strip()
@@ -57,7 +57,7 @@ def generate_audio_source():
     audio_format_extension_table = str(composer).strip()
 
     composer = CodeComposer(base_indentation_level=1)
-    write_scoped_enum(
+    write_enum(
         composer, AudioSeekOrigin, "std::uint_least8_t",
         "Represents the seek origin for audio seek operations.")
     audio_seek_origin_enum = str(composer).strip()
@@ -74,12 +74,11 @@ def generate_audio_source():
 def generate_audio_tests():
 
     composer = CodeComposer()
-    write_scoped_enum_identifier_test_case(composer, AudioCodec, "audio_codec")
+    write_enum_identifier_test_case(composer, AudioCodec)
     audio_codec_identifier_test_case = str(composer).strip()
 
     composer = CodeComposer()
-    write_scoped_enum_identifier_test_case(
-        composer, AudioEndianness, "audio_endianness")
+    write_enum_identifier_test_case(composer, AudioEndianness)
     audio_endianness_identifier_test_case = str(composer).strip()
 
     composer = CodeComposer()
@@ -88,7 +87,7 @@ def generate_audio_tests():
         (
             (
                 "synthclone::audio_format::"
-                f"{get_scoped_enum_element_identifier(element)}",
+                f"{get_enum_element_identifier(element)}",
 
                 make_string_view(get_audio_format_extension(element))
             )
@@ -97,13 +96,11 @@ def generate_audio_tests():
     audio_format_extension_test_case = str(composer).strip()
 
     composer = CodeComposer()
-    write_scoped_enum_identifier_test_case(
-        composer, AudioFormat, "audio_format")
+    write_enum_identifier_test_case(composer, AudioFormat)
     audio_format_identifier_test_case = str(composer).strip()
 
     composer = CodeComposer()
-    write_scoped_enum_identifier_test_case(
-        composer, AudioSeekOrigin, "audio_seek_origin")
+    write_enum_identifier_test_case(composer, AudioSeekOrigin)
     audio_seek_origin_identifier_test_case = str(composer).strip()
 
     apply_template(

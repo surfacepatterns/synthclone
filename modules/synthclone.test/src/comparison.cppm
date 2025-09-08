@@ -23,9 +23,7 @@ namespace synthclone {
     verify_ordered_ge(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_ordered_ge({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_ordered_ge", lhs, rhs));
 
         BOOST_CHECK(lhs >= rhs);
         BOOST_CHECK(rhs <= lhs);
@@ -38,9 +36,7 @@ namespace synthclone {
     verify_ordered_ge(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_ordered_ge({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_ordered_ge", lhs, rhs));
 
         BOOST_CHECK_GE(lhs, rhs);
         BOOST_CHECK_LE(rhs, lhs);
@@ -53,9 +49,7 @@ namespace synthclone {
     verify_three_way_ge(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_three_way_ge({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_three_way_ge", lhs, rhs));
 
         verify_ordered_ge(lhs, rhs);
 
@@ -73,9 +67,7 @@ namespace synthclone {
     verify_ge(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_ge({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_ge", lhs, rhs));
 
         verify_ordered_ge(lhs, rhs);
     }
@@ -87,9 +79,7 @@ namespace synthclone {
     verify_ge(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_ge({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_ge", lhs, rhs));
 
         verify_three_way_ge(lhs, rhs);
     }
@@ -108,9 +98,7 @@ namespace synthclone {
     verify_ordered_le(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_ordered_le({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_ordered_le", lhs, rhs));
 
         BOOST_CHECK(lhs <= rhs);
         BOOST_CHECK(rhs >= lhs);
@@ -123,9 +111,7 @@ namespace synthclone {
     verify_ordered_le(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_ordered_le({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_ordered_le", lhs, rhs));
 
         BOOST_CHECK_LE(lhs, rhs);
         BOOST_CHECK_GE(rhs, lhs);
@@ -138,9 +124,7 @@ namespace synthclone {
     verify_three_way_le(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_three_way_le({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_three_way_le", lhs, rhs));
 
         verify_ordered_le(lhs, rhs);
 
@@ -158,9 +142,7 @@ namespace synthclone {
     verify_le(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_le({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_le", lhs, rhs));
 
         verify_ordered_le(lhs, rhs);
     }
@@ -172,9 +154,7 @@ namespace synthclone {
     verify_le(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_le({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_le", lhs, rhs));
 
         verify_three_way_le(lhs, rhs);
     }
@@ -193,9 +173,7 @@ namespace synthclone {
     verify_equality_ne(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_equality_ne({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_equality_ne", lhs, rhs));
 
         BOOST_CHECK(lhs != rhs);
         BOOST_CHECK(rhs != lhs);
@@ -208,9 +186,7 @@ namespace synthclone {
     verify_equality_ne(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_equality_ne({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_equality_ne", lhs, rhs));
 
         BOOST_CHECK_NE(lhs, rhs);
         BOOST_CHECK_NE(rhs, lhs);
@@ -223,9 +199,7 @@ namespace synthclone {
     verify_three_way_ne(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_three_way_ne({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_three_way_ne", lhs, rhs));
 
         verify_equality_ne(lhs, rhs);
 
@@ -243,9 +217,7 @@ namespace synthclone {
     verify_ne(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_ne({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_ne", lhs, rhs));
 
         verify_equality_ne(lhs, rhs);
     }
@@ -257,9 +229,7 @@ namespace synthclone {
     verify_ne(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_ne({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_ne", lhs, rhs));
 
         verify_three_way_ne(lhs, rhs);
     }
@@ -278,9 +248,7 @@ namespace synthclone {
     verify_equality_eq(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_equality_eq({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_equality_eq", lhs, rhs));
 
         BOOST_CHECK(lhs == rhs);
         BOOST_CHECK(rhs == lhs);
@@ -293,9 +261,7 @@ namespace synthclone {
     verify_equality_eq(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_equality_eq({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_equality_eq", lhs, rhs));
 
         BOOST_CHECK_EQUAL(lhs, rhs);
         BOOST_CHECK_EQUAL(rhs, lhs);
@@ -308,9 +274,7 @@ namespace synthclone {
     verify_ordered_eq(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_ordered_eq({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_ordered_eq", lhs, rhs));
 
         verify_ge(lhs, rhs);
         verify_le(lhs, rhs);
@@ -322,9 +286,7 @@ namespace synthclone {
     verify_three_way_eq(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_three_way_eq({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_three_way_eq", lhs, rhs));
 
         verify_ordered_eq(lhs, rhs);
 
@@ -342,9 +304,7 @@ namespace synthclone {
     verify_eq(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_eq({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_eq", lhs, rhs));
 
         verify_equality_eq(lhs, rhs);
     }
@@ -360,9 +320,7 @@ namespace synthclone {
     verify_eq(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_eq({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_eq", lhs, rhs));
 
         verify_ordered_eq(lhs, rhs);
     }
@@ -374,9 +332,7 @@ namespace synthclone {
     verify_eq(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_eq({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_eq", lhs, rhs));
 
         verify_three_way_eq(lhs, rhs);
     }
@@ -395,9 +351,7 @@ namespace synthclone {
     verify_ordered_gt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_ordered_gt({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_ordered_gt", lhs, rhs));
 
         verify_ge(lhs, rhs);
 
@@ -412,9 +366,7 @@ namespace synthclone {
     verify_ordered_gt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_ordered_gt({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_ordered_gt", lhs, rhs));
 
         verify_ge(lhs, rhs);
 
@@ -429,9 +381,7 @@ namespace synthclone {
     verify_equality_gt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_equality_gt({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_equality_gt", lhs, rhs));
 
         verify_ne(lhs, rhs);
         verify_ordered_gt(lhs, rhs);
@@ -442,9 +392,7 @@ namespace synthclone {
     verify_three_way_gt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_three_way_gt({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_three_way_gt", lhs, rhs));
 
         verify_equality_gt(lhs, rhs);
 
@@ -462,9 +410,7 @@ namespace synthclone {
     verify_gt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_gt({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_gt", lhs, rhs));
 
         verify_ordered_gt(lhs, rhs);
     }
@@ -480,9 +426,7 @@ namespace synthclone {
     verify_gt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_gt({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_gt", lhs, rhs));
 
         verify_equality_gt(lhs, rhs);
     }
@@ -494,9 +438,7 @@ namespace synthclone {
     verify_gt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_gt({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_gt", lhs, rhs));
 
         verify_three_way_gt(lhs, rhs);
     }
@@ -515,9 +457,7 @@ namespace synthclone {
     verify_ordered_lt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_ordered_lt({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_ordered_lt", lhs, rhs));
 
         verify_le(lhs, rhs);
 
@@ -532,9 +472,7 @@ namespace synthclone {
     verify_ordered_lt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_ordered_lt({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_ordered_lt", lhs, rhs));
 
         verify_le(lhs, rhs);
 
@@ -549,9 +487,7 @@ namespace synthclone {
     verify_equality_lt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_equality_lt({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_equality_lt", lhs, rhs));
 
         verify_ne(lhs, rhs);
         verify_ordered_lt(lhs, rhs);
@@ -562,9 +498,7 @@ namespace synthclone {
     verify_three_way_lt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_three_way_lt({0}, {1})",
-                make_debug_formattable(lhs), make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_three_way_lt", lhs, rhs));
 
         verify_equality_lt(lhs, rhs);
 
@@ -582,9 +516,7 @@ namespace synthclone {
     verify_lt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_lt({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_lt", lhs, rhs));
 
         verify_ordered_lt(lhs, rhs);
     }
@@ -600,9 +532,7 @@ namespace synthclone {
     verify_lt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_lt({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_lt", lhs, rhs));
 
         verify_equality_lt(lhs, rhs);
     }
@@ -614,9 +544,7 @@ namespace synthclone {
     verify_lt(const T& lhs, const U& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::verify_lt({0}, {1})", make_debug_formattable(lhs),
-                make_debug_formattable(rhs)));
+            make_test_info("synthclone::verify_lt", lhs, rhs));
 
         verify_three_way_lt(lhs, rhs);
     }

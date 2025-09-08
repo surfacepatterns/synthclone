@@ -68,7 +68,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     public:
 
         template<class T>
-        requires (std::convertible_to<const T&, std::string_view>)
+        requires (string_view_convertible<const T&>)
         consteval
         diagnostic_info(
             const T& s,

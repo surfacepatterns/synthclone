@@ -25,7 +25,7 @@ namespace {
     verify_eq_types(const string_proxy& lhs, const string_proxy& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            (std::format("verify_eq_types({0:?}, {1:?})", lhs, rhs)));
+            synthclone::make_test_info("verify_eq_types", lhs, rhs));
 
         synthclone::verify_eq(lhs, rhs);
 
@@ -43,7 +43,8 @@ namespace {
     void
     verify_formatting(const std::string& s)
     {
-        BOOST_TEST_INFO_SCOPE((std::format("verify_formatting({0:?})", s)));
+        BOOST_TEST_INFO_SCOPE(
+            synthclone::make_test_info("verify_formatting", s));
 
         auto value_string = std::format("abc{0}", s);
 
@@ -57,7 +58,7 @@ namespace {
     verify_gt_types(const string_proxy& lhs, const string_proxy& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            (std::format("verify_gt_types({0:?}, {1:?})", lhs, rhs)));
+            synthclone::make_test_info("verify_gt_types", lhs, rhs));
 
         synthclone::verify_gt(lhs, rhs);
 
@@ -75,7 +76,7 @@ namespace {
     void
     verify_hashing(const std::string& s)
     {
-        BOOST_TEST_INFO_SCOPE((std::format("verify_hashing({0:?})", s)));
+        BOOST_TEST_INFO_SCOPE(synthclone::make_test_info("verify_hashing", s));
 
         auto value_hash = std::hash<std::string>{}(s);
 
@@ -85,30 +86,11 @@ namespace {
         synthclone::verify_eq(value_hash, proxy_hash);
     }
 
-    template<class I, class S, class C>
-    void
-    verify_iterator_value(I& iter, S sentinel, C value)
-    {
-        BOOST_TEST_INFO_SCOPE(
-            (
-                std::format(
-                    "verify_iterator_value({0:x}, {1:x}, {2:?})",
-                    reinterpret_cast<std::uintptr_t>(std::to_address(iter)),
-                    reinterpret_cast<std::uintptr_t>(
-                        std::to_address(sentinel)),
-                    value)
-            ));
-
-        BOOST_REQUIRE(iter != sentinel);
-        synthclone::verify_eq(*iter, value);
-        ++iter;
-    }
-
     void
     verify_lt_types(const string_proxy& lhs, const string_proxy& rhs)
     {
         BOOST_TEST_INFO_SCOPE(
-            (std::format("verify_lt_types({0:?}, {1:?})", lhs, rhs)));
+            synthclone::make_test_info("verify_lt_types", lhs, rhs));
 
         synthclone::verify_lt(lhs, rhs);
 
@@ -137,6 +119,20 @@ BOOST_AUTO_TEST_CASE(concat_strings)
         synthclone::concat_strings(
             std::string("foo"), std::string_view("bar"), "baz"),
         "foobarbaz");
+}
+
+BOOST_AUTO_TEST_CASE(join_strings)
+{
+    synthclone::verify_eq(synthclone::join_strings("foo"), "");
+    synthclone::verify_eq(synthclone::join_strings("foo", "bar"), "bar");
+    synthclone::verify_eq(synthclone::join_strings("", "", "", ""), "");
+    synthclone::verify_eq(
+        synthclone::join_strings("foo", "bar", "baz"), "barfoobaz");
+
+    synthclone::verify_eq(
+        synthclone::join_strings(
+            std::string("foo"), std::string_view("bar"), "baz"),
+        "barfoobaz");
 }
 
 BOOST_AUTO_TEST_CASE(string_proxy_assignment_and_construction)
@@ -243,53 +239,15 @@ BOOST_AUTO_TEST_CASE(string_proxy_typical_lifetime)
     synthclone::verify_eq(s.at(4), 'f');
     BOOST_CHECK_THROW(s.at(5), std::out_of_range);
 
-    {
-        auto end = s.end();
-        auto iter = s.begin();
-
-        verify_iterator_value(iter, end, 's');
-        verify_iterator_value(iter, end, 't');
-        verify_iterator_value(iter, end, 'u');
-        verify_iterator_value(iter, end, 'f');
-        verify_iterator_value(iter, end, 'f');
-        synthclone::verify_eq(iter, end);
-    }
-
-    {
-        auto end = s.cend();
-        auto iter = s.cbegin();
-
-        verify_iterator_value(iter, end, 's');
-        verify_iterator_value(iter, end, 't');
-        verify_iterator_value(iter, end, 'u');
-        verify_iterator_value(iter, end, 'f');
-        verify_iterator_value(iter, end, 'f');
-        synthclone::verify_eq(iter, end);
-    }
-
-    {
-        auto end = s.rend();
-        auto iter = s.rbegin();
-
-        verify_iterator_value(iter, end, 'f');
-        verify_iterator_value(iter, end, 'f');
-        verify_iterator_value(iter, end, 'u');
-        verify_iterator_value(iter, end, 't');
-        verify_iterator_value(iter, end, 's');
-        synthclone::verify_eq(iter, end);
-    }
-
-    {
-        auto end = s.crend();
-        auto iter = s.crbegin();
-
-        verify_iterator_value(iter, end, 'f');
-        verify_iterator_value(iter, end, 'f');
-        verify_iterator_value(iter, end, 'u');
-        verify_iterator_value(iter, end, 't');
-        verify_iterator_value(iter, end, 's');
-        synthclone::verify_eq(iter, end);
-    }
+    synthclone::verify_range_elements_eq(s, 's', 't', 'u', 'f', 'f');
+    synthclone::verify_range_elements_eq(
+        s.begin(), s.end(), 's', 't', 'u', 'f', 'f');
+    synthclone::verify_range_elements_eq(
+        s.cbegin(), s.cend(), 's', 't', 'u', 'f', 'f');
+    synthclone::verify_range_elements_eq(
+        s.rbegin(), s.rend(), 'f', 'f', 'u', 't', 's');
+    synthclone::verify_range_elements_eq(
+        s.crbegin(), s.crend(), 'f', 'f', 'u', 't', 's');
 
     synthclone::verify_eq(s.back(), 'f');
 

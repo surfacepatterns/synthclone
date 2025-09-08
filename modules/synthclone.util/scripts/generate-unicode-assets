@@ -1,0 +1,81 @@
+#!/usr/bin/env -S /bin/sh -c 'PYTHONPATH="$(dirname "$0")/../../../common/python:$PYTHONPATH" python3 "$0" "$@"'
+
+from csv import DictReader
+from enum import Enum
+
+from synthclone_repo import (
+    CodeComposer,
+    MappedEnumElementTraits,
+    apply_template,
+    make_timestamp,
+    write_enum_identifier_test_case,
+    write_mapped_enum
+)
+from synthclone_repo.modules.util import (
+    SRC_PATH,
+    TABLES_PATH,
+    TEMPLATES_PATH,
+    TESTS_PATH
+)
+
+class UnicodeCategoryElementTraits(MappedEnumElementTraits):
+
+    __slots__ = ()
+
+UNICODE_GEN_SRC_PATH = SRC_PATH / "unicode_gen.cppm"
+UNICODE_GEN_SRC_TEMPLATE_PATH = \
+    TEMPLATES_PATH / "src" / "unicode_gen.cppm.tmpl"
+
+UNICODE_GEN_TESTS_PATH = TESTS_PATH / "unicode_gen.cpp"
+UNICODE_GEN_TESTS_TEMPLATE_PATH = \
+    TEMPLATES_PATH / "tests" / "unicode_gen.cpp.tmpl"
+
+UNICODE_CATEGORIES_TABLE_PATH = \
+    TABLES_PATH / "unicode-general-category-values.csv"
+
+def generate_unicode_category_enum_elements():
+    with open(UNICODE_CATEGORIES_TABLE_PATH, newline='') as fp:
+        reader = DictReader(fp)
+        for row in reader:
+            abbr = row["Abbr"]
+            if abbr.isupper():
+                continue
+            yield (
+                row["Long"].upper(),
+                UnicodeCategoryElementTraits(
+                    row["Description"], f"::UTF8PROC_CATEGORY_{abbr.upper()}")
+            )
+
+def generate_unicode_source(enum_type: type[Enum], /):
+    composer = CodeComposer(base_indentation_level=1)
+    write_mapped_enum(
+        composer, enum_type, "std::uint_least8_t",
+        "Contains the unicode categories applied to codepoints.")
+    unicode_category_enum = str(composer).strip()
+
+    apply_template(
+        UNICODE_GEN_SRC_TEMPLATE_PATH, UNICODE_GEN_SRC_PATH,
+        timestamp=make_timestamp(),
+        unicode_category_enum=unicode_category_enum)
+
+def generate_unicode_tests(enum_type: type[Enum], /):
+    composer = CodeComposer()
+    write_enum_identifier_test_case(composer, enum_type)
+    unicode_category_identifiers_test_case = str(composer).strip()
+
+    apply_template(
+        UNICODE_GEN_TESTS_TEMPLATE_PATH, UNICODE_GEN_TESTS_PATH,
+        timestamp=make_timestamp(),
+        unicode_category_identifiers_test_case=
+            unicode_category_identifiers_test_case)
+
+def main():
+    unicode_category_enum_type = Enum(
+        value="UnicodeCategory",
+        names=generate_unicode_category_enum_elements())
+
+    generate_unicode_source(unicode_category_enum_type)
+    generate_unicode_tests(unicode_category_enum_type)
+
+if __name__ == "__main__":
+    main()

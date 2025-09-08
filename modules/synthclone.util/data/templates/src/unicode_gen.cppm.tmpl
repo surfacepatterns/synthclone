@@ -1,0 +1,38 @@
+/**
+ * @file
+ *
+ * Contains generated unicode enums.
+ *
+ * @note
+ *   This code was auto-generated at:
+ *
+ *       ${timestamp}
+ *
+ *   Do *not* edit this code.  Any changes made to this code will be lost.
+ *
+ *   Category enum data is a slightly modified version of the data here:
+ *
+ *       https://www.unicode.org/reports/tr44/#General_Category_Values
+ */
+
+module;
+
+#include <utf8proc.h>
+
+#include <synthclone/config.h>
+
+export module synthclone.util:unicode_gen;
+
+import std;
+
+import :lookup;
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::unicode_category
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    ${unicode_category_enum}
+
+}

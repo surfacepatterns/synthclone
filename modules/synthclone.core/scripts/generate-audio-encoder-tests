@@ -3,7 +3,7 @@
 from synthclone_repo import (
     CodeComposer,
     apply_template,
-    get_scoped_enum_element_identifier,
+    get_enum_element_identifier,
     make_bool_literal,
     make_timestamp,
     write_compact_test_case,
@@ -40,9 +40,9 @@ def write_encoder_test_case(
     ):
         return False
 
-    codec_id = get_scoped_enum_element_identifier(codec)
-    endianness_id = get_scoped_enum_element_identifier(endianness)
-    format_id = get_scoped_enum_element_identifier(format)
+    codec_id = get_enum_element_identifier(codec)
+    endianness_id = get_enum_element_identifier(endianness)
+    format_id = get_enum_element_identifier(format)
     verification = get_audio_verification_traits(codec, sample_rate)
 
     write_compact_test_case(
