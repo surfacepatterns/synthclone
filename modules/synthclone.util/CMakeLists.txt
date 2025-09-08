@@ -29,7 +29,9 @@ target_sources(
     FILES ${synthclone-util-sources}
 )
 
-synthclone_configure_target_coverage(synthclone_util)
+target_link_libraries(synthclone_util utf8proc)
+
+synthclone_configure_library_target(synthclone_util)
 
 ###############################################################################
 # tests
@@ -65,4 +67,4 @@ target_link_libraries(
     synthclone_util
 )
 
-synthclone_configure_target_coverage(run-synthclone-util-tests)
+synthclone_configure_test_target(run-synthclone-util-tests)

@@ -14,13 +14,15 @@ from ._code import (
     writing_test_case,
     writing_test_suite
 )
+from ._enum import (
+    EnumElementTraits,
+    MappedEnumElementTraits,
+    get_enum_element_identifier,
+    get_enum_identifier,
+    write_enum,
+    write_enum_identifier_test_case,
+    write_mapped_enum
+)
 from ._layout import ROOT_PATH
 from ._lookup import write_mapped_lookup_table, write_simple_lookup_table
-from ._scoped import (
-    ScopedEnumElementTraits,
-    get_scoped_enum_element_identifier,
-    get_scoped_enum_identifier,
-    write_scoped_enum,
-    write_scoped_enum_identifier_test_case
-)
 from ._util import apply_template, make_timestamp

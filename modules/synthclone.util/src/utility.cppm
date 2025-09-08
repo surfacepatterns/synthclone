@@ -95,58 +95,6 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// synthclone::type_sequence
-///////////////////////////////////////////////////////////////////////////////
-
-namespace SYNTHCLONE_LIB_NAMESPACE {
-
-    /**
-     * Simple type that contains a parameter pack of zero or more types.
-     *
-     * @tparam T
-     *   The types.
-     */
-
-    export
-    template<class... T>
-    struct type_sequence {};
-
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// synthclone::make_type_sequence
-///////////////////////////////////////////////////////////////////////////////
-
-namespace SYNTHCLONE_LIB_NAMESPACE {
-
-    template<class T, std::size_t N, class... Types>
-    struct make_type_sequence_impl {
-
-        using type = std::conditional_t<
-            sizeof...(Types) == N,
-            type_sequence<Types...>,
-            typename make_type_sequence_impl<T, N, T, Types...>::type
-        >;
-
-    };
-
-    /**
-     * Type alias that calculates a type sequence containing N copies of the
-     * given type.
-     *
-     * @tparam T
-     *   The type.
-     * @tparam N
-     *   The number of copies.
-     */
-
-    export
-    template<class T, std::size_t N>
-    using make_type_sequence = make_type_sequence_impl<T, N>::type;
-
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // synthclone::validated_t
 ///////////////////////////////////////////////////////////////////////////////
 

@@ -24,11 +24,8 @@ namespace {
     )
     {
         BOOST_TEST_INFO_SCOPE(
-            (
-                std::format(
-                    "verify_directory({0}, {1})", path.string(),
-                    expected_parent_path.string())
-            ));
+            synthclone::make_test_info(
+                "verify_directory", path, expected_parent_path));
 
         synthclone::verify_eq(path.parent_path(), expected_parent_path);
         BOOST_CHECK(std::filesystem::is_directory(path));
@@ -41,11 +38,8 @@ namespace {
     )
     {
         BOOST_TEST_INFO_SCOPE(
-            (
-                std::format(
-                    "verify_file({0}, {1})", path.string(),
-                    expected_parent_path.string())
-            ));
+            synthclone::make_test_info(
+                "verify_file", path, expected_parent_path));
 
         synthclone::verify_eq(path.parent_path(), expected_parent_path);
         BOOST_CHECK(std::filesystem::is_regular_file(path));

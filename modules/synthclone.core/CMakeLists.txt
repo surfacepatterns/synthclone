@@ -32,7 +32,7 @@ target_link_libraries(
     synthclone_util
 )
 
-synthclone_configure_target_coverage(synthclone_core)
+synthclone_configure_library_target(synthclone_core)
 
 ###############################################################################
 # tests
@@ -85,4 +85,4 @@ target_link_libraries(
     synthclone_util
 )
 
-synthclone_configure_target_coverage(run-synthclone-core-tests)
+synthclone_configure_test_target(run-synthclone-core-tests)

@@ -7,7 +7,7 @@ from itertools import pairwise
 from synthclone_repo import (
     CodeComposer,
     apply_template,
-    get_scoped_enum_element_identifier,
+    get_enum_element_identifier,
     indented,
     make_timestamp,
     write_mapped_lookup_table,
@@ -228,7 +228,7 @@ def main():
             (
                 f"::SF_FORMAT_{element.name}",
                 "static_cast<int>(audio_codec::"
-                f"{get_scoped_enum_element_identifier(element.value)})"
+                f"{get_enum_element_identifier(element.value)})"
             )
             for element in SndfileCodec),
         default_value="-1", element_count="sndfile_codec_count",
@@ -242,7 +242,7 @@ def main():
             (
                 f"::SF_ENDIAN_{element.name}",
                 "static_cast<int>(audio_endianness::"
-                f"{get_scoped_enum_element_identifier(element.value)})"
+                f"{get_enum_element_identifier(element.value)})"
             )
             for element in SndfileEndianness),
         default_value="-1", element_count="sndfile_endianness_count",
@@ -256,7 +256,7 @@ def main():
             (
                 f"::SF_FORMAT_{element.name}",
                 "static_cast<int>(audio_format::"
-                f"{get_scoped_enum_element_identifier(element.value)})"
+                f"{get_enum_element_identifier(element.value)})"
             )
             for element in SndfileFormat),
         default_value="-1", element_count="sndfile_format_count",

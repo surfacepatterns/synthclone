@@ -15,4 +15,5 @@ export import :lookup;
 export import :ranges;
 export import :scalar;
 export import :string;
+export import :unicode;
 export import :utility;

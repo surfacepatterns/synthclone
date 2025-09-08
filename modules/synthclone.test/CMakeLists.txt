@@ -34,4 +34,4 @@ target_link_libraries(
     synthclone_util
 )
 
-synthclone_configure_target_coverage(synthclone_test)
+synthclone_configure_library_target(synthclone_test)

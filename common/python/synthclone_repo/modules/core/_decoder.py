@@ -8,8 +8,8 @@ from ..._code import (
     write_compact_test_case as _write_compact_test_case,
     writing_test_suite as _writing_test_suite,
 )
-from ..._scoped import (
-    get_scoped_enum_element_identifier as _get_scoped_enum_element_identifier
+from ..._enum import (
+    get_enum_element_identifier as _get_enum_element_identifier
 )
 from ..._util import (
     apply_template as _apply_template,
@@ -72,9 +72,9 @@ def _write_decoder_test_case_assets(
     ):
         return False
 
-    codec_id = _get_scoped_enum_element_identifier(codec)
-    endianness_id = _get_scoped_enum_element_identifier(endianness)
-    format_id = _get_scoped_enum_element_identifier(format)
+    codec_id = _get_enum_element_identifier(codec)
+    endianness_id = _get_enum_element_identifier(endianness)
+    format_id = _get_enum_element_identifier(format)
 
     path = _ENCODED_AUDIO_PATH / encoder_id / \
         f"{format_id}--{codec_id}" / \

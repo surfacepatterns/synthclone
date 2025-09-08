@@ -7,35 +7,26 @@ import synthclone.util;
 
 namespace {
 
-    template<class I, class C>
-    void
-    verify_iterator_value(I& iter, I sentinel, C value)
-    {
-        BOOST_TEST_INFO_SCOPE(
-            std::format("verify_iterator_value(..., {0})", value));
-
-        synthclone::verify_ne(iter, sentinel);
-        BOOST_CHECK_EQUAL(*iter, value);
-        ++iter;
-    }
-
     template<class T, std::size_t... Indices>
     void
-    verify_basic_ops(T& buffer, std::index_sequence<Indices...>)
+    verify_basic_ops(T& buffer, std::index_sequence<Indices...> indices)
     {
-        BOOST_TEST_INFO_SCOPE(std::format("verify_basic_ops<T, ...>()"));
+        BOOST_TEST_INFO_SCOPE(
+            synthclone::make_test_info("verify_basic_ops", buffer, indices));
 
         const auto& const_buffer = buffer;
 
         ((buffer[Indices] = Indices), ...);
 
-        (synthclone::verify_eq(Indices, buffer[Indices]), ...);
-        (synthclone::verify_eq(Indices, const_buffer[Indices]), ...);
+        synthclone::verify_range_elements_eq(buffer, Indices...);
+        synthclone::verify_range_elements_eq(const_buffer, Indices...);
 
         ((buffer.at(Indices) *= 2), ...);
 
         (synthclone::verify_eq(Indices * 2, buffer.at(Indices)), ...);
+        (synthclone::verify_eq(Indices * 2, buffer[Indices]), ...);
         (synthclone::verify_eq(Indices * 2, const_buffer.at(Indices)), ...);
+        (synthclone::verify_eq(Indices * 2, const_buffer[Indices]), ...);
 
         BOOST_CHECK_THROW(
             buffer.at(sizeof...(Indices)), synthclone::verification_error);
@@ -48,62 +39,18 @@ namespace {
 
         BOOST_CHECK(iter == buffer.end());
 
-        {
-            auto iter = buffer.begin();
-            auto end = buffer.end();
+        synthclone::verify_range_elements_eq(buffer, (Indices * 4)...);
+        synthclone::verify_range_elements_eq(const_buffer, (Indices * 4)...);
+        synthclone::verify_range_elements_eq(
+            const_buffer.cbegin(), const_buffer.cend(), (Indices * 4)...);
 
-            (verify_iterator_value(iter, end, Indices * 4), ...);
+        synthclone::verify_range_elements_eq(
+            buffer.rbegin(), buffer.rend(),
+            ((sizeof...(Indices) - Indices - 1) * 4)...);
+        synthclone::verify_range_elements_eq(
+            const_buffer.crbegin(), const_buffer.crend(),
+            ((sizeof...(Indices) - Indices - 1) * 4)...);
 
-            BOOST_CHECK(iter == end);
-        }
-
-        {
-            auto iter = buffer.rbegin();
-            auto end = buffer.rend();
-
-            (
-                verify_iterator_value(
-                    iter, end, (sizeof...(Indices) - Indices - 1) * 4),
-                ...
-            );
-
-            BOOST_CHECK(iter == end);
-        }
-
-        {
-            auto iter = const_buffer.begin();
-            auto end = const_buffer.end();
-
-            (verify_iterator_value(iter, end, Indices * 4), ...);
-
-            BOOST_CHECK(iter == end);
-        }
-
-        {
-            auto iter = const_buffer.cbegin();
-            auto end = const_buffer.cend();
-
-            (verify_iterator_value(iter, end, Indices * 4), ...);
-
-            BOOST_CHECK(iter == end);
-        }
-
-        {
-            auto iter = const_buffer.crbegin();
-            auto end = const_buffer.crend();
-
-            (
-                verify_iterator_value(
-                    iter, end, (sizeof...(Indices) - Indices - 1) * 4),
-                ...
-            );
-
-            BOOST_CHECK(iter == end);
-        }
-
-        BOOST_CHECK(buffer.data() == std::addressof(*(buffer.begin())));
-        BOOST_CHECK(
-            const_buffer.data() == std::addressof(*(const_buffer.cbegin())));
         BOOST_CHECK(! buffer.empty());
         BOOST_CHECK_EQUAL(sizeof...(Indices), buffer.size());
     }
@@ -112,7 +59,8 @@ namespace {
     void
     verify_basic_ops(T& buffer)
     {
-        BOOST_TEST_INFO_SCOPE(std::format("verify_basic_ops<{0}, T>()", N));
+        BOOST_TEST_INFO_SCOPE(
+            synthclone::make_test_info("verify_basic_ops", buffer));
 
         verify_basic_ops<T>(buffer, std::make_index_sequence<N>());
     }
@@ -121,7 +69,8 @@ namespace {
     void
     verify_move_ops(T& buffer_1, T& buffer_2)
     {
-        BOOST_TEST_INFO_SCOPE("verify_move_ops<T>(T&, T&)");
+        BOOST_TEST_INFO_SCOPE(
+            synthclone::make_test_info("verify_move_ops", buffer_1, buffer_2));
 
         const auto* b1_data = buffer_1.data();
         const auto* b2_data = buffer_2.data();

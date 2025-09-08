@@ -11,7 +11,7 @@ from tempfile import NamedTemporaryFile
 
 from synthclone_repo import (
     CodeComposer,
-    get_scoped_enum_element_identifier,
+    get_enum_element_identifier,
     make_timestamp
 )
 from synthclone_repo.modules.core import (
@@ -836,7 +836,7 @@ def generate_dynamic_sox_test_params(
         yield str(bit_count)
     if endianness is not AudioEndianness.FILE:
         yield "--endian"
-        yield get_scoped_enum_element_identifier(endianness)
+        yield get_enum_element_identifier(endianness)
 
 def encode_sox_wave(
     format: AudioFormat,

@@ -4,6 +4,7 @@
 #include <boost/test/unit_test.hpp>
 
 import synthclone.core;
+import synthclone.test;
 import synthclone.util;
 
 namespace {
@@ -13,7 +14,7 @@ namespace {
     verify_byte_constructor()
     {
         for (std::uint_least8_t i = 0; i <= Max; ++i) {
-            BOOST_CHECK(T{i} == i);
+            synthclone::verify_eq(T{i}, i);
         }
 
         BOOST_CHECK_THROW(T{Max + 1}, synthclone::verification_error);

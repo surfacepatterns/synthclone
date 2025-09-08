@@ -772,6 +772,17 @@ namespace std {
             return impl_.parse(context);
         }
 
+        /**
+         * Turns on debug formatting.
+         */
+
+        constexpr
+        void
+        set_debug_format()
+        {
+            impl_.set_debug_format();
+        }
+
     private:
 
         formatter<typename T::string_type, Char> impl_;
@@ -893,11 +904,9 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     concat_string_ranges(Args&&... args)
     {
         std::basic_string<Char, Traits, Allocator> result;
-        result.reserve((... + args.size()));
+        result.reserve((0 + ... + args.size()));
 
-        // libstdc++ doesn't support std::string::append_range() yet.
-        //(result.append_range(std::forward<Args>(args)), ...);
-        (result.append(args.begin(), args.end()), ...);
+        (result.append_range(std::forward<Args>(args)), ...);
 
         return result;
     }
@@ -953,7 +962,8 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
      *   The concatenated result.
      */
 
-    export template<
+    export
+    template<
         class Char = char,
         class Traits = std::char_traits<Char>,
         class Allocator = std::allocator<Char>,
@@ -965,6 +975,96 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     concat_strings(Args&&... args)
     {
         return concat_string_ranges<Char, Traits, Allocator>(
+            make_concat_string_range<Char, Traits>(
+                std::forward<Args>(args))...);
+    }
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// join_strings
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    constexpr std::string empty_string;
+
+    template<
+        class Char,
+        class Traits,
+        class Allocator,
+        container_compatible_range<Char> D
+    >
+    constexpr
+    std::basic_string<Char, Traits, Allocator>
+    join_string_ranges(D&& delimiter)
+    {
+        return empty_string;
+    }
+
+    template<
+        class Char,
+        class Traits,
+        class Allocator,
+        container_compatible_range<Char> D,
+        container_compatible_range<Char> S,
+        container_compatible_range<Char>... Args
+    >
+    constexpr
+    std::basic_string<Char, Traits, Allocator>
+    join_string_ranges(D&& delimiter, S&& s1, Args&&... args)
+    {
+        std::basic_string<Char, Traits, Allocator> result;
+        result.reserve(
+            (delimiter.size() * sizeof...(Args)) + s1.size() +
+            (0 + ... + args.size()));
+
+        result.append_range(std::forward<S>(s1));
+
+        (
+            (
+                result.append_range(std::forward<D>(delimiter)),
+                result.append_range(std::forward<Args>(args))
+            ),
+            ...
+        );
+
+        return result;
+    }
+
+    /**
+     * Joins zero or more strings using a given delimiter.
+     *
+     * @tparam Char
+     *   The character type.
+     * @tparam Traits
+     *   The character traits type.
+     * @tparam Allocator
+     *   The allocator type.
+     *
+     * @param delimiter
+     *   The delimiter string.
+     * @param args
+     *   The strings to join.
+     *
+     * @returns
+     *   The joined result.
+     */
+
+    export
+    template<
+        class Char = char,
+        class Traits = std::char_traits<Char>,
+        class Allocator = std::allocator<Char>,
+        string_concat_range<Char, Traits> D,
+        string_concat_range<Char, Traits>... Args
+    >
+    constexpr
+    std::basic_string<Char, Traits, Allocator>
+    join_strings(D&& delimiter, Args&&... args)
+    {
+        return join_string_ranges<Char, Traits, Allocator>(
+            make_concat_string_range<Char, Traits>(std::forward<D>(delimiter)),
             make_concat_string_range<Char, Traits>(
                 std::forward<Args>(args))...);
     }
