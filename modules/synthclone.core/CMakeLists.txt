@@ -27,6 +27,7 @@ target_include_directories(
 
 target_link_libraries(
     synthclone_core
+    boost_url
     samplerate
     sndfile
     synthclone_util

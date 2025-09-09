@@ -7,5 +7,6 @@
 export module synthclone.core;
 
 export import :audio;
+export import :metadata;
 export import :midi;
 export import :state;
