@@ -1,8 +1,7 @@
-#include <filesystem>
-
 #include <boost/interprocess/mapped_region.hpp>
-
 #include <boost/test/unit_test.hpp>
+
+import std;
 
 import synthclone.core;
 import synthclone.core.tests;

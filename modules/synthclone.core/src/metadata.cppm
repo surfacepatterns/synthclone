@@ -60,45 +60,6 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
 namespace SYNTHCLONE_LIB_NAMESPACE {
 
-    constexpr char32_t line_feed = '\n';
-    constexpr char32_t vertical_tab = '\v';
-    constexpr char32_t form_feed = '\f';
-    constexpr char32_t carriage_return = '\r';
-    constexpr char32_t next_line = U'\U00000085';
-    constexpr char32_t line_separator = U'\U00002028';
-    constexpr char32_t paragraph_separator = U'\U00002029';
-
-    std::string&&
-    verify_metadata_element(std::string&& s)
-    {
-        if (s.empty()) [[unlikely]] {
-            throw metadata_error("metadata element strings cannot be empty");
-        }
-        std::ranges::for_each(
-            decode_utf8(std::as_bytes(std::span(s))),
-            [](const unicode_codepoint c) {
-                switch (c.value()) {
-                case line_feed:
-                case vertical_tab:
-                case form_feed:
-                case carriage_return:
-                case next_line:
-                case line_separator:
-                case paragraph_separator:
-                    throw metadata_error(
-                        std::format(
-                            "codepoint {0} must not be present in a metadata "
-                            "element",
-                            static_cast<std::uint_least32_t>(c)));
-
-                [[likely]] default:
-                    ;
-                }
-            });
-
-        return std::move(s);
-    }
-
     /**
      * A metadata string type that can hold any UTF-8 encoded data except line
      * terminators.
@@ -107,37 +68,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
      */
 
     export
-    class metadata_element final: public string_proxy<metadata_element> {
-
-    public:
-
-        /**
-         * Constructs a `metadata_element` instance.
-         *
-         * @param args
-         *   The arguments to pass to the `std::string` constructor.
-         */
-
-        template<class... Args>
-        requires (std::constructible_from<std::string, Args...>)
-        explicit (
-            (sizeof...(Args) != 1) ||
-            (
-                ! implicitly_convertible_to<
-                    boost::mp11::mp_front<boost::mp11::mp_list<Args...>>,
-                    std::string
-                >
-            )
-        )
-        metadata_element(Args&&... args):
-            string_proxy<metadata_element>(
-                verify_metadata_element(
-                    std::string(std::forward<Args>(args)...)))
-        {
-            // empty
-        }
-
-    };
+    using metadata_element = utf8_line;
 
 }
 

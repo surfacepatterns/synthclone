@@ -94,49 +94,6 @@ BOOST_AUTO_TEST_CASE(metadata)
     synthclone::verify_eq(metadata_2, metadata_4);
 }
 
-BOOST_AUTO_TEST_CASE(metadata_elements)
-{
-    synthclone::metadata_element element_1("foo");
-    synthclone::verify_eq(element_1, "foo");
-
-    synthclone::metadata_element element_2("bar");
-    synthclone::verify_eq(element_2, "bar");
-
-    synthclone::verify_ne(element_1, element_2);
-
-    synthclone::metadata_element element_3(element_1);
-    synthclone::verify_eq(element_1, element_3);
-
-    synthclone::metadata_element element_4(std::move(element_1));
-    synthclone::verify_eq(element_3, element_4);
-
-    element_1 = element_2;
-    synthclone::verify_eq(element_1, element_2);
-
-    element_4 = std::move(element_1);
-    synthclone::verify_eq(element_2, element_4);
-
-    BOOST_CHECK_THROW(
-        synthclone::metadata_element(""), synthclone::metadata_error);
-    BOOST_CHECK_THROW(
-        synthclone::metadata_element("foo\n"), synthclone::metadata_error);
-    BOOST_CHECK_THROW(
-        synthclone::metadata_element("foo\v"), synthclone::metadata_error);
-    BOOST_CHECK_THROW(
-        synthclone::metadata_element("foo\f"), synthclone::metadata_error);
-    BOOST_CHECK_THROW(
-        synthclone::metadata_element("foo\r"), synthclone::metadata_error);
-    BOOST_CHECK_THROW(
-        synthclone::metadata_element("foo\U00000085"),
-        synthclone::metadata_error);
-    BOOST_CHECK_THROW(
-        synthclone::metadata_element("foo\U00002028"),
-        synthclone::metadata_error);
-    BOOST_CHECK_THROW(
-        synthclone::metadata_element("foo\U00002029"),
-        synthclone::metadata_error);
-}
-
 BOOST_AUTO_TEST_CASE(metadata_urls)
 {
     synthclone::metadata_url url_1("http://somewhere.dev/yup");

@@ -76,6 +76,14 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
     using utf8_byte_iterator = const std::byte*;
 
+    constexpr char32_t unicode_carriage_return = '\r';
+    constexpr char32_t unicode_form_feed = '\f';
+    constexpr char32_t unicode_line_feed = '\n';
+    constexpr char32_t unicode_line_separator = U'\U00002028';
+    constexpr char32_t unicode_next_line = U'\U00000085';
+    constexpr char32_t unicode_paragraph_separator = U'\U00002029';
+    constexpr char32_t unicode_vertical_tab = '\v';
+
     char32_t
     verify_unicode_codepoint(const char32_t n)
     {
@@ -124,7 +132,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     /**
      * Gets the codepoint category.
      *
-     * @param c
+     * @param codepoint
      *   The codepoint.
      *
      * @return
@@ -134,11 +142,45 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     export
     inline
     unicode_category
-    get_category(unicode_codepoint c)
+    get_category(const unicode_codepoint codepoint)
     noexcept
     {
         return static_cast<unicode_category>(
-            ::utf8proc_category(static_cast<::utf8proc_int32_t>(c.value())));
+            ::utf8proc_category(
+                static_cast<::utf8proc_int32_t>(codepoint.value())));
+    }
+
+    /**
+     * Gets a boolean indicating whether or not the given codepoint is a line
+     * terminator.
+     *
+     * @param c
+     *   The codepoint.
+     *
+     * @return
+     *   The boolean indicator.
+     */
+
+    export
+    constexpr
+    bool
+    is_line_terminator(const unicode_codepoint c)
+    noexcept
+    {
+        switch (c.value()) {
+        case unicode_carriage_return:
+        case unicode_form_feed:
+        case unicode_line_feed:
+        case unicode_line_separator:
+        case unicode_next_line:
+        case unicode_paragraph_separator:
+        case unicode_vertical_tab:
+            return true;
+
+        default:
+            ;
+        }
+        return false;
     }
 
 }
@@ -534,6 +576,68 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         utf8_string(Args&&... args):
             string_proxy<utf8_string>(
                 verify_utf8_string(std::string(std::forward<Args>(args)...)))
+        {
+            // empty
+        }
+
+    };
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::utf8_line
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    std::string&&
+    verify_utf8_line(std::string&& s)
+    {
+        std::ranges::for_each(
+            decode_utf8(std::as_bytes(std::span(s))),
+            [](const unicode_codepoint c) {
+                if (is_line_terminator(c)) [[unlikely]] {
+                    throw unicode_error(
+                        std::format(
+                            "codepoint {0} is a line terminator - line "
+                            "terminators must not be present in a `utf8_line`",
+                            static_cast<std::uint_least32_t>(c)));
+                }
+            });
+        return std::move(s);
+    }
+
+    /**
+     * A UTF-8 string type that can hold any UTF-8 encoded data except line
+     * terminators.
+     */
+
+    export
+    class utf8_line final: public string_proxy<utf8_line> {
+
+    public:
+
+        /**
+         * Constructs a `utf8_line` instance.
+         *
+         * @param args
+         *   The arguments to pass to the `std::string` constructor.
+         */
+
+        template<class... Args>
+        requires (std::constructible_from<std::string, Args...>)
+        explicit (
+            (sizeof...(Args) != 1) ||
+            (
+                ! implicitly_convertible_to<
+                    boost::mp11::mp_front<boost::mp11::mp_list<Args...>>,
+                    std::string
+                >
+            )
+        )
+        utf8_line(Args&&... args):
+            string_proxy<utf8_line>(
+                verify_utf8_line(std::string(std::forward<Args>(args)...)))
         {
             // empty
         }

@@ -1,7 +1,6 @@
-#include <cstdint>
-#include <optional>
-
 #include <boost/test/unit_test.hpp>
+
+import std;
 
 import synthclone.core;
 import synthclone.test;
@@ -32,6 +31,11 @@ BOOST_AUTO_TEST_CASE(aftertouch_constructor)
 BOOST_AUTO_TEST_CASE(channel_constructor)
 {
     verify_byte_constructor<synthclone::midi_channel, 15>();
+}
+
+BOOST_AUTO_TEST_CASE(channel_pressure_constructor)
+{
+    verify_byte_constructor<synthclone::midi_channel_pressure>();
 }
 
 BOOST_AUTO_TEST_CASE(control_index_constructor)
