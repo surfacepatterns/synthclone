@@ -46,6 +46,40 @@ namespace {
     }
 
     void
+    verify_invalid_utf8_line(const std::string& s)
+    {
+        BOOST_TEST_INFO_SCOPE(
+            synthclone::make_test_info("verify_invalid_utf8_line", s));
+
+        BOOST_CHECK_THROW(synthclone::utf8_line{s}, synthclone::unicode_error);
+    }
+
+    void
+    verify_line_terminator(char32_t n)
+    {
+        BOOST_TEST_INFO_SCOPE(
+            synthclone::make_test_info(
+                "verify_line_terminator",
+                static_cast<std::uint_least32_t>(n)));
+
+        BOOST_CHECK(
+            synthclone::is_line_terminator(synthclone::unicode_codepoint(n)));
+    }
+
+    void
+    verify_non_line_terminator(char32_t n)
+    {
+        BOOST_TEST_INFO_SCOPE(
+            synthclone::make_test_info(
+                "verify_non_line_terminator",
+                static_cast<std::uint_least32_t>(n)));
+
+        BOOST_CHECK(
+            ! synthclone::is_line_terminator(
+                synthclone::unicode_codepoint(n)));
+    }
+
+    void
     verify_valid_codepoint(char32_t n)
     {
         BOOST_TEST_INFO_SCOPE(
@@ -95,6 +129,21 @@ BOOST_AUTO_TEST_CASE(codepoint_categories)
     }
 }
 
+BOOST_AUTO_TEST_CASE(codepoint_line_terminators)
+{
+    verify_line_terminator('\n');
+    verify_line_terminator('\v');
+    verify_line_terminator('\r');
+    verify_line_terminator('\f');
+    verify_line_terminator(U'\U00000085');
+    verify_line_terminator(U'\U00002028');
+    verify_line_terminator(U'\U00002029');
+
+    for (char32_t i = 0x20; i < 0x80; ++i) {
+        verify_non_line_terminator(i);
+    }
+}
+
 BOOST_AUTO_TEST_CASE(invalid_utf8_decode_iterator)
 {
     synthclone::utf8_decode_iterator invalid_iter;
@@ -113,6 +162,17 @@ BOOST_AUTO_TEST_CASE(invalid_unicode_codepoints)
     for (char32_t c = 0x110000; c < 0x110010; ++c) {
         verify_invalid_codepoint(c);
     }
+}
+
+BOOST_AUTO_TEST_CASE(invalid_utf8_lines)
+{
+    verify_invalid_utf8_line("foo\n");
+    verify_invalid_utf8_line("foo\v");
+    verify_invalid_utf8_line("foo\f");
+    verify_invalid_utf8_line("foo\r");
+    verify_invalid_utf8_line("foo\U00000085");
+    verify_invalid_utf8_line("foo\U00002028");
+    verify_invalid_utf8_line("foo\U00002029");
 }
 
 BOOST_AUTO_TEST_CASE(invalid_utf8_strings)
@@ -242,6 +302,29 @@ BOOST_AUTO_TEST_CASE(valid_unicode_codepoints)
     }
 }
 
+BOOST_AUTO_TEST_CASE(valid_utf8_lines)
+{
+    synthclone::utf8_line line_1("foo");
+    synthclone::verify_eq(line_1, "foo");
+
+    synthclone::utf8_line line_2("bar");
+    synthclone::verify_eq(line_2, "bar");
+
+    synthclone::verify_ne(line_1, line_2);
+
+    synthclone::utf8_line line_3(line_1);
+    synthclone::verify_eq(line_1, line_3);
+
+    synthclone::utf8_line line_4(std::move(line_1));
+    synthclone::verify_eq(line_3, line_4);
+
+    line_1 = line_2;
+    synthclone::verify_eq(line_1, line_2);
+
+    line_4 = std::move(line_1);
+    synthclone::verify_eq(line_2, line_4);
+}
+
 BOOST_AUTO_TEST_CASE(valid_utf8_strings)
 {
     for (auto i = 0; i < 0x10; ++i) {
@@ -260,7 +343,6 @@ BOOST_AUTO_TEST_CASE(valid_utf8_strings)
         verify_valid_utf8(std::string {c1, c2, '\xbf', '\xbe'}, i);
         verify_valid_utf8(std::string {c1, c2, '\xbf', '\xbf'}, i + 1);
     }
-
 }
 
 BOOST_AUTO_TEST_SUITE_END()

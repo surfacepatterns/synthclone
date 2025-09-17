@@ -7,6 +7,7 @@ export module synthclone.core.tests:audio;
 import std;
 
 import synthclone.core;
+import synthclone.test;
 import synthclone.util;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -41,14 +42,7 @@ namespace synthclone {
     audio_sample_buffer<FrameCount * ChannelCount>
     load_audio(const std::filesystem::path& path)
     {
-        BOOST_TEST_INFO_SCOPE(
-            std::format(
-                "synthclone::load_audio<"
-                "{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}"
-                ">({8:?})",
-                get_identifier(Format), get_identifier(Codec),
-                get_identifier(Endianness), SampleRate, ChannelCount,
-                FrameCount, FrameOffset, ExpectEos, path.string()));
+        BOOST_TEST_INFO_SCOPE(make_test_info("synthclone::load_audio", path));
 
         constexpr audio_traits traits(
             Format, Codec, Endianness, SampleRate, ChannelCount);
@@ -111,6 +105,107 @@ namespace synthclone {
         }
 
         return buffer;
+    }
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::verify_audio_traits()
+///////////////////////////////////////////////////////////////////////////////
+
+namespace synthclone {
+
+    export
+    void
+    verify_audio_traits(
+        const audio_traits& traits,
+        audio_format expected_format,
+        audio_codec expected_codec,
+        audio_endianness expected_endianness,
+        audio_sample_rate expected_sample_rate,
+        audio_channel_count expected_channel_count
+    )
+    {
+        BOOST_TEST_INFO_SCOPE(
+            make_test_info(
+                "synthclone::verify_audio_traits", traits,
+                get_identifier(expected_format),
+                get_identifier(expected_codec),
+                get_identifier(expected_endianness), expected_sample_rate,
+                expected_channel_count));
+
+        verify_eq(traits.format(), expected_format);
+        verify_eq(traits.codec(), expected_codec);
+        verify_eq(traits.endianness(), expected_endianness);
+        verify_eq(traits.sample_rate(), expected_sample_rate);
+        verify_eq(traits.channel_count(), expected_channel_count);
+    }
+
+    export
+    void
+    verify_audio_traits(const audio_traits& lhs, const audio_traits& rhs)
+    {
+        BOOST_TEST_INFO_SCOPE(
+            make_test_info("synthclone::verify_audio_traits", lhs, rhs));
+
+        verify_audio_traits(
+            lhs, rhs.format(), rhs.codec(), rhs.endianness(),
+            rhs.sample_rate(), rhs.channel_count());
+
+        verify_eq(lhs, rhs);
+    }
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::verify_audio_input_stream()
+///////////////////////////////////////////////////////////////////////////////
+
+namespace synthclone {
+
+    export
+    void
+    verify_audio_input_stream(audio_input_stream& lhs, audio_input_stream& rhs)
+    {
+        BOOST_TEST_INFO_SCOPE(
+            make_test_info("synthclone::verify_audio_input_stream", lhs, rhs));
+
+        verify_audio_traits(lhs.traits(), rhs.traits());
+
+        auto closed = lhs.closed();
+        verify_eq(closed, rhs.closed());
+
+        if (closed) {
+            return;
+        }
+
+        auto seekable = lhs.seekable();
+        verify_eq(seekable, rhs.seekable());
+
+        if (seekable) {
+            verify_eq(lhs.tell(), rhs.tell());
+        }
+
+        std::array<audio_sample, 4096> lhs_buffer;
+        std::array<audio_sample, 4096> rhs_buffer;
+
+        for (;;) {
+
+            const auto lhs_read_count = lhs.read(lhs_buffer);
+            const auto rhs_read_count = rhs.read(rhs_buffer);
+            verify_eq(lhs_read_count, rhs_read_count);
+
+            if (! lhs_read_count) {
+                break;
+            }
+
+            std::span lhs_span(lhs_buffer.data(), lhs_read_count);
+            std::span rhs_span(rhs_buffer.data(), rhs_read_count);
+
+            BOOST_CHECK_EQUAL_COLLECTIONS(
+                lhs_span.begin(), lhs_span.end(), rhs_span.begin(),
+                rhs_span.end());
+        }
     }
 
 }

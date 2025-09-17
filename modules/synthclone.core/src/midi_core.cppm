@@ -105,6 +105,49 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// synthclone::midi_channel_pressure
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    constexpr
+    std::uint_least8_t
+    verify_midi_channel_pressure(const std::uint_least8_t n)
+    {
+        verify(n <= 127, "{0}: invalid MIDI channel pressure value", n);
+        return n;
+    }
+
+    /**
+     * Contains a valid MIDI channel pressure value.
+     */
+
+    export
+    class midi_channel_pressure final:
+        public uint_least8_proxy<midi_channel_pressure> {
+
+    public:
+
+        /**
+         * Constructs a `midi_channel_pressure` instance.
+         *
+         * @param n
+         *   The MIDI channel pressure value.
+         */
+
+        constexpr
+        midi_channel_pressure(const std::uint_least8_t n):
+            uint_least8_proxy<midi_channel_pressure>(
+                verify_midi_channel_pressure(n))
+        {
+            // empty
+        }
+
+    };
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // synthclone::midi_control_index
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -240,6 +283,23 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         }
 
     };
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::midi_control_array
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    /**
+     * Array type that holds optional control values for each of the 128
+     * control indices.
+     */
+
+    export
+    using midi_control_array =
+        std::array<std::optional<midi_control_value>, 128>;
 
 }
 
