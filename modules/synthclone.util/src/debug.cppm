@@ -57,20 +57,24 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// synthclone::assume()
+// synthclone::diagnostic_format_string
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace SYNTHCLONE_LIB_NAMESPACE {
 
+    export
     template<class... Args>
-    class diagnostic_info final {
+    class diagnostic_format_string final {
 
     public:
 
         template<class T>
-        requires (string_view_convertible<const T&>)
+        requires (
+            std::constructible_from<std::format_string<Args...>, const T&>
+        )
+        //requires (string_view_convertible<const T&>)
         consteval
-        diagnostic_info(
+        diagnostic_format_string(
             const T& s,
             std::source_location location = std::source_location::current()
         ) noexcept:
@@ -101,11 +105,19 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
     };
 
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::assume()
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
     template<class... Args>
     [[noreturn]]
     void
     process_assumption_error(
-        const diagnostic_info<Args...>& info,
+        const diagnostic_format_string<Args...>& info,
         Args&&... args
     )
     {
@@ -157,7 +169,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     void
     assume(
         const bool condition,
-        diagnostic_info<std::type_identity_t<Args>...> info,
+        diagnostic_format_string<std::type_identity_t<Args>...> info,
         Args&&... args
     )
     {
@@ -214,7 +226,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     constexpr
     void
     assume_unreachable(
-        diagnostic_info<std::type_identity_t<Args>...> info,
+        diagnostic_format_string<std::type_identity_t<Args>...> info,
         Args&&... args
     )
     {
@@ -252,7 +264,10 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     export
     template<class... Args>
     void
-    trace(diagnostic_info<std::type_identity_t<Args>...> info, Args&&... args)
+    trace(
+        diagnostic_format_string<std::type_identity_t<Args>...> info,
+        Args&&... args
+    )
     {
 
 #ifndef NDEBUG
@@ -278,7 +293,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     [[noreturn]]
     void
     process_verification_error(
-        const diagnostic_info<Args...>& info,
+        const diagnostic_format_string<Args...>& info,
         Args&&... args
     )
     {
@@ -321,7 +336,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     void
     verify(
         const bool condition,
-        diagnostic_info<std::type_identity_t<Args>...> info,
+        diagnostic_format_string<std::type_identity_t<Args>...> info,
         Args&&... args
     )
     {
@@ -372,7 +387,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     constexpr
     void
     verify_unreachable(
-        diagnostic_info<std::type_identity_t<Args>...> info,
+        diagnostic_format_string<std::type_identity_t<Args>...> info,
         Args&&... args
     )
     {

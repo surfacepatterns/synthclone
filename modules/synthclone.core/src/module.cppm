@@ -13,6 +13,8 @@ export import :exporter;
 export import :importer;
 export import :metadata;
 export import :midi;
+export import :plugin;
 export import :sampler;
+export import :session;
 export import :state;
 export import :zone;
