@@ -70,7 +70,7 @@ function(synthclone_initialize_config)
             --function-coverage
             --demangle-cpp
             --erase-functions __cxx_global_var_init
-            --ignore-errors inconsistent
+            --ignore-errors format,inconsistent
             --directory ${CMAKE_SOURCE_DIR}
             --base-directory ${CMAKE_SOURCE_DIR}
             --gcov-tool "${LLVM_COV}" --gcov-tool gcov
