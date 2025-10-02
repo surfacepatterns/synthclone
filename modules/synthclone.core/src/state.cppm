@@ -15,15 +15,13 @@
 
 module;
 
-#include <boost/container/flat_map.hpp>
-#include <boost/mp11/algorithm.hpp>
-
 #include <synthclone/config.h>
 
 export module synthclone.core:state;
 
 import std;
 
+import synthclone.external.boost;
 import synthclone.util;
 
 ///////////////////////////////////////////////////////////////////////////////

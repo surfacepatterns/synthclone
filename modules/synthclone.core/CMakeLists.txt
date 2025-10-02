@@ -6,17 +6,38 @@ include(../../common/cmake/config.cmake)
 # library
 ###############################################################################
 
-add_library(synthclone_core SHARED)
-add_dependencies(synthclone_core synthclone_util)
+add_library(synthclone_core OBJECT)
+add_dependencies(
+    synthclone_core
+    synthclone_external_boost
+    synthclone_external_samplerate
+    synthclone_external_sndfile
+    synthclone_util
+)
+
+# project version information submodule
+configure_file(
+    "data/templates/project.cppm.tmpl"
+    "${CMAKE_CURRENT_BINARY_DIR}/modules/project.cppm"
+)
 
 # module
-file(GLOB synthclone-core-sources src/*.cppm)
+file(
+    GLOB
+    synthclone-core-sources
+    src/*.cppm
+    ${CMAKE_CURRENT_BINARY_DIR}/modules/*.cppm
+)
 target_sources(
     synthclone_core
     PUBLIC
     FILE_SET CXX_MODULES
     TYPE CXX_MODULES
-    FILES ${synthclone-core-sources}
+    BASE_DIRS
+    src
+    ${CMAKE_CURRENT_BINARY_DIR}/modules
+    FILES
+    ${synthclone-core-sources}
 )
 
 target_include_directories(
@@ -27,13 +48,16 @@ target_include_directories(
 
 target_link_libraries(
     synthclone_core
-    boost_url
-    samplerate
-    sndfile
+    PRIVATE
+    synthclone_external_boost
+    synthclone_external_posix
+    synthclone_external_samplerate
+    synthclone_external_sndfile
+    synthclone_external_utf8proc
     synthclone_util
 )
 
-synthclone_configure_library_target(synthclone_core)
+synthclone_configure_internal_library_target(synthclone_core)
 
 ###############################################################################
 # tests
@@ -43,6 +67,9 @@ add_executable(run-synthclone-core-tests)
 add_dependencies(
     run-synthclone-core-tests
     synthclone_core
+    synthclone_core_test
+    synthclone_external_boost
+    synthclone_external_kissfft
     synthclone_test
     synthclone_util
 )
@@ -79,9 +106,16 @@ find_package(
 )
 target_link_libraries(
     run-synthclone-core-tests
+    PRIVATE
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-    kissfft-float
     synthclone_core
+    synthclone_core_test
+    synthclone_external_boost
+    synthclone_external_kissfft
+    synthclone_external_posix
+    synthclone_external_samplerate
+    synthclone_external_sndfile
+    synthclone_external_utf8proc
     synthclone_test
     synthclone_util
 )

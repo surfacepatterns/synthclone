@@ -2,7 +2,7 @@ module;
 
 #include <boost/test/unit_test.hpp>
 
-export module synthclone.core.tests:audio_decoder;
+export module synthclone.core.test:audio_encoder;
 
 import std;
 
@@ -12,7 +12,7 @@ import :frequency;
 import :reference;
 
 ///////////////////////////////////////////////////////////////////////////////
-// synthclone::verify_encoded_reference_audio()
+// synthclone::verify_audio_encoder()
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace synthclone {
@@ -29,16 +29,31 @@ namespace synthclone {
         double PeakThreshold
     >
     void
-    verify_encoded_reference_audio(const std::filesystem::path& path)
+    verify_audio_encoder()
     {
         BOOST_TEST_INFO_SCOPE(
             std::format(
-                "synthclone::verify_encoded_reference_audio<"
-                "{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}"
-                ">({8:?})",
+                "synthclone::verify_audio_encoder<"
+                "{0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}>()",
                 get_identifier(Format), get_identifier(Codec),
                 get_identifier(Endianness), SampleRate, ChannelCount,
-                FrameOffset, ExpectEos, PeakThreshold, path.string()));
+                FrameOffset, ExpectEos, PeakThreshold));
+
+        constexpr audio_traits traits(
+            Format, Codec, Endianness, SampleRate, ChannelCount);
+
+        BOOST_REQUIRE(is_streamable(traits));
+
+        const auto& reference_audio =
+            get_reference_audio<SampleRate, ChannelCount>();
+
+        temporary_file temp_file;
+        const auto& temp_path = temp_file.path();
+
+        {
+            audio_output_stream stream(temp_path, traits);
+            stream.write(reference_audio);
+        }
 
         const auto encoded_frequencies = load_encoded_reference_frequencies<
             Format,
@@ -48,7 +63,7 @@ namespace synthclone {
             ChannelCount,
             FrameOffset,
             ExpectEos
-        >(path);
+        >(temp_path);
 
         const auto& reference_frequencies = get_reference_frequencies<
             SampleRate,

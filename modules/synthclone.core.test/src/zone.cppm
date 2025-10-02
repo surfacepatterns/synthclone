@@ -2,7 +2,7 @@ module;
 
 #include <boost/test/unit_test.hpp>
 
-export module synthclone.core.tests:zone;
+export module synthclone.core.test:zone;
 
 import std;
 

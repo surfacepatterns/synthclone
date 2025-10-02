@@ -7,7 +7,7 @@
  * @note
  *   This code was auto-generated at:
  *
- *       2025-08-29 22:11:45.836966+00:00
+ *       2025-09-28 03:50:51.770647+00:00
  *
  *   Do *not* edit this code.  Any changes made to this code will be lost.
  */
@@ -16,14 +16,13 @@ module;
 
 #include <cstdio>
 
-#include <sndfile.h>
-
 #include <synthclone/config.h>
 
 export module synthclone.core:sndfile_gen;
 
 import std;
 
+import synthclone.external.sndfile;
 import synthclone.util;
 
 import :audio_gen;

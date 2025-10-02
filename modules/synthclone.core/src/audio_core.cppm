@@ -8,14 +8,13 @@ module;
 
 #include <stdfloat>
 
-#include <samplerate.h>
-
 #include <synthclone/config.h>
 
 export module synthclone.core:audio_core;
 
 import std;
 
+import synthclone.external.samplerate;
 import synthclone.util;
 
 import :audio_gen;

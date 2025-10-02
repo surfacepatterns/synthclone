@@ -9,15 +9,14 @@ module;
 
 #include <cerrno>
 
-#include <unistd.h>
-
-#include <boost/scope/scope_fail.hpp>
-
 #include <synthclone/config.h>
 
 export module synthclone.util:filesystem;
 
 import std;
+
+import synthclone.external.boost;
+import synthclone.external.posix;
 
 import :utility;
 

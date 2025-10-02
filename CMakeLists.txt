@@ -47,5 +47,5 @@ enable_testing()
 
 synthclone_initialize_config()
 
-#add_subdirectory(app)
 add_subdirectory(modules)
+add_subdirectory(synthclone)

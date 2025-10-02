@@ -1,11 +1,10 @@
 module;
 
-#include <boost/core/demangle.hpp>
-
 export module synthclone.test:debug;
 
 import std;
 
+import synthclone.external.boost;
 import synthclone.util;
 
 import :concepts;

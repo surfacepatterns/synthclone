@@ -1,0 +1,55 @@
+module;
+
+#include <synthclone/config.h>
+
+export module synthclone.core:project;
+
+import std;
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::project_version_major
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    /**
+     * The major portion of the `synthclone` version number.
+     */
+
+    export
+    constexpr std::uint_least32_t project_version_major =
+        ${CMAKE_PROJECT_VERSION_MAJOR};
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::project_version_minor
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    /**
+     * The minor portion of the `synthclone` version number.
+     */
+
+    export
+    constexpr std::uint_least32_t project_version_minor =
+        ${CMAKE_PROJECT_VERSION_MINOR};
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::project_version_patch
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    /**
+     * The patch portion of the `synthclone` version number.
+     */
+
+    export
+    constexpr std::uint_least32_t project_version_patch =
+        ${CMAKE_PROJECT_VERSION_PATCH};
+
+}

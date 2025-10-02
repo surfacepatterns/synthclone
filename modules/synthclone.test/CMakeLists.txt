@@ -6,8 +6,13 @@ include(../../common/cmake/config.cmake)
 # library
 ###############################################################################
 
-add_library(synthclone_test SHARED)
-add_dependencies(synthclone_test synthclone_core synthclone_util)
+add_library(synthclone_test OBJECT)
+add_dependencies(
+    synthclone_test
+    synthclone_core
+    synthclone_external_boost
+    synthclone_util
+)
 
 # module
 
@@ -29,9 +34,15 @@ find_package(
 )
 target_link_libraries(
     synthclone_test
+    PRIVATE
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
     synthclone_core
+    synthclone_external_boost
+    synthclone_external_posix
+    synthclone_external_samplerate
+    synthclone_external_sndfile
+    synthclone_external_utf8proc
     synthclone_util
 )
 
-synthclone_configure_library_target(synthclone_test)
+synthclone_configure_internal_library_target(synthclone_test)

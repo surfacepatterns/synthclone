@@ -1,4 +1,4 @@
-export module synthclone.core.tests;
+export module synthclone.core.test;
 
 export import :audio;
 export import :audio_decoder;

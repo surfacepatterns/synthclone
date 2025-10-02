@@ -111,7 +111,7 @@ namespace {
 
 BOOST_AUTO_TEST_SUITE(unicode_core)
 
-// Many of these tests are based on tests in `utf8core`.
+// Many of these tests are based on tests in `utf8proc`.
 
 BOOST_AUTO_TEST_CASE(codepoint_categories)
 {
