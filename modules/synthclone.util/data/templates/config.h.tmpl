@@ -1,11 +1,8 @@
 #ifndef SYNTHCLONE_CONFIG_H
 #define SYNTHCLONE_CONFIG_H
 
-#define SYNTHCLONE_VERSION_MAJOR ${synthclone_VERSION_MAJOR}
-#define SYNTHCLONE_VERSION_MINOR ${synthclone_VERSION_MINOR}
-
 #define SYNTHCLONE_LIB_NAMESPACE \
     synthclone::inline \
-    v_${synthclone_VERSION_MAJOR}_${synthclone_VERSION_MINOR}
+    v_${CMAKE_PROJECT_VERSION_MAJOR}_${CMAKE_PROJECT_VERSION_MINOR}
 
 #endif

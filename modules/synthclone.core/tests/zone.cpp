@@ -3,7 +3,7 @@
 import std;
 
 import synthclone.core;
-import synthclone.core.tests;
+import synthclone.core.test;
 import synthclone.test;
 
 namespace {

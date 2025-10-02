@@ -6,7 +6,13 @@ include(../../common/cmake/config.cmake)
 # library
 ###############################################################################
 
-add_library(synthclone_util SHARED)
+add_library(synthclone_util OBJECT)
+add_dependencies(
+    synthclone_util
+    synthclone_external_boost
+    synthclone_external_posix
+    synthclone_external_utf8proc
+)
 
 # config header
 configure_file(
@@ -29,16 +35,26 @@ target_sources(
     FILES ${synthclone-util-sources}
 )
 
-target_link_libraries(synthclone_util utf8proc)
+target_link_libraries(
+    synthclone_util
+    PRIVATE
+    synthclone_external_boost
+    synthclone_external_posix
+    synthclone_external_utf8proc
+)
 
-synthclone_configure_library_target(synthclone_util)
+synthclone_configure_internal_library_target(synthclone_util)
 
 ###############################################################################
 # tests
 ###############################################################################
 
 add_executable(run-synthclone-util-tests)
-add_dependencies(run-synthclone-util-tests synthclone_test synthclone_util)
+add_dependencies(
+    run-synthclone-util-tests
+    synthclone_test
+    synthclone_util
+)
 add_test(
     NAME run-synthclone-util-tests
     COMMAND run-synthclone-util-tests
@@ -62,7 +78,10 @@ find_package(
 )
 target_link_libraries(
     run-synthclone-util-tests
-    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+    PRIVATE
+    synthclone_external_boost
+    synthclone_external_posix
+    synthclone_external_utf8proc
     synthclone_test
     synthclone_util
 )

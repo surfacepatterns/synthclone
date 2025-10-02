@@ -25,15 +25,14 @@
 
 module;
 
-#include <boost/mp11/list.hpp>
-
-#include <utf8proc.h>
-
 #include <synthclone/config.h>
 
 export module synthclone.util:unicode_core;
 
 import std;
+
+import synthclone.external.boost;
+import synthclone.external.utf8proc;
 
 import :debug;
 import :scalar;

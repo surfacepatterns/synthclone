@@ -1,6 +1,6 @@
 // This code was auto-generated at:
 //
-//     2025-08-29 22:17:25.009213+00:00
+//     2025-10-01 18:28:40.121561+00:00
 //
 // Do *not* edit this code.  Any changes made to this code will be lost.
 
@@ -9,7 +9,7 @@
 import std;
 
 import synthclone.core;
-import synthclone.core.tests;
+import synthclone.core.test;
 
 BOOST_AUTO_TEST_SUITE(audio_io_encoder_gen)
 BOOST_AUTO_TEST_CASE(test_aiff_pcm_s8_file_8000Hz_1ch){synthclone::verify_audio_encoder<synthclone::audio_format::aiff,synthclone::audio_codec::pcm_s8,synthclone::audio_endianness::file,8000,1,0,true,0.007812559604644775>();}

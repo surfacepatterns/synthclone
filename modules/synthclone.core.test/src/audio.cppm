@@ -2,7 +2,7 @@ module;
 
 #include <boost/test/unit_test.hpp>
 
-export module synthclone.core.tests:audio;
+export module synthclone.core.test:audio;
 
 import std;
 

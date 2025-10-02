@@ -7,15 +7,13 @@
 
 module;
 
-#include <boost/mp11/list.hpp>
-#include <boost/url/parse.hpp>
-
 #include <synthclone/config.h>
 
 export module synthclone.core:metadata;
 
 import std;
 
+import synthclone.external.boost;
 import synthclone.util;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -85,7 +83,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         if (! result) [[unlikely]] {
             throw metadata_error(
                 std::format(
-                    "boost::url::parse_absolute_uri({0:?}): failed to parse "
+                    "boost::urls::parse_absolute_uri({0:?}): failed to parse "
                     "metadata URL: {1}",
                     s, result.error().message()));
         }
@@ -94,7 +92,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
         assume(
             url_view.has_scheme(),
-            "boost::url::parse_absolute_uri({0:?}) returned url view with "
+            "boost::urls::parse_absolute_uri({0:?}) returned url view with "
             "empty scheme",
             s);
 

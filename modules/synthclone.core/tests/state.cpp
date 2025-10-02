@@ -1,9 +1,9 @@
-#include <boost/container/flat_map.hpp>
 #include <boost/test/unit_test.hpp>
 
 import std;
 
 import synthclone.core;
+import synthclone.external.boost;
 import synthclone.test;
 import synthclone.util;
 

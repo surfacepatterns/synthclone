@@ -4,13 +4,12 @@ module;
 
 #include <boost/test/unit_test.hpp>
 
-#include <kissfft/kiss_fftr.h>
-
-export module synthclone.core.tests:frequency;
+export module synthclone.core.test:frequency;
 
 import std;
 
 import synthclone.core;
+import synthclone.external.kissfft;
 import synthclone.util;
 
 import :audio;
@@ -46,8 +45,6 @@ namespace synthclone {
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace synthclone {
-
-    static_assert(std::same_as<audio_sample, kiss_fft_scalar>);
 
     struct kissfft_config_destroyer final {
 

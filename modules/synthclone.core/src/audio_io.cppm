@@ -6,16 +6,13 @@
 
 module;
 
-#include <boost/interprocess/mapped_region.hpp>
-
-#include <samplerate.h>
-
 #include <synthclone/config.h>
 
 export module synthclone.core:audio_io;
 
 import std;
 
+import synthclone.external.boost;
 import synthclone.util;
 
 import :audio_core;

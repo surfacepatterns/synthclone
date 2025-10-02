@@ -8,16 +8,14 @@ module;
 
 #include <cerrno>
 
-#include <boost/scope/scope_exit.hpp>
-
-#include <sndfile.h>
-
 #include <synthclone/config.h>
 
 export module synthclone.core:sndfile_io;
 
 import std;
 
+import synthclone.external.boost;
+import synthclone.external.sndfile;
 import synthclone.util;
 
 import :audio_core;

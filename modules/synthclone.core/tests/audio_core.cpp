@@ -1,7 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 import synthclone.core;
-import synthclone.core.tests;
+import synthclone.core.test;
 import synthclone.test;
 import synthclone.util;
 

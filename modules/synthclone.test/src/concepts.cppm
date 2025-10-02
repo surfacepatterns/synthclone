@@ -1,10 +1,8 @@
-module;
-
-#include <boost/type_traits/has_left_shift.hpp>
-
 export module synthclone.test:concepts;
 
 import std;
+
+import synthclone.external.boost;
 
 ///////////////////////////////////////////////////////////////////////////////
 // synthclone::ostream_printable

@@ -6,14 +6,13 @@
 
 module;
 
-#include <sndfile.h>
-
 #include <synthclone/config.h>
 
 export module synthclone.core:sndfile_core;
 
 import std;
 
+import synthclone.external.sndfile;
 import synthclone.util;
 
 ///////////////////////////////////////////////////////////////////////////////

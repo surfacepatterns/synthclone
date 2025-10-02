@@ -2,7 +2,7 @@ module;
 
 #include <boost/test/unit_test.hpp>
 
-export module synthclone.core.tests:audio_resampler;
+export module synthclone.core.test:audio_resampler;
 
 import std;
 

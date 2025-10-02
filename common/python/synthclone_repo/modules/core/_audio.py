@@ -16,7 +16,7 @@ from ._layout import REFERENCE_AUDIO_PATH as _REFERENCE_AUDIO_PATH
 # AudioEndiannessTraits
 ###############################################################################
 
-class AudioEndiannessTraits(_ScopedEnumElementTraits):
+class AudioEndiannessTraits(_EnumElementTraits):
 
     __slots__ = ()
 
@@ -129,7 +129,7 @@ def _make_simple_audio_verification_traits_factory(
     traits_map = dict(sample_rate_traits)
     return lambda r: traits_map.get(r, default_traits)
 
-class AudioCodecTraits(_ScopedEnumElementTraits):
+class AudioCodecTraits(_EnumElementTraits):
 
     __slots__ = ("__bit_depth", "__filter", "__verification")
 
@@ -573,7 +573,7 @@ type AudioFormatFilterCallable = \
 # AudioFormatTraits
 ###############################################################################
 
-class AudioFormatTraits(_ScopedEnumElementTraits):
+class AudioFormatTraits(_EnumElementTraits):
 
     __slots__ = ("__extension", "__filter")
 
@@ -1249,7 +1249,7 @@ def is_audio_supported(
 # AudioSeekOriginTraits
 ###############################################################################
 
-class AudioSeekOriginTraits(_ScopedEnumElementTraits):
+class AudioSeekOriginTraits(_EnumElementTraits):
 
     __slots__ = ()
 

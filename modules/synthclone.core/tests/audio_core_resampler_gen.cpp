@@ -1,6 +1,6 @@
 // This code was auto-generated at:
 //
-//     2025-08-29 22:17:29.354106+00:00
+//     2025-10-01 18:29:04.587326+00:00
 //
 // Do *not* edit this code.  Any changes made to this code will be lost.
 
@@ -8,7 +8,7 @@
 
 import std;
 
-import synthclone.core.tests;
+import synthclone.core.test;
 
 BOOST_AUTO_TEST_SUITE(audio_core_resampler_gen)
 BOOST_AUTO_TEST_CASE(test_resampler_8000Hz_to_8000Hz_1ch_256_256){synthclone::verify_resampled_audio<8000,8000,1,256,256,6.931667268210247e-05>();}

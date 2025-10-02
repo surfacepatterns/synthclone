@@ -6,7 +6,7 @@
  * @note
  *   This code was auto-generated at:
  *
- *       2025-09-05 05:59:47.715747+00:00
+ *       2025-09-27 21:09:43.626166+00:00
  *
  *   Do *not* edit this code.  Any changes made to this code will be lost.
  *
@@ -17,13 +17,13 @@
 
 module;
 
-#include <utf8proc.h>
-
 #include <synthclone/config.h>
 
 export module synthclone.util:unicode_gen;
 
 import std;
+
+import synthclone.external.utf8proc;
 
 import :lookup;
 
