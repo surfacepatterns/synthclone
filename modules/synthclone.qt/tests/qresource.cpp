@@ -2,7 +2,7 @@
 
 import std;
 
-import synthclone.external.qt;
+import synthclone.external.qt.core;
 import synthclone.qt;
 import synthclone.test;
 import synthclone.util;
@@ -12,7 +12,7 @@ BOOST_AUTO_TEST_SUITE(qresource)
 BOOST_AUTO_TEST_CASE(load_bytes)
 {
     synthclone::verify_eq(
-        QByteArray("bar\n"),
+        ::QByteArray("bar\n"),
         synthclone::load_qresource_bytes(
             ":/synthclone.qt.test/qresource/foo"));
 

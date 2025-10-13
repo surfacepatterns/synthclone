@@ -1,27 +1,22 @@
-project(synthclone.external.utf8proc LANGUAGES CXX)
+project(module-synthclone.external.utf8proc LANGUAGES CXX)
 
 include(../../common/cmake/config.cmake)
 
-###############################################################################
-# library
-###############################################################################
+file(GLOB module-synthclone.external.utf8proc-sources src/*.cppm)
 
-add_library(synthclone_external_utf8proc OBJECT)
+function(synthclone_make_module type)
+    set(target "module-synthclone.external.utf8proc-${type}")
+    add_library(${target} OBJECT)
+    target_sources(
+        ${target}
+        PUBLIC
+        FILE_SET CXX_MODULES
+        TYPE CXX_MODULES
+        FILES ${module-synthclone.external.utf8proc-sources}
+    )
+    target_link_libraries(${target} PRIVATE utf8proc)
+    synthclone_configure_module(${target} ${type})
+endfunction()
 
-# module
-file(GLOB synthclone-external-utf8proc-sources src/*.cppm)
-target_sources(
-    synthclone_external_utf8proc
-    PUBLIC
-    FILE_SET CXX_MODULES
-    TYPE CXX_MODULES
-    FILES ${synthclone-external-utf8proc-sources}
-)
-
-target_link_libraries(
-    synthclone_external_utf8proc
-    PRIVATE
-    utf8proc
-)
-
-synthclone_configure_external_library_target(synthclone_external_utf8proc)
+synthclone_make_module(object)
+synthclone_make_module(shared)

@@ -1,10 +1,8 @@
-module;
-
 export module synthclone.test:debug;
 
 import std;
 
-import synthclone.external.boost;
+import synthclone.external.boost.core;
 import synthclone.util;
 
 import :concepts;

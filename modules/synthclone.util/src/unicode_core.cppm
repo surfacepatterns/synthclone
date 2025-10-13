@@ -31,7 +31,7 @@ export module synthclone.util:unicode_core;
 
 import std;
 
-import synthclone.external.boost;
+import synthclone.external.boost.mp11;
 import synthclone.external.utf8proc;
 
 import :debug;

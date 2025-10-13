@@ -1,6 +1,6 @@
 export module synthclone.qt:qwidget;
 
-import synthclone.external.qt;
+import synthclone.external.qt.widgets;
 import synthclone.util;
 
 ///////////////////////////////////////////////////////////////////////////////

@@ -21,7 +21,8 @@ export module synthclone.core:state;
 
 import std;
 
-import synthclone.external.boost;
+import synthclone.external.boost.container;
+import synthclone.external.boost.mp11;
 import synthclone.util;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1904,9 +1905,13 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     const
     {
         const auto iter = find(key);
-        verify(
-            iter != end(),
-            "key {0:?} is not associated with a value in this state map", key);
+        if (iter == end()) [[unlikely]] {
+            throw state_error(
+                std::format(
+                    "key {0:?} is not associated with a value in this state "
+                    "map",
+                    key));
+        }
         return iter->second;
     }
 

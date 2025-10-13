@@ -7,7 +7,9 @@ export module synthclone.app:about;
 import std;
 
 import synthclone.core;
-import synthclone.external.qt;
+import synthclone.external.qt.core;
+import synthclone.external.qt.gui;
+import synthclone.external.qt.widgets;
 import synthclone.qt;
 import synthclone.util;
 

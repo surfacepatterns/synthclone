@@ -3,7 +3,7 @@
 import std;
 
 import synthclone.core;
-import synthclone.external.boost;
+import synthclone.external.boost.container;
 import synthclone.test;
 import synthclone.util;
 
@@ -328,7 +328,7 @@ namespace {
         (synthclone::verify_eq(args.second, map.at(args.first)), ...);
         (synthclone::verify_eq(true, map.contains(args.first)), ...);
 
-        BOOST_CHECK_THROW(map.at("new-key"), synthclone::verification_error);
+        BOOST_CHECK_THROW(map.at("new-key"), synthclone::state_error);
         BOOST_CHECK(! map.contains("new-key"));
 
         constexpr auto expected_empty_result = sizeof...(Args) == 0;

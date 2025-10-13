@@ -1,27 +1,22 @@
-project(synthclone.external.samplerate LANGUAGES CXX)
+project(module-synthclone.external.samplerate LANGUAGES CXX)
 
 include(../../common/cmake/config.cmake)
 
-###############################################################################
-# library
-###############################################################################
+file(GLOB module-synthclone.external.samplerate-sources src/*.cppm)
 
-add_library(synthclone_external_samplerate OBJECT)
+function(synthclone_make_module type)
+    set(target "module-synthclone.external.samplerate-${type}")
+    add_library(${target} OBJECT)
+    target_sources(
+        ${target}
+        PUBLIC
+        FILE_SET CXX_MODULES
+        TYPE CXX_MODULES
+        FILES ${module-synthclone.external.samplerate-sources}
+    )
+    target_link_libraries(${target} PRIVATE samplerate)
+    synthclone_configure_module(${target} ${type})
+endfunction()
 
-# module
-file(GLOB synthclone-external-samplerate-sources src/*.cppm)
-target_sources(
-    synthclone_external_samplerate
-    PUBLIC
-    FILE_SET CXX_MODULES
-    TYPE CXX_MODULES
-    FILES ${synthclone-external-samplerate-sources}
-)
-
-target_link_libraries(
-    synthclone_external_samplerate
-    PRIVATE
-    samplerate
-)
-
-synthclone_configure_external_library_target(synthclone_external_samplerate)
+synthclone_make_module(object)
+synthclone_make_module(shared)

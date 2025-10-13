@@ -15,7 +15,7 @@ export module synthclone.util:filesystem;
 
 import std;
 
-import synthclone.external.boost;
+import synthclone.external.boost.scope;
 import synthclone.external.posix;
 
 import :utility;

@@ -2,7 +2,7 @@
 
 import std;
 
-import synthclone.external.qt;
+import synthclone.external.qt.core;
 import synthclone.qt;
 import synthclone.test;
 import synthclone.util;

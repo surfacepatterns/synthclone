@@ -1,21 +1,21 @@
-project(synthclone.external.posix LANGUAGES CXX)
+project(module-synthclone.external.posix LANGUAGES CXX)
 
 include(../../common/cmake/config.cmake)
 
-###############################################################################
-# library
-###############################################################################
+file(GLOB module-synthclone.external.posix-sources src/*.cppm)
 
-add_library(synthclone_external_posix OBJECT)
+function(synthclone_make_module type)
+    set(target "module-synthclone.external.posix-${type}")
+    add_library(${target} OBJECT)
+    target_sources(
+        ${target}
+        PUBLIC
+        FILE_SET CXX_MODULES
+        TYPE CXX_MODULES
+        FILES ${module-synthclone.external.posix-sources}
+    )
+    synthclone_configure_module(${target} ${type})
+endfunction()
 
-# module
-file(GLOB synthclone-external-posix-sources src/*.cppm)
-target_sources(
-    synthclone_external_posix
-    PUBLIC
-    FILE_SET CXX_MODULES
-    TYPE CXX_MODULES
-    FILES ${synthclone-external-posix-sources}
-)
-
-synthclone_configure_external_library_target(synthclone_external_posix)
+synthclone_make_module(object)
+synthclone_make_module(shared)

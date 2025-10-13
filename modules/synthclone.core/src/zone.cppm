@@ -69,15 +69,15 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         midi_control_array controls;
 
         /**
-         * The time the sampler should spend (or spent) capturing audio after
-         * the MIDI parameter are (or were) sent.
+         * The time that should be spent capturing instrument audio after the
+         * MIDI parameters are sent.
          */
 
         audio_duration sample_duration;
 
         /**
-         * The additional time the sampler should spend (or spent) capturing
-         * audio after the MIDI note off event is (or was) sent.
+         * The additional time that should be spent capturing instrument audio
+         * after the MIDI note off event is sent.
          */
 
         audio_duration release_duration;
@@ -93,7 +93,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 namespace SYNTHCLONE_LIB_NAMESPACE {
 
     /**
-     * Contains data used by the sampler to capture an audio sample.
+     * Contains data used when capturing audio from an instrument.
      */
 
     export

@@ -8,6 +8,10 @@ module;
 
 #include <synthclone/config.h>
 
+// The forward declaration needs to be here so the declaration is not attached
+// to the module.
+class QWidget;
+
 export module synthclone.core:component_core;
 
 import std;
@@ -71,8 +75,6 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 // synthclone::component_editor_ops
 ///////////////////////////////////////////////////////////////////////////////
 
-class QWindow;
-
 namespace SYNTHCLONE_LIB_NAMESPACE {
 
     /**
@@ -105,8 +107,8 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
          *
          * @param component
          *   The component to be edited.
-         * @param window
-         *   The window to use to display the edit interface.
+         * @param parent
+         *   The widget to use as the parent of the edit interface.
          * @param stop_token
          *   A stop token that will be set if the operation is cancelled.
          *
@@ -116,7 +118,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
         virtual
         std::generator<M>
-        edit(T& component, ::QWindow& window, std::stop_token stop_token) = 0;
+        edit(T& component, ::QWidget* parent, std::stop_token stop_token) = 0;
 
     protected:
 
@@ -205,8 +207,8 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 namespace SYNTHCLONE_LIB_NAMESPACE {
 
     /**
-     * Used to initialize `component_type` instances using aggregate
-     * initialization.
+     * Common type used to initialize `component_type` instances using
+     * aggregate initialization.
      *
      * @tparam C
      *   The core operations type.
@@ -218,7 +220,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
     export
     template<class C, class E, class S>
-    struct component_type_init_args {
+    struct component_type_init_args final {
 
         /**
          * The component core operations.
@@ -227,10 +229,10 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         std::unique_ptr<C> core_ops;
 
         /**
-         * The component editor operations.
+         * The component external editor operations.
          */
 
-        std::unique_ptr<E> editor_ops;
+        std::unique_ptr<E> external_editor_ops;
 
         /**
          * The component state operations.
@@ -242,7 +244,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
          * Metadata describing components of the given component type.
          */
 
-        synthclone::metadata metadata;
+        metadata_init_args metadata;
 
     };
 
@@ -266,18 +268,19 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     template<bool R, class E>
     constexpr
     std::unique_ptr<E>&&
-    verify_component_editor_ops(std::unique_ptr<E>&& editor_ops)
+    verify_component_external_editor_ops(std::unique_ptr<E>&& editor_ops)
     {
         if constexpr(R) {
             verify(
-                editor_ops != nullptr, "`editor_ops` cannot be set to null");
+                editor_ops != nullptr,
+                "`external_editor_ops` cannot be set to null");
         }
         return std::move(editor_ops);
     }
 
     /**
-     * Contains operations and metadata corresponding to a specific component
-     * type.
+     * Contains base operations and metadata corresponding to a specific
+     * component type.
      *
      * @tparam C
      *   The core operations type.
@@ -285,31 +288,23 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
      *   The edit operations type.
      * @tparam S
      *   The state operations type.
-     * @tparam EditorOpsRequired
-     *   Whether or not editor operations are required for the component type.
+     * @tparam A
+     *   The initialization arguments type.
+     * @tparam ExternalEditorOpsRequired
+     *   Whether or not external editor operations are required for the
+     *   component type.
      */
 
     export
-    template<class C, class E, class S, bool EditorOpsRequired = false>
-    class component_type final: private noncopyable {
+    template<
+        class C,
+        class E,
+        class S,
+        bool ExternalEditorOpsRequired
+    >
+    class component_type: private noncopyable {
 
     public:
-
-        /**
-         * Constructs a `component_type` instance.
-         *
-         * @param args
-         *   The data to use to populate the `component_type` instance.
-         */
-
-        constexpr
-        component_type(component_type_init_args<C, E, S> args):
-            component_type(
-                std::move(args.core_ops), std::move(args.editor_ops),
-                std::move(args.state_ops), std::move(args.metadata))
-        {
-            // empty
-        }
 
         /**
          * Gets the core operations for the component type.
@@ -327,19 +322,19 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         }
 
         /**
-         * Gets the (possibly optional) editor operations for the component
-         * type.
+         * Gets the (possibly optional) external editor operations for the
+         * component type.
          *
          * @return
-         *   A pointer to the editor operations.
+         *   A pointer to the external editor operations.
          */
 
         constexpr
         const std::unique_ptr<E>&
-        editor_ops()
+        external_editor_ops()
         const noexcept
         {
-            return editor_ops_;
+            return external_editor_ops_;
         }
 
         /**
@@ -372,29 +367,32 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
             return state_ops_;
         }
 
-    private:
+    protected:
 
         constexpr
         component_type(
             std::unique_ptr<C>&& core_ops,
-            std::unique_ptr<E>&& editor_ops,
+            std::unique_ptr<E>&& external_editor_ops,
             std::unique_ptr<S>&& state_ops,
-            class metadata&& metadata
+            metadata_init_args&& metadata
         ):
             metadata_(std::move(metadata)),
             core_ops_(verify_component_core_ops(std::move(core_ops))),
-            editor_ops_(
-                verify_component_editor_ops<EditorOpsRequired>(
-                    std::move(editor_ops))),
+            external_editor_ops_(
+                verify_component_external_editor_ops<
+                    ExternalEditorOpsRequired
+                >(std::move(external_editor_ops))),
             state_ops_(std::move(state_ops))
         {
             // empty
         }
 
+    private:
+
         class metadata metadata_;
 
         std::unique_ptr<C> core_ops_;
-        std::unique_ptr<E> editor_ops_;
+        std::unique_ptr<E> external_editor_ops_;
         std::unique_ptr<S> state_ops_;
 
     };

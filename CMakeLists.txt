@@ -14,14 +14,19 @@ set(CMAKE_CXX_MODULE_STD 1)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(
-    CMAKE_CXX_FLAGS
-    "${CMAKE_CXX_FLAGS} --stdlib=libstdc++" #" -Weverything -Werror -pedantic"
-)
+#" -Weverything -Werror -pedantic"
+set(SYNTHCLONE_CXX_FLAGS "--stdlib=libstdc++")
+if(NOT DEFINED CMAKE_CXX_FLAGS)
+    set(CMAKE_CXX_FLAGS ${SYNTHCLONE_CXX_FLAGS})
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SYNTHCLONE_CXX_FLAGS}")
+endif()
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/bin)
+set(SYNTHCLONE_BUILD_DIR "${CMAKE_BINARY_DIR}/build")
+set(SYNTHCLONE_HEADER_OUTPUT_DIRECTORY "${SYNTHCLONE_BUILD_DIR}/include")
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${SYNTHCLONE_BUILD_DIR}/lib")
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${SYNTHCLONE_BUILD_DIR}/lib")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${SYNTHCLONE_BUILD_DIR}/bin")
 
 set(CMAKE_COMPILE_WARNING_AS_ERROR 1)
 
@@ -45,7 +50,8 @@ include(common/cmake/config.cmake)
 
 enable_testing()
 
-synthclone_initialize_config()
-
+add_subdirectory(apps)
 add_subdirectory(modules)
-add_subdirectory(synthclone)
+add_subdirectory(plugins)
+
+synthclone_configure_project()

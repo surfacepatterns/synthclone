@@ -120,6 +120,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     export
     using importer_run_message = std::variant<
         component_progress_message,
+        component_state_changed_message,
         component_status_message,
         importer_zone_message
     >;
@@ -276,11 +277,31 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
      */
 
     export
-    using importer_type = component_type<
+    class importer_type final: public component_type<
         importer_core_ops,
         importer_editor_ops,
         importer_state_ops,
         true
-    >;
+    > {
+
+    public:
+
+        /**
+         * Constructs an `importer_type` instance.
+         *
+         * @param args
+         *   The data to use to populate the `importer_type` instance.
+         */
+
+        constexpr
+        importer_type(importer_type_init_args args):
+            component_type(
+                std::move(args.core_ops), std::move(args.external_editor_ops),
+                std::move(args.state_ops), std::move(args.metadata))
+        {
+            // empty
+        }
+
+    };
 
 }

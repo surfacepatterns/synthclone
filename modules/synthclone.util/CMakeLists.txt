@@ -1,89 +1,92 @@
-project(synthclone.util LANGUAGES CXX)
+project(module-synthclone.util LANGUAGES CXX)
 
 include(../../common/cmake/config.cmake)
 
 ###############################################################################
-# library
+# module
 ###############################################################################
 
-add_library(synthclone_util OBJECT)
-add_dependencies(
-    synthclone_util
-    synthclone_external_boost
-    synthclone_external_posix
-    synthclone_external_utf8proc
-)
-
-# config header
 configure_file(
     "data/templates/config.h.tmpl"
-    "${CMAKE_CURRENT_BINARY_DIR}/include/synthclone/config.h"
-)
-target_include_directories(
-    synthclone_util
-    PUBLIC
-    "${CMAKE_CURRENT_BINARY_DIR}/include"
+    "${SYNTHCLONE_HEADER_OUTPUT_DIRECTORY}/synthclone/config.h"
 )
 
-# module
-file(GLOB synthclone-util-sources src/*.cppm)
-target_sources(
-    synthclone_util
-    PUBLIC
-    FILE_SET CXX_MODULES
-    TYPE CXX_MODULES
-    FILES ${synthclone-util-sources}
-)
+file(GLOB module-synthclone.util-sources src/*.cppm)
 
-target_link_libraries(
-    synthclone_util
-    PRIVATE
-    synthclone_external_boost
-    synthclone_external_posix
-    synthclone_external_utf8proc
-)
+function(synthclone_make_module type)
+    set(target "module-synthclone.util-${type}")
+    add_library(${target} OBJECT)
+    add_dependencies(
+        ${target}
+        module-synthclone.external.boost.mp11-${type}
+        module-synthclone.external.boost.scope-${type}
+        module-synthclone.external.posix-${type}
+        module-synthclone.external.utf8proc-${type}
+    )
+    target_include_directories(
+        ${target}
+        PUBLIC
+        ${SYNTHCLONE_HEADER_OUTPUT_DIRECTORY}
+    )
+    target_sources(
+        ${target}
+        PUBLIC
+        FILE_SET CXX_MODULES
+        TYPE CXX_MODULES
+        FILES
+        ${module-synthclone.util-sources}
+    )
+    target_link_libraries(
+        ${target}
+        PRIVATE
+        module-synthclone.external.boost.mp11-${type}
+        module-synthclone.external.boost.scope-${type}
+        module-synthclone.external.posix-${type}
+        module-synthclone.external.utf8proc-${type}
+    )
+    synthclone_configure_module(${target} ${type})
+endfunction()
 
-synthclone_configure_internal_library_target(synthclone_util)
+synthclone_make_module(object)
+synthclone_make_module(shared)
 
 ###############################################################################
 # tests
 ###############################################################################
 
-add_executable(run-synthclone-util-tests)
-add_dependencies(
-    run-synthclone-util-tests
-    synthclone_test
-    synthclone_util
-)
-add_test(
-    NAME run-synthclone-util-tests
-    COMMAND run-synthclone-util-tests
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-)
+file(GLOB module-synthclone.util-tests tests/*.cpp)
 
-# tests
-file(GLOB synthclone-util-tests tests/*.cpp)
-target_sources(
-    run-synthclone-util-tests
-    PUBLIC
-    ${synthclone-util-tests}
-)
+function(synthclone_make_tests)
+    set(target "run-synthclone-util-tests")
+    add_executable(${target})
+    add_dependencies(
+        ${target}
+        module-synthclone.test-object
+        module-synthclone.util-object
+    )
+    add_test(
+        NAME ${target}
+        COMMAND ${target}
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    )
+    target_sources(
+        ${target}
+        PRIVATE
+        ${module-synthclone.util-tests}
+    )
+    target_link_libraries(
+        ${target}
+        PRIVATE
+        module-synthclone.external.boost.core-object
+        module-synthclone.external.boost.mp11-object
+        module-synthclone.external.boost.scope-object
+        module-synthclone.external.boost.type_traits-object
+        module-synthclone.external.posix-object
+        module-synthclone.external.utf8proc-object
+        module-synthclone.test-object
+        module-synthclone.util-object
+    )
+    synthclone_configure_test(${target})
+endfunction()
 
-find_package(
-    Boost
-    CONFIG
-    REQUIRED
-    COMPONENTS
-    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-)
-target_link_libraries(
-    run-synthclone-util-tests
-    PRIVATE
-    synthclone_external_boost
-    synthclone_external_posix
-    synthclone_external_utf8proc
-    synthclone_test
-    synthclone_util
-)
-
-synthclone_configure_test_target(run-synthclone-util-tests)
+synthclone_make_tests()

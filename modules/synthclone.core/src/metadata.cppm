@@ -13,7 +13,8 @@ export module synthclone.core:metadata;
 
 import std;
 
-import synthclone.external.boost;
+import synthclone.external.boost.mp11;
+import synthclone.external.boost.urls;
 import synthclone.util;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -144,12 +145,25 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// synthclone::metadata_init_args
+// synthclone::metadata_element_sequence
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace SYNTHCLONE_LIB_NAMESPACE {
 
+    /**
+     * The `metadata` element sequence type used by other `metadata` types.
+     */
+
+    export
     using metadata_element_sequence = std::vector<metadata_element>;
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::metadata_init_args
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
 
     /**
      * Used to initialize `metadata` instances using aggregate initialization.
