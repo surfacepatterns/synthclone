@@ -4,7 +4,7 @@ import std;
 
 import synthclone.core;
 import synthclone.core.test;
-import synthclone.external.boost;
+import synthclone.external.boost.interprocess;
 import synthclone.test;
 import synthclone.util;
 

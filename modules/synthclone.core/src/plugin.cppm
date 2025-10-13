@@ -14,11 +14,11 @@ import std;
 
 import synthclone.util;
 
-import :effect;
+import :capture_effect;
 import :exporter;
 import :importer;
+import :instrument;
 import :metadata;
-import :sampler;
 import :session;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -44,16 +44,16 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         ~plugin_instance() = default;
 
         /**
-         * Gets an `effect_type` instance for each effect type provided by this
-         * plugin.
+         * Gets a `capture_effect_type` instance for each capture effect type
+         * provided by this plugin.
          *
          * @return
-         *   A generator yielding `effect_type` instances.
+         *   A generator yielding `capture_effect_type` instances.
          */
 
         virtual
-        std::generator<effect_type>
-        effect_types()
+        std::generator<capture_effect_type>
+        capture_effect_types()
         {
             co_return;
         }
@@ -89,16 +89,16 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         }
 
         /**
-         * Gets a `sampler_type` instance for each sampler type provided by
-         * this plugin.
+         * Gets an `instrument_type` instance for each instrument type provided
+         * by this plugin.
          *
          * @return
-         *   A generator yielding `sampler_type` instances.
+         *   A generator yielding `instrument_type` instances.
          */
 
         virtual
-        std::generator<sampler_type>
-        sampler_types()
+        std::generator<instrument_type>
+        instrument_types()
         {
             co_return;
         }

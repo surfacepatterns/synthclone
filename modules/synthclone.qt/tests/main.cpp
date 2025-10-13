@@ -4,7 +4,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-import synthclone.external.qt;
+import synthclone.external.qt.widgets;
 
 bool
 init_unit_tests()

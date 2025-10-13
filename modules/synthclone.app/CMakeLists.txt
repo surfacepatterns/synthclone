@@ -1,84 +1,81 @@
-project(synthclone.app LANGUAGES CXX)
+project(module-synthclone.app LANGUAGES CXX)
 
 include(../../common/cmake/config.cmake)
 
-#find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
 ###############################################################################
-# library
+# module
 ###############################################################################
 
-qt_add_library(synthclone_app OBJECT)
-add_dependencies(
-    synthclone_app
-    synthclone_core
-    synthclone_external_qt
-    synthclone_qt
-    synthclone_util
-)
-
-# cmake build information submodule
 configure_file(
     "data/templates/cmake.cppm.tmpl"
     "${CMAKE_CURRENT_BINARY_DIR}/modules/cmake.cppm"
 )
-
-# ui files
-qt_add_ui(
-    synthclone_app
-    SOURCES
-    data/ui/about_dialog.ui
-)
-
-# resource files
-qt_add_resources(
-    synthclone_app "synthclone.app"
-    PREFIX "/synthclone.app"
-    BASE "../.."
-    FILES
-    "../../LICENSE.md"
-    "../../README.md"
-)
-
-# module
 file(
     GLOB
-    synthclone-app-sources
+    module-synthclone.app-sources
     src/*.cppm
     ${CMAKE_CURRENT_BINARY_DIR}/modules/*.cppm
 )
-target_sources(
-    synthclone_app
-    PUBLIC
-    FILE_SET CXX_MODULES
-    TYPE CXX_MODULES
-    BASE_DIRS
-    src
-    ${CMAKE_CURRENT_BINARY_DIR}/modules
-    FILES ${synthclone-app-sources}
-)
 
-target_include_directories(
-    synthclone_app
-    PUBLIC
-    "${CMAKE_CURRENT_BINARY_DIR}/include"
-)
+function(synthclone_make_module type)
+    set(target "module-synthclone.app-${type}")
+    qt_add_library(${target} OBJECT)
+    add_dependencies(
+        ${target}
+        module-synthclone.core-${type}
+        module-synthclone.external.qt.core-${type}
+        module-synthclone.external.qt.gui-${type}
+        module-synthclone.external.qt.widgets-${type}
+        module-synthclone.qt-${type}
+        module-synthclone.util-${type}
+    )
+    qt_add_ui(
+        ${target}
+        SOURCES
+        data/ui/about_dialog.ui
+    )
+    qt_add_resources(
+        ${target}
+        "synthclone.app"
+        PREFIX "/synthclone.app"
+        BASE "../.."
+        FILES
+        "../../LICENSE.md"
+        "../../README.md"
+    )
+    target_sources(
+        ${target}
+        PUBLIC
+        FILE_SET CXX_MODULES
+        TYPE CXX_MODULES
+        BASE_DIRS
+        src
+        ${CMAKE_CURRENT_BINARY_DIR}/modules
+        FILES ${module-synthclone.app-sources}
+    )
+    target_link_libraries(
+        ${target}
+        PRIVATE
+        module-synthclone.core-${type}
+        module-synthclone.external.qt.core-${type}
+        module-synthclone.external.qt.gui-${type}
+        module-synthclone.external.qt.widgets-${type}
+        module-synthclone.qt-${type}
+        module-synthclone.util-${type}
 
-target_link_libraries(
-    synthclone_app
-    PRIVATE
-    synthclone_core
-    synthclone_external_boost
-    synthclone_external_posix
-    synthclone_external_qt
-    synthclone_external_samplerate
-    synthclone_external_sndfile
-    synthclone_external_utf8proc
-    synthclone_qt
-    synthclone_util
-    Qt6::Core
-    Qt6::Widgets
-)
+        # These entries are needed for the generated UI code.
+        Qt6::Core
+        Qt6::Widgets
+    )
+    synthclone_configure_module(${target} ${type})
+endfunction()
 
-synthclone_configure_internal_library_target(synthclone_app)
+synthclone_make_module(object)
+
+###############################################################################
+# tests
+###############################################################################
+
+# XXX: Write me.

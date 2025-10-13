@@ -14,7 +14,7 @@ export module synthclone.core:sndfile_io;
 
 import std;
 
-import synthclone.external.boost;
+import synthclone.external.boost.scope;
 import synthclone.external.sndfile;
 import synthclone.util;
 

@@ -12,7 +12,7 @@ export module synthclone.core:audio_io;
 
 import std;
 
-import synthclone.external.boost;
+import synthclone.external.boost.interprocess;
 import synthclone.util;
 
 import :audio_core;

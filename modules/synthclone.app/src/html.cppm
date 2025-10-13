@@ -2,7 +2,8 @@ export module synthclone.app:html;
 
 import std;
 
-import synthclone.external.qt;
+import synthclone.external.qt.core;
+import synthclone.external.qt.gui;
 import synthclone.util;
 
 ///////////////////////////////////////////////////////////////////////////////

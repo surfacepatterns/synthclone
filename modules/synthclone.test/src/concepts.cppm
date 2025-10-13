@@ -2,7 +2,7 @@ export module synthclone.test:concepts;
 
 import std;
 
-import synthclone.external.boost;
+import synthclone.external.boost.type_traits;
 
 ///////////////////////////////////////////////////////////////////////////////
 // synthclone::ostream_printable

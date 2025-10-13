@@ -3,121 +3,117 @@ project(synthclone.core LANGUAGES CXX)
 include(../../common/cmake/config.cmake)
 
 ###############################################################################
-# library
+# module
 ###############################################################################
 
-add_library(synthclone_core OBJECT)
-add_dependencies(
-    synthclone_core
-    synthclone_external_boost
-    synthclone_external_samplerate
-    synthclone_external_sndfile
-    synthclone_util
-)
-
-# project version information submodule
 configure_file(
     "data/templates/project.cppm.tmpl"
     "${CMAKE_CURRENT_BINARY_DIR}/modules/project.cppm"
 )
-
-# module
 file(
     GLOB
-    synthclone-core-sources
+    module-synthclone.core-sources
     src/*.cppm
     ${CMAKE_CURRENT_BINARY_DIR}/modules/*.cppm
 )
-target_sources(
-    synthclone_core
-    PUBLIC
-    FILE_SET CXX_MODULES
-    TYPE CXX_MODULES
-    BASE_DIRS
-    src
-    ${CMAKE_CURRENT_BINARY_DIR}/modules
-    FILES
-    ${synthclone-core-sources}
-)
 
-target_include_directories(
-    synthclone_core
-    PUBLIC
-    "${CMAKE_CURRENT_BINARY_DIR}/include"
-)
+function(synthclone_make_module type)
+    set(target "module-synthclone.core-${type}")
+    add_library(${target} OBJECT)
+    add_dependencies(
+        ${target}
+        module-synthclone.external.boost.container-${type}
+        module-synthclone.external.boost.interprocess-${type}
+        module-synthclone.external.boost.mp11-${type}
+        module-synthclone.external.boost.scope-${type}
+        module-synthclone.external.boost.urls-${type}
+        module-synthclone.external.samplerate-${type}
+        module-synthclone.external.sndfile-${type}
+        module-synthclone.util-${type}
+    )
+    target_include_directories(
+        ${target}
+        PUBLIC
+        ${SYNTHCLONE_HEADER_OUTPUT_DIRECTORY}
+    )
+    target_sources(
+        ${target}
+        PUBLIC
+        FILE_SET CXX_MODULES
+        TYPE CXX_MODULES
+        BASE_DIRS
+        src
+        ${CMAKE_CURRENT_BINARY_DIR}/modules
+        FILES
+        ${module-synthclone.core-sources}
+    )
+    target_link_libraries(
+        ${target}
+        PRIVATE
+        module-synthclone.external.boost.container-${type}
+        module-synthclone.external.boost.interprocess-${type}
+        module-synthclone.external.boost.mp11-${type}
+        module-synthclone.external.boost.scope-${type}
+        module-synthclone.external.boost.urls-${type}
+        module-synthclone.external.samplerate-${type}
+        module-synthclone.external.sndfile-${type}
+        module-synthclone.util-${type}
+    )
+    synthclone_configure_module(${target} ${type})
+endfunction()
 
-target_link_libraries(
-    synthclone_core
-    PRIVATE
-    synthclone_external_boost
-    synthclone_external_posix
-    synthclone_external_samplerate
-    synthclone_external_sndfile
-    synthclone_external_utf8proc
-    synthclone_util
-)
-
-synthclone_configure_internal_library_target(synthclone_core)
+synthclone_make_module(object)
+synthclone_make_module(shared)
 
 ###############################################################################
 # tests
 ###############################################################################
 
-add_executable(run-synthclone-core-tests)
-add_dependencies(
-    run-synthclone-core-tests
-    synthclone_core
-    synthclone_core_test
-    synthclone_external_boost
-    synthclone_external_kissfft
-    synthclone_test
-    synthclone_util
-)
-add_test(
-    NAME run-synthclone-core-tests
-    COMMAND run-synthclone-core-tests
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-)
+file(GLOB module-synthclone.core-tests tests/*.cpp)
 
-# module
-file(GLOB synthclone-core-tests-module tests/*.cppm)
-target_sources(
-    run-synthclone-core-tests
-    PUBLIC
-    FILE_SET CXX_MODULES
-    TYPE CXX_MODULES
-    FILES ${synthclone-core-tests-module}
-)
+function(synthclone_make_tests)
+    set(target "run-synthclone-core-tests")
+    add_executable(${target})
+    add_dependencies(
+        ${target}
+        module-synthclone.core-object
+        module-synthclone.core.test-object
+        module-synthclone.external.boost.container-object
+        module-synthclone.external.boost.interprocess-object
+        module-synthclone.test-object
+        module-synthclone.util-object
+    )
+    add_test(
+        NAME ${target}
+        COMMAND ${target}
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    )
+    target_sources(
+        ${target}
+        PRIVATE
+        ${module-synthclone.core-tests}
+    )
+    target_link_libraries(
+        ${target}
+        PRIVATE
+        module-synthclone.core-object
+        module-synthclone.core.test-object
+        module-synthclone.external.boost.container-object
+        module-synthclone.external.boost.core-object
+        module-synthclone.external.boost.interprocess-object
+        module-synthclone.external.boost.mp11-object
+        module-synthclone.external.boost.scope-object
+        module-synthclone.external.boost.type_traits-object
+        module-synthclone.external.boost.urls-object
+        module-synthclone.external.kissfft-object
+        module-synthclone.external.posix-object
+        module-synthclone.external.samplerate-object
+        module-synthclone.external.sndfile-object
+        module-synthclone.external.utf8proc-object
+        module-synthclone.test-object
+        module-synthclone.util-object
+    )
+    synthclone_configure_test(${target})
+endfunction()
 
-# tests
-file(GLOB synthclone-core-tests tests/*.cpp)
-target_sources(
-    run-synthclone-core-tests
-    PUBLIC
-    ${synthclone-core-tests}
-)
-
-find_package(
-    Boost
-    CONFIG
-    REQUIRED
-    COMPONENTS
-    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-)
-target_link_libraries(
-    run-synthclone-core-tests
-    PRIVATE
-    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-    synthclone_core
-    synthclone_core_test
-    synthclone_external_boost
-    synthclone_external_kissfft
-    synthclone_external_posix
-    synthclone_external_samplerate
-    synthclone_external_sndfile
-    synthclone_external_utf8proc
-    synthclone_test
-    synthclone_util
-)
-
-synthclone_configure_test_target(run-synthclone-core-tests)
+synthclone_make_tests()

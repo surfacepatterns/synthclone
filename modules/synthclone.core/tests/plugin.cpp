@@ -59,10 +59,10 @@ BOOST_AUTO_TEST_CASE(instance)
     std::unique_ptr<synthclone::plugin_instance> instance(
         std::make_unique<test_instance>());
 
-    verify_empty_gen(instance->effect_types());
+    verify_empty_gen(instance->capture_effect_types());
     verify_empty_gen(instance->exporter_types());
     verify_empty_gen(instance->importer_types());
-    verify_empty_gen(instance->sampler_types());
+    verify_empty_gen(instance->instrument_types());
 }
 
 BOOST_AUTO_TEST_CASE(plugin)

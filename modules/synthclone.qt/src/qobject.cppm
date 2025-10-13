@@ -2,8 +2,10 @@ export module synthclone.qt:qobject;
 
 import std;
 
-import synthclone.external.boost;
-import synthclone.external.qt;
+import synthclone.external.boost.callable_traits;
+import synthclone.external.boost.core;
+import synthclone.external.boost.mp11;
+import synthclone.external.qt.core;
 import synthclone.util;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -287,5 +289,52 @@ namespace synthclone {
         ::QObject* old_parent_;
 
     };
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::find_child()
+///////////////////////////////////////////////////////////////////////////////
+
+namespace synthclone {
+
+    export
+    template<std::derived_from<::QObject> T>
+    T*
+    find_child(
+        const ::QObject* parent,
+        std::string_view name,
+        Qt::FindChildOptions options = Qt::FindChildrenRecursively
+    )
+    {
+        verify(parent != nullptr, "parent is set to NULL");
+        return parent->findChild<T*>(
+            ::QAnyStringView(name.data(), name.size()), options);
+    }
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::extract_child()
+///////////////////////////////////////////////////////////////////////////////
+
+namespace synthclone {
+
+    export
+    template<std::derived_from<::QObject> T>
+    T*
+    extract_child(
+        const ::QObject* parent,
+        std::string_view name,
+        Qt::FindChildOptions options = Qt::FindChildrenRecursively
+    )
+    {
+        auto* child = find_child<T>(parent, name, options);
+        verify(
+            child != nullptr,
+            "find_child(const {0}*, {1:?}, {2}): child not found",
+            get_class_name(parent), name, options.toInt());
+        return child;
+    }
 
 }
