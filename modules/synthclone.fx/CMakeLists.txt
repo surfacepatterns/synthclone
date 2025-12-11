@@ -2,7 +2,7 @@ project(module-synthclone.fx LANGUAGES CXX)
 
 include(../../common/cmake/config.cmake)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Core)
 
 ###############################################################################
 # library
@@ -17,15 +17,10 @@ function(synthclone_make_module type)
         ${target}
         module-synthclone.core-${type}
         module-synthclone.external.boost.interprocess-${type}
-        module-synthclone.external.qt.widgets-${type}
+        module-synthclone.external.qt.qml-${type}
         module-synthclone.plugin-${type}
         module-synthclone.qt-${type}
         module-synthclone.util-${type}
-    )
-    qt_add_ui(
-        ${target}
-        SOURCES
-        data/ui/reverser_form.ui
     )
     target_sources(
         ${target}
@@ -39,7 +34,7 @@ function(synthclone_make_module type)
         PRIVATE
         module-synthclone.core-${type}
         module-synthclone.external.boost.interprocess-${type}
-        module-synthclone.external.qt.widgets-${type}
+        module-synthclone.external.qt.qml-${type}
         module-synthclone.plugin-${type}
         module-synthclone.qt-${type}
         module-synthclone.util-${type}
@@ -47,7 +42,6 @@ function(synthclone_make_module type)
         # These links are needed for includes associated with the generated UI
         # code.
         Qt6::Core
-        Qt6::Widgets
     )
     synthclone_configure_module(${target} ${type})
 endfunction()
@@ -98,7 +92,8 @@ function(synthclone_make_tests)
         module-synthclone.external.boost.urls-object
         module-synthclone.external.posix-object
         module-synthclone.external.qt.core-object
-        module-synthclone.external.qt.widgets-object
+        module-synthclone.external.qt.gui-object
+        module-synthclone.external.qt.qml-object
         module-synthclone.external.samplerate-object
         module-synthclone.external.sndfile-object
         module-synthclone.external.utf8proc-object

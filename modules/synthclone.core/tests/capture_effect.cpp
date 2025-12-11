@@ -6,7 +6,7 @@ import synthclone.core;
 import synthclone.test;
 import synthclone.util;
 
-class QWidget;
+class QQuickItem;
 
 namespace {
 
@@ -42,7 +42,7 @@ namespace {
         std::generator<synthclone::capture_effect_edit_message>
         edit(
             synthclone::capture_effect_instance& instance,
-            ::QWidget* parent,
+            ::QQuickItem* parent,
             std::stop_token stop_token
         )
         override final
@@ -78,17 +78,13 @@ namespace {
     verify_type(
         const synthclone::capture_effect_type& type,
         const synthclone::capture_effect_core_ops* core_ops_ptr,
-        const synthclone::capture_effect_editor_ops* external_editor_ops_ptr,
-        const synthclone::capture_effect_editor_ops* internal_editor_ops_ptr,
+        const synthclone::capture_effect_editor_ops* editor_ops_ptr,
         const synthclone::capture_effect_state_ops* state_ops_ptr,
         const synthclone::metadata& metadata
     )
     {
         synthclone::verify_eq(core_ops_ptr, type.core_ops().get());
-        synthclone::verify_eq(
-            external_editor_ops_ptr, type.external_editor_ops().get());
-        synthclone::verify_eq(
-            internal_editor_ops_ptr, type.internal_editor_ops().get());
+        synthclone::verify_eq(editor_ops_ptr, type.editor_ops().get());
         synthclone::verify_eq(state_ops_ptr, type.state_ops().get());
         synthclone::verify_eq(metadata, type.metadata());
     }
@@ -118,14 +114,12 @@ BOOST_AUTO_TEST_CASE(types)
             .core_ops = std::move(core_ops_1),
             .metadata = metadata_1
         });
-    verify_type(type_1, core_ops_1_ptr, nullptr, nullptr, nullptr, metadata_1);
+    verify_type(type_1, core_ops_1_ptr, nullptr, nullptr, metadata_1);
 
     auto core_ops_2 = std::make_unique<test_core_ops>();
     const auto* core_ops_2_ptr = core_ops_2.get();
-    auto external_editor_ops_2 = std::make_unique<test_editor_ops>();
-    const auto* external_editor_ops_2_ptr = external_editor_ops_2.get();
-    auto internal_editor_ops_2 = std::make_unique<test_editor_ops>();
-    const auto* internal_editor_ops_2_ptr = internal_editor_ops_2.get();
+    auto editor_ops_2 = std::make_unique<test_editor_ops>();
+    const auto* editor_ops_2_ptr = editor_ops_2.get();
     auto state_ops_2 = std::make_unique<test_state_ops>();
     const auto* state_ops_2_ptr = state_ops_2.get();
 
@@ -137,22 +131,19 @@ BOOST_AUTO_TEST_CASE(types)
     synthclone::capture_effect_type type_2(
         {
             .core_ops = std::move(core_ops_2),
-            .external_editor_ops = std::move(external_editor_ops_2),
-            .internal_editor_ops = std::move(internal_editor_ops_2),
+            .editor_ops = std::move(editor_ops_2),
             .state_ops = std::move(state_ops_2),
             .metadata = metadata_2
         });
     verify_type(
-        type_2, core_ops_2_ptr, external_editor_ops_2_ptr,
-        internal_editor_ops_2_ptr, state_ops_2_ptr, metadata_2);
+        type_2, core_ops_2_ptr, editor_ops_2_ptr, state_ops_2_ptr, metadata_2);
 
     synthclone::capture_effect_type type_3 = std::move(type_1);
-    verify_type(type_3, core_ops_1_ptr, nullptr, nullptr, nullptr, metadata_1);
+    verify_type(type_3, core_ops_1_ptr, nullptr, nullptr, metadata_1);
 
     type_1 = std::move(type_2);
     verify_type(
-        type_1, core_ops_2_ptr, external_editor_ops_2_ptr,
-        internal_editor_ops_2_ptr, state_ops_2_ptr, metadata_2);
+        type_1, core_ops_2_ptr, editor_ops_2_ptr, state_ops_2_ptr, metadata_2);
 
     BOOST_CHECK_THROW(
         synthclone::capture_effect_type(

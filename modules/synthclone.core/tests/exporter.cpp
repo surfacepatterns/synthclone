@@ -6,7 +6,7 @@ import synthclone.core;
 import synthclone.test;
 import synthclone.util;
 
-class QWidget;
+class QQuickItem;
 
 namespace {
 
@@ -41,7 +41,7 @@ namespace {
         std::generator<synthclone::exporter_edit_message>
         edit(
             synthclone::exporter_instance& instance,
-            ::QWidget* parent,
+            ::QQuickItem* parent,
             std::stop_token stop_token
         )
         override final
@@ -84,7 +84,7 @@ namespace {
     {
         synthclone::verify_eq(expected_core_ops_ptr, type.core_ops().get());
         synthclone::verify_eq(
-            expected_editor_ops_ptr, type.external_editor_ops().get());
+            expected_editor_ops_ptr, type.editor_ops().get());
         synthclone::verify_eq(expected_state_ops_ptr, type.state_ops().get());
         synthclone::verify_eq(expected_metadata, type.metadata());
     }
@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(types)
     synthclone::exporter_type type_1(
         {
             .core_ops = std::move(core_ops_1),
-            .external_editor_ops = std::move(editor_ops_1),
+            .editor_ops = std::move(editor_ops_1),
             .metadata = metadata_1
         });
     verify_type(type_1, core_ops_1_ptr, editor_ops_1_ptr, nullptr, metadata_1);
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(types)
     synthclone::exporter_type type_2(
         {
             .core_ops = std::move(core_ops_2),
-            .external_editor_ops = std::move(editor_ops_2),
+            .editor_ops = std::move(editor_ops_2),
             .state_ops = std::move(state_ops_2),
             .metadata = metadata_2
         });
@@ -158,7 +158,7 @@ BOOST_AUTO_TEST_CASE(types)
     BOOST_CHECK_THROW(
         synthclone::exporter_type(
             {
-                .external_editor_ops = std::make_unique<test_editor_ops>(),
+                .editor_ops = std::make_unique<test_editor_ops>(),
                 .metadata = metadata_1
             }),
         synthclone::verification_error);

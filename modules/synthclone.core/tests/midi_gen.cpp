@@ -1,6 +1,6 @@
 // This code was auto-generated at:
 //
-//     2025-08-29 22:11:15.704629+00:00
+//     2025-12-04 19:02:11.570122+00:00
 //
 // Do *not* edit this code.  Any changes made to this code will be lost.
 
@@ -275,6 +275,17 @@ BOOST_AUTO_TEST_CASE(midi_control_index_get_name)
     synthclone::verify_eq(get_name(synthclone::midi_control_index(125)), std::string_view("[Channel Mode Message] Omni Mode On (+ all notes off)"));
     synthclone::verify_eq(get_name(synthclone::midi_control_index(126)), std::string_view("[Channel Mode Message] Mono Mode On (+ poly off, + all notes off)"));
     synthclone::verify_eq(get_name(synthclone::midi_control_index(127)), std::string_view("[Channel Mode Message] Poly Mode On (+ mono off, +all notes off)"));
+}
+
+BOOST_AUTO_TEST_CASE(midi_control_type_identifiers)
+{
+    synthclone::verify_eq(synthclone::get_identifier(synthclone::midi_control_type::undefined), std::string_view("undefined"));
+    synthclone::verify_eq(synthclone::get_identifier(synthclone::midi_control_type::command), std::string_view("command"));
+    synthclone::verify_eq(synthclone::get_identifier(synthclone::midi_control_type::continuous), std::string_view("continuous"));
+    synthclone::verify_eq(synthclone::get_identifier(synthclone::midi_control_type::local), std::string_view("local"));
+    synthclone::verify_eq(synthclone::get_identifier(synthclone::midi_control_type::mono_mode), std::string_view("mono_mode"));
+    synthclone::verify_eq(synthclone::get_identifier(synthclone::midi_control_type::step), std::string_view("step"));
+    synthclone::verify_eq(synthclone::get_identifier(synthclone::midi_control_type::toggle), std::string_view("toggle"));
 }
 
 BOOST_AUTO_TEST_CASE(midi_control_index_get_type)

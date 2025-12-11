@@ -4,12 +4,9 @@ import std;
 
 import synthclone.core;
 import synthclone.external.boost.interprocess;
-import synthclone.external.qt.widgets;
 import synthclone.plugin;
 import synthclone.qt;
 import synthclone.util;
-
-import :ui;
 
 ///////////////////////////////////////////////////////////////////////////////
 // synthclone::make_reverser_type()
@@ -179,47 +176,6 @@ namespace synthclone {
 
     };
 
-    struct reverser_editor_ops final: public capture_effect_editor_ops {
-
-        std::generator<capture_effect_edit_message>
-        edit(
-            capture_effect_instance& instance,
-            ::QWidget* parent,
-            std::stop_token stop_token
-        )
-        override final
-        {
-            auto& buffer = static_cast<reverser_instance&>(instance).buffer();
-
-            reverser_form form_state;
-            form_state.setupUi(parent);
-
-            auto* spin_box = form_state.buffer_size_spin_box;
-            spin_box->setValue(static_cast<int>(buffer.size()));
-
-            bool changed = false;
-
-            qobject_connection_guard connection_guard(
-                spin_box, &QSpinBox::valueChanged,
-                [&buffer, &changed](int value) {
-                    buffer.resize(static_cast<std::size_t>(value));
-                    changed = true;
-                });
-
-            co_yield component_event_wait_message();
-
-            while (! stop_token.stop_requested()) {
-                if (changed) {
-                    changed = false;
-                    co_yield component_state_changed_message();
-                } else {
-                    co_yield component_event_wait_message();
-                }
-            }
-        }
-
-    };
-
     struct reverser_state_ops final: public capture_effect_state_ops {
 
         state_value
@@ -251,7 +207,6 @@ namespace synthclone {
         return capture_effect_type(
             {
                 .core_ops = std::make_unique<reverser_core_ops>(host),
-                .internal_editor_ops = std::make_unique<reverser_editor_ops>(),
                 .state_ops = std::make_unique<reverser_state_ops>(),
                 .metadata = generate_simple_metadata(
                     {

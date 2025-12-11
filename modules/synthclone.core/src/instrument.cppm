@@ -237,7 +237,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         constexpr
         instrument_type(instrument_type_init_args args):
             component_type(
-                std::move(args.core_ops), std::move(args.external_editor_ops),
+                std::move(args.core_ops), std::move(args.editor_ops),
                 std::move(args.state_ops), std::move(args.metadata))
         {
             // empty

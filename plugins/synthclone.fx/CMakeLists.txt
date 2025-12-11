@@ -6,7 +6,7 @@ file(GLOB plugin-synthclone.fx-sources src/*.cpp)
 
 function(synthclone_make_plugin)
     set(target "synthclone.fx")
-    add_library(${target} SHARED)
+    add_library(${target} MODULE)
     add_dependencies(${target} module-synthclone.fx-shared)
     target_sources(
         ${target}
@@ -26,6 +26,7 @@ function(synthclone_make_plugin)
         module-synthclone.external.posix-shared
         module-synthclone.external.qt.core-shared
         module-synthclone.external.qt.gui-shared
+        module-synthclone.external.qt.qml-shared
         module-synthclone.external.qt.widgets-shared
         module-synthclone.external.samplerate-shared
         module-synthclone.external.sndfile-shared

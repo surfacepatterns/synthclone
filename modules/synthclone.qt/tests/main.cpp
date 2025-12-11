@@ -4,7 +4,7 @@
 
 #include <boost/test/unit_test.hpp>
 
-import synthclone.external.qt.widgets;
+import synthclone.external.qt.gui;
 
 bool
 init_unit_tests()
@@ -15,6 +15,6 @@ init_unit_tests()
 int
 main(int argc, char **argv)
 {
-    ::QApplication app(argc, argv);
+    ::QGuiApplication app(argc, argv);
     return boost::unit_test::unit_test_main(init_unit_tests, argc, argv);
 }
