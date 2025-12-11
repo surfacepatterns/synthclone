@@ -223,32 +223,6 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
      * Creates a `lookup_table` instance using the given function object to
      * generate the lookup table values.
      *
-     * @tparam T
-     *   The lookup table element type.
-     * @tparam N
-     *   The size of the lookup table.
-     *
-     * @param f
-     *   The function object to use to generate lookup table values.
-     *
-     * @return
-     *   The lookup table.
-     */
-
-    export
-    template<class T, std::size_t N, lookup_table_func<T> F>
-    requires (N != 0)
-    constexpr
-    auto
-    make_lookup_table(F f)
-    {
-        return make_lookup_table<T, N>(f, std::make_index_sequence<N>());
-    }
-
-    /**
-     * Creates a `lookup_table` instance using the given function object to
-     * generate the lookup table values.
-     *
      * @tparam N
      *   The size of the lookup table.
      *

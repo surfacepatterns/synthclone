@@ -1,5 +1,6 @@
 export module synthclone.qt;
 
-export import :qobject;
-export import :qresource;
-export import :qwidget;
+export import :meta;
+export import :object;
+export import :qml;
+export import :resource;

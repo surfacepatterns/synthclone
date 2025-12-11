@@ -6,7 +6,7 @@
  * @note
  *   This code was auto-generated at:
  *
- *       2025-09-27 21:09:43.626166+00:00
+ *       2025-12-04 17:27:15.164405+00:00
  *
  *   Do *not* edit this code.  Any changes made to this code will be lost.
  *
@@ -232,7 +232,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
     constexpr
     lookup_table<std::string_view, 30>
-    unicode_category_identifier_table = make_lookup_table<std::string_view, 30>(
+    unicode_category_identifier_table = make_lookup_table<30>(
         [](std::size_t n) consteval -> std::string_view {
             switch (static_cast<unicode_category>(n)) {
             case unicode_category::uppercase_letter:

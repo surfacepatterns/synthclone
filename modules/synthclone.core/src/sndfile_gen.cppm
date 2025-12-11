@@ -7,7 +7,7 @@
  * @note
  *   This code was auto-generated at:
  *
- *       2025-09-28 03:50:51.770647+00:00
+ *       2025-12-04 17:28:23.051698+00:00
  *
  *   Do *not* edit this code.  Any changes made to this code will be lost.
  */
@@ -64,7 +64,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     export
     constexpr
     lookup_table<int, sndfile_codec_count>
-    sndfile_to_audio_codec_table = make_lookup_table<int, sndfile_codec_count>(
+    sndfile_to_audio_codec_table = make_lookup_table<sndfile_codec_count>(
         [](std::size_t n) consteval -> int {
             switch (n << sndfile_codec_shift) {
             case ::SF_FORMAT_PCM_S8:
@@ -129,7 +129,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     export
     constexpr
     lookup_table<int, sndfile_endianness_count>
-    sndfile_to_audio_endianness_table = make_lookup_table<int, sndfile_endianness_count>(
+    sndfile_to_audio_endianness_table = make_lookup_table<sndfile_endianness_count>(
         [](std::size_t n) consteval -> int {
             switch (n << sndfile_endianness_shift) {
             case ::SF_ENDIAN_FILE:
@@ -188,7 +188,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     export
     constexpr
     lookup_table<int, sndfile_format_count>
-    sndfile_to_audio_format_table = make_lookup_table<int, sndfile_format_count>(
+    sndfile_to_audio_format_table = make_lookup_table<sndfile_format_count>(
         [](std::size_t n) consteval -> int {
             switch (n << sndfile_format_shift) {
             case ::SF_FORMAT_AIFF:

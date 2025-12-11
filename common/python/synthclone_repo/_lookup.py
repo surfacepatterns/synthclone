@@ -26,7 +26,7 @@ def write_mapped_lookup_table(
     composer.write_line("constexpr")
     composer.write_line(f"lookup_table<{element_type}, {element_count}>")
     composer.write_line(
-        f"{table_name} = make_lookup_table<{element_type}, {element_count}>(")
+        f"{table_name} = make_lookup_table<{element_count}>(")
     with _indented(composer):
         composer.write_line(
             f"[](std::size_t n) consteval -> {element_type} {{")

@@ -210,16 +210,10 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         std::unique_ptr<capture_effect_core_ops> core_ops;
 
         /**
-         * The capture effect external editor operations.
+         * The capture effect editor operations.
          */
 
-        std::unique_ptr<capture_effect_editor_ops> external_editor_ops;
-
-        /**
-         * The capture effect internal editor operations.
-         */
-
-        std::unique_ptr<capture_effect_editor_ops> internal_editor_ops;
+        std::unique_ptr<capture_effect_editor_ops> editor_ops;
 
         /**
          * The capture effect state operations.
@@ -267,32 +261,11 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         constexpr
         capture_effect_type(capture_effect_type_init_args args):
             component_type(
-                std::move(args.core_ops), std::move(args.external_editor_ops),
-                std::move(args.state_ops), std::move(args.metadata)),
-            internal_editor_ops_(std::move(args.internal_editor_ops))
+                std::move(args.core_ops), std::move(args.editor_ops),
+                std::move(args.state_ops), std::move(args.metadata))
         {
             // empty
         }
-
-        /**
-         * Gets the (possibly optional) internal editor operations for the
-         * capture effect type.
-         *
-         * @return
-         *   A pointer to the internal editor operations.
-         */
-
-        constexpr
-        const std::unique_ptr<capture_effect_editor_ops>&
-        internal_editor_ops()
-        const noexcept
-        {
-            return internal_editor_ops_;
-        }
-
-    private:
-
-        std::unique_ptr<capture_effect_editor_ops> internal_editor_ops_;
 
     };
 

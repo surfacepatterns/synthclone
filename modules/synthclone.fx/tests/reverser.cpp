@@ -4,7 +4,6 @@ import std;
 
 import synthclone.core;
 import synthclone.external.boost.interprocess;
-import synthclone.external.qt.widgets;
 import synthclone.fx;
 import synthclone.qt;
 import synthclone.test;
@@ -141,60 +140,6 @@ BOOST_AUTO_TEST_CASE(core_ops)
             std::ranges::empty_view<synthclone::audio_sample>(),
             std::ranges::empty_view<synthclone::audio_sample>());
     }
-}
-
-BOOST_AUTO_TEST_CASE(edit_ops)
-{
-    synthclone::test_session_log log;
-    synthclone::session_logger logger(
-        log, synthclone::session_log_level::debug);
-    synthclone::session_host host(logger, 48000, 1);
-
-    auto type = load_reverser_type(host);
-    auto instance_ptr = type.core_ops()->create();
-
-    auto parent_widget_ptr = std::make_unique<::QWidget>();
-    std::stop_source stop_source;
-    auto gen = type.internal_editor_ops()->edit(
-        *instance_ptr, parent_widget_ptr.get(), stop_source.get_token());
-    auto gen_end = gen.end();
-
-    auto gen_iter = gen.begin();
-    synthclone::verify_ne(gen_iter, gen_end);
-    BOOST_CHECK(
-        (
-            std::holds_alternative<synthclone::component_event_wait_message>(
-                *gen_iter)
-        ));
-
-    ++gen_iter;
-    synthclone::verify_ne(gen_iter, gen_end);
-    BOOST_CHECK(
-        (
-            std::holds_alternative<synthclone::component_event_wait_message>(
-                *gen_iter)
-        ));
-    verify_default_buffer_size(type, *instance_ptr);
-
-    auto* buffer_size_spin_box = synthclone::extract_child<::QSpinBox>(
-        parent_widget_ptr.get(), "buffer_size_spin_box");
-    synthclone::verify_eq(
-        get_default_buffer_size(), buffer_size_spin_box->value());
-
-    buffer_size_spin_box->setValue(16384);
-    ++gen_iter;
-    synthclone::verify_ne(gen_iter, gen_end);
-    BOOST_CHECK(
-        (
-            std::holds_alternative<
-                synthclone::component_state_changed_message
-            >(*gen_iter)
-        ));
-    verify_buffer_size(type, *instance_ptr, 16384);
-
-    stop_source.request_stop();
-    ++gen_iter;
-    synthclone::verify_eq(gen_iter, gen_end);
 }
 
 BOOST_AUTO_TEST_CASE(state_ops)

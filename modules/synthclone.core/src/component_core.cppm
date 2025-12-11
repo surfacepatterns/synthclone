@@ -10,7 +10,7 @@ module;
 
 // The forward declaration needs to be here so the declaration is not attached
 // to the module.
-class QWidget;
+class QQuickItem;
 
 export module synthclone.core:component_core;
 
@@ -108,7 +108,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
          * @param component
          *   The component to be edited.
          * @param parent
-         *   The widget to use as the parent of the edit interface.
+         *   The item to use as the parent of the edit interface.
          * @param stop_token
          *   A stop token that will be set if the operation is cancelled.
          *
@@ -118,7 +118,11 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
         virtual
         std::generator<M>
-        edit(T& component, ::QWidget* parent, std::stop_token stop_token) = 0;
+        edit(
+            T& component,
+            ::QQuickItem* parent,
+            std::stop_token stop_token
+        ) = 0;
 
     protected:
 
@@ -229,10 +233,10 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         std::unique_ptr<C> core_ops;
 
         /**
-         * The component external editor operations.
+         * The component editor operations.
          */
 
-        std::unique_ptr<E> external_editor_ops;
+        std::unique_ptr<E> editor_ops;
 
         /**
          * The component state operations.
@@ -268,12 +272,11 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     template<bool R, class E>
     constexpr
     std::unique_ptr<E>&&
-    verify_component_external_editor_ops(std::unique_ptr<E>&& editor_ops)
+    verify_component_editor_ops(std::unique_ptr<E>&& editor_ops)
     {
         if constexpr(R) {
             verify(
-                editor_ops != nullptr,
-                "`external_editor_ops` cannot be set to null");
+                editor_ops != nullptr, "`editor_ops` cannot be set to null");
         }
         return std::move(editor_ops);
     }
@@ -290,9 +293,8 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
      *   The state operations type.
      * @tparam A
      *   The initialization arguments type.
-     * @tparam ExternalEditorOpsRequired
-     *   Whether or not external editor operations are required for the
-     *   component type.
+     * @tparam EditorOpsRequired
+     *   Whether or not editor operations are required for the component type.
      */
 
     export
@@ -300,7 +302,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         class C,
         class E,
         class S,
-        bool ExternalEditorOpsRequired
+        bool EditorOpsRequired
     >
     class component_type: private noncopyable {
 
@@ -322,19 +324,19 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         }
 
         /**
-         * Gets the (possibly optional) external editor operations for the
-         * component type.
+         * Gets the (possibly optional) editor operations for the component
+         * type.
          *
          * @return
-         *   A pointer to the external editor operations.
+         *   A pointer to the editor operations.
          */
 
         constexpr
         const std::unique_ptr<E>&
-        external_editor_ops()
+        editor_ops()
         const noexcept
         {
-            return external_editor_ops_;
+            return editor_ops_;
         }
 
         /**
@@ -372,16 +374,16 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         constexpr
         component_type(
             std::unique_ptr<C>&& core_ops,
-            std::unique_ptr<E>&& external_editor_ops,
+            std::unique_ptr<E>&& editor_ops,
             std::unique_ptr<S>&& state_ops,
             metadata_init_args&& metadata
         ):
             metadata_(std::move(metadata)),
             core_ops_(verify_component_core_ops(std::move(core_ops))),
-            external_editor_ops_(
-                verify_component_external_editor_ops<
-                    ExternalEditorOpsRequired
-                >(std::move(external_editor_ops))),
+            editor_ops_(
+                verify_component_editor_ops<
+                    EditorOpsRequired
+                >(std::move(editor_ops))),
             state_ops_(std::move(state_ops))
         {
             // empty
@@ -392,7 +394,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         class metadata metadata_;
 
         std::unique_ptr<C> core_ops_;
-        std::unique_ptr<E> external_editor_ops_;
+        std::unique_ptr<E> editor_ops_;
         std::unique_ptr<S> state_ops_;
 
     };

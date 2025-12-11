@@ -48,6 +48,17 @@ include(GNUInstallDirs)
 
 include(common/cmake/config.cmake)
 
+find_package(Qt6 REQUIRED COMPONENTS Core Qml)
+
+qt_standard_project_setup(REQUIRES 6.10)
+
+# "Enabling this policy ensures that your QML module is placed under a default
+# import path, and its types can be found without manual calls to
+# QQmlEngine::addImportPath.":
+#
+#     https://doc.qt.io/qt-6/qt-cmake-policy-qtp0001.html
+qt_policy(SET QTP0001 NEW)
+
 enable_testing()
 
 add_subdirectory(apps)

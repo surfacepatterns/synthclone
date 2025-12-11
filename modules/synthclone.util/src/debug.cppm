@@ -62,17 +62,35 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
 namespace SYNTHCLONE_LIB_NAMESPACE {
 
+    /**
+     * Format string wrapper that records the source location where it's
+     * declared.
+     *
+     * @tparam Args
+     *   The types of arguments that will be used to populate resulting
+     *   strings.
+     */
+
     export
     template<class... Args>
     class diagnostic_format_string final {
 
     public:
 
+        /**
+         * Constructs a `diagnostic_format_string` instance.
+         *
+         * @param s
+         *   The format string spec.
+         * @param location
+         *   The optional source location, defaulting to the source location
+         *   where the string is defined.
+         */
+
         template<class T>
         requires (
             std::constructible_from<std::format_string<Args...>, const T&>
         )
-        //requires (string_view_convertible<const T&>)
         consteval
         diagnostic_format_string(
             const T& s,
@@ -84,12 +102,26 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
             // empty
         }
 
+        /**
+         * Gets the source location.
+         *
+         * @return
+         *   The source location.
+         */
+
         constexpr
         const std::source_location&
         location() const noexcept
         {
             return location_;
         }
+
+        /**
+         * Gets the format string.
+         *
+         * @return
+         *   The format string.
+         */
 
         constexpr
         const std::format_string<Args...>&

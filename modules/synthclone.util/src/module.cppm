@@ -12,6 +12,7 @@ export import :debug;
 export import :filesystem;
 export import :functional;
 export import :lookup;
+export import :memory;
 export import :ranges;
 export import :scalar;
 export import :string;
