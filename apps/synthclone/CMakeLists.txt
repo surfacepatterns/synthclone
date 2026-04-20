@@ -15,6 +15,7 @@ function(synthclone_make_app)
         ${target}
         PRIVATE
         module-synthclone.app-object
+        module-synthclone.archive-object
         module-synthclone.core-object
         module-synthclone.external.boost.callable_traits-object
         module-synthclone.external.boost.container-object

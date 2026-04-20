@@ -18,7 +18,9 @@ function(synthclone_make_module type)
     add_library(${target} OBJECT)
     add_dependencies(
         ${target}
+        module-synthclone.external.boost.io-${type}
         module-synthclone.external.boost.mp11-${type}
+        module-synthclone.external.boost.numeric-${type}
         module-synthclone.external.boost.scope-${type}
         module-synthclone.external.posix-${type}
         module-synthclone.external.utf8proc-${type}
@@ -39,7 +41,9 @@ function(synthclone_make_module type)
     target_link_libraries(
         ${target}
         PRIVATE
+        module-synthclone.external.boost.io-${type}
         module-synthclone.external.boost.mp11-${type}
+        module-synthclone.external.boost.numeric-${type}
         module-synthclone.external.boost.scope-${type}
         module-synthclone.external.posix-${type}
         module-synthclone.external.utf8proc-${type}
@@ -78,9 +82,12 @@ function(synthclone_make_tests)
         ${target}
         PRIVATE
         module-synthclone.external.boost.core-object
+        module-synthclone.external.boost.io-object
         module-synthclone.external.boost.mp11-object
+        module-synthclone.external.boost.numeric-object
         module-synthclone.external.boost.scope-object
         module-synthclone.external.boost.type_traits-object
+        module-synthclone.external.boost.unit_test-object
         module-synthclone.external.posix-object
         module-synthclone.external.utf8proc-object
         module-synthclone.test-object

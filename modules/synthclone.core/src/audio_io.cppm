@@ -6,6 +6,8 @@
 
 module;
 
+#include <cerrno>
+
 #include <synthclone/config.h>
 
 export module synthclone.core:audio_io;
@@ -20,10 +22,250 @@ import :audio_gen;
 import :sndfile_io;
 
 ///////////////////////////////////////////////////////////////////////////////
+// synthclone::audio_source
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    export
+    class audio_input_stream;
+
+    /**
+     * Represents an on-disk audio file, but doesn't expose the path to the
+     * resource.
+     *
+     * Obviously, code can subvert the privacy mechanism and get the path, but
+     * the point is to stress that the underlying file is owned by the creator
+     * of the `audio_source` instance, not the code that reads from the
+     * underlying file.
+     */
+
+    export
+    class audio_source final {
+
+    public:
+
+        /**
+         * Move constructor.
+         */
+
+        audio_source(audio_source&&) = default;
+
+        /**
+         * Copy constructor.
+         */
+
+        audio_source(const audio_source&) = default;
+
+        /**
+         * Constructs an `audio_source` instance that references a file at the
+         * given path with the assumption being that the audio traits can be
+         * inferred from the file's contents.
+         *
+         * @param path
+         *   The audio file path.
+         */
+
+        inline explicit
+        audio_source(std::filesystem::path path) noexcept:
+            path_(std::move(path))
+        {
+            // empty
+        }
+
+        /**
+         * Constructs an `audio_source` instance that references a file at the
+         * given path with audio adhering to the given audio traits.
+         *
+         * @param path
+         *   The audio file path.
+         * @param traits
+         *   The audio traits.
+         */
+
+        inline
+        audio_source(
+            std::filesystem::path path,
+            const audio_traits& traits
+        ) noexcept:
+            traits_(traits),
+            path_(std::move(path))
+        {
+            // empty
+        }
+
+        /**
+         * Move assignment operator.
+         */
+
+        audio_source&
+        operator=(audio_source&&) = default;
+
+        /**
+         * Copy assignment operator.
+         */
+
+        audio_source&
+        operator=(const audio_source& other)
+        {
+            *this = audio_source(other);
+            return *this;
+        }
+
+        /**
+         * Gets a boolean indicating whether or not two `audio_source`
+         * instances refer to the same path and traits.
+         *
+         * @param lhs
+         *   The first instance.
+         * @param rhs
+         *   The second instance.
+         *
+         * @return
+         *   The boolean indicator.
+         */
+
+        friend
+        bool
+        operator==(const audio_source& lhs, const audio_source& rhs) noexcept
+        {
+            return (lhs.traits_ == rhs.traits_) && (lhs.path_ == rhs.path_);
+        }
+
+    private:
+
+        friend
+        class audio_input_stream;
+
+        std::optional<audio_traits> traits_;
+        std::filesystem::path path_;
+
+    };
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::audio_sink
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    export
+    class audio_output_stream;
+
+    /**
+     * Represents an on-disk location that an audio file can be written to, but
+     * doesn't expose the path to the resource.
+     *
+     * Obviously, code can subvert the privacy mechanism and get the path, but
+     * the point is to stress that the underlying file is owned by the creator
+     * of the `audio_sink` instance, not the code that writes to the underlying
+     * file.
+     */
+
+    export
+    class audio_sink final {
+
+    public:
+
+        /**
+         * Move constructor.
+         */
+
+        audio_sink(audio_sink&&) = default;
+
+        /**
+         * Copy constructor.
+         */
+
+        audio_sink(const audio_sink&) = default;
+
+        /**
+         * Constructs an `audio_sink` instance that references a file at the
+         * given path with audio adhering to the given audio traits.
+         *
+         * @param path
+         *   The audio file path.
+         * @param traits
+         *   The audio traits.
+         */
+
+        inline
+        audio_sink(
+            std::filesystem::path path,
+            const audio_traits& traits
+        ) noexcept:
+            traits_(traits),
+            path_(std::move(path))
+        {
+            // empty
+        }
+
+        /**
+         * Move assignment operator.
+         */
+
+        audio_sink&
+        operator=(audio_sink&&) = default;
+
+        /**
+         * Copy assignment operator.
+         */
+
+        audio_sink&
+        operator=(const audio_sink& other)
+        {
+            *this = audio_sink(other);
+            return *this;
+        }
+
+        /**
+         * Gets a boolean indicating whether or not two `audio_sink` instances
+         * refer to the same path and traits.
+         *
+         * @param lhs
+         *   The first instance.
+         * @param rhs
+         *   The second instance.
+         *
+         * @return
+         *   The boolean indicator.
+         */
+
+        friend
+        bool
+        operator==(const audio_sink& lhs, const audio_sink& rhs) noexcept
+        {
+            return (lhs.traits_ == rhs.traits_) && (lhs.path_ == rhs.path_);
+        }
+
+    private:
+
+        friend
+        class audio_output_stream;
+
+        audio_traits traits_;
+        std::filesystem::path path_;
+
+    };
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // synthclone::audio_input_stream
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    sndfile_input_stream
+    make_audio_input_stream_impl(
+        const std::filesystem::path& path,
+        const std::optional<audio_traits>& traits
+    )
+    {
+        return traits ? sndfile_input_stream(path, *traits) :
+            sndfile_input_stream(path);
+    }
 
     void
     verify_audio_buffer(
@@ -100,6 +342,21 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
             const audio_traits& traits
         ):
             impl_(path, traits)
+        {
+            // empty
+        }
+
+        /**
+         * Constructs an `audio_input_stream` instance that references the
+         * audio at the path stored in the given audio source.
+         *
+         * @param source
+         *   The audio source.
+         */
+
+        inline explicit
+        audio_input_stream(const audio_source& source):
+            impl_(make_audio_input_stream_impl(source.path_, source.traits_))
         {
             // empty
         }
@@ -244,7 +501,8 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
      * Allows for the writing of samples to audio files.
      */
 
-    export class audio_output_stream final: private noncopyable {
+    export
+    class audio_output_stream final: private noncopyable {
 
     public:
 
@@ -265,6 +523,21 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
             const audio_traits& traits
         ):
             impl_(path, traits)
+        {
+            // empty
+        }
+
+        /**
+         * Constructs an `audio_output_stream` instance that references the
+         * audio at the path stored in the given audio sink.
+         *
+         * @param sink
+         *   The audio sink.
+         */
+
+        inline explicit
+        audio_output_stream(const audio_sink& sink):
+            audio_output_stream(sink.path_, sink.traits_)
         {
             // empty
         }

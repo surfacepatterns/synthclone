@@ -16,8 +16,7 @@ namespace {
     public:
 
         std::unique_ptr<synthclone::importer_instance>
-        create()
-        override final
+        create(synthclone::app_host& host) override final
         {
             return nullptr;
         }
@@ -25,9 +24,9 @@ namespace {
         std::generator<synthclone::importer_run_message>
         run(
             synthclone::importer_instance& instance,
+            synthclone::out_param<synthclone::session_snapshot>& result,
             std::stop_token stop_token
-        )
-        override final
+        ) override final
         {
             co_return;
         }
@@ -43,8 +42,7 @@ namespace {
             synthclone::importer_instance& instance,
             ::QQuickItem* parent,
             std::stop_token stop_token
-        )
-        override final
+        ) override final
         {
             co_return;
         }
@@ -58,15 +56,17 @@ namespace {
     public:
 
         synthclone::state_value
-        dump(const synthclone::importer_instance& instance)
-        override final
+        dump(const synthclone::importer_instance& instance) override final
         {
             return synthclone::state_value();
         }
 
         std::unique_ptr<synthclone::importer_instance>
-        load(const synthclone::state_value& value)
-        override final
+        load(
+            synthclone::app_host& host,
+            const synthclone::metadata_element& version,
+            const synthclone::state_value& value
+        ) override final
         {
             return nullptr;
         }
@@ -79,7 +79,7 @@ namespace {
         const synthclone::importer_core_ops* expected_core_ops_ptr,
         const synthclone::importer_editor_ops* expected_editor_ops_ptr,
         const synthclone::importer_state_ops* expected_state_ops_ptr,
-        const synthclone::metadata& expected_metadata
+        const synthclone::component_metadata& expected_metadata
     )
     {
         synthclone::verify_eq(expected_core_ops_ptr, type.core_ops().get());
@@ -106,7 +106,7 @@ BOOST_AUTO_TEST_CASE(types)
     const auto* core_ops_1_ptr = core_ops_1.get();
     auto editor_ops_1 = std::make_unique<test_editor_ops>();
     const auto* editor_ops_1_ptr = editor_ops_1.get();
-    synthclone::metadata_init_args metadata_1(
+    synthclone::component_metadata_init_args metadata_1(
         {
             .identifier = "foo",
             .version = "1.2.3"
@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE(types)
     auto state_ops_2 = std::make_unique<test_state_ops>();
     const auto* state_ops_2_ptr = state_ops_2.get();
 
-    synthclone::metadata_init_args metadata_2(
+    synthclone::component_metadata_init_args metadata_2(
         {
             .identifier = "bar",
             .version = "4.5.6"
@@ -162,43 +162,6 @@ BOOST_AUTO_TEST_CASE(types)
                 .metadata = metadata_1
             }),
         synthclone::verification_error);
-}
-
-BOOST_AUTO_TEST_CASE(zone_messages)
-{
-    synthclone::midi_control_array unset_controls;
-
-    synthclone::importer_zone_message message_1(
-        synthclone::zone_port_params(
-            {
-                .channel = 2,
-                .note = 40,
-                .velocity = 70
-            }));
-    synthclone::verify_zone_port_params(
-        message_1.params(), 2, 40, 70, std::nullopt, std::nullopt,
-        unset_controls, std::nullopt);
-
-    synthclone::importer_zone_message message_2(
-        synthclone::zone_port_params(
-            {
-                .channel = 4,
-                .note = 80,
-                .velocity = 35
-            }));
-    synthclone::verify_zone_port_params(
-        message_2.params(), 4, 80, 35, std::nullopt, std::nullopt,
-        unset_controls, std::nullopt);
-
-    synthclone::importer_zone_message message_3(std::move(message_1));
-    synthclone::verify_zone_port_params(
-        message_3.params(), 2, 40, 70, std::nullopt, std::nullopt,
-        unset_controls, std::nullopt);
-
-    message_1 = std::move(message_2);
-    synthclone::verify_zone_port_params(
-        message_1.params(), 4, 80, 35, std::nullopt, std::nullopt,
-        unset_controls, std::nullopt);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

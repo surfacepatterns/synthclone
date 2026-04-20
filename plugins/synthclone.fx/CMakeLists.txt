@@ -20,6 +20,7 @@ function(synthclone_make_plugin)
         module-synthclone.external.boost.callable_traits-shared
         module-synthclone.external.boost.container-shared
         module-synthclone.external.boost.interprocess-shared
+        module-synthclone.external.boost.json-shared
         module-synthclone.external.boost.mp11-shared
         module-synthclone.external.boost.scope-shared
         module-synthclone.external.boost.urls-shared

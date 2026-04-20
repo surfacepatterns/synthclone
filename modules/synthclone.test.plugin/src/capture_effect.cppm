@@ -26,13 +26,14 @@ namespace synthclone {
         ):
             progress_(0.0),
             state_changes_left_(expected_state_change_count),
-            status_("")
+            status_(""),
+            warning_("")
         {
             // empty
         }
 
         void
-        operator()(const component_progress_message& message)
+        operator()(const operation_progress_message& message)
         {
             BOOST_TEST_INFO_SCOPE(
                 make_test_info(
@@ -46,7 +47,7 @@ namespace synthclone {
         }
 
         void
-        operator()(const component_state_changed_message& message)
+        operator()(const operation_state_changed_message& message)
         {
             BOOST_TEST_INFO_SCOPE(
                 make_test_info(
@@ -59,40 +60,51 @@ namespace synthclone {
         }
 
         void
-        operator()(const component_status_message& message)
+        operator()(const operation_status_message& message)
         {
             status_ = message.status();
         }
 
+        void
+        operator()(const operation_warning_message& message)
+        {
+            warning_ = message.warning();
+        }
+
         constexpr
         float
-        progress()
-        const noexcept
+        progress() const noexcept
         {
             return progress_;
         }
 
         constexpr
         std::size_t
-        state_changes_left()
-        const noexcept
+        state_changes_left() const noexcept
         {
             return state_changes_left_;
         }
 
         constexpr
-        const utf8_line&
-        status()
-        const noexcept
+        const operation_string&
+        status() const noexcept
         {
             return status_;
+        }
+
+        constexpr
+        const operation_string&
+        warning() const noexcept
+        {
+            return warning_;
         }
 
     private:
 
         float progress_;
         std::size_t state_changes_left_;
-        utf8_line status_;
+        operation_string status_;
+        operation_string warning_;
 
     };
 
@@ -104,7 +116,7 @@ namespace synthclone {
     )
     void
     verify_basic_capture_effect_run(
-        synthclone::session_host& host,
+        const synthclone::session_info& info,
         synthclone::capture_effect_type& type,
         synthclone::capture_effect_instance& instance,
         R1&& input_samples,
@@ -114,10 +126,10 @@ namespace synthclone {
     {
         BOOST_TEST_INFO_SCOPE(
             make_test_info(
-                "synthclone::verify_basic_capture_effect_run", host, type,
+                "synthclone::verify_basic_capture_effect_run", info, type,
                 instance, input_samples, expected_output_samples));
 
-        const auto& audio_traits = host.audio_traits();
+        const auto& audio_traits = info.audio_traits();
 
         synthclone::temporary_file input_file;
         const auto& input_file_path = input_file.path();
@@ -134,18 +146,15 @@ namespace synthclone {
         const auto& output_file_path = output_file.path();
 
         {
-            synthclone::audio_input_stream input_stream(
-                input_file_path, audio_traits);
-            synthclone::audio_output_stream output_stream(
-                output_file_path, audio_traits);
+            audio_sink sink(output_file_path, audio_traits);
+            audio_source source(input_file_path, audio_traits);
             std::stop_source stop_source;
 
             capture_effect_run_message_tracker tracker(
                 expected_state_change_count);
 
             auto gen = type.core_ops()->run(
-                instance, input_stream, output_stream,
-                stop_source.get_token());
+                instance, source, sink, stop_source.get_token());
             for (auto message: gen) {
                 std::visit(tracker, message);
             }

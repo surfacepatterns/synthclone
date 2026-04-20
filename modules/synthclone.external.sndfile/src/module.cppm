@@ -2,9 +2,14 @@ module;
 
 #include <sndfile.h>
 
+constexpr inline ::sf_count_t SF_COUNT_MAX_ = SF_COUNT_MAX;
+#undef SF_COUNT_MAX
+
 export module synthclone.external.sndfile;
 
 export {
+
+    constexpr inline ::sf_count_t SF_COUNT_MAX = SF_COUNT_MAX_;
 
     using ::SF_INFO;
     using ::SNDFILE;

@@ -9,15 +9,20 @@ module;
 
 #include <synthclone/config.h>
 
+// The forward declaration needs to be here so the declaration is not attached
+// to the module.
+class QQuickItem;
+
 export module synthclone.core:exporter;
 
 import std;
 
 import synthclone.util;
 
-import :component;
+import :app;
 import :component_core;
-import :zone;
+import :operation;
+import :snapshot;
 
 ///////////////////////////////////////////////////////////////////////////////
 // synthclone::exporter_request_message
@@ -48,8 +53,8 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
     export
     using exporter_edit_message = std::variant<
-        component_event_wait_message,
-        component_state_changed_message,
+        operation_idle_message,
+        operation_state_changed_message,
         exporter_request_message
     >;
 
@@ -67,9 +72,10 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
     export
     using exporter_run_message = std::variant<
-        component_progress_message,
-        component_state_changed_message,
-        component_status_message
+        operation_progress_message,
+        operation_state_changed_message,
+        operation_status_message,
+        operation_warning_message
     >;
 
 }
@@ -120,7 +126,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
      */
 
     export
-    class exporter_core_ops: public component_core_ops<exporter_instance> {
+    class exporter_core_ops: public nonmovable {
 
     public:
 
@@ -132,12 +138,27 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         ~exporter_core_ops() = default;
 
         /**
-         * Exports the given zone data.
+         * Instantiates a new component instance.
+         *
+         * @param host
+         *   The application host.
+         * @param info
+         *   Information about the current session.
+         *
+         * @return
+         *   A pointer to the new component instance.
+         */
+
+        virtual
+        std::unique_ptr<exporter_instance>
+        create(app_host& host, const session_info& info) = 0;
+
+        /**
+         * Exports contained session data (typically stored during an ongoing
+         * `exporter_edit_ops::edit()` operation).
          *
          * @param instance
          *   The exporter instance.
-         * @param zones
-         *   A generated range of zones to export.
          * @param stop_token
          *   A token to monitor for cancellation.
          *
@@ -147,11 +168,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
         virtual
         std::generator<exporter_run_message>
-        run(
-            exporter_instance& instance,
-            std::generator<zone_port_params>& zones,
-            std::stop_token stop_token
-        ) = 0;
+        run(exporter_instance& instance, std::stop_token stop_token) = 0;
 
     protected:
 
@@ -177,10 +194,55 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
      */
 
     export
-    using exporter_editor_ops = component_editor_ops<
-        exporter_instance,
-        exporter_edit_message
-    >;
+    class exporter_editor_ops: private nonmovable {
+
+    public:
+
+        /**
+         * Destructor.
+         */
+
+        virtual
+        ~exporter_editor_ops() = default;
+
+        /**
+         * Populates the given window with an editor interface, allowing the
+         * user to edit the exporter state, and manages the window throughout
+         * the lifetime of the edit operations (e.g. until the window is
+         * closed).
+         *
+         * @param instance
+         *   The exporter instance to be edited.
+         * @param snapshot
+         *   A snapshot of the current session.
+         * @param parent
+         *   The item to use as the parent of the edit interface.
+         * @param stop_token
+         *   A stop token that will be set if the operation is cancelled.
+         *
+         * @return
+         *   A generator that is used to send messages back to the host.
+         */
+
+        virtual
+        std::generator<exporter_edit_message>
+        edit(
+            exporter_instance& instance,
+            session_snapshot& snapshot,
+            ::QQuickItem* parent,
+            std::stop_token stop_token
+        ) = 0;
+
+    protected:
+
+        /**
+         * Default constructor.
+         */
+
+        explicit
+        exporter_editor_ops() = default;
+
+    };
 
 }
 
@@ -195,7 +257,67 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
      */
 
     export
-    using exporter_state_ops = component_state_ops<exporter_instance>;
+    class exporter_state_ops: private nonmovable {
+
+    public:
+
+        /**
+         * Destructor.
+         */
+
+        virtual
+        ~exporter_state_ops() = default;
+
+        /**
+         * Gets a snapshot of the given exporter's state.
+         *
+         * @param instance
+         *   The exporter instance to get the state for.
+         *
+         * @return
+         *   The exporter state.
+         */
+
+        virtual
+        state_value
+        dump(const exporter_instance& instance) = 0;
+
+        /**
+         * Loads an exporter from the given state.
+         *
+         * @param host
+         *   The application host.
+         * @param info
+         *   Information about the current session.
+         * @param version
+         *   The version of the exporter type that was used to save the given
+         *   state.
+         * @param state
+         *   The state to load the exporter from.
+         *
+         * @return
+         *   A pointer to the loaded exporter instance.
+         */
+
+        virtual
+        std::unique_ptr<exporter_instance>
+        load(
+            app_host& host,
+            const session_info& info,
+            const metadata_element& version,
+            const state_value& state
+        ) = 0;
+
+    protected:
+
+        /**
+         * Default constructor.
+         */
+
+        explicit
+        exporter_state_ops() = default;
+
+    };
 
 }
 

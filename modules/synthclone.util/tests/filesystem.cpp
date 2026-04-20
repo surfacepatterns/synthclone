@@ -80,6 +80,18 @@ BOOST_AUTO_TEST_CASE(temporary_directory_construct_errors)
         });
 }
 
+BOOST_AUTO_TEST_CASE(temporary_directory_double_reset)
+{
+    synthclone::temporary_directory directory;
+    std::filesystem::path directory_path(directory.path());
+    verify_directory(directory_path, std::filesystem::temp_directory_path());
+
+    directory.reset();
+    BOOST_CHECK(! std::filesystem::exists(directory_path));
+
+    directory.reset();
+}
+
 BOOST_AUTO_TEST_CASE(temporary_directory_move_assign)
 {
     synthclone::temporary_directory directory;
@@ -214,6 +226,18 @@ BOOST_AUTO_TEST_CASE(temporary_file_construct_errors)
                 (code.category() == std::generic_category()) &&
                 e.path2().empty();
         });
+}
+
+BOOST_AUTO_TEST_CASE(temporary_file_double_reset)
+{
+    synthclone::temporary_file file;
+    std::filesystem::path file_path(file.path());
+    verify_file(file_path, std::filesystem::temp_directory_path());
+
+    file.reset();
+    BOOST_CHECK(! std::filesystem::exists(file_path));
+
+    file.reset();
 }
 
 BOOST_AUTO_TEST_CASE(temporary_file_move_assign)

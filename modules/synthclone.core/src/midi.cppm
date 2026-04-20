@@ -18,8 +18,8 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     export using synthclone::midi_aftertouch;
     export using synthclone::midi_channel;
     export using synthclone::midi_channel_pressure;
-    export using synthclone::midi_control_array;
     export using synthclone::midi_control_index;
+    export using synthclone::midi_control_map;
     export using synthclone::midi_control_type;
     export using synthclone::midi_control_value;
     export using synthclone::midi_note;

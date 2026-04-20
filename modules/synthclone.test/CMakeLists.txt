@@ -11,6 +11,7 @@ function(synthclone_make_module type)
         ${target}
         module-synthclone.external.boost.core-${type}
         module-synthclone.external.boost.type_traits-${type}
+        module-synthclone.external.boost.unit_test-${type}
         module-synthclone.util-${type}
     )
     target_sources(
@@ -25,7 +26,9 @@ function(synthclone_make_module type)
         PRIVATE
         module-synthclone.external.boost.core-${type}
         module-synthclone.external.boost.type_traits-${type}
+        module-synthclone.external.boost.unit_test-${type}
         module-synthclone.util-${type}
+        stdc++exp
     )
     synthclone_configure_module(${target} ${type})
 endfunction()

@@ -59,13 +59,16 @@ function(synthclone_make_tests)
     target_link_libraries(
         ${target}
         PRIVATE
+        module-synthclone.archive-object
         module-synthclone.core-object
         module-synthclone.external.boost.container-object
         module-synthclone.external.boost.core-object
         module-synthclone.external.boost.interprocess-object
+        module-synthclone.external.boost.json-object
         module-synthclone.external.boost.mp11-object
         module-synthclone.external.boost.scope-object
         module-synthclone.external.boost.type_traits-object
+        module-synthclone.external.boost.unit_test-object
         module-synthclone.external.boost.urls-object
         module-synthclone.external.posix-object
         module-synthclone.external.samplerate-object

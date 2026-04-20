@@ -9,15 +9,20 @@ module;
 
 #include <synthclone/config.h>
 
+// The forward declaration needs to be here so the declaration is not attached
+// to the module.
+class QQuickItem;
+
 export module synthclone.core:importer;
 
 import std;
 
 import synthclone.util;
 
-import :component;
+import :app;
 import :component_core;
-import :zone;
+import :operation;
+import :snapshot;
 
 ///////////////////////////////////////////////////////////////////////////////
 // synthclone::importer_request_message
@@ -47,63 +52,10 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
     export
     using importer_edit_message = std::variant<
-        component_event_wait_message,
-        component_state_changed_message,
+        operation_idle_message,
+        operation_state_changed_message,
         importer_request_message
     >;
-
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// synthclone::importer_zone_message
-///////////////////////////////////////////////////////////////////////////////
-
-namespace SYNTHCLONE_LIB_NAMESPACE {
-
-    /**
-     * Message indicating that a zone should be generated from the contained
-     * parameters.
-     */
-
-    export
-    class importer_zone_message final: private noncopyable {
-
-    public:
-
-        /**
-         * Constructs an `importer_zone_message` instance.
-         *
-         * @param params
-         *   The zone parameters to use to construct the zone.
-         */
-
-        constexpr explicit
-        importer_zone_message(zone_port_params&& params):
-            params_(std::move(params))
-        {
-            // empty
-        }
-
-        /**
-         * Gets the zone parameters.
-         *
-         * @return
-         *   The zone parameters.
-         */
-
-        constexpr
-        zone_port_params&
-        params()
-        noexcept
-        {
-            return params_;
-        }
-
-    private:
-
-        zone_port_params params_;
-
-    };
 
 }
 
@@ -119,10 +71,10 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
     export
     using importer_run_message = std::variant<
-        component_progress_message,
-        component_state_changed_message,
-        component_status_message,
-        importer_zone_message
+        operation_progress_message,
+        operation_state_changed_message,
+        operation_status_message,
+        operation_warning_message
     >;
 
 }
@@ -173,7 +125,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
      */
 
     export
-    class importer_core_ops: public component_core_ops<importer_instance> {
+    class importer_core_ops: public nonmovable {
 
     public:
 
@@ -185,10 +137,26 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         ~importer_core_ops() = default;
 
         /**
-         * Imports zone data.
+         * Instantiates a new component instance.
+         *
+         * @param host
+         *   The application host.
+         *
+         * @return
+         *   A pointer to the new component instance.
+         */
+
+        virtual
+        std::unique_ptr<importer_instance>
+        create(app_host& host) = 0;
+
+        /**
+         * Imports session data.
          *
          * @param instance
          *   The importer instance.
+         * @param result
+         *   A parameter to use to store the imported session snapshot.
          * @param stop_token
          *   A token to monitor for cancellation.
          *
@@ -198,7 +166,11 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
         virtual
         std::generator<importer_run_message>
-        run(importer_instance& instance, std::stop_token stop_token) = 0;
+        run(
+            importer_instance& instance,
+            out_param<session_snapshot>& result,
+            std::stop_token stop_token
+        ) = 0;
 
     protected:
 
@@ -224,10 +196,52 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
      */
 
     export
-    using importer_editor_ops = component_editor_ops<
-        importer_instance,
-        importer_edit_message
-    >;
+    class importer_editor_ops: private nonmovable {
+
+    public:
+
+        /**
+         * Destructor.
+         */
+
+        virtual
+        ~importer_editor_ops() = default;
+
+        /**
+         * Populates the given window with an editor interface, allowing the
+         * user to edit the importer state, and manages the window throughout
+         * the lifetime of the edit operations (e.g. until the window is
+         * closed).
+         *
+         * @param instance
+         *   The importer instance to be edited.
+         * @param parent
+         *   The item to use as the parent of the edit interface.
+         * @param stop_token
+         *   A stop token that will be set if the operation is cancelled.
+         *
+         * @return
+         *   A generator that is used to send messages back to the host.
+         */
+
+        virtual
+        std::generator<importer_edit_message>
+        edit(
+            importer_instance& instance,
+            ::QQuickItem* parent,
+            std::stop_token stop_token
+        ) = 0;
+
+    protected:
+
+        /**
+         * Default constructor.
+         */
+
+        explicit
+        importer_editor_ops() = default;
+
+    };
 
 }
 
@@ -242,7 +256,64 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
      */
 
     export
-    using importer_state_ops = component_state_ops<importer_instance>;
+    class importer_state_ops: private nonmovable {
+
+    public:
+
+        /**
+         * Destructor.
+         */
+
+        virtual
+        ~importer_state_ops() = default;
+
+        /**
+         * Gets a snapshot of the given importer's state.
+         *
+         * @param instance
+         *   The importer instance to get the state for.
+         *
+         * @return
+         *   The importer state.
+         */
+
+        virtual
+        state_value
+        dump(const importer_instance& instance) = 0;
+
+        /**
+         * Loads an importer from the given state.
+         *
+         * @param host
+         *   The application host.
+         * @param version
+         *   The version of the importer type that was used to save the given
+         *   state.
+         * @param state
+         *   The state to load the importer from.
+         *
+         * @return
+         *   A pointer to the loaded importer instance.
+         */
+
+        virtual
+        std::unique_ptr<importer_instance>
+        load(
+            app_host& host,
+            const metadata_element& version,
+            const state_value& state
+        ) = 0;
+
+    protected:
+
+        /**
+         * Default constructor.
+         */
+
+        explicit
+        importer_state_ops() = default;
+
+    };
 
 }
 

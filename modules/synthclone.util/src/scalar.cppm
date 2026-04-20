@@ -33,23 +33,18 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     template<class T, scalar S>
     class basic_scalar_proxy;
 
-    template<class T, class = void>
-    struct is_scalar_proxy_type: std::false_type {};
+    namespace scalar_ {
+
+        template<class T, scalar S>
+        void
+        check_scalar_proxy(const basic_scalar_proxy<T, S>& proxy);
+
+    }
 
     template<class T>
-    struct is_scalar_proxy_type<
-        T,
-        std::void_t<
-            std::enable_if_t<
-                std::is_base_of_v<
-                    basic_scalar_proxy<T, typename T::scalar_type>, T
-                >
-            >
-        >
-    >: std::true_type {};
-
-    template<class T>
-    concept scalar_proxy_type = is_scalar_proxy_type<T>::value;
+    concept scalar_proxy_type = requires {
+        scalar_::check_scalar_proxy(std::declval<T>());
+    };
 
     /**
      * Read-only wrapper around a scalar value that's meant to be extended by

@@ -18,40 +18,49 @@ namespace synthclone {
 
     public:
 
-        explicit
-        reverser_instance():
-            reverser_instance(
-                boost::interprocess::mapped_region::get_page_size())
+        reverser_instance(
+            app_host& host,
+            const std::size_t initial_buffer_size
+        ):
+            host_(host),
+            buffer_(initial_buffer_size)
         {
             // empty
         }
 
         explicit
-        reverser_instance(const std::size_t initial_buffer_size):
-            buffer_(initial_buffer_size)
+        reverser_instance(app_host& host):
+            reverser_instance(
+                host, boost::interprocess::mapped_region::get_page_size())
         {
             // empty
         }
 
         constexpr
         const dynamic_buffer<audio_sample>&
-        buffer()
-        const noexcept
+        buffer() const noexcept
         {
             return buffer_;
         }
 
         constexpr
         dynamic_buffer<audio_sample>&
-        buffer()
-        noexcept
+        buffer() noexcept
         {
             return buffer_;
+        }
+
+        constexpr
+        app_host&
+        host() noexcept
+        {
+            return host_;
         }
 
     private:
 
         dynamic_buffer<audio_sample> buffer_;
+        app_host& host_;
 
     };
 
@@ -94,35 +103,38 @@ namespace synthclone {
 
     public:
 
-        reverser_core_ops(session_host& host):
-            host_(host)
-        {
-            // empty
-        }
+        reverser_core_ops() = default;
 
         std::unique_ptr<capture_effect_instance>
-        create()
-        override final
+        create(app_host& host, const session_info& /*info*/) override final
         {
-            return std::make_unique<reverser_instance>();
+            return std::make_unique<reverser_instance>(host);
         }
 
         std::generator<capture_effect_run_message>
         run(
             capture_effect_instance& instance,
-            audio_input_stream& input_stream,
-            audio_output_stream& output_stream,
+            const audio_source& source,
+            const audio_sink& sink,
             std::stop_token /*stop_token*/
-        )
-        override final
+        ) override final
         {
-            auto& buffer = static_cast<reverser_instance&>(instance).buffer();
+            co_yield operation_status_message("Opening audio source ...");
+            audio_input_stream input_stream(source);
+
+            co_yield operation_status_message("Opening audio sink ...");
+            audio_output_stream output_stream(sink);
+
+            co_yield operation_status_message("Updating reverser state ...");
+
+            auto& reverser = static_cast<reverser_instance&>(instance);
+            auto& buffer = reverser.buffer();
 
             auto size = buffer.size();
             auto channel_count = input_stream.traits().channel_count().value();
             if (size < channel_count) {
-                host_.logger().log(
-                    session_log_level::debug,
+                reverser.host().logger().log(
+                    app_log_level::debug,
                     "increasing buffer size from {0} to {1} to accommodate "
                     "{1} channels of data",
                     size, channel_count);
@@ -130,15 +142,15 @@ namespace synthclone {
                 buffer.resize(channel_count);
                 size = channel_count;
 
-                co_yield component_state_changed_message();
+                co_yield operation_state_changed_message();
             }
 
-            co_yield component_status_message("Reversing ...");
+            co_yield operation_status_message("Reversing ...");
 
             input_stream.seek(0, audio_seek_origin::end);
             auto total_frame_count = input_stream.tell();
             if (total_frame_count == 0) [[unlikely]] {
-                co_yield component_progress_message(1.0);
+                co_yield operation_progress_message(1.0);
                 co_return;
             }
 
@@ -154,7 +166,7 @@ namespace synthclone {
                     input_stream, buffer_span, total_frame_count - next_offset,
                     output_stream);
 
-                co_yield component_progress_message(
+                co_yield operation_progress_message(
                     static_cast<float>(next_offset) /
                     static_cast<float>(total_frame_count));
             }
@@ -167,20 +179,15 @@ namespace synthclone {
                     channel_count),
                 0, output_stream);
 
-            co_yield component_progress_message(1.0);
+            co_yield operation_progress_message(1.0);
         }
-
-    private:
-
-        session_host& host_;
 
     };
 
     struct reverser_state_ops final: public capture_effect_state_ops {
 
         state_value
-        dump(const capture_effect_instance& instance)
-        override final
+        dump(const capture_effect_instance& instance) override final
         {
             const auto& reverser = static_cast<const reverser_instance&>(
                 instance);
@@ -190,10 +197,23 @@ namespace synthclone {
         }
 
         std::unique_ptr<capture_effect_instance>
-        load(const state_value& state)
-        override final
+        load(
+            app_host& host,
+            const session_info& /*info*/,
+            const metadata_element& version,
+            const state_value& state
+        ) override final
         {
+            if (version != simple_metadata_version) {
+                host.logger().log(
+                    app_log_level::warning,
+                    "loading state created from reverser type with version "
+                    "{0:?}, but current version is {1:?}",
+                    version, simple_metadata_version);
+            }
+
             return std::make_unique<reverser_instance>(
+                host,
                 extract_number<std::size_t>(
                     extract_map(state).at("buffer-size")));
         }
@@ -202,13 +222,13 @@ namespace synthclone {
 
     export
     capture_effect_type
-    make_reverser_type(session_host& host)
+    make_reverser_type()
     {
         return capture_effect_type(
             {
-                .core_ops = std::make_unique<reverser_core_ops>(host),
+                .core_ops = std::make_unique<reverser_core_ops>(),
                 .state_ops = std::make_unique<reverser_state_ops>(),
-                .metadata = generate_simple_metadata(
+                .metadata = generate_simple_component_metadata(
                     {
                         .identifier = "synthclone.fx.reverser",
                         .title = "reverser",

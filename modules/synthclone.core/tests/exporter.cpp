@@ -15,8 +15,10 @@ namespace {
     public:
 
         std::unique_ptr<synthclone::exporter_instance>
-        create()
-        override final
+        create(
+            synthclone::app_host& host,
+            const synthclone::session_info& info
+        ) override final
         {
             return nullptr;
         }
@@ -24,10 +26,8 @@ namespace {
         std::generator<synthclone::exporter_run_message>
         run(
             synthclone::exporter_instance& instance,
-            std::generator<synthclone::zone_port_params>& zones,
             std::stop_token stop_token
-        )
-        override final
+        ) override final
         {
             co_return;
         }
@@ -41,10 +41,10 @@ namespace {
         std::generator<synthclone::exporter_edit_message>
         edit(
             synthclone::exporter_instance& instance,
+            synthclone::session_snapshot& snapshot,
             ::QQuickItem* parent,
             std::stop_token stop_token
-        )
-        override final
+        ) override final
         {
             co_return;
         }
@@ -58,15 +58,18 @@ namespace {
     public:
 
         synthclone::state_value
-        dump(const synthclone::exporter_instance& instance)
-        override final
+        dump(const synthclone::exporter_instance& instance) override final
         {
             return synthclone::state_value();
         }
 
         std::unique_ptr<synthclone::exporter_instance>
-        load(const synthclone::state_value& value)
-        override final
+        load(
+            synthclone::app_host& host,
+            const synthclone::session_info& info,
+            const synthclone::metadata_element& version,
+            const synthclone::state_value& value
+        ) override final
         {
             return nullptr;
         }
@@ -79,7 +82,7 @@ namespace {
         const synthclone::exporter_core_ops* expected_core_ops_ptr,
         const synthclone::exporter_editor_ops* expected_editor_ops_ptr,
         const synthclone::exporter_state_ops* expected_state_ops_ptr,
-        const synthclone::metadata& expected_metadata
+        const synthclone::component_metadata& expected_metadata
     )
     {
         synthclone::verify_eq(expected_core_ops_ptr, type.core_ops().get());
@@ -106,7 +109,7 @@ BOOST_AUTO_TEST_CASE(types)
     const auto* core_ops_1_ptr = core_ops_1.get();
     auto editor_ops_1 = std::make_unique<test_editor_ops>();
     const auto* editor_ops_1_ptr = editor_ops_1.get();
-    synthclone::metadata_init_args metadata_1(
+    synthclone::component_metadata_init_args metadata_1(
         {
             .identifier = "foo",
             .version = "1.2.3"
@@ -126,7 +129,7 @@ BOOST_AUTO_TEST_CASE(types)
     auto state_ops_2 = std::make_unique<test_state_ops>();
     const auto* state_ops_2_ptr = state_ops_2.get();
 
-    synthclone::metadata_init_args metadata_2(
+    synthclone::component_metadata_init_args metadata_2(
         {
             .identifier = "bar",
             .version = "4.5.6"

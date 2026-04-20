@@ -1,0 +1,145 @@
+{
+    "synthclone-session": {
+
+        "version": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+        },
+
+        "sample-rate": 48000,
+        "channel-count": 2,
+        "endianness": "big",
+
+        "sampler": {
+            "plugin-identifier": "sampler-plugin-1",
+            "type-identifier": "sampler-type-1",
+            "type-version": "sampler-version-1",
+            "state": {
+                "foo": [
+                    null,
+                    false,
+                    true,
+                    -4,
+                    44444444444,
+                    4.4,
+                    "bar"
+                ]
+            }
+        },
+
+        "effect-chains": [
+            {
+                "name": "foo",
+                "effects": []
+            },
+            {
+                "name": "bar",
+                "effects": [
+                    {
+                        "plugin-identifier": "effect-plugin-1",
+                        "type-identifier": "effect-type-1",
+                        "type-version": "effect-version-1",
+                        "state": {
+                            "foo": [
+                                null,
+                                false,
+                                true,
+                                -1,
+                                11111111111,
+                                1.1,
+                                "bar"
+                            ]
+                        }
+                    },
+                    {
+                        "plugin-identifier": "effect-plugin-2",
+                        "type-identifier": "effect-type-2",
+                        "type-version": "effect-version-2"
+                    }
+                ]
+            }
+        ],
+
+        "exporters": [
+            {
+                "plugin-identifier": "exporter-plugin-1",
+                "type-identifier": "exporter-type-1",
+                "type-version": "exporter-version-1",
+                "state": {
+                    "foo": [
+                        null,
+                        false,
+                        true,
+                        -2,
+                        22222222222,
+                        2.2,
+                        "bar"
+                    ]
+                }
+            },
+            {
+                "plugin-identifier": "exporter-plugin-2",
+                "type-identifier": "exporter-type-2",
+                "type-version": "exporter-version-2"
+            }
+        ],
+
+        "importers": [
+            {
+                "plugin-identifier": "importer-plugin-1",
+                "type-identifier": "importer-type-1",
+                "type-version": "importer-version-1",
+                "state": {
+                    "foo": [
+                        null,
+                        false,
+                        true,
+                        -3,
+                        33333333333,
+                        3.3,
+                        "bar"
+                    ]
+                }
+            },
+            {
+                "plugin-identifier": "importer-plugin-2",
+                "type-identifier": "importer-type-2",
+                "type-version": "importer-version-2"
+            }
+        ],
+
+        "zones": [
+            {
+                "channel": 1,
+                "note": 32,
+                "velocity": 127,
+                "aftertouch": null,
+                "channel-pressure": null,
+                "controls": [],
+                "sample-duration": 0,
+                "release-duration": 0,
+                "effect-chain-index": null,
+                "dry-sample": null,
+                "wet-sample": null
+            },
+            {
+                "channel": 15,
+                "note": 64,
+                "velocity": 64,
+                "aftertouch": 32,
+                "channel-pressure": 96,
+                "controls": [
+                    [1, 108],
+                    [64, 127]
+                ],
+                "sample-duration": 3700,
+                "release-duration": 1800,
+                "effect-chain-index": 0,
+                "dry-sample": "samples/0",
+                "wet-sample": "samples/1"
+            }
+        ]
+
+    }
+}

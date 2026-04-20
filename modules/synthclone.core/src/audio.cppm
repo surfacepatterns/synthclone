@@ -35,6 +35,8 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     export using synthclone::audio_seek_offset;
     export using synthclone::audio_seek_origin;
     export using synthclone::audio_seek_origin_count;
+    export using synthclone::audio_sink;
+    export using synthclone::audio_source;
     export using synthclone::audio_traits;
 
     export using synthclone::get_extension;

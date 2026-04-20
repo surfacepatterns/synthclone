@@ -5,6 +5,7 @@ import std;
 import synthclone.core;
 import synthclone.external.boost.interprocess;
 import synthclone.fx;
+import synthclone.plugin;
 import synthclone.qt;
 import synthclone.test;
 import synthclone.test.plugin;
@@ -21,17 +22,21 @@ namespace {
     std::unique_ptr<synthclone::capture_effect_instance>
     load_reverser_instance(
         synthclone::capture_effect_type& type,
+        synthclone::app_host& host,
+        const synthclone::session_info& info,
+        const synthclone::metadata_element& version,
         std::size_t buffer_size
     )
     {
         return type.state_ops()->load(
+            host, info, version,
             synthclone::state_map { { "buffer-size", buffer_size } });
     }
 
     synthclone::capture_effect_type
-    load_reverser_type(synthclone::session_host& host)
+    load_reverser_type()
     {
-        auto instance = synthclone::make_fx_plugin()->instantiate(host);
+        auto instance = synthclone::make_fx_plugin_instance();
         return synthclone::load_capture_effect_type(
             instance, "synthclone.fx.reverser");
     }
@@ -71,34 +76,37 @@ BOOST_AUTO_TEST_SUITE(reverser)
 BOOST_AUTO_TEST_CASE(core_ops)
 {
     {
-        synthclone::test_session_log log;
-        synthclone::session_logger logger(
-            log, synthclone::session_log_level::debug);
-        synthclone::session_host host(logger, 48000, 1);
+        synthclone::test_app_log log;
+        synthclone::app_logger logger(log);
+        synthclone::app_host host(logger);
+
+        auto info = synthclone::make_test_session_info(48000, 1);
 
         std::array<synthclone::audio_sample, 96000> in_samples;
         for (std::size_t i = 0; i < 96000; ++i) {
             in_samples[i] = static_cast<synthclone::audio_sample>(i) / 96000.1;
         }
 
-        auto type = load_reverser_type(host);
+        auto type = load_reverser_type();
 
-        auto instance_ptr = type.core_ops()->create();
+        auto instance_ptr = type.core_ops()->create(host, info);
         synthclone::verify_basic_capture_effect_run(
-            host, type, *instance_ptr, in_samples,
+            info, type, *instance_ptr, in_samples,
             std::ranges::reverse_view(in_samples));
 
-        instance_ptr = load_reverser_instance(type, 0);
+        instance_ptr = load_reverser_instance(
+            type, host, info, synthclone::simple_metadata_version, 0);
         synthclone::verify_basic_capture_effect_run(
-            host, type, *instance_ptr, in_samples,
+            info, type, *instance_ptr, in_samples,
             std::ranges::reverse_view(in_samples), 1);
     }
 
     {
-        synthclone::test_session_log log;
-        synthclone::session_logger logger(
-            log, synthclone::session_log_level::debug);
-        synthclone::session_host host(logger, 48000, 2);
+        synthclone::test_app_log log;
+        synthclone::app_logger logger(log);
+        synthclone::app_host host(logger);
+
+        auto info = synthclone::make_test_session_info(48000, 2);
 
         std::array<synthclone::audio_sample, 96000> in_samples;
         std::array<synthclone::audio_sample, 96000> expected_out_samples;
@@ -115,28 +123,30 @@ BOOST_AUTO_TEST_CASE(core_ops)
             expected_out_samples[out_index + 1] = n2;
         }
 
-        auto type = load_reverser_type(host);
+        auto type = load_reverser_type();
 
-        auto instance_ptr = type.core_ops()->create();
+        auto instance_ptr = type.core_ops()->create(host, info);
         synthclone::verify_basic_capture_effect_run(
-            host, type, *instance_ptr, in_samples, expected_out_samples);
+            info, type, *instance_ptr, in_samples, expected_out_samples);
 
-        instance_ptr = load_reverser_instance(type, 1);
+        instance_ptr = load_reverser_instance(
+            type, host, info, synthclone::simple_metadata_version, 1);
         synthclone::verify_basic_capture_effect_run(
-            host, type, *instance_ptr, in_samples, expected_out_samples, 1);
+            info, type, *instance_ptr, in_samples, expected_out_samples, 1);
     }
 
     {
-        synthclone::test_session_log log;
-        synthclone::session_logger logger(
-            log, synthclone::session_log_level::debug);
-        synthclone::session_host host(logger, 48000, 1);
+        synthclone::test_app_log log;
+        synthclone::app_logger logger(log);
+        synthclone::app_host host(logger);
 
-        auto type = load_reverser_type(host);
+        auto info = synthclone::make_test_session_info(48000, 1);
 
-        auto instance_ptr = type.core_ops()->create();
+        auto type = load_reverser_type();
+
+        auto instance_ptr = type.core_ops()->create(host, info);
         synthclone::verify_basic_capture_effect_run(
-            host, type, *instance_ptr,
+            info, type, *instance_ptr,
             std::ranges::empty_view<synthclone::audio_sample>(),
             std::ranges::empty_view<synthclone::audio_sample>());
     }
@@ -144,26 +154,39 @@ BOOST_AUTO_TEST_CASE(core_ops)
 
 BOOST_AUTO_TEST_CASE(state_ops)
 {
-    synthclone::test_session_log log;
-    synthclone::session_logger logger(
-        log, synthclone::session_log_level::debug);
-    synthclone::session_host host(logger, 48000, 1);
+    synthclone::test_app_log log;
+    synthclone::app_logger logger(log);
+    synthclone::app_host host(logger);
 
-    auto type = load_reverser_type(host);
-    auto instance_ptr = type.core_ops()->create();
+    auto info = synthclone::make_test_session_info(48000, 1);
+
+    auto type = load_reverser_type();
+    auto instance_ptr = type.core_ops()->create(host, info);
     verify_default_buffer_size(type, *instance_ptr);
 
-    instance_ptr = load_reverser_instance(type, 16384);
+    instance_ptr = load_reverser_instance(
+        type, host, info, synthclone::simple_metadata_version, 16384);
     verify_buffer_size(type, *instance_ptr, 16384);
+
+    instance_ptr = load_reverser_instance(
+        type, host, info, "different-version", 4096);
+    verify_buffer_size(type, *instance_ptr, 4096);
 
     auto& state_ops_ptr = type.state_ops();
 
-    BOOST_CHECK_THROW(state_ops_ptr->load("foo"), synthclone::state_error);
     BOOST_CHECK_THROW(
-        state_ops_ptr->load(synthclone::state_map {}),
+        state_ops_ptr->load(
+            host, info, synthclone::simple_metadata_version, "foo"),
         synthclone::state_error);
     BOOST_CHECK_THROW(
-        state_ops_ptr->load(synthclone::state_map { { "buffer-size", -4096 }}),
+        state_ops_ptr->load(
+            host, info, synthclone::simple_metadata_version,
+            synthclone::state_map {}),
+        synthclone::state_error);
+    BOOST_CHECK_THROW(
+        state_ops_ptr->load(
+            host, info, synthclone::simple_metadata_version,
+            synthclone::state_map { { "buffer-size", -4096 }}),
         synthclone::state_error);
 }
 

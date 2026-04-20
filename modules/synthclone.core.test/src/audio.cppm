@@ -209,3 +209,28 @@ namespace synthclone {
     }
 
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::verify_audio_source()
+///////////////////////////////////////////////////////////////////////////////
+
+namespace synthclone {
+
+    export
+    void
+    verify_audio_source(
+        const audio_source& expected_source,
+        const audio_source& actual_source
+    )
+    {
+        BOOST_TEST_INFO_SCOPE(
+            make_test_info(
+                "synthclone::verify_audio_source", expected_source,
+                actual_source));
+
+        synthclone::audio_input_stream expected_stream(expected_source);
+        synthclone::audio_input_stream actual_stream(actual_source);
+        verify_audio_input_stream(expected_stream, actual_stream);
+    }
+
+}

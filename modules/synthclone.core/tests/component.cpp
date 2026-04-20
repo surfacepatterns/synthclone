@@ -4,51 +4,107 @@ import std;
 
 import synthclone.core;
 import synthclone.test;
-import synthclone.util;
+
+namespace {
+
+    void
+    verify_component_metadata(
+        const synthclone::component_metadata& metadata,
+        const synthclone::metadata_element& identifier,
+        const synthclone::metadata_element& version,
+        const std::optional<synthclone::metadata_element>& title,
+        const std::optional<synthclone::metadata_url>& url,
+        const std::optional<synthclone::metadata_element>& license,
+        const std::vector<synthclone::metadata_element>& creators,
+        const std::vector<synthclone::metadata_element>& contributors,
+        const synthclone::metadata_text& description,
+        const std::vector<synthclone::metadata_element>& category
+    )
+    {
+        synthclone::verify_eq(identifier, metadata.identifier());
+        synthclone::verify_eq(version, metadata.version());
+        synthclone::verify_eq(title, metadata.title());
+        synthclone::verify_eq(url, metadata.url());
+        synthclone::verify_eq(license, metadata.license());
+
+        const auto& metadata_creators = metadata.creators();
+        BOOST_CHECK_EQUAL_COLLECTIONS(
+            creators.begin(), creators.end(), metadata_creators.begin(),
+            metadata_creators.end());
+
+        const auto& metadata_contributors = metadata.contributors();
+        BOOST_CHECK_EQUAL_COLLECTIONS(
+            contributors.begin(), contributors.end(),
+            metadata_contributors.begin(), metadata_contributors.end());
+
+        synthclone::verify_eq(description, metadata.description());
+
+        const auto& metadata_category = metadata.category();
+        BOOST_CHECK_EQUAL_COLLECTIONS(
+            category.begin(), category.end(), metadata_category.begin(),
+            metadata_category.end());
+    }
+
+}
 
 BOOST_AUTO_TEST_SUITE(component)
 
-BOOST_AUTO_TEST_CASE(progress_message)
+BOOST_AUTO_TEST_CASE(metadata)
 {
-    synthclone::component_progress_message message_1(0.5);
-    synthclone::verify_eq(0.5, message_1.progress());
+    synthclone::component_metadata metadata_1(
+        {
+            .identifier = "some.identifier",
+            .version = "some-version"
+        });
 
-    synthclone::component_progress_message message_2(0.75);
-    synthclone::verify_eq(0.75, message_2.progress());
+    verify_component_metadata(
+        metadata_1, "some.identifier", "some-version", std::nullopt,
+        std::nullopt, std::nullopt, {}, {}, "", {});
 
-    synthclone::component_progress_message message_3(message_1);
-    synthclone::verify_eq(0.5, message_3.progress());
+    synthclone::component_metadata metadata_2(
+        {
+            .identifier = "some.other.identifier",
+            .version = "1.2.3",
+            .title = "title",
+            .url = "http://host/path",
+            .license = "license",
+            .creators = {"me", "myself", "I"},
+            .contributors = {"him", "her", "them"},
+            .description = "description",
+            .category = {"component", "category"}
+        });
+    verify_component_metadata(
+        metadata_2, "some.other.identifier", "1.2.3", "title",
+        "http://host/path", "license", {"me", "myself", "I"},
+        {"him", "her", "them"}, "description", {"component", "category"});
 
-    message_1 = message_2;
-    synthclone::verify_eq(0.75, message_1.progress());
+    synthclone::verify_ne(metadata_1, metadata_2);
 
-    BOOST_CHECK_THROW(
-        synthclone::component_progress_message(1.1),
-        synthclone::verification_error);
-    BOOST_CHECK_THROW(
-        synthclone::component_progress_message(-0.1),
-        synthclone::verification_error);
-}
+    synthclone::component_metadata metadata_3(metadata_1);
+    synthclone::verify_eq(metadata_1, metadata_3);
 
-BOOST_AUTO_TEST_CASE(status_message)
-{
-    synthclone::component_status_message message_1("foo");
-    synthclone::verify_eq("foo", message_1.status());
+    synthclone::component_metadata metadata_4(std::move(metadata_1));
+    synthclone::verify_eq(metadata_3, metadata_4);
 
-    synthclone::component_status_message message_2("bar");
-    synthclone::verify_eq("bar", message_2.status());
+    metadata_1 = metadata_2;
+    synthclone::verify_eq(metadata_1, metadata_2);
 
-    synthclone::component_status_message message_3(message_1);
-    synthclone::verify_eq("foo", message_3.status());
+    metadata_4 = std::move(metadata_1);
+    synthclone::verify_eq(metadata_2, metadata_4);
 
-    synthclone::component_status_message message_4(std::move(message_1));
-    synthclone::verify_eq("foo", message_4.status());
-
-    message_1 = message_2;
-    synthclone::verify_eq("bar", message_1.status());
-
-    message_2 = std::move(message_3);
-    synthclone::verify_eq("foo", message_2.status());
+    synthclone::component_metadata metadata_5(
+        {
+            .identifier = "some.other.identifier",
+            .version = "1.2.3",
+            .title = "title",
+            .url = "http://host/path",
+            .license = "license",
+            .creators = {"me", "myself", "I"},
+            .contributors = {"him", "her", "them"},
+            .description = "description",
+            .category = {"different-component", "different-category"}
+        });
+    synthclone::verify_ne(metadata_2, metadata_5);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

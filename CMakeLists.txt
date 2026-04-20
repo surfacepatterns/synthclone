@@ -4,18 +4,46 @@ cmake_minimum_required(VERSION 4.0.0)
 # be enabled before C++ language support.
 #
 # This specific value changes as experimental support evolves.
-#set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "a9e1cf81-9932-4810-974b-6eccaf14e457")
-#set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "0e5b6991-d74f-4b3d-a41c-cf096e0b2508")
-set(CMAKE_EXPERIMENTAL_CXX_IMPORT_STD "d0edc3af-4c50-42ea-a356-e2862fe7a444")
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.3.0")
+    set(
+        CMAKE_EXPERIMENTAL_CXX_IMPORT_STD
+        "451f2fe2-a8a2-47c3-bc32-94786d8fc91b"
+    )
+elseif(CMAKE_VERSION VERSION_GREATER_EQUAL "4.0.3")
+    set(
+        CMAKE_EXPERIMENTAL_CXX_IMPORT_STD
+        "d0edc3af-4c50-42ea-a356-e2862fe7a444"
+    )
+else()
+    set(
+        CMAKE_EXPERIMENTAL_CXX_IMPORT_STD
+        "a9e1cf81-9932-4810-974b-6eccaf14e457"
+    )
+endif()
 
 set(CMAKE_CXX_COMPILER /usr/bin/clang++-20)
+#set(CMAKE_CXX_COMPILER /usr/bin/clang++-21)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_MODULE_STD 1)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#" -Weverything -Werror -pedantic"
+# XXX: " -Weverything -Werror -pedantic"
 set(SYNTHCLONE_CXX_FLAGS "--stdlib=libstdc++")
+
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.3.0")
+    # XXX: https://gitlab.kitware.com/cmake/cmake/-/work_items/27601
+    #
+    # XXX: For whatever reason, `cmake` 4.3.0 started using `-c` in places
+    # where it's unused.  There are still warnings that aren't suppressed when
+    # doing module scanning.
+    string(
+        CONCAT SYNTHCLONE_CXX_FLAGS
+        "${SYNTHCLONE_CXX_FLAGS} -Wno-reserved-module-identifier "
+        "-Wno-unused-command-line-argument"
+    )
+endif()
+
 if(NOT DEFINED CMAKE_CXX_FLAGS)
     set(CMAKE_CXX_FLAGS ${SYNTHCLONE_CXX_FLAGS})
 else()

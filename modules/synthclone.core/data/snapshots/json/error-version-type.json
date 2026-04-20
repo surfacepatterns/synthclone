@@ -1,0 +1,17 @@
+{
+    "synthclone-session": {
+
+        "version": 26,
+
+        "sample-rate": 44100,
+        "channel-count": 1,
+        "endianness": "little",
+
+        "sampler": null,
+        "effect-chains": [],
+        "exporters": [],
+        "importers": [],
+        "zones": []
+
+    }
+}
