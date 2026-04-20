@@ -25,10 +25,10 @@ namespace synthclone {
         BOOST_TEST_INFO_SCOPE(
             make_test_info("synthclone::verify_ordered_ge", lhs, rhs));
 
-        BOOST_CHECK(lhs >= rhs);
-        BOOST_CHECK(rhs <= lhs);
-        BOOST_CHECK(! (lhs < rhs));
-        BOOST_CHECK(! (rhs > lhs));
+        BOOST_REQUIRE(lhs >= rhs);
+        BOOST_REQUIRE(rhs <= lhs);
+        BOOST_REQUIRE(! (lhs < rhs));
+        BOOST_REQUIRE(! (rhs > lhs));
     }
 
     template<ostream_printable T, ostream_printable U>
@@ -38,10 +38,10 @@ namespace synthclone {
         BOOST_TEST_INFO_SCOPE(
             make_test_info("synthclone::verify_ordered_ge", lhs, rhs));
 
-        BOOST_CHECK_GE(lhs, rhs);
-        BOOST_CHECK_LE(rhs, lhs);
-        BOOST_CHECK(! (lhs < rhs));
-        BOOST_CHECK(! (rhs > lhs));
+        BOOST_REQUIRE_GE(lhs, rhs);
+        BOOST_REQUIRE_LE(rhs, lhs);
+        BOOST_REQUIRE(! (lhs < rhs));
+        BOOST_REQUIRE(! (rhs > lhs));
     }
 
     template<class T, class U>
@@ -53,8 +53,8 @@ namespace synthclone {
 
         verify_ordered_ge(lhs, rhs);
 
-        BOOST_CHECK(std::is_gteq(lhs <=> rhs));
-        BOOST_CHECK(std::is_lteq(rhs <=> lhs));
+        BOOST_REQUIRE(std::is_gteq(lhs <=> rhs));
+        BOOST_REQUIRE(std::is_lteq(rhs <=> lhs));
     }
 
     export
@@ -100,10 +100,10 @@ namespace synthclone {
         BOOST_TEST_INFO_SCOPE(
             make_test_info("synthclone::verify_ordered_le", lhs, rhs));
 
-        BOOST_CHECK(lhs <= rhs);
-        BOOST_CHECK(rhs >= lhs);
-        BOOST_CHECK(! (lhs > rhs));
-        BOOST_CHECK(! (rhs < lhs));
+        BOOST_REQUIRE(lhs <= rhs);
+        BOOST_REQUIRE(rhs >= lhs);
+        BOOST_REQUIRE(! (lhs > rhs));
+        BOOST_REQUIRE(! (rhs < lhs));
     }
 
     template<ostream_printable T, ostream_printable U>
@@ -113,10 +113,10 @@ namespace synthclone {
         BOOST_TEST_INFO_SCOPE(
             make_test_info("synthclone::verify_ordered_le", lhs, rhs));
 
-        BOOST_CHECK_LE(lhs, rhs);
-        BOOST_CHECK_GE(rhs, lhs);
-        BOOST_CHECK(! (lhs > rhs));
-        BOOST_CHECK(! (rhs < lhs));
+        BOOST_REQUIRE_LE(lhs, rhs);
+        BOOST_REQUIRE_GE(rhs, lhs);
+        BOOST_REQUIRE(! (lhs > rhs));
+        BOOST_REQUIRE(! (rhs < lhs));
     }
 
     template<class T, class U>
@@ -128,8 +128,8 @@ namespace synthclone {
 
         verify_ordered_le(lhs, rhs);
 
-        BOOST_CHECK(std::is_lteq(lhs <=> rhs));
-        BOOST_CHECK(std::is_gteq(rhs <=> lhs));
+        BOOST_REQUIRE(std::is_lteq(lhs <=> rhs));
+        BOOST_REQUIRE(std::is_gteq(rhs <=> lhs));
     }
 
     export
@@ -175,10 +175,10 @@ namespace synthclone {
         BOOST_TEST_INFO_SCOPE(
             make_test_info("synthclone::verify_equality_ne", lhs, rhs));
 
-        BOOST_CHECK(lhs != rhs);
-        BOOST_CHECK(rhs != lhs);
-        BOOST_CHECK(! (lhs == rhs));
-        BOOST_CHECK(! (rhs == lhs));
+        BOOST_REQUIRE(lhs != rhs);
+        BOOST_REQUIRE(rhs != lhs);
+        BOOST_REQUIRE(! (lhs == rhs));
+        BOOST_REQUIRE(! (rhs == lhs));
     }
 
     template<ostream_printable T, ostream_printable U>
@@ -188,10 +188,10 @@ namespace synthclone {
         BOOST_TEST_INFO_SCOPE(
             make_test_info("synthclone::verify_equality_ne", lhs, rhs));
 
-        BOOST_CHECK_NE(lhs, rhs);
-        BOOST_CHECK_NE(rhs, lhs);
-        BOOST_CHECK(! (lhs == rhs));
-        BOOST_CHECK(! (rhs == lhs));
+        BOOST_REQUIRE_NE(lhs, rhs);
+        BOOST_REQUIRE_NE(rhs, lhs);
+        BOOST_REQUIRE(! (lhs == rhs));
+        BOOST_REQUIRE(! (rhs == lhs));
     }
 
     template<class T, class U>
@@ -203,8 +203,8 @@ namespace synthclone {
 
         verify_equality_ne(lhs, rhs);
 
-        BOOST_CHECK(std::is_neq(lhs <=> rhs));
-        BOOST_CHECK(std::is_neq(rhs <=> lhs));
+        BOOST_REQUIRE(std::is_neq(lhs <=> rhs));
+        BOOST_REQUIRE(std::is_neq(rhs <=> lhs));
     }
 
     export
@@ -250,10 +250,10 @@ namespace synthclone {
         BOOST_TEST_INFO_SCOPE(
             make_test_info("synthclone::verify_equality_eq", lhs, rhs));
 
-        BOOST_CHECK(lhs == rhs);
-        BOOST_CHECK(rhs == lhs);
-        BOOST_CHECK(! (lhs != rhs));
-        BOOST_CHECK(! (rhs != lhs));
+        BOOST_REQUIRE(lhs == rhs);
+        BOOST_REQUIRE(rhs == lhs);
+        BOOST_REQUIRE(! (lhs != rhs));
+        BOOST_REQUIRE(! (rhs != lhs));
     }
 
     template<ostream_printable T, ostream_printable U>
@@ -263,10 +263,10 @@ namespace synthclone {
         BOOST_TEST_INFO_SCOPE(
             make_test_info("synthclone::verify_equality_eq", lhs, rhs));
 
-        BOOST_CHECK_EQUAL(lhs, rhs);
-        BOOST_CHECK_EQUAL(rhs, lhs);
-        BOOST_CHECK(! (lhs != rhs));
-        BOOST_CHECK(! (rhs != lhs));
+        BOOST_REQUIRE_EQUAL(lhs, rhs);
+        BOOST_REQUIRE_EQUAL(rhs, lhs);
+        BOOST_REQUIRE(! (lhs != rhs));
+        BOOST_REQUIRE(! (rhs != lhs));
     }
 
     template<class T, class U>
@@ -290,8 +290,8 @@ namespace synthclone {
 
         verify_ordered_eq(lhs, rhs);
 
-        BOOST_CHECK(std::is_eq(lhs <=> rhs));
-        BOOST_CHECK(std::is_eq(rhs <=> lhs));
+        BOOST_REQUIRE(std::is_eq(lhs <=> rhs));
+        BOOST_REQUIRE(std::is_eq(rhs <=> lhs));
     }
 
     export
@@ -355,10 +355,10 @@ namespace synthclone {
 
         verify_ge(lhs, rhs);
 
-        BOOST_CHECK(lhs > rhs);
-        BOOST_CHECK(rhs < lhs);
-        BOOST_CHECK(! (lhs <= rhs));
-        BOOST_CHECK(! (rhs >= lhs));
+        BOOST_REQUIRE(lhs > rhs);
+        BOOST_REQUIRE(rhs < lhs);
+        BOOST_REQUIRE(! (lhs <= rhs));
+        BOOST_REQUIRE(! (rhs >= lhs));
     }
 
     template<ostream_printable T, ostream_printable U>
@@ -370,10 +370,10 @@ namespace synthclone {
 
         verify_ge(lhs, rhs);
 
-        BOOST_CHECK_GT(lhs, rhs);
-        BOOST_CHECK_LT(rhs, lhs);
-        BOOST_CHECK(! (lhs <= rhs));
-        BOOST_CHECK(! (rhs >= lhs));
+        BOOST_REQUIRE_GT(lhs, rhs);
+        BOOST_REQUIRE_LT(rhs, lhs);
+        BOOST_REQUIRE(! (lhs <= rhs));
+        BOOST_REQUIRE(! (rhs >= lhs));
     }
 
     template<class T, class U>
@@ -396,8 +396,8 @@ namespace synthclone {
 
         verify_equality_gt(lhs, rhs);
 
-        BOOST_CHECK(std::is_gt(lhs <=> rhs));
-        BOOST_CHECK(std::is_lt(rhs <=> lhs));
+        BOOST_REQUIRE(std::is_gt(lhs <=> rhs));
+        BOOST_REQUIRE(std::is_lt(rhs <=> lhs));
     }
 
     export
@@ -461,10 +461,10 @@ namespace synthclone {
 
         verify_le(lhs, rhs);
 
-        BOOST_CHECK(lhs < rhs);
-        BOOST_CHECK(rhs > lhs);
-        BOOST_CHECK(! (lhs >= rhs));
-        BOOST_CHECK(! (rhs <= lhs));
+        BOOST_REQUIRE(lhs < rhs);
+        BOOST_REQUIRE(rhs > lhs);
+        BOOST_REQUIRE(! (lhs >= rhs));
+        BOOST_REQUIRE(! (rhs <= lhs));
     }
 
     template<ostream_printable T, ostream_printable U>
@@ -476,10 +476,10 @@ namespace synthclone {
 
         verify_le(lhs, rhs);
 
-        BOOST_CHECK_LT(lhs, rhs);
-        BOOST_CHECK_GT(rhs, lhs);
-        BOOST_CHECK(! (lhs >= rhs));
-        BOOST_CHECK(! (rhs <= lhs));
+        BOOST_REQUIRE_LT(lhs, rhs);
+        BOOST_REQUIRE_GT(rhs, lhs);
+        BOOST_REQUIRE(! (lhs >= rhs));
+        BOOST_REQUIRE(! (rhs <= lhs));
     }
 
     template<class T, class U>
@@ -502,8 +502,8 @@ namespace synthclone {
 
         verify_equality_lt(lhs, rhs);
 
-        BOOST_CHECK(std::is_lt(lhs <=> rhs));
-        BOOST_CHECK(std::is_gt(rhs <=> lhs));
+        BOOST_REQUIRE(std::is_lt(lhs <=> rhs));
+        BOOST_REQUIRE(std::is_gt(rhs <=> lhs));
     }
 
     export

@@ -26,27 +26,20 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     template<class T, class Char, class Traits, class Allocator>
     class basic_string_proxy;
 
-    template<class T, class = void>
-    struct is_string_proxy_type: std::false_type {};
+    namespace string_ {
+
+        template<class T, class Char, class Traits, class Allocator>
+        void
+        check_string_proxy(
+            const basic_string_proxy<T, Char, Traits, Allocator>& proxy
+        );
+
+    }
 
     template<class T>
-    struct is_string_proxy_type<
-        T,
-        std::void_t<
-            std::enable_if_t<
-                std::is_base_of_v<
-                    basic_string_proxy<
-                        T, typename T::value_type, typename T::traits_type,
-                        typename T::allocator_type
-                    >,
-                    T
-                >
-            >
-        >
-    >: std::true_type {};
-
-    template<class T>
-    concept string_proxy_type = is_string_proxy_type<T>::value;
+    concept string_proxy_type = requires {
+        string_::check_string_proxy(std::declval<T>());
+    };
 
     /**
      * Read-only wrapper around a `std::basic_string` instance that's meant to

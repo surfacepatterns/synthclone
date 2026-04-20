@@ -1,0 +1,188 @@
+#!/usr/bin/env -S /bin/sh -c 'PYTHONPATH="$(dirname "$0")/../../../common/python:$PYTHONPATH" python3 "$0" "$@"'
+
+from collections.abc import Iterable
+from io import BytesIO
+from itertools import chain
+from pathlib import Path
+from stat import (
+    S_IRGRP,
+    S_IROTH,
+    S_IRUSR,
+    S_ISGID,
+    S_ISUID,
+    S_ISVTX,
+    S_IWGRP,
+    S_IWOTH,
+    S_IWUSR,
+    S_IXGRP,
+    S_IXOTH,
+    S_IXUSR
+)
+from tarfile import (
+    BLKTYPE,
+    CHRTYPE,
+    DIRTYPE,
+    FIFOTYPE,
+    GNU_FORMAT,
+    LNKTYPE,
+    PAX_FORMAT,
+    REGTYPE,
+    SYMTYPE,
+    USTAR_FORMAT,
+    TarInfo,
+    open as open_tar_file
+)
+from typing import assert_never
+
+TAR_DATA_PATH = Path(__file__).parent.parent / "data" / "archives" / "tar"
+
+def make_tar_info(
+    path: Path,
+    type: bytes,
+    /,
+    *,
+    dev_major: int = 0,
+    dev_minor: int = 0,
+    gid: int = 0,
+    group_name: str = "",
+    link_path: Path | None = None,
+    modification_time: int = 0,
+    permissions: int = 0,
+    size: int = 0,
+    uid: int = 0,
+    user_name: str = ""
+) -> TarInfo:
+    info = TarInfo(str(path))
+    info.devmajor = dev_major
+    info.devminor = dev_minor
+    info.gid = gid
+    info.gname = group_name
+    info.mode = permissions
+    info.mtime = modification_time
+    info.size = size
+    info.type = type
+    info.uid = uid
+    info.uname = user_name
+
+    if link_path is not None:
+        info.linkpath = str(link_path)
+
+    # XXX:
+    # * Can we explicitly set the wrong `chksum`?
+    # * How do we use `sparse`?
+    # * We should make use of `pax_headers`.
+
+    return info
+
+def truncate_file(path: Path, n: int, /):
+    with open(path, "r+b") as fp:
+        fp.truncate(path.stat().st_size + n if n < 0 else n)
+
+def write_tar_file(
+    name: str,
+    /,
+    *,
+    entries: Iterable[TarInfo | tuple[TarInfo, bytes]] = (),
+    format: int = PAX_FORMAT,
+    pax_headers: dict | None = None
+):
+    path = TAR_DATA_PATH / name
+    with open_tar_file(path, "w", format=format, pax_headers=pax_headers) as f:
+        for entry in entries:
+            match entry:
+                case TarInfo():
+                    f.addfile(entry)
+                case (info, data):
+                    f.addfile(info, fileobj=BytesIO(data))
+                case _:
+                    assert_never(entry)
+    return path
+
+_BASIC_HEADERS = (
+    make_tar_info(
+        Path("block-device"), BLKTYPE, dev_major=1, dev_minor=2,
+        gid=3, group_name="block-group", modification_time=4,
+        permissions=S_IRGRP | S_IROTH | S_IRUSR, uid=5,
+        user_name="block-user"),
+    make_tar_info(
+        Path("character-device"), CHRTYPE, dev_major=6, dev_minor=7,
+        gid=8, group_name="character-group", modification_time=9,
+        permissions=S_IWGRP | S_IWOTH | S_IWUSR, uid=10,
+        user_name="character-user"),
+    make_tar_info(
+        Path("directory"), DIRTYPE, gid=11,
+        group_name="directory-group", modification_time=12,
+        permissions=S_IXGRP | S_IXOTH | S_IXUSR, uid=13,
+        user_name="directory-user"),
+    make_tar_info(
+        Path("fifo"), FIFOTYPE, gid=14, group_name="fifo-group",
+        modification_time=15, permissions=S_ISGID | S_ISUID | S_ISVTX,
+        uid=16, user_name="fifo-user"),
+    (
+        make_tar_info(
+            Path("file"), REGTYPE, gid=17,
+            group_name="file-group", modification_time=18, size=19,
+            uid=20, user_name="file-user"),
+        bytes(range(19))
+    ),
+    make_tar_info(
+        Path("hard-link"), LNKTYPE, gid=21,
+        group_name="hard-link-group", link_path=Path("hard-link-path"),
+        modification_time=22, uid=23, user_name="hard-link-user"),
+    make_tar_info(
+        Path("symbolic-link"), SYMTYPE, gid=24,
+        group_name="symbolic-link-group",
+        link_path=Path("symbolic-link-path"),
+        modification_time=25, uid=26, user_name="symbolic-link-user")
+)
+
+def main():
+    truncate_file(
+        write_tar_file(
+            "error-truncated-first-directory.tar",
+            entries=(make_tar_info(Path("foo"), DIRTYPE),)),
+        0x8e)
+    truncate_file(
+        write_tar_file(
+            "error-truncated-second-directory.tar",
+            entries=(
+                make_tar_info(Path("foo"), DIRTYPE),
+                make_tar_info(Path("bar"), DIRTYPE)
+            )),
+        0x26f)
+
+    write_tar_file(
+        "basic-header-types-gnu.tar", entries=_BASIC_HEADERS,
+        format=GNU_FORMAT)
+    write_tar_file(
+        "basic-header-types-pax.tar", entries=_BASIC_HEADERS,
+        format=PAX_FORMAT, pax_headers={"foo": "bar"})
+    write_tar_file(
+        "basic-header-types-ustar.tar", entries=_BASIC_HEADERS,
+        format=USTAR_FORMAT)
+
+    write_tar_file(
+        "basic-files.tar",
+        entries=(
+            (
+                make_tar_info(Path("file1"), REGTYPE, size=8192),
+                bytes(i % 256 for i in range(8192))
+            ),
+            (
+                make_tar_info(Path("file2"), REGTYPE, size=1024),
+                bytes(i % 256 for i in range(1024))
+            )
+        ))
+
+    write_tar_file(
+        "multi-volume.tar",
+        entries=(
+            (
+                make_tar_info(Path("volume"), b'M', size=1),
+                bytes((0,))
+            ),
+        ),
+        format=GNU_FORMAT)
+
+if __name__ == "__main__":
+    main()

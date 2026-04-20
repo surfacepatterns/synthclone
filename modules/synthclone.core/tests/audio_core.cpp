@@ -7,15 +7,41 @@ import synthclone.util;
 
 namespace {
 
+    template<class T, typename T::scalar_type N>
+    void
+    verify_scalar_creation()
+    {
+        auto result = T::create(N);
+        BOOST_REQUIRE(static_cast<bool>(result));
+        synthclone::verify_eq(*result, N);
+    }
+
+    template<class T, typename T::scalar_type N>
+    void
+    verify_scalar_creation_error()
+    {
+        auto result = T::create(N);
+        BOOST_REQUIRE(! result);
+        synthclone::verify_eq(
+            result.error().value(),
+            static_cast<int>(std::errc::invalid_argument));
+    }
+
     template<class T, typename T::scalar_type Min, typename T::scalar_type Max>
     void
-    verify_scalar_constructor()
+    verify_scalar_construction_ops()
     {
         synthclone::verify_eq(T{Min}, Min);
         synthclone::verify_eq(T{Max}, Max);
 
         BOOST_CHECK_THROW(T{Max + 1}, synthclone::verification_error);
         BOOST_CHECK_THROW(T{Min - 1}, synthclone::verification_error);
+
+        verify_scalar_creation<T, Min>();
+        verify_scalar_creation<T, Max>();
+
+        verify_scalar_creation_error<T, Min - 1>();
+        verify_scalar_creation_error<T, Max + 1>();
     }
 
 }
@@ -24,12 +50,16 @@ BOOST_AUTO_TEST_SUITE(audio_core)
 
 BOOST_AUTO_TEST_CASE(channel_count_constructor)
 {
-    verify_scalar_constructor<synthclone::audio_channel_count, 1, 128>();
+    verify_scalar_construction_ops<synthclone::audio_channel_count, 1, 128>();
 }
 
 BOOST_AUTO_TEST_CASE(duration_constructor)
 {
-    verify_scalar_constructor<synthclone::audio_duration, 0, 300000000000>();
+    verify_scalar_construction_ops<
+        synthclone::audio_duration,
+        0,
+        300000000000
+    >();
 }
 
 BOOST_AUTO_TEST_CASE(resampler_buffer_overlap_error)
@@ -59,7 +89,11 @@ BOOST_AUTO_TEST_CASE(resampler_flush_error)
 
 BOOST_AUTO_TEST_CASE(sample_rate_constructor)
 {
-    verify_scalar_constructor<synthclone::audio_sample_rate, 4000, 1024000>();
+    verify_scalar_construction_ops<
+        synthclone::audio_sample_rate,
+        4000,
+        1024000
+    >();
 }
 
 BOOST_AUTO_TEST_CASE(traits)

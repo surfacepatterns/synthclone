@@ -22,10 +22,15 @@ function(synthclone_make_module type)
     add_library(${target} OBJECT)
     add_dependencies(
         ${target}
+        module-synthclone.archive-${type}
         module-synthclone.external.boost.container-${type}
+        module-synthclone.external.boost.core-${type}
         module-synthclone.external.boost.interprocess-${type}
+        module-synthclone.external.boost.iostreams-${type}
+        module-synthclone.external.boost.json-${type}
         module-synthclone.external.boost.mp11-${type}
         module-synthclone.external.boost.scope-${type}
+        module-synthclone.external.boost.system-${type}
         module-synthclone.external.boost.urls-${type}
         module-synthclone.external.samplerate-${type}
         module-synthclone.external.sndfile-${type}
@@ -50,10 +55,16 @@ function(synthclone_make_module type)
     target_link_libraries(
         ${target}
         PRIVATE
+        module-synthclone.archive-${type}
+        module-synthclone.external.archive-${type}
         module-synthclone.external.boost.container-${type}
+        module-synthclone.external.boost.core-${type}
         module-synthclone.external.boost.interprocess-${type}
+        module-synthclone.external.boost.iostreams-${type}
+        module-synthclone.external.boost.json-${type}
         module-synthclone.external.boost.mp11-${type}
         module-synthclone.external.boost.scope-${type}
+        module-synthclone.external.boost.system-${type}
         module-synthclone.external.boost.urls-${type}
         module-synthclone.external.samplerate-${type}
         module-synthclone.external.sndfile-${type}
@@ -96,14 +107,20 @@ function(synthclone_make_tests)
     target_link_libraries(
         ${target}
         PRIVATE
+        module-synthclone.archive-object
+        module-synthclone.external.archive-object
         module-synthclone.core-object
         module-synthclone.core.test-object
         module-synthclone.external.boost.container-object
         module-synthclone.external.boost.core-object
         module-synthclone.external.boost.interprocess-object
+        module-synthclone.external.boost.iostreams-object
+        module-synthclone.external.boost.json-object
         module-synthclone.external.boost.mp11-object
         module-synthclone.external.boost.scope-object
+        module-synthclone.external.boost.system-object
         module-synthclone.external.boost.type_traits-object
+        module-synthclone.external.boost.unit_test-object
         module-synthclone.external.boost.urls-object
         module-synthclone.external.kissfft-object
         module-synthclone.external.posix-object

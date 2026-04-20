@@ -80,6 +80,7 @@ function(synthclone_make_tests)
     target_link_libraries(
         ${target}
         PRIVATE
+        module-synthclone.archive-object
         module-synthclone.core-object
         module-synthclone.external.boost.callable_traits-object
         module-synthclone.external.boost.container-object

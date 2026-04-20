@@ -45,15 +45,23 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
 namespace SYNTHCLONE_LIB_NAMESPACE {
 
-    constexpr std::uint_least64_t maximum_audio_duration_n =
+    constexpr std::uint_least64_t audio_duration_upper_bound =
         300 * static_cast<std::uint_least64_t>(std::nano::den);
+
+    constexpr
+    bool
+    is_valid_audio_duration(const std::uint_least64_t n)
+    {
+        return n <= audio_duration_upper_bound;
+    }
 
     constexpr
     std::uint_least64_t
     verify_audio_duration(const std::uint_least64_t n)
     {
         verify(
-            n <= maximum_audio_duration_n, "{0}: invalid audio duration", n);
+            is_valid_audio_duration(n), "{0} is not a valid audio duration",
+            n);
         return n;
     }
 
@@ -68,6 +76,28 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     public:
 
         /**
+         * Creates a new `audio_duration` instance.
+         *
+         * @param n
+         *   The audio duration value.
+         *
+         * @returns
+         *   The new `audio_duration` instance, or a `std::error_code` instance
+         *   if the value is not valid.
+         */
+
+        static constexpr
+        std::expected<audio_duration, std::error_code>
+        create(const std::uint_least64_t n) noexcept
+        {
+            if (! is_valid_audio_duration(n)) {
+                return std::unexpected(
+                    std::make_error_code(std::errc::invalid_argument));
+            }
+            return audio_duration(n, validated);
+        }
+
+        /**
          * Constucts an `audio_duration` instance.
          *
          * @param n
@@ -77,6 +107,15 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         constexpr
         audio_duration(const std::uint_least64_t n):
             uint_least64_proxy<audio_duration>(verify_audio_duration(n))
+        {
+            // empty
+        }
+
+    private:
+
+        constexpr
+        audio_duration(const std::uint_least64_t n, validated_t):
+            uint_least64_proxy<audio_duration>(n)
         {
             // empty
         }
@@ -124,15 +163,24 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
     // 1024 is the maximum audio channel count supported by `libsndfile`.  128
     // is the maximum audio channel count supported by `libsamplerate`.
-    constexpr std::uint_least16_t maximum_audio_channel_count_n = 128;
+    constexpr std::uint_least16_t audio_channel_count_lower_bound = 1;
+    constexpr std::uint_least16_t audio_channel_count_upper_bound = 128;
+
+    constexpr
+    bool
+    is_valid_audio_channel_count(const std::uint_least16_t n)
+    {
+        return (n >= audio_channel_count_lower_bound) &&
+            (n <= audio_channel_count_upper_bound);
+    }
 
     constexpr
     std::uint_least16_t
     verify_audio_channel_count(const std::uint_least16_t n)
     {
         verify(
-            (n != 0) && (n <= maximum_audio_channel_count_n),
-            "{0}: invalid audio channel count", n);
+            is_valid_audio_channel_count(n),
+            "{0} is not a valid audio channel count", n);
         return n;
     }
 
@@ -147,6 +195,28 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     public:
 
         /**
+         * Creates a new `audio_channel_count` instance.
+         *
+         * @param n
+         *   The audio channel count.
+         *
+         * @returns
+         *   The new `audio_channel_count` instance, or a `std::error_code`
+         *   instance if the value is not valid.
+         */
+
+        static constexpr
+        std::expected<audio_channel_count, std::error_code>
+        create(const std::uint_least16_t n) noexcept
+        {
+            if (! is_valid_audio_channel_count(n)) {
+                return std::unexpected(
+                    std::make_error_code(std::errc::invalid_argument));
+            }
+            return audio_channel_count(n, validated);
+        }
+
+        /**
          * Constructs an `audio_channel_count` instance.
          *
          * @param n
@@ -157,6 +227,15 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         audio_channel_count(const std::uint_least16_t n):
             uint_least16_proxy<audio_channel_count>(
                 verify_audio_channel_count(n))
+        {
+            // empty
+        }
+
+    private:
+
+        constexpr
+        audio_channel_count(const std::uint_least16_t n, validated_t):
+            uint_least16_proxy<audio_channel_count>(n)
         {
             // empty
         }
@@ -175,18 +254,25 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     // sure to only support a sample rate range that would generate ratios
     // within the supported resampler range.
     //
-    // We can always /decrease/increase these later.
-    constexpr std::uint_least32_t maximum_audio_sample_rate_n = 1024000;
-    constexpr std::uint_least32_t minimum_audio_sample_rate_n = 4000;
+    // We can always decrease/increase these later.
+    constexpr std::uint_least32_t audio_sample_rate_lower_bound = 4000;
+    constexpr std::uint_least32_t audio_sample_rate_upper_bound = 1024000;
+
+    constexpr
+    bool
+    is_valid_audio_sample_rate(const std::uint_least32_t n)
+    {
+        return (n >= audio_sample_rate_lower_bound) &&
+            (n <= audio_sample_rate_upper_bound);
+    }
 
     constexpr
     std::uint_least32_t
     verify_audio_sample_rate(const std::uint_least32_t n)
     {
         verify(
-            (n >= minimum_audio_sample_rate_n) &&
-            (n <= maximum_audio_sample_rate_n),
-            "{0}: unsupported audio sample rate", n);
+            is_valid_audio_sample_rate(n),
+            "{0} is not a valid audio sample rate", n);
         return n;
     }
 
@@ -201,6 +287,28 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     public:
 
         /**
+         * Creates a new `audio_sample_rate` instance.
+         *
+         * @param n
+         *   The audio sample rate.
+         *
+         * @returns
+         *   The new `audio_sample_rate` instance, or a `std::error_code`
+         *   instance if the value is not valid.
+         */
+
+        static constexpr
+        std::expected<audio_sample_rate, std::error_code>
+        create(const std::uint_least32_t n) noexcept
+        {
+            if (! is_valid_audio_sample_rate(n)) {
+                return std::unexpected(
+                    std::make_error_code(std::errc::invalid_argument));
+            }
+            return audio_sample_rate(n, validated);
+        }
+
+        /**
          * Constructs an `audio_sample_rate` instance.
          *
          * @param n
@@ -210,6 +318,15 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         constexpr
         audio_sample_rate(const std::uint_least32_t n):
             uint_least32_proxy<audio_sample_rate>(verify_audio_sample_rate(n))
+        {
+            // empty
+        }
+
+    private:
+
+        constexpr
+        audio_sample_rate(const std::uint_least32_t n, validated_t):
+            uint_least32_proxy<audio_sample_rate>(n)
         {
             // empty
         }

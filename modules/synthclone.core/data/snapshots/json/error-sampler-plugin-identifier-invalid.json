@@ -1,0 +1,25 @@
+{
+    "synthclone-session": {
+
+        "version": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+        },
+
+        "sample-rate": 44100,
+        "channel-count": 1,
+        "endianness": "little",
+
+        "sampler": {
+            "plugin-identifier": "foo\n",
+            "type-identifier": "sampler-type",
+            "type-version": "sampler-version"
+        },
+        "effect-chains": [],
+        "exporters": [],
+        "importers": [],
+        "zones": []
+
+    }
+}

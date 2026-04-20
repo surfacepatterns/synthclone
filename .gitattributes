@@ -1,1 +1,2 @@
+modules/synthclone.archive/data/archives/** filter=lfs diff=lfs merge=lfs -text
 modules/synthclone.core/data/audio/** filter=lfs diff=lfs merge=lfs -text

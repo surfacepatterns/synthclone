@@ -1,0 +1,20 @@
+{
+    "synthclone-session": {
+
+        "version": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+        },
+
+        "sample-rate": 44100,
+        "endianness": "little",
+
+        "sampler": null,
+        "effect-chains": [],
+        "exporters": [],
+        "importers": [],
+        "zones": []
+
+    }
+}

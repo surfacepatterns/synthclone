@@ -1,0 +1,37 @@
+{
+    "synthclone-session": {
+
+        "version": {
+            "major": 0,
+            "minor": 5,
+            "patch": 0
+        },
+
+        "sample-rate": 44100,
+        "channel-count": 1,
+        "endianness": "little",
+
+        "sampler": null,
+        "effect-chains": [],
+        "exporters": [],
+        "importers": [
+            "foo"
+        ],
+        "zones": [
+            {
+                "channel": 2,
+                "note": 64,
+                "velocity": 127,
+                "aftertouch": null,
+                "channel-pressure": null,
+                "controls": [],
+                "sample-duration": 0,
+                "release-duration": 300000000001,
+                "effect-chain-index": null,
+                "dry-sample": null,
+                "wet-sample": null
+            }
+        ]
+
+    }
+}

@@ -6,4 +6,3 @@ export import :audio_encoder;
 export import :audio_resampler;
 export import :frequency;
 export import :reference;
-export import :zone;

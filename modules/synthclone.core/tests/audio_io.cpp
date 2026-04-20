@@ -137,6 +137,64 @@ namespace {
 
 BOOST_AUTO_TEST_SUITE(audio_io)
 
+BOOST_AUTO_TEST_CASE(basic_audio_sinks)
+{
+    synthclone::audio_sink sink_1(
+        "sink-1",
+        synthclone::audio_traits(
+            synthclone::audio_format::raw, synthclone::audio_codec::pcm_f32,
+            synthclone::audio_endianness::little, 48000, 1));
+    synthclone::audio_sink sink_2(
+        "sink-2",
+        synthclone::audio_traits(
+            synthclone::audio_format::raw, synthclone::audio_codec::pcm_f32,
+            synthclone::audio_endianness::little, 44100, 2));
+    synthclone::verify_ne(sink_1, sink_2);
+
+    synthclone::audio_sink sink_3(sink_1);
+    synthclone::verify_eq(sink_1, sink_3);
+    synthclone::verify_ne(sink_2, sink_3);
+
+    synthclone::audio_sink sink_4(std::move(sink_1));
+    synthclone::verify_eq(sink_3, sink_4);
+    synthclone::verify_ne(sink_2, sink_4);
+
+    sink_1 = sink_2;
+    synthclone::verify_eq(sink_1, sink_2);
+    synthclone::verify_ne(sink_1, sink_4);
+
+    sink_1 = std::move(sink_3);
+    synthclone::verify_ne(sink_1, sink_2);
+    synthclone::verify_eq(sink_1, sink_4);
+}
+
+BOOST_AUTO_TEST_CASE(basic_audio_sources)
+{
+    synthclone::audio_source source_1("source-1");
+    synthclone::audio_source source_2(
+        "source-2",
+        synthclone::audio_traits(
+            synthclone::audio_format::raw, synthclone::audio_codec::pcm_f32,
+            synthclone::audio_endianness::little, 44100, 2));
+    synthclone::verify_ne(source_1, source_2);
+
+    synthclone::audio_source source_3(source_1);
+    synthclone::verify_eq(source_1, source_3);
+    synthclone::verify_ne(source_2, source_3);
+
+    synthclone::audio_source source_4(std::move(source_1));
+    synthclone::verify_eq(source_3, source_4);
+    synthclone::verify_ne(source_2, source_4);
+
+    source_1 = source_2;
+    synthclone::verify_eq(source_1, source_2);
+    synthclone::verify_ne(source_1, source_4);
+
+    source_1 = std::move(source_3);
+    synthclone::verify_ne(source_1, source_2);
+    synthclone::verify_eq(source_1, source_4);
+}
+
 BOOST_AUTO_TEST_CASE(copier_downsampled_copies)
 {
     verify_resampled_copies<10, 48000, 8000, 9.526827348100687e-06>();
@@ -383,7 +441,8 @@ BOOST_AUTO_TEST_CASE(input_stream_content_type_inference)
         output_stream.write(audio);
     }
 
-    synthclone::audio_input_stream input_stream(output_path);
+    synthclone::audio_source source(output_path);
+    synthclone::audio_input_stream input_stream(source);
     synthclone::verify_eq(traits, input_stream.traits());
 }
 

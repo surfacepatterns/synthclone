@@ -8,199 +8,193 @@ module;
 
 #include <synthclone/config.h>
 
-// The forward declaration needs to be here so the declaration is not attached
-// to the module.
-class QQuickItem;
-
 export module synthclone.core:component_core;
 
 import std;
 
 import synthclone.util;
 
-import :metadata;
+import :metadata_core;
+import :session;
 import :state;
 
 ///////////////////////////////////////////////////////////////////////////////
-// synthclone::component_core_ops
+// synthclone::component_metadata_init_args
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace SYNTHCLONE_LIB_NAMESPACE {
 
     /**
-     * Contains core operations for a component type.
-     *
-     * @tparam T
-     *   The base component type.
+     * Used to initialize `component_metadata` instances using aggregate
+     * initialization.
      */
 
     export
-    template<class T>
-    class component_core_ops: private nonmovable {
-
-    public:
+    struct component_metadata_init_args final {
 
         /**
-         * Destructs a `component_core_ops` instance.
+         * The component identifier.
          */
 
-        virtual
-        ~component_core_ops() = default;
+        metadata_element identifier;
 
         /**
-         * Instantiates a new component instance.
-         *
-         * @return
-         *   A pointer to the new component instance.
+         * The component version.
          */
 
-        virtual
-        std::unique_ptr<T>
-        create() = 0;
-
-    protected:
+        metadata_element version;
 
         /**
-         * Constructs a `component_core_ops` instance.
+         * The optional title for the component.
          */
 
-        explicit
-        component_core_ops() = default;
+        std::optional<metadata_element> title;
+
+        /**
+         * The optional URL that links to more information on the component.
+         */
+
+        std::optional<metadata_url> url;
+
+        /**
+         * The optional license descriptor for the component.
+         */
+
+        std::optional<metadata_element> license;
+
+        /**
+         * The creators of the component.
+         */
+
+        metadata_element_sequence creators;
+
+        /**
+         * The contributors to the component.
+         */
+
+        metadata_element_sequence contributors;
+
+        /**
+         * The description of the component.
+         */
+
+        metadata_text description;
+
+        /**
+         * The tiered category for the component.
+         */
+
+        metadata_element_sequence category;
 
     };
 
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// synthclone::component_editor_ops
+// synthclone::component_metadata
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace SYNTHCLONE_LIB_NAMESPACE {
 
     /**
-     * Contains component editor operations.
-     *
-     * @tparam T
-     *   The base component type.
-     * @tparam M
-     *   The message variant type.
+     * Contains metadata for a component.
      */
 
     export
-    template<class T, class M>
-    class component_editor_ops: private nonmovable {
+    class component_metadata final: public metadata {
 
     public:
 
         /**
-         * Destructs a `component_editor_ops` instance.
+         * Move constructor.
          */
 
-        virtual
-        ~component_editor_ops() = default;
+        component_metadata(component_metadata&&) = default;
 
         /**
-         * Populates the given window with an editor interface, allowing the
-         * user to edit the component state, and manages the window throughout
-         * the lifetime of the edit operations (e.g. until the window is
-         * closed).
+         * Copy constructor.
+         */
+
+        component_metadata(const component_metadata&) = default;
+
+        /**
+         * Constructs a `component_metadata` instance.
          *
-         * @param component
-         *   The component to be edited.
-         * @param parent
-         *   The item to use as the parent of the edit interface.
-         * @param stop_token
-         *   A stop token that will be set if the operation is cancelled.
+         * @param args
+         *   The data to use to populate the `metadata` instance.
+         */
+
+        constexpr
+        component_metadata(component_metadata_init_args args) noexcept:
+            metadata(
+                std::move(args.identifier), std::move(args.version),
+                std::move(args.title), std::move(args.url),
+                std::move(args.license), std::move(args.creators),
+                std::move(args.contributors), std::move(args.description)),
+            category_(std::move(args.category))
+        {
+            // empty
+        }
+
+        /**
+         * Move assignment operator.
+         */
+
+        component_metadata&
+        operator=(component_metadata&&) = default;
+
+        /**
+         * Copy assignment operator.
+         */
+
+        component_metadata&
+        operator=(const component_metadata& other)
+        {
+            *this = component_metadata(other);
+            return *this;
+        }
+
+        /**
+         * Gets the tiered category for the component.
          *
          * @return
-         *   A generator that is used to send messages back to the host.
+         *   A range representing the tiered category.
          */
 
-        virtual
-        std::generator<M>
-        edit(
-            T& component,
-            ::QQuickItem* parent,
-            std::stop_token stop_token
-        ) = 0;
+        constexpr
+        auto
+        category() const
+        {
+            return std::ranges::subrange(category_.cbegin(), category_.cend());
+        }
 
-    protected:
+    private:
 
-        /**
-         * Constructs a `component_editor_ops` instance.
-         */
-
-        explicit
-        component_editor_ops() = default;
+        metadata_element_sequence category_;
 
     };
-
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// synthclone::component_state_ops
-///////////////////////////////////////////////////////////////////////////////
-
-namespace SYNTHCLONE_LIB_NAMESPACE {
 
     /**
-     * Contains component state operations.
+     * Gets a boolean indicating whether or not two `component_metadata`
+     * instances contain exactly the same metadata.
      *
-     * @tparam T
-     *   The base component type.
+     * @param lhs
+     *   The first instance.
+     * @param rhs
+     *   The second instance.
+     *
+     * @return
+     *   The boolean indicator.
      */
 
     export
-    template<class T>
-    class component_state_ops: private nonmovable {
-
-    public:
-
-        /**
-         * Destructs a `component_state_ops` instance.
-         */
-
-        virtual
-        ~component_state_ops() = default;
-
-        /**
-         * Gets a snapshot of the given component's state.
-         *
-         * @param component
-         *   The component to get the state for.
-         *
-         * @return
-         *   The component state.
-         */
-
-        virtual
-        state_value
-        dump(const T& component) = 0;
-
-        /**
-         * Loads a component from the given state.
-         *
-         * @param state
-         *   The state to load the component from.
-         *
-         * @return
-         *   A pointer to the loaded component instance.
-         */
-
-        virtual
-        std::unique_ptr<T>
-        load(const state_value& state) = 0;
-
-    protected:
-
-        /**
-         * Constructs a `component_state_ops` instance.
-         */
-
-        explicit
-        component_state_ops() = default;
-
-    };
+    constexpr
+    bool
+    operator==(const component_metadata& lhs, const component_metadata& rhs)
+    {
+        return equal(lhs, rhs) &&
+            std::ranges::equal(lhs.category(), rhs.category());
+    }
 
 }
 
@@ -245,10 +239,10 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
         std::unique_ptr<S> state_ops;
 
         /**
-         * Metadata describing components of the given component type.
+         * Metadata describing the given component type.
          */
 
-        metadata_init_args metadata;
+        component_metadata_init_args metadata;
 
     };
 
@@ -317,8 +311,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
         constexpr
         const std::unique_ptr<C>&
-        core_ops()
-        const noexcept
+        core_ops() const noexcept
         {
             return core_ops_;
         }
@@ -333,8 +326,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
         constexpr
         const std::unique_ptr<E>&
-        editor_ops()
-        const noexcept
+        editor_ops() const noexcept
         {
             return editor_ops_;
         }
@@ -347,9 +339,8 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
          */
 
         constexpr
-        const metadata&
-        metadata()
-        const noexcept
+        const component_metadata&
+        metadata() const noexcept
         {
             return metadata_;
         }
@@ -363,8 +354,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
         constexpr
         const std::unique_ptr<S>&
-        state_ops()
-        const noexcept
+        state_ops() const noexcept
         {
             return state_ops_;
         }
@@ -376,7 +366,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
             std::unique_ptr<C>&& core_ops,
             std::unique_ptr<E>&& editor_ops,
             std::unique_ptr<S>&& state_ops,
-            metadata_init_args&& metadata
+            component_metadata_init_args&& metadata
         ):
             metadata_(std::move(metadata)),
             core_ops_(verify_component_core_ops(std::move(core_ops))),
@@ -391,7 +381,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
     private:
 
-        class metadata metadata_;
+        component_metadata metadata_;
 
         std::unique_ptr<C> core_ops_;
         std::unique_ptr<E> editor_ops_;

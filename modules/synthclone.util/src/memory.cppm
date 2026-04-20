@@ -105,3 +105,24 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     using pointer_address_t = pointer_element_t<T>*;
 
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::pointer_to
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    /**
+     * Checks whether a type is a pointer to the given element type.
+     *
+     * @tparam T
+     *   The type to check.
+     * @tparam E
+     *   The element type.
+     */
+
+    export
+    template<class T, class E>
+    concept pointer_to = pointer<T> && std::same_as<pointer_element_t<T>, E>;
+
+}

@@ -7,7 +7,7 @@ BOOST_AUTO_TEST_SUITE(plugin)
 
 BOOST_AUTO_TEST_CASE(make)
 {
-    auto ptr = synthclone::make_fx_plugin();
+    auto ptr = synthclone::make_fx_plugin_instance();
 
     const auto& metadata = ptr->metadata();
     synthclone::verify_eq("synthclone.fx", metadata.identifier());

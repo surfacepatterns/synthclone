@@ -432,7 +432,7 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
     >;
 
     /**
-     * A `state_value` type that maps `std::string` keys to `state_value`
+     * A `state_value` type that maps `state_string` keys to `state_value`
      * instances.
      *
      * @note

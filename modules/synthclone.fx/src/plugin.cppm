@@ -6,7 +6,7 @@ import synthclone.plugin;
 import :reverser;
 
 ///////////////////////////////////////////////////////////////////////////////
-// synthclone::make_fx_plugin()
+// synthclone::make_fx_plugin_instance()
 ///////////////////////////////////////////////////////////////////////////////
 
 namespace synthclone {
@@ -16,33 +16,9 @@ namespace synthclone {
     public:
 
         inline explicit
-        fx_plugin_instance(session_host& host):
-            host_(host)
-        {
-            // empty
-        }
-
-        std::generator<capture_effect_type>
-        capture_effect_types()
-        override final
-        {
-            co_yield make_reverser_type(host_);
-        }
-
-    private:
-
-        session_host& host_;
-
-    };
-
-    class fx_plugin final: public plugin {
-
-    public:
-
-        explicit
-        fx_plugin():
+        fx_plugin_instance():
             metadata_(
-                generate_simple_metadata(
+                generate_simple_plugin_metadata(
                     {
                         .identifier = "synthclone.fx",
                         .title = "synthclone effects suite",
@@ -54,31 +30,29 @@ namespace synthclone {
             // empty
         }
 
-        std::unique_ptr<plugin_instance>
-        instantiate(session_host& host)
-        override final
+        std::generator<capture_effect_type>
+        capture_effect_types() override final
         {
-            return std::make_unique<fx_plugin_instance>(host);
+            co_yield make_reverser_type();
         }
 
-        const class metadata&
-        metadata()
-        override final
+        const plugin_metadata&
+        metadata() override final
         {
             return metadata_;
         }
 
     private:
 
-        class metadata metadata_;
+        plugin_metadata metadata_;
 
     };
 
     export
-    std::unique_ptr<plugin>
-    make_fx_plugin()
+    std::unique_ptr<plugin_instance>
+    make_fx_plugin_instance()
     {
-        return std::make_unique<fx_plugin>();
+        return std::make_unique<fx_plugin_instance>();
     }
 
 }

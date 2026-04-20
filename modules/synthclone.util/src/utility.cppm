@@ -13,6 +13,8 @@ export module synthclone.util:utility;
 
 import std;
 
+import :debug;
+
 ///////////////////////////////////////////////////////////////////////////////
 // synthclone::noncopyable
 ///////////////////////////////////////////////////////////////////////////////
@@ -91,6 +93,175 @@ namespace SYNTHCLONE_LIB_NAMESPACE {
 
     export
     using nonmovable = nonmovable_::nonmovable;
+
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// synthclone::out_param
+///////////////////////////////////////////////////////////////////////////////
+
+namespace SYNTHCLONE_LIB_NAMESPACE {
+
+    /**
+     * Type passed to functions wherein an output parameter is expected and
+     * cannot be transmitted via a return value (e.g. coroutine functions that
+     * return `std::generator` types).
+     */
+
+    export
+    template<class T>
+    requires (std::movable<T> || std::copyable<T>)
+    class out_param final: private nonmovable {
+
+    public:
+
+        /**
+         * Checks whether or not a result has already been assigned to the
+         * `out_param` instance.
+         *
+         * @return
+         *   The boolean indicator.
+         */
+
+        constexpr explicit
+        operator bool() const noexcept
+        {
+            return static_cast<bool>(result_);
+        }
+
+        /**
+         * Assigns a result to the `out_param` instance.
+         *
+         * @param result
+         *   The result to assign.
+         *
+         * @return
+         *   This `out_param` instance.
+         */
+
+        constexpr
+        out_param&
+        operator=(T&& result)
+        requires (std::movable<T>)
+        {
+            verify(! result_, "result is already set");
+            result_ = std::move(result);
+            return *this;
+        }
+
+        /**
+         * Assigns a result to the `out_param` instance.
+         *
+         * @param result
+         *   The result to assign.
+         *
+         * @return
+         *   This `out_param` instance.
+         */
+
+        constexpr
+        out_param&
+        operator=(const T& result)
+        requires (std::copyable<T>)
+        {
+            verify(! result_, "result is already set");
+            result_ = result;
+            return *this;
+        }
+
+        /**
+         * Constructs a result in-place in the `out_param` instance.
+         *
+         * @param args
+         *   The arguments to pass to the constructor.
+         *
+         * @return
+         *   The constructed result.
+         */
+
+        template<class... Args>
+        requires (std::constructible_from<T, Args&&...>)
+        constexpr
+        T&
+        emplace(Args&&... args)
+        {
+            verify(! result_, "result is already set");
+            return result_.emplace(std::forward<Args>(args)...);
+        }
+
+        /**
+         * Constructs a result in-place in the `out_param` instance.
+         *
+         * @param ilist
+         *   An initializer list argument to pass to the constructor.
+         * @param args
+         *   The arguments to pass to the constructor.
+         *
+         * @return
+         *   The constructed result.
+         */
+
+        template<class U, class... Args>
+        requires (
+            std::constructible_from<T, std::initializer_list<U>&, Args&&...>
+        )
+        T&
+        emplace(std::initializer_list<U> ilist, Args&&... args)
+        {
+            verify(! result_, "result is already set");
+            return result_.emplace(ilist, std::forward<Args>(args)...);
+        }
+
+        /**
+         * Gets the result stored in the `out_param` instance.
+         *
+         * @return
+         *   The stored result.
+         */
+
+        constexpr
+        T&
+        value() &
+        {
+            verify(static_cast<bool>(result_), "result is not set");
+            return *result_;
+        }
+
+        /**
+         * Gets the result stored in the `out_param` instance.
+         *
+         * @return
+         *   The stored result.
+         */
+
+        constexpr
+        const T&
+        value() const &
+        {
+            verify(static_cast<bool>(result_), "result is not set");
+            return *result_;
+        }
+
+        /**
+         * Gets the result stored in the `out_param` instance.
+         *
+         * @return
+         *   The stored result.
+         */
+
+        constexpr
+        T&&
+        value() &&
+        {
+            verify(static_cast<bool>(result_), "result is not set");
+            return *(std::move(result_));
+        }
+
+    private:
+
+        std::optional<T> result_;
+
+    };
 
 }
 
